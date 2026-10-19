@@ -1084,7 +1084,7 @@ sgx_status_t sgx_create_enclave(
                     mark_invalid("readiness_fread_failed");
                 } else {
                     sgx_page_readiness_table_t tbl = { .data = rbuf, .size = (size_t)rsz };
-                    if (fn_tbl(*enclave_id, &tbl) != 0 || fn_be(*enclave_id, 1U) != 0) {
+                    if (fn_tbl(*enclave_id, &tbl) != 0 || fn_be(*enclave_id, 0U /* ATFIELD_READINESS_BACKEND_KERNEL */) != 0) {
                         syscall_error_count++;
                         mark_invalid("readiness_install_ioctl_failed");
                     }
@@ -1193,45 +1193,31 @@ sgx_status_t sgx_create_enclave(
     return st;
 }
 
-typedef struct {
-    uint64_t selector;
-    uint64_t table_ptr;
-    uint64_t table_bytes;
-} sgx_enclave_pages_acquire_t;
-
-#ifndef SGX_MAGIC
-#define SGX_MAGIC 0xA4
-#endif
-#define SGX_IOC_ENCLAVE_PAGES_ACQUIRE _IOW(SGX_MAGIC, 0x0A, sgx_enclave_pages_acquire_t)
-#define SGX_IOC_ENCLAVE_PAGES_RELEASE _IO(SGX_MAGIC, 0x0B)
-
-typedef int (*real_ioctl_fn_t)(int, unsigned long, void *);
-static real_ioctl_fn_t real_ioctl_fn = NULL;
 static uint64_t cur_ecall_acquire_ns = 0;
 static uint64_t cur_ecall_release_ns = 0;
+typedef int (*real_encl_acq_fn_t)(void *, uint64_t, uint64_t, uint64_t);
+typedef int (*real_encl_rel_fn_t)(void *);
+static real_encl_acq_fn_t real_encl_acq_fn = NULL;
+static real_encl_rel_fn_t real_encl_rel_fn = NULL;
 
-int ioctl(int fd, unsigned long request, ...) {
-    if (!real_ioctl_fn)
-        real_ioctl_fn = (real_ioctl_fn_t)dlsym(RTLD_NEXT, "ioctl");
-    va_list ap;
-    va_start(ap, request);
-    void *arg = va_arg(ap, void *);
-    va_end(ap);
-    if (__atomic_load_n(&in_measured_ecall, __ATOMIC_RELAXED)) {
-        if (request == (unsigned long)SGX_IOC_ENCLAVE_PAGES_ACQUIRE) {
-            uint64_t ti0 = monotonic_ns();
-            int rc = real_ioctl_fn(fd, request, arg);
-            cur_ecall_acquire_ns += monotonic_ns() - ti0;
-            return rc;
-        }
-        if (request == (unsigned long)SGX_IOC_ENCLAVE_PAGES_RELEASE) {
-            uint64_t ti0 = monotonic_ns();
-            int rc = real_ioctl_fn(fd, request, arg);
-            cur_ecall_release_ns += monotonic_ns() - ti0;
-            return rc;
-        }
-    }
-    return real_ioctl_fn(fd, request, arg);
+int enclave_pages_acquire(void *base_address, uint64_t selector, uint64_t table_ptr, uint64_t table_bytes) {
+    if (!real_encl_acq_fn)
+        real_encl_acq_fn = (real_encl_acq_fn_t)dlsym(RTLD_NEXT, "enclave_pages_acquire");
+    uint64_t ti0 = monotonic_ns();
+    int rc = real_encl_acq_fn(base_address, selector, table_ptr, table_bytes);
+    if (__atomic_load_n(&in_measured_ecall, __ATOMIC_RELAXED))
+        cur_ecall_acquire_ns += monotonic_ns() - ti0;
+    return rc;
+}
+
+int enclave_pages_release(void *base_address) {
+    if (!real_encl_rel_fn)
+        real_encl_rel_fn = (real_encl_rel_fn_t)dlsym(RTLD_NEXT, "enclave_pages_release");
+    uint64_t ti0 = monotonic_ns();
+    int rc = real_encl_rel_fn(base_address);
+    if (__atomic_load_n(&in_measured_ecall, __ATOMIC_RELAXED))
+        cur_ecall_release_ns += monotonic_ns() - ti0;
+    return rc;
 }
 
 static sgx_status_t execute_one_measured_ecall(
@@ -1351,7 +1337,7 @@ static sgx_status_t execute_one_measured_ecall(
                 "{\"call_seq\":%d,\"ecall_index\":%d,\"selector_seq\":%d,\"tag\":\"%s\","
                 "\"sgx_status\":%d,\"abi_return_type\":\"%s\",\"ms_retval\":%s,\"ms_retval_i32\":%d,"
                 "\"has_out_status_i32\":%d,\"out_status_i32\":%d,"
-                "\"elapsed_ns\":%" PRIu64 ","
+                "\"elapsed_ns\":%" PRIu64 ",\"acquire_ns\":%" PRIu64 ",\"encl_body_ns\":%" PRIu64 ",\"release_ns\":%" PRIu64 ","
                 "\"total_aex_count\":%u,\"gate_ipi_aex_count\":%u,"
                 "\"measurement_invalid\":%d,\"invalid_reason\":\"%s\","
                 "\"syscall_errors\":%d,\"ipi_flush_failures\":%d,\"mutation_oob_rejected\":%d,"
@@ -1362,7 +1348,7 @@ static sgx_status_t execute_one_measured_ecall(
                 st, abi.has_retval ? "scalar" : "void", ms_ret_json,
                 abi.has_retval ? (int32_t)abi.retval_i64 : 0,
                 has_out_status_ptr, out_status_val,
-                elapsed_ns,
+                elapsed_ns, acq_ns, body_ns, rel_ns,
                 g_shared->total_aex_count, g_shared->gate_ipi_aex_count,
                 measurement_invalid, last_invalid_reason,
                 syscall_error_count, ipi_flush_failure_count, mutation_oob_rejected_count,
