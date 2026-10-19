@@ -11,12 +11,14 @@ DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
 sys.path.insert(0, str(DYN_ROOT / "tools"))
 
 from acceptance_validator import (  # noqa: E402
+    sha256_path,
+    validate_production_run_result,
     validate_provenance_consistency,
     validate_run_result,
 )
 from run_native_sgx import run_sample  # noqa: E402
 
-SAMPLES = ["qe3", "signal-cds", "sgxwallet", "ehsm"]
+SAMPLES = ["qe3", "signal-cds", "sgxwallet", "ehsm", "ehsm-opt-1", "ehsm-opt-2"]
 
 # Hold-out suites:
 # - Uses schema-typed primitives (xor_param, set_scalar, scale_bound_v2, typed_state_probe).
@@ -66,11 +68,27 @@ HOLDOUT_SUITES = {
     },
     "ehsm": {
         "expected_tags": {"cold_state_replay_ecall_2_after_0_1", "cold_state_replay_ecall_4_after_0_1", "schema_xor_p4_byte_9"},
+        "intervention": "typed_state_probe:2:1:0:1;typed_state_probe:4:1:0:1;xor_param:3:1:4:9:127",
+        "host_args": ["--bytes", "1536", "--requests", "3"],
+        "min_records": 39,
+        "aux_runs": [],
+        "desc": "Original 2-step eHSM (--bytes 1536 --requests 3) + cold-enclave state replay on encrypt & generate_datakey + ciphertext byte-9 bit-flip",
+    },
+    "ehsm-opt-1": {
+        "expected_tags": {"cold_state_replay_ecall_2_after_0_1", "cold_state_replay_ecall_4_after_0_1", "schema_xor_p4_byte_9"},
         "intervention": "typed_state_probe:2:0:0:1;typed_state_probe:4:0:0:1;xor_param:3:0:4:9:127",
         "host_args": ["--bytes", "1536", "--requests", "3"],
         "min_records": 20,
         "aux_runs": [],
-        "desc": "New input combination (--bytes 1536 --requests 3) + cold-enclave state replay on encrypt & generate_datakey + ciphertext byte-9 bit-flip",
+        "desc": "Direct-sizing eHSM-opt-1 (--bytes 1536 --requests 3) + cold-enclave state replay on encrypt & generate_datakey + ciphertext byte-9 bit-flip",
+    },
+    "ehsm-opt-2": {
+        "expected_tags": {"cold_state_replay_ecall_2_after_0_1", "cold_state_replay_ecall_4_after_0_1", "schema_xor_p4_byte_9"},
+        "intervention": "typed_state_probe:2:0:0:1;typed_state_probe:4:0:0:1;xor_param:3:0:4:9:127",
+        "host_args": ["--bytes", "1536", "--requests", "3"],
+        "min_records": 20,
+        "aux_runs": [],
+        "desc": "Eager-OpenSSL-init eHSM-opt-2 (--bytes 1536 --requests 3) + cold-enclave state replay on encrypt & generate_datakey + ciphertext byte-9 bit-flip",
     },
 }
 
@@ -596,7 +614,13 @@ def evaluate_sample(sample: str) -> dict:
             "cat3_body_ns": [],
             "cat3_release_ns": [],
             "cat2_early_ret_ns": [],
+            "cat2_acquire_ns": [],
+            "cat2_body_ns": [],
+            "cat2_release_ns": [],
             "cat1_init_ns": [],
+            "cat1_acquire_ns": [],
+            "cat1_body_ns": [],
+            "cat1_release_ns": [],
         }
         for g in prod_keys
     }
@@ -663,6 +687,10 @@ def evaluate_sample(sample: str) -> dict:
     for _, pmode in group_modes_prod_aex1:
         run_sample(sample, mode=pmode, ipi_mask=0, host_args=perf_h_args, allow_fast_forward=0)
 
+    expected_ecall_seq = [r["ecall_index"] for r in first_4gate_records]
+    ready_sel_set = set(full_sel_map.keys())
+    protected_groups = {"groupA_all_reg_xr", "groupB_dynamic_xr", "groupC_dynamic_refined"}
+
     for rnd in range(perf_rounds):
         for gname, pmode in group_modes_prod_aex1:
             for att in range(4):
@@ -677,35 +705,51 @@ def evaluate_sample(sample: str) -> dict:
                 )
                 prod_aex1_attempt_stats.setdefault(gname, {"total_attempts": 0, "clean_completed": 0, "interrupt_aborted_0x1006": 0, "other_failures": 0})
                 prod_aex1_attempt_stats[gname]["total_attempts"] += 1
-                if rp["returncode"] == 0 and "PASS" in rp["stdout"]:
+                val_prod = validate_production_run_result(
+                    rp,
+                    expected_stdout_substr="PASS",
+                    expected_ecall_seq=expected_ecall_seq,
+                    ready_sel_set=ready_sel_set,
+                    require_readiness=(gname in protected_groups),
+                )
+                if val_prod["status"] == "PASS":
                     prod_aex1_attempt_stats[gname]["clean_completed"] += 1
                     prod_aex1_ecall_sum_ns[gname].append(sum(r["elapsed_ns"] for r in rp["records"]))
-                    c3_tot = c3_acq = c3_bod = c3_rel = c2_tot = c1_tot = 0
+                    c3_tot = c3_acq = c3_bod = c3_rel = 0
+                    c2_tot = c2_acq = c2_bod = c2_rel = 0
+                    c1_tot = c1_acq = c1_bod = c1_rel = 0
                     for r in rp["records"]:
                         cseq = r["call_seq"]
                         eidx = r["ecall_index"]
                         has_rdy = eidx in full_sel_map
+                        el = r.get("elapsed_ns", 0)
+                        ac = r.get("acquire_ns", 0)
+                        bd = r.get("encl_body_ns", el)
+                        rl = r.get("release_ns", 0)
                         if cseq in field_entering_call_seqs:
-                            c3_tot += r.get("elapsed_ns", 0)
-                            c3_acq += r.get("acquire_ns", 0)
-                            c3_bod += r.get("encl_body_ns", r.get("elapsed_ns", 0))
-                            c3_rel += r.get("release_ns", 0)
+                            c3_tot += el; c3_acq += ac; c3_bod += bd; c3_rel += rl
                         elif has_rdy:
-                            c2_tot += r.get("elapsed_ns", 0)
+                            c2_tot += el; c2_acq += ac; c2_bod += bd; c2_rel += rl
                         else:
-                            c1_tot += r.get("elapsed_ns", 0)
+                            c1_tot += el; c1_acq += ac; c1_bod += bd; c1_rel += rl
                     prod_aex1_seg[gname]["cat3_total_ns"].append(c3_tot)
                     prod_aex1_seg[gname]["cat3_acquire_ns"].append(c3_acq)
                     prod_aex1_seg[gname]["cat3_body_ns"].append(c3_bod)
                     prod_aex1_seg[gname]["cat3_release_ns"].append(c3_rel)
                     prod_aex1_seg[gname]["cat2_early_ret_ns"].append(c2_tot)
+                    prod_aex1_seg[gname]["cat2_acquire_ns"].append(c2_acq)
+                    prod_aex1_seg[gname]["cat2_body_ns"].append(c2_bod)
+                    prod_aex1_seg[gname]["cat2_release_ns"].append(c2_rel)
                     prod_aex1_seg[gname]["cat1_init_ns"].append(c1_tot)
+                    prod_aex1_seg[gname]["cat1_acquire_ns"].append(c1_acq)
+                    prod_aex1_seg[gname]["cat1_body_ns"].append(c1_bod)
+                    prod_aex1_seg[gname]["cat1_release_ns"].append(c1_rel)
                     break
-                elif any(r.get("sgx_status") == 0x1006 for r in rp["records"]):
+                elif any(r.get("sgx_status") == 0x1006 for r in rp["records"]) and not rp.get("measurement_invalid", False):
                     prod_aex1_attempt_stats[gname]["interrupt_aborted_0x1006"] += 1
                 else:
                     prod_aex1_attempt_stats[gname]["other_failures"] += 1
-                    raise RuntimeError(f"Non-AEX failure on {sample} {gname} r{rnd}: rc={rp['returncode']}")
+                    raise RuntimeError(f"Production validation failed on {sample} {gname} r{rnd}: {val_prod}")
 
     ablation_summary_by_field = {}
     for fid in closed_target_pages_by_fid:
@@ -747,6 +791,11 @@ def evaluate_sample(sample: str) -> dict:
         and val_ho_strict_field["status"] == "PASS"
         and val_ho_strict_ecall["status"] == "PASS"
         and prov_check["status"] == "PASS"
+        and all(
+            prod_aex1_attempt_stats[g]["clean_completed"] == perf_rounds
+            and prod_aex1_attempt_stats[g]["other_failures"] == 0
+            for g in prod_keys
+        )
     )
     overall_verdict = "PASS" if all_validators_pass else "FAIL_OR_INVALID"
 
@@ -890,6 +939,30 @@ def _run_main_body() -> None:
         )
     (out_dir / "evaluation_results.json").write_text(json.dumps(summary, indent=2) + "\n")
     print(f"Wrote {out_dir / 'evaluation_results.json'}")
+
+    manifest_entries = []
+    raw_root = out_dir / "raw_traces"
+    if raw_root.is_dir():
+        for jf in sorted(raw_root.rglob("*.jsonl")):
+            manifest_entries.append({
+                "rel_path": str(jf.relative_to(DYN_ROOT)),
+                "sha256": sha256_path(jf),
+                "bytes": jf.stat().st_size,
+                "lines": sum(1 for _ in jf.open("rb")),
+            })
+        archive_path = out_dir / "latest_traces_archive.tar.gz"
+        __import__("subprocess").run(
+            ["tar", "-czf", str(archive_path), "-C", str(out_dir), "raw_traces"],
+            check=True,
+        )
+        manifest_payload = {
+            "archive_path": "experiments/latest_traces_archive.tar.gz",
+            "archive_sha256": sha256_path(archive_path),
+            "archive_bytes": archive_path.stat().st_size,
+            "total_trace_files": len(manifest_entries),
+            "traces": manifest_entries,
+        }
+        (out_dir / "traces_manifest.json").write_text(json.dumps(manifest_payload, indent=2) + "\n")
 
 
 if __name__ == "__main__":

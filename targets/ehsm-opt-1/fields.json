@@ -1,0 +1,82 @@
+{
+  "schema": "atfield-fields-v1",
+  "fields": [
+    {
+      "id": "0x2c6ee760c60f6016",
+      "name": "ehsm_generate_datakey(ehsm_keyblob_t*, ehsm_data_t*, ehsm_data_t*, ehsm_data_t*)",
+      "function": "_ZL21ehsm_generate_datakeyP14ehsm_keyblob_tP11ehsm_data_tS2_S2_",
+      "linkage_name": "_ZL21ehsm_generate_datakeyP14ehsm_keyblob_tP11ehsm_data_tS2_S2_",
+      "demangled_name": "ehsm_generate_datakey(ehsm_keyblob_t*, ehsm_data_t*, ehsm_data_t*, ehsm_data_t*)",
+      "order": [
+        "0x66fe3042b575734c",
+        "14"
+      ],
+      "marker_symbol": "__atfield_marker_3201750787932774422",
+      "continuation_symbol": "__atfield_after_marker_3201750787932774422",
+      "body_symbol": "__atfield_body_3201750787932774422",
+      "pretouch_symbol": "__atfield_pretouch_3201750787932774422",
+      "field_enter_symbol": "__atfield_field_enter_3201750787932774422",
+      "normal_close_symbol": "__atfield_normal_close_3201750787932774422",
+      "field_exit_symbol": "__atfield_field_exit_3201750787932774422",
+      "stack_bytes": null
+    },
+    {
+      "id": "0x816b2c1d4427550e",
+      "name": "ehsm_aes_gcm_encrypt(ehsm_data_t*, ehsm_keyblob_t*, ehsm_data_t*, ehsm_data_t*)",
+      "function": "_Z20ehsm_aes_gcm_encryptP11ehsm_data_tP14ehsm_keyblob_tS0_S0_",
+      "linkage_name": "_Z20ehsm_aes_gcm_encryptP11ehsm_data_tP14ehsm_keyblob_tS0_S0_",
+      "demangled_name": "ehsm_aes_gcm_encrypt(ehsm_data_t*, ehsm_keyblob_t*, ehsm_data_t*, ehsm_data_t*)",
+      "order": [
+        "0x8558048f8f200572",
+        "3"
+      ],
+      "marker_symbol": "__atfield_marker_9325595957609846030",
+      "continuation_symbol": "__atfield_after_marker_9325595957609846030",
+      "body_symbol": "__atfield_body_9325595957609846030",
+      "pretouch_symbol": "__atfield_pretouch_9325595957609846030",
+      "field_enter_symbol": "__atfield_field_enter_9325595957609846030",
+      "normal_close_symbol": "__atfield_normal_close_9325595957609846030",
+      "field_exit_symbol": "__atfield_field_exit_9325595957609846030",
+      "stack_bytes": null
+    },
+    {
+      "id": "0xc78a81e7028b9848",
+      "name": "ehsm_aes_gcm_decrypt(ehsm_data_t*, ehsm_keyblob_t*, ehsm_data_t*, ehsm_data_t*)",
+      "function": "_Z20ehsm_aes_gcm_decryptP11ehsm_data_tP14ehsm_keyblob_tS0_S0_",
+      "linkage_name": "_Z20ehsm_aes_gcm_decryptP11ehsm_data_tP14ehsm_keyblob_tS0_S0_",
+      "demangled_name": "ehsm_aes_gcm_decrypt(ehsm_data_t*, ehsm_keyblob_t*, ehsm_data_t*, ehsm_data_t*)",
+      "order": [
+        "0x8558048f8f200572",
+        "5"
+      ],
+      "marker_symbol": "__atfield_marker_14378447589513861192",
+      "continuation_symbol": "__atfield_after_marker_14378447589513861192",
+      "body_symbol": "__atfield_body_14378447589513861192",
+      "pretouch_symbol": "__atfield_pretouch_14378447589513861192",
+      "field_enter_symbol": "__atfield_field_enter_14378447589513861192",
+      "normal_close_symbol": "__atfield_normal_close_14378447589513861192",
+      "field_exit_symbol": "__atfield_field_exit_14378447589513861192",
+      "stack_bytes": null
+    },
+    {
+      "id": "0xf91057fc204a2eec",
+      "name": "ehsm_create_aes_key(ehsm_keyblob_t*)",
+      "function": "_Z19ehsm_create_aes_keyP14ehsm_keyblob_t",
+      "linkage_name": "_Z19ehsm_create_aes_keyP14ehsm_keyblob_t",
+      "demangled_name": "ehsm_create_aes_key(ehsm_keyblob_t*)",
+      "order": [
+        "0xef99a0bc50ac3be9",
+        "5"
+      ],
+      "marker_symbol": "__atfield_marker_17946941255456534252",
+      "continuation_symbol": "__atfield_after_marker_17946941255456534252",
+      "body_symbol": "__atfield_body_17946941255456534252",
+      "pretouch_symbol": "__atfield_pretouch_17946941255456534252",
+      "field_enter_symbol": "__atfield_field_enter_17946941255456534252",
+      "normal_close_symbol": "__atfield_normal_close_17946941255456534252",
+      "field_exit_symbol": "__atfield_field_exit_17946941255456534252",
+      "stack_bytes": null
+    }
+  ],
+  "selectors": []
+}

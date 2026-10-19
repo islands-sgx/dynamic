@@ -1,0 +1,44 @@
+{
+  "assembly": "/home/meandssh/islands-sgx/dynamic/targets/ehsm-opt-2/pretouch-profile.S",
+  "blocks": [
+    {
+      "begin_offset": 0,
+      "continuation_symbol": "__atfield_after_marker_1509912146111699759",
+      "end_offset": 5,
+      "field_id": "0x14f44918d7091b2f",
+      "size": 5,
+      "symbol": "__atfield_pretouch_1509912146111699759"
+    },
+    {
+      "begin_offset": 5,
+      "continuation_symbol": "__atfield_after_marker_6562763778015714921",
+      "end_offset": 10,
+      "field_id": "0x5b139ee2956d5e69",
+      "size": 5,
+      "symbol": "__atfield_pretouch_6562763778015714921"
+    },
+    {
+      "begin_offset": 10,
+      "continuation_symbol": "__atfield_after_marker_14640171863970985695",
+      "end_offset": 15,
+      "field_id": "0xcb2c56be4aa8b6df",
+      "size": 5,
+      "symbol": "__atfield_pretouch_14640171863970985695"
+    },
+    {
+      "begin_offset": 15,
+      "continuation_symbol": "__atfield_after_marker_7036312007578662512",
+      "end_offset": 20,
+      "field_id": "0x61a6007dac8ab670",
+      "size": 5,
+      "symbol": "__atfield_pretouch_7036312007578662512"
+    }
+  ],
+  "capacity_q": 94208,
+  "code_bytes": 20,
+  "fields_sha256": "182e9ce804ee898c357b35f2195af0b2b0477dfc3081cedf66999eef511dd87c",
+  "mode": "profile",
+  "pretouch_start": null,
+  "schema": "atfield-pretouch-output-v1",
+  "workset_sha256": null
+}

@@ -82,7 +82,45 @@ TARGETS = {
         "stack": 0x40000,
         "capacity_q": 94208,
         "upstream_pkg": "ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-clang",
-        "upstream_root": "/nix/store/d7ag1nxkg4crmph9s7lvihih3wd5wicp-ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-clang",
+        "upstream_root": "/nix/store/my840mbl3rj7gv78bmhbxxi48yznjfvp-ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-clang",
+        "extra_includes": [
+            f"-I{SGX_SDK_ROOT}/include",
+            "-I/nix/store/nfd9a0lbz3vjh19g3nw03vpsp1qkgki7-intel-sgx-ssl-anchor-3.0_Rev5.4/include",
+        ],
+        "selectors": [
+            {"ecall_index": 0, "name": "enclave_get_domain_key_from_local", "reachable_functions": []},
+            {"ecall_index": 1, "name": "enclave_create_key", "reachable_functions": ["_Z19ehsm_create_aes_keyP14ehsm_keyblob_t"]},
+            {"ecall_index": 2, "name": "enclave_encrypt", "reachable_functions": ["_Z20ehsm_aes_gcm_encryptP11ehsm_data_tP14ehsm_keyblob_tS0_S0_"]},
+            {"ecall_index": 3, "name": "enclave_decrypt", "reachable_functions": ["_Z20ehsm_aes_gcm_decryptP11ehsm_data_tP14ehsm_keyblob_tS0_S0_"]},
+            {"ecall_index": 4, "name": "enclave_generate_datakey", "reachable_functions": ["_ZL21ehsm_generate_datakeyP14ehsm_keyblob_tP11ehsm_data_tS2_S2_"]},
+        ],
+    },
+    "ehsm-opt-1": {
+        "edl": "enclave_hsm.edl",
+        "heap": 0x400000,
+        "stack": 0x40000,
+        "capacity_q": 94208,
+        "upstream_pkg": "ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-opt-1-clang",
+        "upstream_root": "/nix/store/zd3wnkf5a9rl27ai52kr6ws9k2k80228-ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-opt-1-clang",
+        "extra_includes": [
+            f"-I{SGX_SDK_ROOT}/include",
+            "-I/nix/store/nfd9a0lbz3vjh19g3nw03vpsp1qkgki7-intel-sgx-ssl-anchor-3.0_Rev5.4/include",
+        ],
+        "selectors": [
+            {"ecall_index": 0, "name": "enclave_get_domain_key_from_local", "reachable_functions": []},
+            {"ecall_index": 1, "name": "enclave_create_key", "reachable_functions": ["_Z19ehsm_create_aes_keyP14ehsm_keyblob_t"]},
+            {"ecall_index": 2, "name": "enclave_encrypt", "reachable_functions": ["_Z20ehsm_aes_gcm_encryptP11ehsm_data_tP14ehsm_keyblob_tS0_S0_"]},
+            {"ecall_index": 3, "name": "enclave_decrypt", "reachable_functions": ["_Z20ehsm_aes_gcm_decryptP11ehsm_data_tP14ehsm_keyblob_tS0_S0_"]},
+            {"ecall_index": 4, "name": "enclave_generate_datakey", "reachable_functions": ["_ZL21ehsm_generate_datakeyP14ehsm_keyblob_tP11ehsm_data_tS2_S2_"]},
+        ],
+    },
+    "ehsm-opt-2": {
+        "edl": "enclave_hsm.edl",
+        "heap": 0x400000,
+        "stack": 0x40000,
+        "capacity_q": 94208,
+        "upstream_pkg": "ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-opt-2-clang",
+        "upstream_root": "/nix/store/bz93f9hr99lpgdyr032qrsfxyi6zj6qj-ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-opt-2-clang",
         "extra_includes": [
             f"-I{SGX_SDK_ROOT}/include",
             "-I/nix/store/nfd9a0lbz3vjh19g3nw03vpsp1qkgki7-intel-sgx-ssl-anchor-3.0_Rev5.4/include",
@@ -288,6 +326,18 @@ def build_target(name: str) -> dict:
         "--out", str(ready_all_reg_bin),
         "--out-json", str(ready_all_reg_json),
     ], check=True)
+
+    for prefix, in_elf in (("profile", profile_elf), ("all_reg", final_all_reg_elf)):
+        subprocess.run([
+            sys.executable, str(DYN_ROOT / "tools" / "patch_4gate.py"),
+            "--input-elf", str(in_elf),
+            "--fields", str(out_dir / "fields.json"),
+            "--capacity-q", str(cfg["capacity_q"]),
+            "--config-xml", str(aex0_xml),
+            "--out-elf", str(out_dir / f"enclave.{prefix}.4gate.so"),
+            "--out-signed-elf", str(out_dir / f"enclave.{prefix}.4gate.aex0.signed.so"),
+            "--out-json", str(out_dir / f"enclave.{prefix}.4gate.json"),
+        ], check=True)
 
     fields_data = json.loads((out_dir / "fields.json").read_text())
     ver_data = json.loads(verify_all_reg_json.read_text())

@@ -1,0 +1,4494 @@
+{
+  "artifacts": {
+    "dynamic": {
+      "final_elf_sha256": "43b759a8e2d68be8d1d370eafa9f4ad9a90d9b79f05ea1f066a7d84dea4d6471",
+      "gate_aex0_sha256": "4f09469780cb952a4d6df929e0bdb206b81d07e9bffca9993a670eb3ec46a919",
+      "ready_bin_sha256": "25002a34689aa0be41315a0c7bb8ca4fdc1a0a424a63128a25fee1f8d3ca4459",
+      "signed_aex0_sha256": "51b73dced0a476b54b40dea72ab4da9528b9fd3cd50194c08f65a5c3f0a9bc24",
+      "signed_aex1_sha256": "8c2f67147d3cebe09c13ee7b0b86faf5cfa834d57a768266f838a12fb3ceb4d9",
+      "variant": "dynamic",
+      "workset_sha256": "52dc2ed9317ef416dc7515760ec532a0ad69b8a83a31bf3d2dba5f84cc81b12d"
+    },
+    "dynamic_xr": {
+      "final_elf_sha256": "5f96fed04bc907ea5fc256ad7f990bf4294147631d2d041521db264838f5add1",
+      "gate_aex0_sha256": "6abbd05d0618f4a2ee285edc5eea0dfdbfbf4a30382097c7fb7a9162ab102e32",
+      "ready_bin_sha256": "b542c0158c03707df9c6568909a7f81bf87d5009b680040003ddd9afbdff95b6",
+      "signed_aex0_sha256": "1734a44bf3b8348ee4fc1fb9cf30f25527348e420d148446afd46ea26d33fb92",
+      "signed_aex1_sha256": "b11491f1b02ba3cb3084e60a2a764a462337e8e6eea27f88ab9d4c2a271d9de2",
+      "variant": "dynamic_xr",
+      "workset_sha256": "97f0de0a11d921bf8cc3181608d41866a10304d2237585361f190ba02582be1c"
+    }
+  },
+  "closure_breakdown": {
+    "0x14f44918d7091b2f": {
+      "all_business_reg_pages": 2349,
+      "call_statistics": {
+        "abi_nonzero_return_entries": 0,
+        "abi_void_return_entries": 0,
+        "abi_zero_return_entries": 171,
+        "field_entries": 171,
+        "transport_error_entries": 0,
+        "transport_ok_entries": 171
+      },
+      "dynamic_explored_obs_effects": 100,
+      "dynamic_explored_obs_pages": 92,
+      "final_field_target_pages": 181,
+      "four_layer_attribution": {
+        "layer0_first_field_call": {
+          "page_effects": 95,
+          "pages": 89
+        },
+        "layer1_full_existing_host": {
+          "added_effects_over_layer0": 5,
+          "added_pages_over_layer0": 3,
+          "page_effects": 100,
+          "pages": 92
+        },
+        "layer2_generic_schema_explorer": {
+          "added_effects_beyond_full_host_layer1": 0,
+          "added_pages_beyond_full_host_layer1": 0,
+          "cumulative_effects_after_layer2": 100,
+          "cumulative_pages_after_layer2": 92,
+          "seed_isolated_added_pages_over_layer0": 3,
+          "seed_isolated_pages": 92
+        },
+        "layer3_domain_assisted": {
+          "added_effects_beyond_layer2": 0,
+          "added_pages_beyond_layer2": 0,
+          "cumulative_effects_after_layer3": 100,
+          "cumulative_pages_after_layer3": 92
+        }
+      },
+      "function": "_Z20ehsm_aes_gcm_encryptP11ehsm_data_tP14ehsm_keyblob_tS0_S0_",
+      "heuristic_assist_breakdown": {
+        "direct_call_depth4_code_added": 4,
+        "direct_call_rip_data_added": 15,
+        "dlmalloc_heap_and_frontier_added": 37,
+        "heap_pread_failure_runs": 0,
+        "heap_walk_truncated_runs": 0,
+        "heuristic_parameters": {
+          "direct_call_max_depth": 4,
+          "heap_top_frontier_pages": 2,
+          "stack_below_min_rsp_margin_pages": 4
+        },
+        "pruned_noreturn_callees": [
+          "__stack_chk_fail",
+          "abort",
+          "field_exit"
+        ],
+        "stack_margin_and_td_added": 4,
+        "stt_object_span_added": 21,
+        "unresolved_indirect_branch_sites_in_subgraph": 29
+      },
+      "raw_single_run_pages": 89,
+      "reduction_vs_all_reg_pct": 92.29,
+      "rx_pages_kept_xr_in_group_b": 62,
+      "rx_pages_refined_to_x_in_group_c": 29,
+      "s0_s1_epilogue_bridge_pages": 8
+    },
+    "0x5b139ee2956d5e69": {
+      "all_business_reg_pages": 2349,
+      "call_statistics": {
+        "abi_nonzero_return_entries": 11,
+        "abi_void_return_entries": 0,
+        "abi_zero_return_entries": 137,
+        "field_entries": 148,
+        "transport_error_entries": 0,
+        "transport_ok_entries": 148
+      },
+      "dynamic_explored_obs_effects": 101,
+      "dynamic_explored_obs_pages": 92,
+      "final_field_target_pages": 184,
+      "four_layer_attribution": {
+        "layer0_first_field_call": {
+          "page_effects": 95,
+          "pages": 89
+        },
+        "layer1_full_existing_host": {
+          "added_effects_over_layer0": 5,
+          "added_pages_over_layer0": 3,
+          "page_effects": 100,
+          "pages": 92
+        },
+        "layer2_generic_schema_explorer": {
+          "added_effects_beyond_full_host_layer1": 1,
+          "added_pages_beyond_full_host_layer1": 0,
+          "cumulative_effects_after_layer2": 101,
+          "cumulative_pages_after_layer2": 92,
+          "seed_isolated_added_pages_over_layer0": 3,
+          "seed_isolated_pages": 92
+        },
+        "layer3_domain_assisted": {
+          "added_effects_beyond_layer2": 0,
+          "added_pages_beyond_layer2": 0,
+          "cumulative_effects_after_layer3": 101,
+          "cumulative_pages_after_layer3": 92
+        }
+      },
+      "function": "_Z20ehsm_aes_gcm_decryptP11ehsm_data_tP14ehsm_keyblob_tS0_S0_",
+      "heuristic_assist_breakdown": {
+        "direct_call_depth4_code_added": 7,
+        "direct_call_rip_data_added": 16,
+        "dlmalloc_heap_and_frontier_added": 37,
+        "heap_pread_failure_runs": 0,
+        "heap_walk_truncated_runs": 0,
+        "heuristic_parameters": {
+          "direct_call_max_depth": 4,
+          "heap_top_frontier_pages": 2,
+          "stack_below_min_rsp_margin_pages": 4
+        },
+        "pruned_noreturn_callees": [
+          "__stack_chk_fail",
+          "abort",
+          "field_exit"
+        ],
+        "stack_margin_and_td_added": 4,
+        "stt_object_span_added": 20,
+        "unresolved_indirect_branch_sites_in_subgraph": 29
+      },
+      "raw_single_run_pages": 89,
+      "reduction_vs_all_reg_pct": 92.17,
+      "rx_pages_kept_xr_in_group_b": 66,
+      "rx_pages_refined_to_x_in_group_c": 29,
+      "s0_s1_epilogue_bridge_pages": 8
+    },
+    "0x61a6007dac8ab670": {
+      "all_business_reg_pages": 2349,
+      "call_statistics": {
+        "abi_nonzero_return_entries": 0,
+        "abi_void_return_entries": 0,
+        "abi_zero_return_entries": 1383,
+        "field_entries": 1383,
+        "transport_error_entries": 0,
+        "transport_ok_entries": 1383
+      },
+      "dynamic_explored_obs_effects": 96,
+      "dynamic_explored_obs_pages": 89,
+      "final_field_target_pages": 178,
+      "four_layer_attribution": {
+        "layer0_first_field_call": {
+          "page_effects": 95,
+          "pages": 89
+        },
+        "layer1_full_existing_host": {
+          "added_effects_over_layer0": 0,
+          "added_pages_over_layer0": 0,
+          "page_effects": 95,
+          "pages": 89
+        },
+        "layer2_generic_schema_explorer": {
+          "added_effects_beyond_full_host_layer1": 1,
+          "added_pages_beyond_full_host_layer1": 0,
+          "cumulative_effects_after_layer2": 96,
+          "cumulative_pages_after_layer2": 89,
+          "seed_isolated_added_pages_over_layer0": 0,
+          "seed_isolated_pages": 89
+        },
+        "layer3_domain_assisted": {
+          "added_effects_beyond_layer2": 0,
+          "added_pages_beyond_layer2": 0,
+          "cumulative_effects_after_layer3": 96,
+          "cumulative_pages_after_layer3": 89
+        }
+      },
+      "function": "_ZL21ehsm_generate_datakeyP14ehsm_keyblob_tP11ehsm_data_tS2_S2_",
+      "heuristic_assist_breakdown": {
+        "direct_call_depth4_code_added": 4,
+        "direct_call_rip_data_added": 15,
+        "dlmalloc_heap_and_frontier_added": 37,
+        "heap_pread_failure_runs": 0,
+        "heap_walk_truncated_runs": 0,
+        "heuristic_parameters": {
+          "direct_call_max_depth": 4,
+          "heap_top_frontier_pages": 2,
+          "stack_below_min_rsp_margin_pages": 4
+        },
+        "pruned_noreturn_callees": [
+          "__stack_chk_fail",
+          "abort",
+          "field_exit"
+        ],
+        "stack_margin_and_td_added": 4,
+        "stt_object_span_added": 21,
+        "unresolved_indirect_branch_sites_in_subgraph": 29
+      },
+      "raw_single_run_pages": 89,
+      "reduction_vs_all_reg_pct": 92.42,
+      "rx_pages_kept_xr_in_group_b": 62,
+      "rx_pages_refined_to_x_in_group_c": 29,
+      "s0_s1_epilogue_bridge_pages": 8
+    },
+    "0xcb2c56be4aa8b6df": {
+      "all_business_reg_pages": 2349,
+      "call_statistics": {
+        "abi_nonzero_return_entries": 0,
+        "abi_void_return_entries": 0,
+        "abi_zero_return_entries": 141,
+        "field_entries": 141,
+        "transport_error_entries": 0,
+        "transport_ok_entries": 141
+      },
+      "dynamic_explored_obs_effects": 93,
+      "dynamic_explored_obs_pages": 86,
+      "final_field_target_pages": 176,
+      "four_layer_attribution": {
+        "layer0_first_field_call": {
+          "page_effects": 93,
+          "pages": 86
+        },
+        "layer1_full_existing_host": {
+          "added_effects_over_layer0": 0,
+          "added_pages_over_layer0": 0,
+          "page_effects": 93,
+          "pages": 86
+        },
+        "layer2_generic_schema_explorer": {
+          "added_effects_beyond_full_host_layer1": 0,
+          "added_pages_beyond_full_host_layer1": 0,
+          "cumulative_effects_after_layer2": 93,
+          "cumulative_pages_after_layer2": 86,
+          "seed_isolated_added_pages_over_layer0": 0,
+          "seed_isolated_pages": 86
+        },
+        "layer3_domain_assisted": {
+          "added_effects_beyond_layer2": 0,
+          "added_pages_beyond_layer2": 0,
+          "cumulative_effects_after_layer3": 93,
+          "cumulative_pages_after_layer3": 86
+        }
+      },
+      "function": "_Z19ehsm_create_aes_keyP14ehsm_keyblob_t",
+      "heuristic_assist_breakdown": {
+        "direct_call_depth4_code_added": 3,
+        "direct_call_rip_data_added": 15,
+        "dlmalloc_heap_and_frontier_added": 37,
+        "heap_pread_failure_runs": 0,
+        "heap_walk_truncated_runs": 0,
+        "heuristic_parameters": {
+          "direct_call_max_depth": 4,
+          "heap_top_frontier_pages": 2,
+          "stack_below_min_rsp_margin_pages": 4
+        },
+        "pruned_noreturn_callees": [
+          "__stack_chk_fail",
+          "abort",
+          "field_exit"
+        ],
+        "stack_margin_and_td_added": 4,
+        "stt_object_span_added": 22,
+        "unresolved_indirect_branch_sites_in_subgraph": 23
+      },
+      "raw_single_run_pages": 86,
+      "reduction_vs_all_reg_pct": 92.51,
+      "rx_pages_kept_xr_in_group_b": 61,
+      "rx_pages_refined_to_x_in_group_c": 29,
+      "s0_s1_epilogue_bridge_pages": 9
+    }
+  },
+  "ecall_statistics": {
+    "0": {
+      "abi_nonzero_return_calls": 0,
+      "abi_return_type": "scalar",
+      "abi_void_calls": 0,
+      "abi_zero_return_calls": 153,
+      "ecall_invocations": 153,
+      "field_entering_calls": 0,
+      "out_status_nonzero_calls": 0,
+      "out_status_zero_calls": 0,
+      "outer_non_field_calls": 153,
+      "transport_error_calls": 0
+    },
+    "1": {
+      "abi_nonzero_return_calls": 8,
+      "abi_return_type": "scalar",
+      "abi_void_calls": 0,
+      "abi_zero_return_calls": 141,
+      "ecall_invocations": 149,
+      "field_entering_calls": 141,
+      "out_status_nonzero_calls": 0,
+      "out_status_zero_calls": 0,
+      "outer_non_field_calls": 8,
+      "transport_error_calls": 0
+    },
+    "2": {
+      "abi_nonzero_return_calls": 50,
+      "abi_return_type": "scalar",
+      "abi_void_calls": 0,
+      "abi_zero_return_calls": 171,
+      "ecall_invocations": 221,
+      "field_entering_calls": 171,
+      "out_status_nonzero_calls": 0,
+      "out_status_zero_calls": 0,
+      "outer_non_field_calls": 50,
+      "transport_error_calls": 0
+    },
+    "3": {
+      "abi_nonzero_return_calls": 46,
+      "abi_return_type": "scalar",
+      "abi_void_calls": 0,
+      "abi_zero_return_calls": 137,
+      "ecall_invocations": 183,
+      "field_entering_calls": 148,
+      "out_status_nonzero_calls": 0,
+      "out_status_zero_calls": 0,
+      "outer_non_field_calls": 35,
+      "transport_error_calls": 0
+    },
+    "4": {
+      "abi_nonzero_return_calls": 35,
+      "abi_return_type": "scalar",
+      "abi_void_calls": 0,
+      "abi_zero_return_calls": 1383,
+      "ecall_invocations": 1418,
+      "field_entering_calls": 1383,
+      "out_status_nonzero_calls": 0,
+      "out_status_zero_calls": 0,
+      "outer_non_field_calls": 35,
+      "transport_error_calls": 0
+    }
+  },
+  "feedback_trace": [
+    {
+      "decision": "continue_past_rejected_scale",
+      "ecall_index": 2,
+      "heap_span": 0,
+      "new_effects": 0,
+      "scale": 64,
+      "valid_return": false
+    },
+    {
+      "decision": "stop_enclave_rejected_scale",
+      "ecall_index": 2,
+      "heap_span": 0,
+      "new_effects": 0,
+      "scale": 256,
+      "valid_return": false
+    },
+    {
+      "decision": "continue_past_rejected_scale",
+      "ecall_index": 3,
+      "heap_span": 0,
+      "new_effects": 0,
+      "scale": 64,
+      "valid_return": false
+    },
+    {
+      "decision": "stop_enclave_rejected_scale",
+      "ecall_index": 3,
+      "heap_span": 0,
+      "new_effects": 0,
+      "scale": 256,
+      "valid_return": false
+    },
+    {
+      "decision": "continue_past_rejected_scale",
+      "ecall_index": 4,
+      "heap_span": 0,
+      "new_effects": 0,
+      "scale": 64,
+      "valid_return": false
+    },
+    {
+      "decision": "stop_enclave_rejected_scale",
+      "ecall_index": 4,
+      "heap_span": 0,
+      "new_effects": 0,
+      "scale": 256,
+      "valid_return": false
+    },
+    {
+      "ecall_index": 4,
+      "history_depth": 16,
+      "max_tsc_s3": 147976,
+      "median_tsc_s3": 133498,
+      "regime_jump_ratio": 1.11
+    },
+    {
+      "ecall_index": 4,
+      "history_depth": 64,
+      "max_tsc_s3": 165520,
+      "median_tsc_s3": 135446,
+      "regime_jump_ratio": 1.22
+    },
+    {
+      "ecall_index": 4,
+      "history_depth": 256,
+      "max_tsc_s3": 144582,
+      "median_tsc_s3": 135224,
+      "regime_jump_ratio": 1.07
+    },
+    {
+      "ecall_index": 4,
+      "history_depth": 1024,
+      "max_tsc_s3": 156802,
+      "median_tsc_s3": 133988,
+      "regime_jump_ratio": 1.17
+    }
+  ],
+  "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+  "profile_elf_sha256": "f75578142088eb095009253ad696da7e2df05f8306940b83d18fce020a6dcfb6",
+  "runs": [
+    {
+      "description": "Unmodified host binary full execution (first entry per Field = Layer 0; full run = Layer 1)",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer1_full_host",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 388,
+      "records_collected": 19,
+      "returncode": 0,
+      "run_id": "layer0_and_layer1_unmodified_host",
+      "subkind": "unmodified_host_full_trace",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer0_and_layer1_unmodified_host.jsonl",
+      "trace_sha256": "800142ef9a7318604961d100f99c87ae931ec50d8e69bb4ce3696a37cbb1293f"
+    },
+    {
+      "description": "Closed-loop feedback scale step n=64 on enclave_encrypt (stop_after_selector=2:0)",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 6,
+      "returncode": 0,
+      "run_id": "layer2_feedback_scale_ecall2_n64",
+      "subkind": "feedback_scale_expansion",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_feedback_scale_ecall2_n64.jsonl",
+      "trace_sha256": "fac84c981626b2234b920dc9a35b83797833965d20197f72338d0e6495febd63"
+    },
+    {
+      "description": "Closed-loop feedback scale step n=256 on enclave_encrypt (stop_after_selector=2:0)",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 6,
+      "returncode": 0,
+      "run_id": "layer2_feedback_scale_ecall2_n256",
+      "subkind": "feedback_scale_expansion",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_feedback_scale_ecall2_n256.jsonl",
+      "trace_sha256": "4da88ddf58c7dc90d2a0a92ca8348cd7fd3a7fddd06d360ad3165c86e1b14005"
+    },
+    {
+      "description": "Closed-loop feedback scale step n=64 on enclave_decrypt (stop_after_selector=3:0)",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_feedback_scale_ecall3_n64",
+      "subkind": "feedback_scale_expansion",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_feedback_scale_ecall3_n64.jsonl",
+      "trace_sha256": "d09de6e91eb352c04a815d17ae4ec3e1d999af304d3052c6c8ad63adfbccf1f7"
+    },
+    {
+      "description": "Closed-loop feedback scale step n=256 on enclave_decrypt (stop_after_selector=3:0)",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_feedback_scale_ecall3_n256",
+      "subkind": "feedback_scale_expansion",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_feedback_scale_ecall3_n256.jsonl",
+      "trace_sha256": "bd373076deb3069e51d096e40fa831a70dc0efe102c7439f6fc6b4687ed1e160"
+    },
+    {
+      "description": "Closed-loop feedback scale step n=64 on enclave_generate_datakey (stop_after_selector=4:0)",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 10,
+      "returncode": 0,
+      "run_id": "layer2_feedback_scale_ecall4_n64",
+      "subkind": "feedback_scale_expansion",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_feedback_scale_ecall4_n64.jsonl",
+      "trace_sha256": "e27def026b36d7975bef8bb30c0da3189649a8ff513178b3b61b6e2a8d978b45"
+    },
+    {
+      "description": "Closed-loop feedback scale step n=256 on enclave_generate_datakey (stop_after_selector=4:0)",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 10,
+      "returncode": 0,
+      "run_id": "layer2_feedback_scale_ecall4_n256",
+      "subkind": "feedback_scale_expansion",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_feedback_scale_ecall4_n256.jsonl",
+      "trace_sha256": "ef3f942eadde0b0f79fe7cf3afe6f581a8cc0afbb50be877a29b57457a212675"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_create_key.cmk_size = 0 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 2,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall1_s0_m0_schema_scalar_p1_val_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall1_s0_m0_schema_scalar_p1_val_0.jsonl",
+      "trace_sha256": "55c87ae736179cdf8b8514a6178da4e9912549600845ccb99cb21a19599e3924"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_create_key.cmk[0] ^= 0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 2,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall1_s0_m1_schema_xor_p0_byte_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall1_s0_m1_schema_xor_p0_byte_0.jsonl",
+      "trace_sha256": "627300eadc45565ca018861a9cbbe54e363081fa20f411988fb9d58097efc664"
+    },
+    {
+      "description": "Round-robin structured mutation (joint): Joint 2-param perturbation: cmk_size=2 and cmk[0]^=0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 2,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall1_s0_m2_schema_joint_s1_2_x0_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall1_s0_m2_schema_joint_s1_2_x0_0.jsonl",
+      "trace_sha256": "4656d3c73511b0a168caa256d9eb8e4ad7c2ab3ed3028736dcad512c7ad718c3"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_create_key.cmk_size = 1 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 2,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall1_s0_m3_schema_scalar_p1_val_1",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall1_s0_m3_schema_scalar_p1_val_1.jsonl",
+      "trace_sha256": "0d2dd0916541868c8c46e9a5d4405bf10f55a66cd05d73de8d17eee8a6fe1da8"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_create_key.cmk[4] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 2,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall1_s0_m4_schema_xor_p0_byte_4",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall1_s0_m4_schema_xor_p0_byte_4.jsonl",
+      "trace_sha256": "81397660751be07691bd5822f86fd11f8d905183f68d658ada8b7416284d5d13"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_create_key.cmk_size = 2 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 2,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall1_s0_m5_schema_scalar_p1_val_2",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall1_s0_m5_schema_scalar_p1_val_2.jsonl",
+      "trace_sha256": "1861421ae14f2fb2ccad179222a64dead8821eba816517fb5693573f5051c3ad"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_create_key.cmk[15] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 2,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall1_s0_m6_schema_xor_p0_byte_15",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall1_s0_m6_schema_xor_p0_byte_15.jsonl",
+      "trace_sha256": "56677b43716eb228befc45a85b084b8d2ff3ac9ec827e40976b48561300e83bb"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_create_key.cmk_size = 16 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 2,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall1_s0_m7_schema_scalar_p1_val_16",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall1_s0_m7_schema_scalar_p1_val_16.jsonl",
+      "trace_sha256": "7d629ef87b58c87370c1a01224d9eeeff2b070eee25d7f7e5e19ced48b1e805d"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_create_key.cmk[31] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 2,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall1_s0_m8_schema_xor_p0_byte_31",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall1_s0_m8_schema_xor_p0_byte_31.jsonl",
+      "trace_sha256": "7767faf237cfa3659f9545ca8cf21c723450806c04891b45b34d17a90387fd6d"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_create_key.cmk_size = 99 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 2,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall1_s0_m9_schema_scalar_p1_val_99",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall1_s0_m9_schema_scalar_p1_val_99.jsonl",
+      "trace_sha256": "a51dd069569d2390ac79871564428d3c97e8d01655a8ca6102f1f1fad1a018fb"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_encrypt.cmk_size = 0 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m0_schema_scalar_p1_val_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m0_schema_scalar_p1_val_0.jsonl",
+      "trace_sha256": "fa38d1dd3be0e2ebf2791bddaa1123cb233087d42196bc317ecd295c7f5c6e12"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_encrypt.cmk[0] ^= 0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m1_schema_xor_p0_byte_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m1_schema_xor_p0_byte_0.jsonl",
+      "trace_sha256": "427fb05b4fe0f07cd94ab87c3a527878c10a8871cf87b26cef92f13506d488df"
+    },
+    {
+      "description": "Round-robin structured mutation (joint): Joint 2-param perturbation: cmk_size=2 and cmk[0]^=0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m2_schema_joint_s1_2_x0_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m2_schema_joint_s1_2_x0_0.jsonl",
+      "trace_sha256": "1399a1a0f69e866586fe45c7016b3e11cb0016efc9969626636882f4cea35c1f"
+    },
+    {
+      "description": "Round-robin structured mutation (alias): Overlapping buffer pair probe between cmk and aad (+4B) at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m3_schema_alias_p0_p2_off_4",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m3_schema_alias_p0_p2_off_4.jsonl",
+      "trace_sha256": "dccf9514b8ef51be192b3e56fa266405dfc3d78cf6bdd338f6f5700f1d863cd3"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_encrypt.cmk_size = 1 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m4_schema_scalar_p1_val_1",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m4_schema_scalar_p1_val_1.jsonl",
+      "trace_sha256": "72046d5fd73594eafa202d5bb2ef9ca20a27cd9c2bca5de49397252dc6d83c6f"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_encrypt.cmk[4] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m5_schema_xor_p0_byte_4",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m5_schema_xor_p0_byte_4.jsonl",
+      "trace_sha256": "df0ad42bf2abdfdf6a6db09d2bbf40e770e659810695d15dfed9b12cfa3f8b98"
+    },
+    {
+      "description": "Round-robin structured mutation (joint): Joint 2-param perturbation: cmk_size=2 and aad[0]^=0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m6_schema_joint_s1_2_x2_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m6_schema_joint_s1_2_x2_0.jsonl",
+      "trace_sha256": "ed725c7f3c99324a17ae40bb87afdf0609a49e80e02f0a0db1468606a7da3e2c"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_encrypt.cmk_size = 2 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m7_schema_scalar_p1_val_2",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m7_schema_scalar_p1_val_2.jsonl",
+      "trace_sha256": "740452c002c7ec11b1a10919827338bbfdd450103d1ea570bbe641ee775251ca"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_encrypt.cmk[15] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m8_schema_xor_p0_byte_15",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m8_schema_xor_p0_byte_15.jsonl",
+      "trace_sha256": "ed3e7a691c019e6d3fe80a140b9cac0a8be116a62dcf08cc2bfbc4ea574bed74"
+    },
+    {
+      "description": "Round-robin structured mutation (joint): Joint 2-param perturbation: aad_size=2 and cmk[0]^=0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m9_schema_joint_s3_2_x0_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m9_schema_joint_s3_2_x0_0.jsonl",
+      "trace_sha256": "a0cfb89fa8c2c22655a726a2e828b43956a33ae9089841ace15e984f7caa9f1a"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_encrypt.cmk_size = 16 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m10_schema_scalar_p1_val_16",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m10_schema_scalar_p1_val_16.jsonl",
+      "trace_sha256": "63a7f87eef67cecf959eea68abd1cf099da65618f9685f9c762d783392f95b67"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_encrypt.cmk[31] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m11_schema_xor_p0_byte_31",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m11_schema_xor_p0_byte_31.jsonl",
+      "trace_sha256": "edf80f00bcf061f98014509a0c2cf509ccaaeda5faa454e7fd7b4399fb61b632"
+    },
+    {
+      "description": "Round-robin structured mutation (joint): Joint 2-param perturbation: aad_size=2 and aad[0]^=0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m12_schema_joint_s3_2_x2_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m12_schema_joint_s3_2_x2_0.jsonl",
+      "trace_sha256": "2eb8208de0b9d3b97840c052924b7dc947ff4a0078a6f65aa50989cf792349e3"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_encrypt.cmk_size = 99 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m13_schema_scalar_p1_val_99",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m13_schema_scalar_p1_val_99.jsonl",
+      "trace_sha256": "5a254868b6471d53edcc0d3f2626f6222a32229476cf286ae6bd7733a891056b"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_encrypt.aad[0] ^= 0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m14_schema_xor_p2_byte_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m14_schema_xor_p2_byte_0.jsonl",
+      "trace_sha256": "ce0d40d1553900c00b31cdcfc00839ee2fc796ee0b0c144f864951c11375dfe5"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_encrypt.aad_size = 0 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m15_schema_scalar_p3_val_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m15_schema_scalar_p3_val_0.jsonl",
+      "trace_sha256": "db3797ee2b35f13b196f1e30114cb9866d3a9da2d8c2ee18e37c8ffaedb7d77e"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_encrypt.aad[4] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m16_schema_xor_p2_byte_4",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m16_schema_xor_p2_byte_4.jsonl",
+      "trace_sha256": "751174f7f727f61c1771eb6b97d27756cf7b478a1478facbc42e54da5e8781a4"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_encrypt.aad_size = 1 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m17_schema_scalar_p3_val_1",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m17_schema_scalar_p3_val_1.jsonl",
+      "trace_sha256": "67d3b30fe69f5c536dd735485991889376ba010c606dbacd23cf7973b9c9f6af"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_encrypt.aad[15] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m18_schema_xor_p2_byte_15",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m18_schema_xor_p2_byte_15.jsonl",
+      "trace_sha256": "aa71319f9783e11374d705616a95120495e0f869bb4038fe5968688d09ac85c1"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_encrypt.aad_size = 2 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m19_schema_scalar_p3_val_2",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m19_schema_scalar_p3_val_2.jsonl",
+      "trace_sha256": "f4678e66dd4b44eae5b36f4b41592ac91149006a4d4463325343d6d0ce58b225"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_encrypt.aad[31] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 2,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m20_schema_xor_p2_byte_31",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m20_schema_xor_p2_byte_31.jsonl",
+      "trace_sha256": "da18aa3b949d0b3f70e53b8bdf7fd921423977a28c176edd400c541ade8b5bea"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_encrypt.aad_size = 16 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m21_schema_scalar_p3_val_16",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m21_schema_scalar_p3_val_16.jsonl",
+      "trace_sha256": "0b31f6c0cc658ba769c46fd253691d35dc84a717a535687b39a0c17301eb44fa"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_encrypt.plaintext[0] ^= 0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m22_schema_xor_p4_byte_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m22_schema_xor_p4_byte_0.jsonl",
+      "trace_sha256": "aa43bbf85b92ac1c19272fe396b5d01f5323ab49ce38cc364d7f738bff068ab2"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_encrypt.aad_size = 99 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m23_schema_scalar_p3_val_99",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m23_schema_scalar_p3_val_99.jsonl",
+      "trace_sha256": "3d88925ca9d3f3af5b4eceb3b452782a389a5ed9ca68d6ab3e9aba94a1fe8fcc"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_encrypt.plaintext[4] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m24_schema_xor_p4_byte_4",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m24_schema_xor_p4_byte_4.jsonl",
+      "trace_sha256": "8d7204fce4e527ed92165b830dab8ad4dbd3fa1b35af9a43175e45a72eefcd7d"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_encrypt.plaintext_size = 0 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m25_schema_scalar_p5_val_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m25_schema_scalar_p5_val_0.jsonl",
+      "trace_sha256": "14a8725bb8638553d89367ec604190b2826086b220f7ba7d5b9292f2e0af9dcd"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_encrypt.plaintext[15] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m26_schema_xor_p4_byte_15",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m26_schema_xor_p4_byte_15.jsonl",
+      "trace_sha256": "20d651c3562e56e1ed0233edd61d3eecc0731e9e73ee6eb782a8698387c7ac88"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_encrypt.plaintext_size = 1 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m27_schema_scalar_p5_val_1",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m27_schema_scalar_p5_val_1.jsonl",
+      "trace_sha256": "ca668179f8dc13c127cacedf7218dfe4d99bf707b770430a56b0321796c3925f"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_encrypt.plaintext[31] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m28_schema_xor_p4_byte_31",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m28_schema_xor_p4_byte_31.jsonl",
+      "trace_sha256": "02df9f4af1af20082f678e2584669fa923b25a3db9e289985b4f98d673494093"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_encrypt.plaintext_size = 2 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m29_schema_scalar_p5_val_2",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m29_schema_scalar_p5_val_2.jsonl",
+      "trace_sha256": "c64cf85f3de844931d454d479875d85782bb35ebbfd5ed0d0d4b8cd41cbb2de4"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_encrypt.ciphertext[0] ^= 0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m30_schema_xor_p6_byte_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m30_schema_xor_p6_byte_0.jsonl",
+      "trace_sha256": "854bb30f5760a3d237885eaf51b49b0604d2a8707ec9c005908a9e1c39c45a87"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_encrypt.plaintext_size = 16 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m31_schema_scalar_p5_val_16",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m31_schema_scalar_p5_val_16.jsonl",
+      "trace_sha256": "1e02eca75c314498a1c2b70c9085a2e9f9a4a19bf014aff12dd44abc68441bd7"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_encrypt.ciphertext[4] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m32_schema_xor_p6_byte_4",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m32_schema_xor_p6_byte_4.jsonl",
+      "trace_sha256": "b7c598a31938e76eb5cad3a835fb56c6253cbea9c1abe12c34ec1f25f37a96f6"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_encrypt.plaintext_size = 99 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m33_schema_scalar_p5_val_99",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m33_schema_scalar_p5_val_99.jsonl",
+      "trace_sha256": "27e948c42e34dbf1401a5f491b3b30a28742ef193ca32636147c043e9e2ca4bb"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_encrypt.ciphertext[15] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m34_schema_xor_p6_byte_15",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m34_schema_xor_p6_byte_15.jsonl",
+      "trace_sha256": "71a19e2595a583d2985778224e55db834913861c2280b3116e0a8e88c665d6f5"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_encrypt.ciphertext_size = 0 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m35_schema_scalar_p7_val_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m35_schema_scalar_p7_val_0.jsonl",
+      "trace_sha256": "573bc5b6b3fc9e649b5fd3c1118d58d4750ae0374b6c65b15be00f10c77680f5"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_encrypt.ciphertext[31] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m36_schema_xor_p6_byte_31",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m36_schema_xor_p6_byte_31.jsonl",
+      "trace_sha256": "4e75a282b2098fbda1579cbdc9e223516182306eb7c7f257c40a4d169438cdae"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_encrypt.ciphertext_size = 1 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m37_schema_scalar_p7_val_1",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m37_schema_scalar_p7_val_1.jsonl",
+      "trace_sha256": "7912a01c602cfc37dd8883d0869980dce8728d5423f4b601bbc8d8f1ad2704d7"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_encrypt.ciphertext_size = 2 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m38_schema_scalar_p7_val_2",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m38_schema_scalar_p7_val_2.jsonl",
+      "trace_sha256": "e025a952be6925e87d8a2de38e735a40d2fb322fffc2201fd01c2fc9414dcba5"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_encrypt.ciphertext_size = 16 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m39_schema_scalar_p7_val_16",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m39_schema_scalar_p7_val_16.jsonl",
+      "trace_sha256": "f501f89d087485032eb1b2f87451ef45609545d6fd4224e46595b7e7c1a2e263"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_encrypt.ciphertext_size = 99 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall2_s0_m40_schema_scalar_p7_val_99",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall2_s0_m40_schema_scalar_p7_val_99.jsonl",
+      "trace_sha256": "016ae02627d63cdf454d1d7b81ad1e34a1e269b26ca0554d9613b125780d8397"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_decrypt.cmk_size = 0 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m0_schema_scalar_p1_val_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m0_schema_scalar_p1_val_0.jsonl",
+      "trace_sha256": "4b71b457ae231829e91e40af1988f6913a9e00f9489a9ffefa808ec0c2bb6216"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_decrypt.cmk[0] ^= 0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m1_schema_xor_p0_byte_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m1_schema_xor_p0_byte_0.jsonl",
+      "trace_sha256": "8fe07ba0a89708a79fdf2d2e48f56ecdd395ae85b15eeb98e12fb56a9e0a4c8f"
+    },
+    {
+      "description": "Round-robin structured mutation (joint): Joint 2-param perturbation: cmk_size=2 and cmk[0]^=0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m2_schema_joint_s1_2_x0_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m2_schema_joint_s1_2_x0_0.jsonl",
+      "trace_sha256": "4f92c813f4abba0792d5c40095f6c41affbc99b2bab3af68f862f55b46269124"
+    },
+    {
+      "description": "Round-robin structured mutation (alias): Overlapping buffer pair probe between cmk and aad (+4B) at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m3_schema_alias_p0_p2_off_4",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m3_schema_alias_p0_p2_off_4.jsonl",
+      "trace_sha256": "5d3b4b022b3994417b8e42f539f30e2fa57e8ae54854e93d1e165815a9b6b940"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_decrypt.cmk_size = 1 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m4_schema_scalar_p1_val_1",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m4_schema_scalar_p1_val_1.jsonl",
+      "trace_sha256": "c0889d299da235fda1c57b2c9c9d260a07e720a98f7f8bcba2cfe1f6cb5353cb"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_decrypt.cmk[4] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m5_schema_xor_p0_byte_4",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m5_schema_xor_p0_byte_4.jsonl",
+      "trace_sha256": "cd37f1e7d9f97d937e8635934dff8d9291e65e071afe804ca7beb45d43bddf61"
+    },
+    {
+      "description": "Round-robin structured mutation (joint): Joint 2-param perturbation: cmk_size=2 and aad[0]^=0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m6_schema_joint_s1_2_x2_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m6_schema_joint_s1_2_x2_0.jsonl",
+      "trace_sha256": "a74ae25ed34c49f297742a8c057fdfa4f971e852525224322ebad36ee1b10ead"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_decrypt.cmk_size = 2 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m7_schema_scalar_p1_val_2",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m7_schema_scalar_p1_val_2.jsonl",
+      "trace_sha256": "a1e2b437c4518b2fb9930e5117e4e3270a55f08cc1c40f50059104490bd4ed5e"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_decrypt.cmk[15] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m8_schema_xor_p0_byte_15",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m8_schema_xor_p0_byte_15.jsonl",
+      "trace_sha256": "c8ae612a4905db60e3075c7f76640bbd6e1e176fd4df032495d2d0d7b2fcd750"
+    },
+    {
+      "description": "Round-robin structured mutation (joint): Joint 2-param perturbation: aad_size=2 and cmk[0]^=0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m9_schema_joint_s3_2_x0_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m9_schema_joint_s3_2_x0_0.jsonl",
+      "trace_sha256": "5aa068da92ef8547f050e610222e4a60a7d954d19897ed4702b5d5393151f72f"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_decrypt.cmk_size = 16 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m10_schema_scalar_p1_val_16",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m10_schema_scalar_p1_val_16.jsonl",
+      "trace_sha256": "f4be6bbef4e4bd373005390e11f72ccce95ed87db2def82e355130646c295bde"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_decrypt.cmk[31] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m11_schema_xor_p0_byte_31",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m11_schema_xor_p0_byte_31.jsonl",
+      "trace_sha256": "1b563db8c23ec4c1e42cfa262c874896f3fa59f64469e0dc319ec32ffb1d8b2c"
+    },
+    {
+      "description": "Round-robin structured mutation (joint): Joint 2-param perturbation: aad_size=2 and aad[0]^=0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m12_schema_joint_s3_2_x2_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m12_schema_joint_s3_2_x2_0.jsonl",
+      "trace_sha256": "3cd8de8554d6539bbef6410767ec59ba7037887ad469e92e9b28b01fe23be1d4"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_decrypt.cmk_size = 99 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m13_schema_scalar_p1_val_99",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m13_schema_scalar_p1_val_99.jsonl",
+      "trace_sha256": "c258e0c78dc7f2b7eb8aa004e429c5d116d9c1e856db2b22c9859bdf17b8defa"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_decrypt.aad[0] ^= 0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m14_schema_xor_p2_byte_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m14_schema_xor_p2_byte_0.jsonl",
+      "trace_sha256": "15789241bd3f0eca7e73a4471e85939fd318744de28b322b9a5e2ea8aaa45f1d"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_decrypt.aad_size = 0 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 1,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m15_schema_scalar_p3_val_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m15_schema_scalar_p3_val_0.jsonl",
+      "trace_sha256": "95cd7472c76269b2780c6e06a0aacdb61b54b1d1d2338365eb3047163c9abac4"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_decrypt.aad[4] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m16_schema_xor_p2_byte_4",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m16_schema_xor_p2_byte_4.jsonl",
+      "trace_sha256": "886397196c6898e3d7a5af167ce3dad6f2d7814a662d648f37567130f0821b36"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_decrypt.aad_size = 1 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m17_schema_scalar_p3_val_1",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m17_schema_scalar_p3_val_1.jsonl",
+      "trace_sha256": "eae8e792ab1ac75094ee86134208d810a7cec651aae00f46957a9b33a0516522"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_decrypt.aad[15] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m18_schema_xor_p2_byte_15",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m18_schema_xor_p2_byte_15.jsonl",
+      "trace_sha256": "caffd0f64a93deb15758c0e696c8379adf31f73d57c434392a0c831f00f98891"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_decrypt.aad_size = 2 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m19_schema_scalar_p3_val_2",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m19_schema_scalar_p3_val_2.jsonl",
+      "trace_sha256": "8407d4172aa3d6347eef3c3b9e0c251c7d78a3a7fccfdd73eec7d760e87b47fa"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_decrypt.aad[31] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m20_schema_xor_p2_byte_31",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m20_schema_xor_p2_byte_31.jsonl",
+      "trace_sha256": "69aaeea94f7ae80d7180e8b641503371d35640967e7c67f79c7c0cf408659f48"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_decrypt.aad_size = 16 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m21_schema_scalar_p3_val_16",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m21_schema_scalar_p3_val_16.jsonl",
+      "trace_sha256": "631d66f9f9ff70be074dc5f360585e0e988ed3a0c5e5681c4060c3023f3a2c8d"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_decrypt.ciphertext[0] ^= 0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m22_schema_xor_p4_byte_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m22_schema_xor_p4_byte_0.jsonl",
+      "trace_sha256": "b0a3bbc2f984e5d871b907c6c683112925a5e54d50aa062c332e1015d25b3eef"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_decrypt.aad_size = 99 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m23_schema_scalar_p3_val_99",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m23_schema_scalar_p3_val_99.jsonl",
+      "trace_sha256": "e8a51ac3a97cd31a89dd001d347b057fb61d3a97e29c6b8c87196bdaed45e7e6"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_decrypt.ciphertext[4] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m24_schema_xor_p4_byte_4",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m24_schema_xor_p4_byte_4.jsonl",
+      "trace_sha256": "a162f0cf579267efd30c935a1011b04781c7728e42bae37cb0a5c5bb6cde41e6"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_decrypt.ciphertext_size = 0 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m25_schema_scalar_p5_val_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m25_schema_scalar_p5_val_0.jsonl",
+      "trace_sha256": "3941dc36c611719d863f9d717fb5fb6a1fbcd3ec2bbb3c359d9263bd0e61911c"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_decrypt.ciphertext[15] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m26_schema_xor_p4_byte_15",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m26_schema_xor_p4_byte_15.jsonl",
+      "trace_sha256": "5a29a12d52d680240af3cfaeb12a33c3cd737f98b0667292a58f2496bdcb5d6b"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_decrypt.ciphertext_size = 1 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m27_schema_scalar_p5_val_1",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m27_schema_scalar_p5_val_1.jsonl",
+      "trace_sha256": "d094033156bf2fbb627d169c522033bdf0989ca1bba6e8cad00fa96f65bce3d7"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_decrypt.ciphertext[31] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m28_schema_xor_p4_byte_31",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m28_schema_xor_p4_byte_31.jsonl",
+      "trace_sha256": "9ad9f186a57263db8db833a200a78fc644c5f884270ab9ee8e082b9cf550a778"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_decrypt.ciphertext_size = 2 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m29_schema_scalar_p5_val_2",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m29_schema_scalar_p5_val_2.jsonl",
+      "trace_sha256": "e59a30b57f11ce5a3c79104bb726521e1266ccad0cd93559f04ada866fa1f3a4"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_decrypt.plaintext[0] ^= 0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m30_schema_xor_p6_byte_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m30_schema_xor_p6_byte_0.jsonl",
+      "trace_sha256": "fde281acc178a1d549bb951052c2a7fbcef4ae758f565974b99289bd1272b269"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_decrypt.ciphertext_size = 16 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m31_schema_scalar_p5_val_16",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m31_schema_scalar_p5_val_16.jsonl",
+      "trace_sha256": "75355b90e8230842eafd82a20fad0d88db77084832539f1b19919f3da36a13ad"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_decrypt.plaintext[4] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m32_schema_xor_p6_byte_4",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m32_schema_xor_p6_byte_4.jsonl",
+      "trace_sha256": "a1a5f68c4b1d29cd9983a110e1c0d233365ae0a3b6e9ca61a5746e47ff2957a5"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_decrypt.ciphertext_size = 99 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m33_schema_scalar_p5_val_99",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m33_schema_scalar_p5_val_99.jsonl",
+      "trace_sha256": "5a6209d79d59592387161d945e4b5d5860a5466acce278eb781c872e6edc8204"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_decrypt.plaintext[15] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m34_schema_xor_p6_byte_15",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m34_schema_xor_p6_byte_15.jsonl",
+      "trace_sha256": "807765eae90981bd9ac14dc4990c01f49a7f92a95e30e0c130ea6bf3d22cf3c8"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_decrypt.plaintext_size = 0 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m35_schema_scalar_p7_val_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m35_schema_scalar_p7_val_0.jsonl",
+      "trace_sha256": "3bb7b159c1c2da414deec6abd0ceb555a0189a4210b37d6fe4fefb9b91896970"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_decrypt.plaintext[31] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m36_schema_xor_p6_byte_31",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m36_schema_xor_p6_byte_31.jsonl",
+      "trace_sha256": "7de021299e5e87678aaf6e6705a493105a08d699ec17e34276902d57336ed6d5"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_decrypt.plaintext_size = 1 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m37_schema_scalar_p7_val_1",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m37_schema_scalar_p7_val_1.jsonl",
+      "trace_sha256": "793584f8430ab269f6696bbb81a53f1c701fd03f7fb5b68ee18124b6298dc07f"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_decrypt.plaintext_size = 2 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m38_schema_scalar_p7_val_2",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m38_schema_scalar_p7_val_2.jsonl",
+      "trace_sha256": "54208ad387b12323db262da9b78c2c6996eef87acb44c13d813decb169d7c906"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_decrypt.plaintext_size = 16 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m39_schema_scalar_p7_val_16",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m39_schema_scalar_p7_val_16.jsonl",
+      "trace_sha256": "39a5bf829f69278aeae729838c8a4daa2d0e441154f81afb77bd2df522f636e8"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_decrypt.plaintext_size = 99 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m40_schema_scalar_p7_val_99",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m40_schema_scalar_p7_val_99.jsonl",
+      "trace_sha256": "bafa139e4a68a1845477078ea5d61f6065f65692ffadf6f376ad7134411623ec"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_generate_datakey.cmk_size = 0 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m0_schema_scalar_p1_val_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m0_schema_scalar_p1_val_0.jsonl",
+      "trace_sha256": "2e0cd96987216fb8d5a9acc0f2a77b3147210b17da067b086b7b5115206e0bf7"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_generate_datakey.cmk[0] ^= 0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m1_schema_xor_p0_byte_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m1_schema_xor_p0_byte_0.jsonl",
+      "trace_sha256": "5e162f14ac1aa8e017899c46e257a1b92613a611048e46c9031954f72edc67fc"
+    },
+    {
+      "description": "Round-robin structured mutation (joint): Joint 2-param perturbation: cmk_size=2 and cmk[0]^=0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m2_schema_joint_s1_2_x0_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m2_schema_joint_s1_2_x0_0.jsonl",
+      "trace_sha256": "b2594c06e6756de79d96055d76261dfd61ad9383846bb4dc4ac63f33f647b22c"
+    },
+    {
+      "description": "Round-robin structured mutation (alias): Overlapping buffer pair probe between cmk and aad (+4B) at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m3_schema_alias_p0_p2_off_4",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m3_schema_alias_p0_p2_off_4.jsonl",
+      "trace_sha256": "cdde8114a056d15bea80df27fa0b2e23b3f960e785a6aa50bd039105d2cec9d0"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_generate_datakey.cmk_size = 1 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m4_schema_scalar_p1_val_1",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m4_schema_scalar_p1_val_1.jsonl",
+      "trace_sha256": "6fa5d9e8cc34fbaecc651252f2390b9d2e7c113bcab7f2219fc1e0486b00ea61"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_generate_datakey.cmk[4] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m5_schema_xor_p0_byte_4",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m5_schema_xor_p0_byte_4.jsonl",
+      "trace_sha256": "6c3d71d658b19c2996b48450db2164b0fffa0c3123de4a727032a16c40a0477c"
+    },
+    {
+      "description": "Round-robin structured mutation (joint): Joint 2-param perturbation: cmk_size=2 and aad[0]^=0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m6_schema_joint_s1_2_x2_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m6_schema_joint_s1_2_x2_0.jsonl",
+      "trace_sha256": "3b482583064052f48b91d7a8dbe372d04c435da19f6f0d4b64cda089154397fb"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_generate_datakey.cmk_size = 2 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m7_schema_scalar_p1_val_2",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m7_schema_scalar_p1_val_2.jsonl",
+      "trace_sha256": "1c529e6e5c6c14e87ae6c978a764b3065ce9244f33436cd103746d77c6cf0e06"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_generate_datakey.cmk[15] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m8_schema_xor_p0_byte_15",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m8_schema_xor_p0_byte_15.jsonl",
+      "trace_sha256": "e6eb1aea5bf3d50b2e11e63b4f27e4a0214dd7da52c396ea545130c11a7aaf51"
+    },
+    {
+      "description": "Round-robin structured mutation (joint): Joint 2-param perturbation: aad_size=2 and cmk[0]^=0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m9_schema_joint_s3_2_x0_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m9_schema_joint_s3_2_x0_0.jsonl",
+      "trace_sha256": "b4a41352d100bbf0bef76473f83feaad2479dcc3e05d272e5d6aad53447b78d6"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_generate_datakey.cmk_size = 16 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m10_schema_scalar_p1_val_16",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m10_schema_scalar_p1_val_16.jsonl",
+      "trace_sha256": "e384181a6924f51157d4bd5225a105121cc191406c40db81fc0263d590397b2d"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_generate_datakey.cmk[31] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m11_schema_xor_p0_byte_31",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m11_schema_xor_p0_byte_31.jsonl",
+      "trace_sha256": "a7751ed42ec38ab81a7d20e758e6d2e36f21e41da1408d42db6f7c9468714e83"
+    },
+    {
+      "description": "Round-robin structured mutation (joint): Joint 2-param perturbation: aad_size=2 and aad[0]^=0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m12_schema_joint_s3_2_x2_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m12_schema_joint_s3_2_x2_0.jsonl",
+      "trace_sha256": "b371ccd80a7dad188214a3386e8e8df60d4c25607209815b23f633e55ab95d4e"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_generate_datakey.cmk_size = 99 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m13_schema_scalar_p1_val_99",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m13_schema_scalar_p1_val_99.jsonl",
+      "trace_sha256": "08a2ec677cbea86a0e9d54c72fa11ed325bd8db3e3aa94a5f5201fbbe3e32780"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_generate_datakey.aad[0] ^= 0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m14_schema_xor_p2_byte_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m14_schema_xor_p2_byte_0.jsonl",
+      "trace_sha256": "977b2666d5365c14c3d7246c748119c6917b797d47f4d90c56c5bd8f56ef5873"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_generate_datakey.aad_size = 0 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 1,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m15_schema_scalar_p3_val_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m15_schema_scalar_p3_val_0.jsonl",
+      "trace_sha256": "a2d7ddbc34747407722f119aea15a1fbc6ac60e665a6ce2ffd7740fb8bb56239"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_generate_datakey.aad[4] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m16_schema_xor_p2_byte_4",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m16_schema_xor_p2_byte_4.jsonl",
+      "trace_sha256": "741135af34937ad0f1143b4ed8473242fb8064658990e6399b0011e8b2621b15"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_generate_datakey.aad_size = 1 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m17_schema_scalar_p3_val_1",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m17_schema_scalar_p3_val_1.jsonl",
+      "trace_sha256": "5896a53405ab4881a408a7cc19218c90e9e515c35f342e260cb7eecb851020b2"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_generate_datakey.aad[15] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m18_schema_xor_p2_byte_15",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m18_schema_xor_p2_byte_15.jsonl",
+      "trace_sha256": "0da5709d468a677a2ad20ef9bf12bea97bfab859ac37bc5e7450a2cd3382da8a"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_generate_datakey.aad_size = 2 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m19_schema_scalar_p3_val_2",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m19_schema_scalar_p3_val_2.jsonl",
+      "trace_sha256": "17ec9557e031f5259b8c76baec37e28763eec740fc3611e26df40d8e1f0df8a7"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_generate_datakey.aad[31] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 6,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m20_schema_xor_p2_byte_31",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m20_schema_xor_p2_byte_31.jsonl",
+      "trace_sha256": "9cac3d48fa8db8e7d99f2bd5cfe6dad5a45abeb6601837846508f05b7124aa92"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_generate_datakey.aad_size = 16 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m21_schema_scalar_p3_val_16",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m21_schema_scalar_p3_val_16.jsonl",
+      "trace_sha256": "46a9bfd015c19a1d1e1fffbefac5cf477462e756d2051c381c46792c4b58d06c"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_generate_datakey.plaintext[0] ^= 0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m22_schema_xor_p4_byte_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m22_schema_xor_p4_byte_0.jsonl",
+      "trace_sha256": "db2cfc888ece0235f4c28e22ebae489347b6840ffdafa684f0483f3cfe8bb716"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_generate_datakey.aad_size = 99 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m23_schema_scalar_p3_val_99",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m23_schema_scalar_p3_val_99.jsonl",
+      "trace_sha256": "669e34b72068e64c8d9c8eb6c43826fc93fb2243e7c0b40464d5f70203fa8843"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_generate_datakey.plaintext[4] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m24_schema_xor_p4_byte_4",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m24_schema_xor_p4_byte_4.jsonl",
+      "trace_sha256": "0e0af09674cc020bb8626e017ab76d3a66572a2c18322f89a4c04464d1335f6d"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_generate_datakey.plaintext_size = 0 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m25_schema_scalar_p5_val_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m25_schema_scalar_p5_val_0.jsonl",
+      "trace_sha256": "8d1ec6fc87ff7d082fbabda01b241a0acb9058f377a29227f3acc3bb97a06651"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_generate_datakey.plaintext[15] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m26_schema_xor_p4_byte_15",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m26_schema_xor_p4_byte_15.jsonl",
+      "trace_sha256": "75b55d953d515ae986e361240b05efd95d760c3b3982344c6cfa11559843740f"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_generate_datakey.plaintext_size = 1 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m27_schema_scalar_p5_val_1",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m27_schema_scalar_p5_val_1.jsonl",
+      "trace_sha256": "d35c55535eb56b22fa97bd108c29c7fc1ed81895e1f5f4e751e163a3d062a519"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_generate_datakey.plaintext[31] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m28_schema_xor_p4_byte_31",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m28_schema_xor_p4_byte_31.jsonl",
+      "trace_sha256": "0c33d73243abbf22bbdd6ac9021a5bd771500742c7e1873adfe2bc0758ac2b9a"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_generate_datakey.plaintext_size = 2 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m29_schema_scalar_p5_val_2",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m29_schema_scalar_p5_val_2.jsonl",
+      "trace_sha256": "5695909da49917dc0810e2a524daf01b0dc66fa153ee78e9d7da234d68837e2c"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_generate_datakey.ciphertext[0] ^= 0xff at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m30_schema_xor_p6_byte_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m30_schema_xor_p6_byte_0.jsonl",
+      "trace_sha256": "2d46e2505f863dd17e3bdb822c8084e4ba1b5f189e98622352c8aec88a8fa2a7"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_generate_datakey.plaintext_size = 16 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m31_schema_scalar_p5_val_16",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m31_schema_scalar_p5_val_16.jsonl",
+      "trace_sha256": "a76e9529a78059388ea78b83161975974e56f4cc062af12de79c57533a3acc00"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_generate_datakey.ciphertext[4] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m32_schema_xor_p6_byte_4",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m32_schema_xor_p6_byte_4.jsonl",
+      "trace_sha256": "e9770c892a9d54453e593f2049228d502c66e9685003abb50c5a4bf811fee7df"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_generate_datakey.plaintext_size = 99 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m33_schema_scalar_p5_val_99",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m33_schema_scalar_p5_val_99.jsonl",
+      "trace_sha256": "0c917dd5df3a45a766efe542b50e54c6da3919c74ad8952657fc0e4098ec46d5"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_generate_datakey.ciphertext[15] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m34_schema_xor_p6_byte_15",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m34_schema_xor_p6_byte_15.jsonl",
+      "trace_sha256": "76395bb60845bd740d4da8a66d0ea44b192cce4ee93a2b77da3084db331b1e42"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_generate_datakey.ciphertext_size = 0 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m35_schema_scalar_p7_val_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m35_schema_scalar_p7_val_0.jsonl",
+      "trace_sha256": "2c9bee36d0792cf5bd8a33c843095d1b051520cfadf0fe55ee8fb1dfb7e0f456"
+    },
+    {
+      "description": "Round-robin structured mutation (content): Bounded schema XOR on enclave_generate_datakey.ciphertext[31] ^= 0xaa at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m36_schema_xor_p6_byte_31",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m36_schema_xor_p6_byte_31.jsonl",
+      "trace_sha256": "530ef4c27361b991dde7f5da30f403117ceda299a4998d2e5eed588f408ed167"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_generate_datakey.ciphertext_size = 1 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m37_schema_scalar_p7_val_1",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m37_schema_scalar_p7_val_1.jsonl",
+      "trace_sha256": "2120f17b65c9dc75ef4bc89f2c0e3f898958400a5d175e79ff3040f17833d767"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_generate_datakey.ciphertext_size = 2 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m38_schema_scalar_p7_val_2",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m38_schema_scalar_p7_val_2.jsonl",
+      "trace_sha256": "28280e46ac4aa5886078fecdaf3d88debfffb5b05594e885b70966bdfca9c972"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_generate_datakey.ciphertext_size = 16 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m39_schema_scalar_p7_val_16",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m39_schema_scalar_p7_val_16.jsonl",
+      "trace_sha256": "a9b709bfbe572a9beee22328e6601ffa2ae7f302d3c75d2aa5b67186e5adba8c"
+    },
+    {
+      "description": "Round-robin structured mutation (boundary): Typed scalar boundary (with dependent buffer rebind) enclave_generate_datakey.ciphertext_size = 99 at sseq=0",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m40_schema_scalar_p7_val_99",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m40_schema_scalar_p7_val_99.jsonl",
+      "trace_sha256": "0a720b72b21c2a84e06b0c8ec0718f8427e09d180e1800db200d49564be3e0b5"
+    },
+    {
+      "description": "Schema-typed cold enclave state replay of enclave_create_key (cap_seq=0 -> after ecall 0 sseq=1)",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 20,
+      "returncode": 0,
+      "run_id": "layer2_cold_state_replay_ecall1_cap0",
+      "subkind": "cold_enclave_state_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_cold_state_replay_ecall1_cap0.jsonl",
+      "trace_sha256": "f20e4fbfc6ad113f24ec09ca5aaf32ba6c22a3902b0a21bfe6ee2bbb385104e4"
+    },
+    {
+      "description": "Schema-typed cold enclave state replay of enclave_encrypt (cap_seq=0 -> after ecall 0 sseq=1)",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 20,
+      "returncode": 0,
+      "run_id": "layer2_cold_state_replay_ecall2_cap0",
+      "subkind": "cold_enclave_state_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_cold_state_replay_ecall2_cap0.jsonl",
+      "trace_sha256": "c577a7967e7c6356c8af2f20443be438792ea485313f0e94ac3f1a4d29ab2eff"
+    },
+    {
+      "description": "Schema-typed cold enclave state replay of enclave_decrypt (cap_seq=0 -> after ecall 0 sseq=1)",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 20,
+      "returncode": 0,
+      "run_id": "layer2_cold_state_replay_ecall3_cap0",
+      "subkind": "cold_enclave_state_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_cold_state_replay_ecall3_cap0.jsonl",
+      "trace_sha256": "e9a1a6288afa68d7776ccaa5b65fb221b78f2d1fd3b3947d24bd5b5eac9cf194"
+    },
+    {
+      "description": "Schema-typed cold enclave state replay of enclave_generate_datakey (cap_seq=0 -> after ecall 0 sseq=1)",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 20,
+      "returncode": 0,
+      "run_id": "layer2_cold_state_replay_ecall4_cap0",
+      "subkind": "cold_enclave_state_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_cold_state_replay_ecall4_cap0.jsonl",
+      "trace_sha256": "16b87ceabe5dcdd768718517f7528f08162101fd2db320c0849fa87a57495d29"
+    },
+    {
+      "description": "Quadrupling history scan (4x progression, depth=16, 0 skipped) on enclave_generate_datakey",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 23,
+      "returncode": 0,
+      "run_id": "layer2_quadrupling_history_n16_ecall4",
+      "subkind": "quadrupling_history_scan",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_quadrupling_history_n16_ecall4.jsonl",
+      "trace_sha256": "839b86a0d1e4d3bc1c3893a7d4961095ed565755aa45f0f119b31a125ed1f892"
+    },
+    {
+      "description": "Quadrupling history scan (4x progression, depth=64, 0 skipped) on enclave_generate_datakey",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 71,
+      "returncode": 0,
+      "run_id": "layer2_quadrupling_history_n64_ecall4",
+      "subkind": "quadrupling_history_scan",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_quadrupling_history_n64_ecall4.jsonl",
+      "trace_sha256": "bf03924a5636f291ce473ffb461ae35891027d7148be0f6f4aaa95f114998877"
+    },
+    {
+      "description": "Quadrupling history scan (4x progression, depth=256, 0 skipped) on enclave_generate_datakey",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 263,
+      "returncode": 0,
+      "run_id": "layer2_quadrupling_history_n256_ecall4",
+      "subkind": "quadrupling_history_scan",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_quadrupling_history_n256_ecall4.jsonl",
+      "trace_sha256": "64e09fbc1113ae05dcf195bef711317a7afbb4686fbbbc482c090b7b83ae1dc0"
+    },
+    {
+      "description": "Quadrupling history scan (4x progression, depth=1024, 0 skipped) on enclave_generate_datakey",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1031,
+      "returncode": 0,
+      "run_id": "layer2_quadrupling_history_n1024_ecall4",
+      "subkind": "quadrupling_history_scan",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_quadrupling_history_n1024_ecall4.jsonl",
+      "trace_sha256": "43e192cb74b3c0765a5252b97730d2fcc6157cff167e911350e893f69235c54e"
+    }
+  ],
+  "sample": "ehsm-opt-2",
+  "schema": "atfield-witness-ledger-v3",
+  "witnesses": [
+    {
+      "call_seq": 1,
+      "ecall_index": 1,
+      "enclave_sha256": "dab02140a7e8417d8d1822b7b9051b89acf5a73625a7843034977b029913ab04",
+      "field_id": "0xcb2c56be4aa8b6df",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "intervention": "",
+      "layer": "layer0_first_call",
+      "measurement_invalid": 0,
+      "new_effects": [
+        {
+          "effect": "A",
+          "rva": "0x56000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x5c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x5d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x5f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x64000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x67000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x68000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x6d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x85000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xda000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xdb000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xdc000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xdd000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xde000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xf2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x171000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x174000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x175000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x176000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x178000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x179000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x180000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x181000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x182000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x183000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x185000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x186000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x19b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x19c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x19d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a6000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c6000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c9000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ca000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ce000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1cf000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d0000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d1000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1da000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1e2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1e3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x220000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x22a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x235000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x236000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x284000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x287000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x288000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x289000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x28a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x28b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x28f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x290000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x47e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x47f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x485000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x49b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x4ac000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x4c4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x4c9000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x4d0000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x4d0000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x4e1000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x4e2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x4e2000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x4e3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x4e3000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x505000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x505000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x507000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x50d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x518000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x520000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x523000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x524000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x525000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x52e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x52e000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x532000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x541000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x541000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x954000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x954000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x978000",
+          "upgrade_from_A_to_D": false
+        }
+      ],
+      "returncode": 0,
+      "run_id": "layer0_and_layer1_unmodified_host",
+      "selector_seq": 0,
+      "subkind": "unmodified_host_full_trace",
+      "tag": "host_normal",
+      "total_field_obs_effects": 93,
+      "total_field_obs_pages": 86,
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer0_and_layer1_unmodified_host.jsonl",
+      "trace_sha256": "800142ef9a7318604961d100f99c87ae931ec50d8e69bb4ce3696a37cbb1293f",
+      "tsc_s3": 255476,
+      "witness_id": "ehsm-opt-2_layer0_and_layer1_unmodified_host_seq1_a8b6df"
+    },
+    {
+      "call_seq": 2,
+      "ecall_index": 2,
+      "enclave_sha256": "dab02140a7e8417d8d1822b7b9051b89acf5a73625a7843034977b029913ab04",
+      "field_id": "0x14f44918d7091b2f",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "intervention": "",
+      "layer": "layer0_first_call",
+      "measurement_invalid": 0,
+      "new_effects": [
+        {
+          "effect": "A",
+          "rva": "0x56000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x57000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x5c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x5d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x5f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x64000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x67000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x68000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x6d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x70000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x72000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x85000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xda000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xdb000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xdc000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xdd000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xde000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xf2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x171000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x174000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x175000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x176000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x178000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x179000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x180000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x181000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x182000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x183000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x185000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x186000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x19b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x19c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x19d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a6000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c6000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c9000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ca000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ce000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1cf000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d0000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d1000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1da000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1e2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1e3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x220000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x22a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x235000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x236000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x284000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x287000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x288000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x289000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x28a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x28b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x28f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x290000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x47e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x47f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x485000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x49b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x4ac000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x4c4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x4c9000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x4d0000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x4d0000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x4e1000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x4e2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x4e2000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x4e3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x4e3000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x505000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x507000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x50d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x518000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x520000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x523000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x524000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x525000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x52e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x52e000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x532000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x541000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x541000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x954000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x954000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x978000",
+          "upgrade_from_A_to_D": false
+        }
+      ],
+      "returncode": 0,
+      "run_id": "layer0_and_layer1_unmodified_host",
+      "selector_seq": 0,
+      "subkind": "unmodified_host_full_trace",
+      "tag": "host_normal",
+      "total_field_obs_effects": 95,
+      "total_field_obs_pages": 89,
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer0_and_layer1_unmodified_host.jsonl",
+      "trace_sha256": "800142ef9a7318604961d100f99c87ae931ec50d8e69bb4ce3696a37cbb1293f",
+      "tsc_s3": 195808,
+      "witness_id": "ehsm-opt-2_layer0_and_layer1_unmodified_host_seq2_091b2f"
+    },
+    {
+      "call_seq": 3,
+      "ecall_index": 3,
+      "enclave_sha256": "dab02140a7e8417d8d1822b7b9051b89acf5a73625a7843034977b029913ab04",
+      "field_id": "0x5b139ee2956d5e69",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "intervention": "",
+      "layer": "layer0_first_call",
+      "measurement_invalid": 0,
+      "new_effects": [
+        {
+          "effect": "A",
+          "rva": "0x56000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x57000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x5c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x5d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x5f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x64000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x67000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x68000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x6d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x70000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x72000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x85000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xda000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xdb000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xdc000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xdd000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xde000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xf2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x171000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x174000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x175000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x176000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x178000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x179000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x180000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x181000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x182000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x183000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x185000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x186000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x19b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x19c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x19d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a6000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c6000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c9000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ca000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ce000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1cf000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d0000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d1000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1da000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1e2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1e3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x220000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x22a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x235000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x236000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x284000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x287000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x288000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x289000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x28a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x28b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x28f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x290000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x47e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x47f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x485000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x49b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x4ac000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x4c4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x4c9000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x4d0000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x4d0000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x4e1000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x4e2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x4e2000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x4e3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x4e3000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x505000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x507000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x50d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x518000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x520000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x523000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x524000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x525000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x52e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x52e000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x532000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x541000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x541000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x954000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x954000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x978000",
+          "upgrade_from_A_to_D": false
+        }
+      ],
+      "returncode": 0,
+      "run_id": "layer0_and_layer1_unmodified_host",
+      "selector_seq": 0,
+      "subkind": "unmodified_host_full_trace",
+      "tag": "host_normal",
+      "total_field_obs_effects": 95,
+      "total_field_obs_pages": 89,
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer0_and_layer1_unmodified_host.jsonl",
+      "trace_sha256": "800142ef9a7318604961d100f99c87ae931ec50d8e69bb4ce3696a37cbb1293f",
+      "tsc_s3": 136134,
+      "witness_id": "ehsm-opt-2_layer0_and_layer1_unmodified_host_seq3_6d5e69"
+    },
+    {
+      "call_seq": 6,
+      "ecall_index": 4,
+      "enclave_sha256": "dab02140a7e8417d8d1822b7b9051b89acf5a73625a7843034977b029913ab04",
+      "field_id": "0x61a6007dac8ab670",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "intervention": "",
+      "layer": "layer0_first_call",
+      "measurement_invalid": 0,
+      "new_effects": [
+        {
+          "effect": "A",
+          "rva": "0x56000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x57000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x5c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x5d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x5f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x64000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x67000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x68000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x6d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x70000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x72000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x85000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xda000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xdb000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xdc000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xdd000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xde000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xf2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x171000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x174000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x175000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x176000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x178000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x179000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x180000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x181000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x182000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x183000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x185000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x186000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x19b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x19c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x19d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a6000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c6000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c9000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ca000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ce000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1cf000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d0000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d1000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1da000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1e2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1e3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x220000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x22a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x235000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x236000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x284000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x287000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x288000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x289000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x28a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x28b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x28f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x290000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x47e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x47f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x485000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x49b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x4ac000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x4c4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x4c9000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x4d0000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x4d0000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x4e1000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x4e2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x4e2000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x4e3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x4e3000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x505000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x507000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x50d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x518000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x520000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x523000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x524000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x525000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x52e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x52e000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x532000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x541000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x541000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x954000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x954000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x978000",
+          "upgrade_from_A_to_D": false
+        }
+      ],
+      "returncode": 0,
+      "run_id": "layer0_and_layer1_unmodified_host",
+      "selector_seq": 0,
+      "subkind": "unmodified_host_full_trace",
+      "tag": "host_normal",
+      "total_field_obs_effects": 95,
+      "total_field_obs_pages": 89,
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer0_and_layer1_unmodified_host.jsonl",
+      "trace_sha256": "800142ef9a7318604961d100f99c87ae931ec50d8e69bb4ce3696a37cbb1293f",
+      "tsc_s3": 140726,
+      "witness_id": "ehsm-opt-2_layer0_and_layer1_unmodified_host_seq6_8ab670"
+    },
+    {
+      "call_seq": 13,
+      "ecall_index": 2,
+      "enclave_sha256": "dab02140a7e8417d8d1822b7b9051b89acf5a73625a7843034977b029913ab04",
+      "field_id": "0x14f44918d7091b2f",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "intervention": "",
+      "layer": "layer1_full_host",
+      "measurement_invalid": 0,
+      "new_effects": [
+        {
+          "effect": "A",
+          "rva": "0x542000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x543000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x543000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x544000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x544000",
+          "upgrade_from_A_to_D": true
+        }
+      ],
+      "returncode": 0,
+      "run_id": "layer0_and_layer1_unmodified_host",
+      "selector_seq": 4,
+      "subkind": "unmodified_host_full_trace",
+      "tag": "host_normal",
+      "total_field_obs_effects": 100,
+      "total_field_obs_pages": 92,
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer0_and_layer1_unmodified_host.jsonl",
+      "trace_sha256": "800142ef9a7318604961d100f99c87ae931ec50d8e69bb4ce3696a37cbb1293f",
+      "tsc_s3": 153306,
+      "witness_id": "ehsm-opt-2_layer0_and_layer1_unmodified_host_seq13_091b2f"
+    },
+    {
+      "call_seq": 14,
+      "ecall_index": 3,
+      "enclave_sha256": "dab02140a7e8417d8d1822b7b9051b89acf5a73625a7843034977b029913ab04",
+      "field_id": "0x5b139ee2956d5e69",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "intervention": "",
+      "layer": "layer1_full_host",
+      "measurement_invalid": 0,
+      "new_effects": [
+        {
+          "effect": "A",
+          "rva": "0x542000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x543000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x543000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x544000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x544000",
+          "upgrade_from_A_to_D": true
+        }
+      ],
+      "returncode": 0,
+      "run_id": "layer0_and_layer1_unmodified_host",
+      "selector_seq": 6,
+      "subkind": "unmodified_host_full_trace",
+      "tag": "host_normal",
+      "total_field_obs_effects": 100,
+      "total_field_obs_pages": 92,
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer0_and_layer1_unmodified_host.jsonl",
+      "trace_sha256": "800142ef9a7318604961d100f99c87ae931ec50d8e69bb4ce3696a37cbb1293f",
+      "tsc_s3": 142922,
+      "witness_id": "ehsm-opt-2_layer0_and_layer1_unmodified_host_seq14_6d5e69"
+    },
+    {
+      "call_seq": 3,
+      "ecall_index": 3,
+      "enclave_sha256": "dab02140a7e8417d8d1822b7b9051b89acf5a73625a7843034977b029913ab04",
+      "field_id": "0x5b139ee2956d5e69",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "intervention": "set_scalar:3:0:3:0",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": 0,
+      "new_effects": [
+        {
+          "effect": "D",
+          "rva": "0x505000",
+          "upgrade_from_A_to_D": true
+        }
+      ],
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall3_s0_m15_schema_scalar_p3_val_0",
+      "selector_seq": 0,
+      "subkind": "isolated_single_mutation_replay",
+      "tag": "schema_scalar_p3_val_0",
+      "total_field_obs_effects": 101,
+      "total_field_obs_pages": 92,
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall3_s0_m15_schema_scalar_p3_val_0.jsonl",
+      "trace_sha256": "95cd7472c76269b2780c6e06a0aacdb61b54b1d1d2338365eb3047163c9abac4",
+      "tsc_s3": 139270,
+      "witness_id": "ehsm-opt-2_layer2_isolated_mut_ecall3_s0_m15_schema_scalar_p3_val_0_seq3_6d5e69"
+    },
+    {
+      "call_seq": 6,
+      "ecall_index": 4,
+      "enclave_sha256": "dab02140a7e8417d8d1822b7b9051b89acf5a73625a7843034977b029913ab04",
+      "field_id": "0x61a6007dac8ab670",
+      "interpose_sha256": "b0dd52b0d0f74d1e16b85748e8ec70a80fd07b4266a9e0a717105e69d52e9905",
+      "intervention": "set_scalar:4:0:3:0",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": 0,
+      "new_effects": [
+        {
+          "effect": "D",
+          "rva": "0x505000",
+          "upgrade_from_A_to_D": true
+        }
+      ],
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall4_s0_m15_schema_scalar_p3_val_0",
+      "selector_seq": 0,
+      "subkind": "isolated_single_mutation_replay",
+      "tag": "schema_scalar_p3_val_0",
+      "total_field_obs_effects": 96,
+      "total_field_obs_pages": 89,
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/ehsm-opt-2/layer2_isolated_mut_ecall4_s0_m15_schema_scalar_p3_val_0.jsonl",
+      "trace_sha256": "a2d7ddbc34747407722f119aea15a1fbc6ac60e665a6ce2ffd7740fb8bb56239",
+      "tsc_s3": 139406,
+      "witness_id": "ehsm-opt-2_layer2_isolated_mut_ecall4_s0_m15_schema_scalar_p3_val_0_seq6_8ab670"
+    }
+  ]
+}

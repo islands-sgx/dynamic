@@ -2,6 +2,8 @@
 #include "interpose_4gate_aep.h"
 #include "interpose_interventions.h"
 
+static int readiness_installed = 0;
+
 sgx_status_t sgx_create_enclave(
     const char *file_name,
     const int debug,
@@ -115,7 +117,15 @@ sgx_status_t sgx_create_enclave(
             }
         }
 
+        const char *req_ready_env = getenv("ATFIELD_REQUIRE_READINESS");
+        int readiness_req = (req_ready_env && atoi(req_ready_env) != 0);
         const char *ready_path = getenv("ATFIELD_READY_TABLE");
+        if (readiness_req && (!ready_path || !*ready_path)) {
+            syscall_error_count++;
+            mark_invalid("required_ready_table_env_missing");
+            if (trace_fp) fflush(trace_fp);
+            _exit(71);
+        }
         if (ready_path && *ready_path) {
             set_ready_table_fn_t fn_tbl = (set_ready_table_fn_t)dlsym(RTLD_DEFAULT, "sgx_set_ecall_page_readiness_table");
             set_ready_backend_fn_t fn_be = (set_ready_backend_fn_t)dlsym(RTLD_DEFAULT, "atfield_sgx_set_ecall_page_readiness_backend");
@@ -124,24 +134,34 @@ sgx_status_t sgx_create_enclave(
                 syscall_error_count++;
                 mark_invalid("readiness_open_or_dlsym_failed");
                 if (rf) fclose(rf);
-            } else {
-                fseek(rf, 0, SEEK_END);
-                long rsz = ftell(rf);
-                fseek(rf, 0, SEEK_SET);
-                uint8_t *rbuf = (uint8_t *)malloc((size_t)rsz);
-                if (!rbuf || fread(rbuf, 1, (size_t)rsz, rf) != (size_t)rsz) {
-                    syscall_error_count++;
-                    mark_invalid("readiness_fread_failed");
-                } else {
-                    sgx_page_readiness_table_t tbl = { .data = rbuf, .size = (size_t)rsz };
-                    if (fn_tbl(*enclave_id, &tbl) != 0 || fn_be(*enclave_id, 0U /* ATFIELD_READINESS_BACKEND_KERNEL */) != 0) {
-                        syscall_error_count++;
-                        mark_invalid("readiness_install_ioctl_failed");
-                    }
-                }
+                if (trace_fp) fflush(trace_fp);
+                _exit(71);
+            }
+            fseek(rf, 0, SEEK_END);
+            long rsz = ftell(rf);
+            fseek(rf, 0, SEEK_SET);
+            uint8_t *rbuf = (rsz > 0) ? (uint8_t *)malloc((size_t)rsz) : NULL;
+            if (!rbuf || fread(rbuf, 1, (size_t)rsz, rf) != (size_t)rsz) {
                 free(rbuf);
                 fclose(rf);
+                syscall_error_count++;
+                mark_invalid("readiness_fread_failed");
+                if (trace_fp) fflush(trace_fp);
+                _exit(71);
             }
+            fclose(rf);
+            sgx_page_readiness_table_t tbl = { .data = rbuf, .size = (size_t)rsz };
+            if (fn_tbl(*enclave_id, &tbl) != 0 || fn_be(*enclave_id, 0U /* ATFIELD_READINESS_BACKEND_KERNEL */) != 0) {
+                free(rbuf);
+                syscall_error_count++;
+                mark_invalid("readiness_install_ioctl_failed");
+                if (trace_fp) fflush(trace_fp);
+                _exit(71);
+            }
+            free(rbuf);
+            __atomic_store_n(&readiness_installed, 1, __ATOMIC_SEQ_CST);
+        } else {
+            __atomic_store_n(&readiness_installed, 0, __ATOMIC_SEQ_CST);
         }
         return st_prod;
     }
@@ -245,6 +265,10 @@ sgx_status_t sgx_create_enclave(
 
 static uint64_t cur_ecall_acquire_ns = 0;
 static uint64_t cur_ecall_release_ns = 0;
+static int cur_ecall_acquire_calls = 0;
+static int cur_ecall_acquire_rc = 0;
+static int cur_ecall_release_calls = 0;
+static int cur_ecall_release_rc = 0;
 typedef int (*real_encl_acq_fn_t)(void *, uint64_t, uint64_t, uint64_t);
 typedef int (*real_encl_rel_fn_t)(void *);
 static real_encl_acq_fn_t real_encl_acq_fn = NULL;
@@ -255,8 +279,15 @@ int enclave_pages_acquire(void *base_address, uint64_t selector, uint64_t table_
         real_encl_acq_fn = (real_encl_acq_fn_t)dlsym(RTLD_NEXT, "enclave_pages_acquire");
     uint64_t ti0 = monotonic_ns();
     int rc = real_encl_acq_fn(base_address, selector, table_ptr, table_bytes);
-    if (__atomic_load_n(&in_measured_ecall, __ATOMIC_RELAXED))
+    if (__atomic_load_n(&in_measured_ecall, __ATOMIC_RELAXED)) {
         cur_ecall_acquire_ns += monotonic_ns() - ti0;
+        cur_ecall_acquire_calls++;
+        cur_ecall_acquire_rc = rc;
+    }
+    if (rc != 0) {
+        syscall_error_count++;
+        mark_invalid("enclave_pages_acquire_failed");
+    }
     return rc;
 }
 
@@ -265,8 +296,15 @@ int enclave_pages_release(void *base_address) {
         real_encl_rel_fn = (real_encl_rel_fn_t)dlsym(RTLD_NEXT, "enclave_pages_release");
     uint64_t ti0 = monotonic_ns();
     int rc = real_encl_rel_fn(base_address);
-    if (__atomic_load_n(&in_measured_ecall, __ATOMIC_RELAXED))
+    if (__atomic_load_n(&in_measured_ecall, __ATOMIC_RELAXED)) {
         cur_ecall_release_ns += monotonic_ns() - ti0;
+        cur_ecall_release_calls++;
+        cur_ecall_release_rc = rc;
+    }
+    if (rc != 0) {
+        syscall_error_count++;
+        mark_invalid("enclave_pages_release_failed");
+    }
     return rc;
 }
 
@@ -318,6 +356,10 @@ static sgx_status_t execute_one_measured_ecall(
 
     cur_ecall_acquire_ns = 0;
     cur_ecall_release_ns = 0;
+    cur_ecall_acquire_calls = 0;
+    cur_ecall_acquire_rc = 0;
+    cur_ecall_release_calls = 0;
+    cur_ecall_release_rc = 0;
     __atomic_store_n(&in_measured_ecall, 1, __ATOMIC_SEQ_CST);
     uint64_t t0 = monotonic_ns();
     sgx_status_t st = real_sgx_ecall(eid, index, ocall_table, ms);
@@ -388,6 +430,7 @@ static sgx_status_t execute_one_measured_ecall(
                 "\"sgx_status\":%d,\"abi_return_type\":\"%s\",\"ms_retval\":%s,\"ms_retval_i32\":%d,"
                 "\"has_out_status_i32\":%d,\"out_status_i32\":%d,"
                 "\"elapsed_ns\":%" PRIu64 ",\"acquire_ns\":%" PRIu64 ",\"encl_body_ns\":%" PRIu64 ",\"release_ns\":%" PRIu64 ","
+                "\"readiness_installed\":%d,\"acquire_calls\":%d,\"acquire_rc\":%d,\"release_calls\":%d,\"release_rc\":%d,"
                 "\"total_aex_count\":%u,\"gate_ipi_aex_count\":%u,"
                 "\"measurement_invalid\":%d,\"invalid_reason\":\"%s\","
                 "\"syscall_errors\":%d,\"ipi_flush_failures\":%d,\"mutation_oob_rejected\":%d,"
@@ -399,6 +442,9 @@ static sgx_status_t execute_one_measured_ecall(
                 abi.has_retval ? (int32_t)abi.retval_i64 : 0,
                 has_out_status_ptr, out_status_val,
                 elapsed_ns, acq_ns, body_ns, rel_ns,
+                __atomic_load_n(&readiness_installed, __ATOMIC_RELAXED),
+                cur_ecall_acquire_calls, cur_ecall_acquire_rc,
+                cur_ecall_release_calls, cur_ecall_release_rc,
                 g_shared->total_aex_count, g_shared->gate_ipi_aex_count,
                 measurement_invalid, last_invalid_reason,
                 syscall_error_count, ipi_flush_failure_count, mutation_oob_rejected_count,

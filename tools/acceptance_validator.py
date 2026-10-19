@@ -206,3 +206,56 @@ def validate_provenance_consistency(
                     reasons.append(f"ARTIFACT_HASH_MISMATCH:{key}")
 
     return {"status": status, "reasons": reasons}
+
+
+def validate_production_run_result(
+    run_res: dict,
+    *,
+    expected_stdout_substr: str,
+    expected_ecall_seq: list[int],
+    ready_sel_set: set[int] | None = None,
+    require_readiness: bool = False,
+) -> dict:
+    """Strict non-bypassable validator for production benchmark runs (Raw, No-PreTouch, Group A/B/C)."""
+    base = validate_run_result(
+        run_res,
+        expected_returncode=0,
+        expected_stdout_substr=expected_stdout_substr,
+        expected_min_records=len(expected_ecall_seq),
+    )
+    reasons = list(base["reasons"])
+    status = base["status"]
+
+    def fail(code: str, kind: str = "INVALID") -> None:
+        nonlocal status
+        reasons.append(code)
+        if status == "PASS":
+            status = kind
+        elif kind == "INVALID" and status != "TIMEOUT":
+            status = "INVALID"
+
+    records = run_res.get("records") or []
+    actual_seq = [r.get("ecall_index") for r in records]
+    if actual_seq != expected_ecall_seq:
+        fail(f"ECALL_SEQUENCE_MISMATCH:len={len(actual_seq)}_vs_{len(expected_ecall_seq)}", "INVALID")
+
+    if require_readiness:
+        if ready_sel_set is None:
+            fail("MISSING_READY_SELECTOR_SET", "INVALID")
+        else:
+            for idx, r in enumerate(records):
+                if r.get("readiness_installed", 0) != 1:
+                    fail(f"RECORD_{idx}_READINESS_NOT_INSTALLED", "INVALID")
+                sel = r.get("ecall_index")
+                if sel in ready_sel_set:
+                    if r.get("acquire_calls", 0) != 1 or r.get("acquire_rc", -1) != 0:
+                        fail(f"RECORD_{idx}_ACQUIRE_MISSING_OR_FAILED:calls={r.get('acquire_calls')}_rc={r.get('acquire_rc')}", "INVALID")
+                    if r.get("release_calls", 0) != 1 or r.get("release_rc", -1) != 0:
+                        fail(f"RECORD_{idx}_RELEASE_MISSING_OR_FAILED:calls={r.get('release_calls')}_rc={r.get('release_rc')}", "INVALID")
+                    if r.get("acquire_ns", 0) <= 0:
+                        fail(f"RECORD_{idx}_ZERO_ACQUIRE_NS", "INVALID")
+                else:
+                    if r.get("acquire_calls", 0) != 0:
+                        fail(f"RECORD_{idx}_UNEXPECTED_ACQUIRE_ON_EMPTY_SELECTOR_{sel}", "INVALID")
+
+    return {"status": status, "reasons": reasons}

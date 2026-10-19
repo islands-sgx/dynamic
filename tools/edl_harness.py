@@ -10,7 +10,7 @@ from pathlib import Path
 
 DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
 SAMPLE_ROOT = Path("/home/meandssh/islands-sgx/sample")
-SGX_SDK_INC = "/nix/store/2acwmnfcsz668csnyxn77brmllp7kx6s-sgx-sdk-2.29.100.1/include"
+SGX_SDK_INC = "/nix/store/w9361i2a8728720ll02ypv9nbbfzw5pj-sgx-sdk-2.29.100.1/include"
 
 SAMPLES = {
     "qe3": {
@@ -54,6 +54,28 @@ SAMPLES = {
             f"-I{SAMPLE_ROOT}/real/ehsm",
             "-I/nix/store/my840mbl3rj7gv78bmhbxxi48yznjfvp-ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-clang/include",
             "-I/nix/store/my840mbl3rj7gv78bmhbxxi48yznjfvp-ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-clang/core/Enclave",
+        ],
+    },
+    "ehsm-opt-1": {
+        "edl": SAMPLE_ROOT / "real/ehsm-opt-1/enclave_hsm.edl",
+        "u_c": SAMPLE_ROOT / "build/real/ehsm-opt-1/anchor/real/ehsm-opt-1/ehsm_opt_1_enclave_edl_untrusted/enclave_hsm_u.c",
+        "u_dir": SAMPLE_ROOT / "build/real/ehsm-opt-1/anchor/real/ehsm-opt-1/ehsm_opt_1_enclave_edl_untrusted",
+        "inc": [
+            f"-I{SGX_SDK_INC}",
+            f"-I{SAMPLE_ROOT}/real/ehsm-opt-1",
+            "-I/nix/store/zd3wnkf5a9rl27ai52kr6ws9k2k80228-ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-opt-1-clang/include",
+            "-I/nix/store/zd3wnkf5a9rl27ai52kr6ws9k2k80228-ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-opt-1-clang/core/Enclave",
+        ],
+    },
+    "ehsm-opt-2": {
+        "edl": SAMPLE_ROOT / "real/ehsm-opt-2/enclave_hsm.edl",
+        "u_c": SAMPLE_ROOT / "build/real/ehsm-opt-2/anchor/real/ehsm-opt-2/ehsm_opt_2_enclave_edl_untrusted/enclave_hsm_u.c",
+        "u_dir": SAMPLE_ROOT / "build/real/ehsm-opt-2/anchor/real/ehsm-opt-2/ehsm_opt_2_enclave_edl_untrusted",
+        "inc": [
+            f"-I{SGX_SDK_INC}",
+            f"-I{SAMPLE_ROOT}/real/ehsm-opt-2",
+            "-I/nix/store/bz93f9hr99lpgdyr032qrsfxyi6zj6qj-ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-opt-2-clang/include",
+            "-I/nix/store/bz93f9hr99lpgdyr032qrsfxyi6zj6qj-ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-opt-2-clang/core/Enclave",
         ],
     },
 }

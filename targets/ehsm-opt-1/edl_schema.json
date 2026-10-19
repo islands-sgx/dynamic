@@ -1,0 +1,867 @@
+{
+  "sample": "ehsm-opt-1",
+  "edl_path": "/home/meandssh/islands-sgx/sample/real/ehsm-opt-1/enclave_hsm.edl",
+  "u_c_path": "/home/meandssh/islands-sgx/sample/build/real/ehsm-opt-1/anchor/real/ehsm-opt-1/ehsm_opt_1_enclave_edl_untrusted/enclave_hsm_u.c",
+  "ecalls": [
+    {
+      "ecall_index": 0,
+      "name": "enclave_get_domain_key_from_local",
+      "return_type": "sgx_status_t",
+      "params": [],
+      "ms_layout": {
+        "size": 4,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4,
+            "elem_size": 4,
+            "type": "sgx_status_t"
+          }
+        },
+        "param_consts": {}
+      },
+      "has_retval": true,
+      "retval_offset": 0,
+      "retval_size": 4,
+      "replay_supported": true
+    },
+    {
+      "ecall_index": 1,
+      "name": "enclave_create_key",
+      "return_type": "sgx_status_t",
+      "params": [
+        {
+          "name": "cmk",
+          "type": "ehsm_keyblob_t *",
+          "attributes": [
+            "in",
+            "out",
+            "size=cmk_size"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "ehsm_keyblob_t *cmk",
+          "ms_offset": 8,
+          "ms_size": 8,
+          "elem_size": 44,
+          "direction": "inout",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "size",
+          "bound_param": "cmk_size",
+          "bound_ms_offset": 16,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "cmk_size",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t cmk_size",
+          "ms_offset": 16,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        }
+      ],
+      "ms_layout": {
+        "size": 24,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4,
+            "elem_size": 4,
+            "type": "sgx_status_t"
+          },
+          "ms_cmk": {
+            "offset": 8,
+            "size": 8,
+            "elem_size": 44,
+            "type": "ehsm_keyblob_t*"
+          },
+          "ms_cmk_size": {
+            "offset": 16,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          }
+        },
+        "param_consts": {}
+      },
+      "has_retval": true,
+      "retval_offset": 0,
+      "retval_size": 4,
+      "replay_supported": true
+    },
+    {
+      "ecall_index": 2,
+      "name": "enclave_encrypt",
+      "return_type": "sgx_status_t",
+      "params": [
+        {
+          "name": "cmk",
+          "type": "ehsm_keyblob_t *",
+          "attributes": [
+            "in",
+            "size=cmk_size"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "ehsm_keyblob_t *cmk",
+          "ms_offset": 8,
+          "ms_size": 8,
+          "elem_size": 44,
+          "direction": "in",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "size",
+          "bound_param": "cmk_size",
+          "bound_ms_offset": 16,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "cmk_size",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t cmk_size",
+          "ms_offset": 16,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "aad",
+          "type": "ehsm_data_t *",
+          "attributes": [
+            "in",
+            "size=aad_size"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "ehsm_data_t *aad",
+          "ms_offset": 24,
+          "ms_size": 8,
+          "elem_size": 4,
+          "direction": "in",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "size",
+          "bound_param": "aad_size",
+          "bound_ms_offset": 32,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "aad_size",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t aad_size",
+          "ms_offset": 32,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "plaintext",
+          "type": "ehsm_data_t *",
+          "attributes": [
+            "in",
+            "size=plaintext_size"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "ehsm_data_t *plaintext",
+          "ms_offset": 40,
+          "ms_size": 8,
+          "elem_size": 4,
+          "direction": "in",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "size",
+          "bound_param": "plaintext_size",
+          "bound_ms_offset": 48,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "plaintext_size",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t plaintext_size",
+          "ms_offset": 48,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "ciphertext",
+          "type": "ehsm_data_t *",
+          "attributes": [
+            "in",
+            "out",
+            "size=ciphertext_size"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "ehsm_data_t *ciphertext",
+          "ms_offset": 56,
+          "ms_size": 8,
+          "elem_size": 4,
+          "direction": "inout",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "size",
+          "bound_param": "ciphertext_size",
+          "bound_ms_offset": 64,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "ciphertext_size",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t ciphertext_size",
+          "ms_offset": 64,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        }
+      ],
+      "ms_layout": {
+        "size": 72,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4,
+            "elem_size": 4,
+            "type": "sgx_status_t"
+          },
+          "ms_cmk": {
+            "offset": 8,
+            "size": 8,
+            "elem_size": 44,
+            "type": "ehsm_keyblob_t*"
+          },
+          "ms_cmk_size": {
+            "offset": 16,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          },
+          "ms_aad": {
+            "offset": 24,
+            "size": 8,
+            "elem_size": 4,
+            "type": "ehsm_data_t*"
+          },
+          "ms_aad_size": {
+            "offset": 32,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          },
+          "ms_plaintext": {
+            "offset": 40,
+            "size": 8,
+            "elem_size": 4,
+            "type": "ehsm_data_t*"
+          },
+          "ms_plaintext_size": {
+            "offset": 48,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          },
+          "ms_ciphertext": {
+            "offset": 56,
+            "size": 8,
+            "elem_size": 4,
+            "type": "ehsm_data_t*"
+          },
+          "ms_ciphertext_size": {
+            "offset": 64,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          }
+        },
+        "param_consts": {}
+      },
+      "has_retval": true,
+      "retval_offset": 0,
+      "retval_size": 4,
+      "replay_supported": true
+    },
+    {
+      "ecall_index": 3,
+      "name": "enclave_decrypt",
+      "return_type": "sgx_status_t",
+      "params": [
+        {
+          "name": "cmk",
+          "type": "ehsm_keyblob_t *",
+          "attributes": [
+            "in",
+            "size=cmk_size"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "ehsm_keyblob_t *cmk",
+          "ms_offset": 8,
+          "ms_size": 8,
+          "elem_size": 44,
+          "direction": "in",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "size",
+          "bound_param": "cmk_size",
+          "bound_ms_offset": 16,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "cmk_size",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t cmk_size",
+          "ms_offset": 16,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "aad",
+          "type": "ehsm_data_t *",
+          "attributes": [
+            "in",
+            "size=aad_size"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "ehsm_data_t *aad",
+          "ms_offset": 24,
+          "ms_size": 8,
+          "elem_size": 4,
+          "direction": "in",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "size",
+          "bound_param": "aad_size",
+          "bound_ms_offset": 32,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "aad_size",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t aad_size",
+          "ms_offset": 32,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "ciphertext",
+          "type": "ehsm_data_t *",
+          "attributes": [
+            "in",
+            "size=ciphertext_size"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "ehsm_data_t *ciphertext",
+          "ms_offset": 40,
+          "ms_size": 8,
+          "elem_size": 4,
+          "direction": "in",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "size",
+          "bound_param": "ciphertext_size",
+          "bound_ms_offset": 48,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "ciphertext_size",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t ciphertext_size",
+          "ms_offset": 48,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "plaintext",
+          "type": "ehsm_data_t *",
+          "attributes": [
+            "in",
+            "out",
+            "size=plaintext_size"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "ehsm_data_t *plaintext",
+          "ms_offset": 56,
+          "ms_size": 8,
+          "elem_size": 4,
+          "direction": "inout",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "size",
+          "bound_param": "plaintext_size",
+          "bound_ms_offset": 64,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "plaintext_size",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t plaintext_size",
+          "ms_offset": 64,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        }
+      ],
+      "ms_layout": {
+        "size": 72,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4,
+            "elem_size": 4,
+            "type": "sgx_status_t"
+          },
+          "ms_cmk": {
+            "offset": 8,
+            "size": 8,
+            "elem_size": 44,
+            "type": "ehsm_keyblob_t*"
+          },
+          "ms_cmk_size": {
+            "offset": 16,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          },
+          "ms_aad": {
+            "offset": 24,
+            "size": 8,
+            "elem_size": 4,
+            "type": "ehsm_data_t*"
+          },
+          "ms_aad_size": {
+            "offset": 32,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          },
+          "ms_ciphertext": {
+            "offset": 40,
+            "size": 8,
+            "elem_size": 4,
+            "type": "ehsm_data_t*"
+          },
+          "ms_ciphertext_size": {
+            "offset": 48,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          },
+          "ms_plaintext": {
+            "offset": 56,
+            "size": 8,
+            "elem_size": 4,
+            "type": "ehsm_data_t*"
+          },
+          "ms_plaintext_size": {
+            "offset": 64,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          }
+        },
+        "param_consts": {}
+      },
+      "has_retval": true,
+      "retval_offset": 0,
+      "retval_size": 4,
+      "replay_supported": true
+    },
+    {
+      "ecall_index": 4,
+      "name": "enclave_generate_datakey",
+      "return_type": "sgx_status_t",
+      "params": [
+        {
+          "name": "cmk",
+          "type": "ehsm_keyblob_t *",
+          "attributes": [
+            "in",
+            "size=cmk_size"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "ehsm_keyblob_t *cmk",
+          "ms_offset": 8,
+          "ms_size": 8,
+          "elem_size": 44,
+          "direction": "in",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "size",
+          "bound_param": "cmk_size",
+          "bound_ms_offset": 16,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "cmk_size",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t cmk_size",
+          "ms_offset": 16,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "aad",
+          "type": "ehsm_data_t *",
+          "attributes": [
+            "in",
+            "size=aad_size"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "ehsm_data_t *aad",
+          "ms_offset": 24,
+          "ms_size": 8,
+          "elem_size": 4,
+          "direction": "in",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "size",
+          "bound_param": "aad_size",
+          "bound_ms_offset": 32,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "aad_size",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t aad_size",
+          "ms_offset": 32,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "plaintext",
+          "type": "ehsm_data_t *",
+          "attributes": [
+            "in",
+            "out",
+            "size=plaintext_size"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "ehsm_data_t *plaintext",
+          "ms_offset": 40,
+          "ms_size": 8,
+          "elem_size": 4,
+          "direction": "inout",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "size",
+          "bound_param": "plaintext_size",
+          "bound_ms_offset": 48,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "plaintext_size",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t plaintext_size",
+          "ms_offset": 48,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "ciphertext",
+          "type": "ehsm_data_t *",
+          "attributes": [
+            "in",
+            "out",
+            "size=ciphertext_size"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "ehsm_data_t *ciphertext",
+          "ms_offset": 56,
+          "ms_size": 8,
+          "elem_size": 4,
+          "direction": "inout",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "size",
+          "bound_param": "ciphertext_size",
+          "bound_ms_offset": 64,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "ciphertext_size",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t ciphertext_size",
+          "ms_offset": 64,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        }
+      ],
+      "ms_layout": {
+        "size": 72,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4,
+            "elem_size": 4,
+            "type": "sgx_status_t"
+          },
+          "ms_cmk": {
+            "offset": 8,
+            "size": 8,
+            "elem_size": 44,
+            "type": "ehsm_keyblob_t*"
+          },
+          "ms_cmk_size": {
+            "offset": 16,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          },
+          "ms_aad": {
+            "offset": 24,
+            "size": 8,
+            "elem_size": 4,
+            "type": "ehsm_data_t*"
+          },
+          "ms_aad_size": {
+            "offset": 32,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          },
+          "ms_plaintext": {
+            "offset": 40,
+            "size": 8,
+            "elem_size": 4,
+            "type": "ehsm_data_t*"
+          },
+          "ms_plaintext_size": {
+            "offset": 48,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          },
+          "ms_ciphertext": {
+            "offset": 56,
+            "size": 8,
+            "elem_size": 4,
+            "type": "ehsm_data_t*"
+          },
+          "ms_ciphertext_size": {
+            "offset": 64,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          }
+        },
+        "param_consts": {}
+      },
+      "has_retval": true,
+      "retval_offset": 0,
+      "retval_size": 4,
+      "replay_supported": true
+    }
+  ]
+}

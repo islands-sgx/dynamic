@@ -10,6 +10,7 @@ DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
 sys.path.insert(0, str(DYN_ROOT / "tools"))
 
 from acceptance_validator import (  # noqa: E402
+    validate_production_run_result,
     validate_provenance_consistency,
     validate_run_result,
 )
@@ -157,6 +158,47 @@ class TestAcceptanceValidator(unittest.TestCase):
         v = validate_run_result(run, closed_workset_effects=ws)
         self.assertEqual(v["status"], "INVALID")
         self.assertIn("UNKNOWN_FIELD_NOT_IN_WORKSET:0x1111111111111111", v["reasons"])
+
+
+
+    def test_13_prod_measurement_invalid_rejected(self) -> None:
+        r = make_valid_mock_run()
+        r["measurement_invalid"] = True
+        v = validate_production_run_result(
+            r,
+            expected_stdout_substr="PASS",
+            expected_ecall_seq=[0],
+            ready_sel_set={0},
+            require_readiness=True,
+        )
+        self.assertEqual(v["status"], "INVALID")
+        self.assertIn("RUN_MEASUREMENT_INVALID_FLAG", v["reasons"])
+
+    def test_14_prod_missing_readiness_or_acquire_rejected(self) -> None:
+        r = make_valid_mock_run()
+        r["records"][0]["readiness_installed"] = 0
+        r["records"][0]["acquire_calls"] = 0
+        v = validate_production_run_result(
+            r,
+            expected_stdout_substr="PASS",
+            expected_ecall_seq=[0],
+            ready_sel_set={0},
+            require_readiness=True,
+        )
+        self.assertEqual(v["status"], "INVALID")
+        self.assertIn("RECORD_0_READINESS_NOT_INSTALLED", v["reasons"])
+
+    def test_15_prod_ecall_sequence_mismatch_rejected(self) -> None:
+        r = make_valid_mock_run()
+        v = validate_production_run_result(
+            r,
+            expected_stdout_substr="PASS",
+            expected_ecall_seq=[0, 1],
+            ready_sel_set={0},
+            require_readiness=False,
+        )
+        self.assertEqual(v["status"], "INVALID")
+        self.assertTrue(any("ECALL_SEQUENCE_MISMATCH" in x for x in v["reasons"]))
 
 
 if __name__ == "__main__":

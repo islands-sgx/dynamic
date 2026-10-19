@@ -2,7 +2,7 @@
   "entry_count": 7,
   "fields_sha256": "b53f72dfeb61885d832f8498bc745add906915e81c72fc53a26071f9fa0fbf35",
   "final_elf": "/home/meandssh/islands-sgx/dynamic/targets/sgxwallet/enclave.dynamic_xr.final.so",
-  "final_elf_sha256": "ba2ebf4de28a4b592d66c67747316bf13abc128ea6b9923161a20a9ab5de92cc",
+  "final_elf_sha256": "c490b2d785b1d9956dc0b8735bc2e487b9978e727c620d18c660dd0f81726fc1",
   "format_version": 3,
   "schema": "atfield-ready-table-v3",
   "selectors": [
@@ -316,7 +316,7 @@
       "ecall_index": 4,
       "first_page": 268,
       "name": "trustedGenerateEcdsaKey",
-      "page_count": 166,
+      "page_count": 165,
       "page_rvas": [
         4096,
         8192,
@@ -418,7 +418,6 @@
         2904064,
         2908160,
         2912256,
-        2916352,
         7159808,
         7163904,
         7168000,
@@ -491,9 +490,9 @@
     },
     {
       "ecall_index": 5,
-      "first_page": 434,
+      "first_page": 433,
       "name": "trustedGetPublicEcdsaKey",
-      "page_count": 160,
+      "page_count": 159,
       "page_rvas": [
         4096,
         8192,
@@ -589,7 +588,6 @@
         2904064,
         2908160,
         2912256,
-        2916352,
         7159808,
         7163904,
         7168000,
@@ -662,9 +660,9 @@
     },
     {
       "ecall_index": 6,
-      "first_page": 594,
+      "first_page": 592,
       "name": "trustedEcdsaSign",
-      "page_count": 169,
+      "page_count": 168,
       "page_rvas": [
         4096,
         8192,
@@ -769,7 +767,6 @@
         2904064,
         2908160,
         2912256,
-        2916352,
         7159808,
         7163904,
         7168000,
@@ -842,11 +839,11 @@
     }
   ],
   "signed_final_elf": "/home/meandssh/islands-sgx/dynamic/targets/sgxwallet/enclave.dynamic_xr.final.signed.so",
-  "signed_final_elf_sha256": "062ea49e6f8d8fb332834d01bb092ac0fa83736b110e043b0ca439ced495ac95",
-  "table_bytes": 6304,
+  "signed_final_elf_sha256": "a30e15f81ec5f75c35e5af05a1d73476a90c05e762d35f8b1e77ba69806b0989",
+  "table_bytes": 6280,
   "table_path": "/home/meandssh/islands-sgx/dynamic/targets/sgxwallet/enclave.dynamic_xr.ready.bin",
-  "table_sha256": "741bcdcbb8210ee529754f62c14d914fae991f8b6715205af9e47fc825ceec9f",
-  "total_page_count": 763,
+  "table_sha256": "1f54217090e7ab308b254b397b21f8afbaedefa2f92643a53e585f2df84d45fa",
+  "total_page_count": 760,
   "workset": "/home/meandssh/islands-sgx/dynamic/targets/sgxwallet/workset.dynamic_xr.json",
-  "workset_sha256": "0584d227ce427aafb570706916297b42184487932f02974ee26654c2ca6baabd"
+  "workset_sha256": "8d63558f912c0bf4b25f71c7e32cc6fc06aeeef89520536e47011ea266ba9152"
 }

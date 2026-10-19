@@ -1,0 +1,337 @@
+{
+  "audit_of_legacy_heuristics": [
+    {
+      "empirical_status_and_upgrade": "Retained in S1 baseline; upgraded in S2/S3 to boundary + neighbor set {0, 1, 2, 15, 16, 17, 99} plus joint scalar+buffer perturbations.",
+      "failure_condition": "Misses off-by-one boundary checks (e.g., 1, 15, 16, 17, 255) or predicates coupling a scalar with a buffer byte.",
+      "heuristic": "scalar_values_0_2_99",
+      "information_used": "EDL non-pointer scalar parameter offset and byte width.",
+      "problem_addressed": "Probe zero/empty, small valid enum/mode, and out-of-range scalar branches at S0/S3.",
+      "underlying_assumption": "Branch predicates compare scalar parameters against 0, small enum constants, or upper bounds < 99."
+    },
+    {
+      "empirical_status_and_upgrade": "Renamed from 'doubling' to 'quadrupling' in S1; upgraded in S2/S3 to include page-crossing sizes and continue past single-length rejections instead of aborting.",
+      "failure_condition": "Fails when a specific intermediate size is rejected while a larger size succeeds (non-monotonic hole), or when page-crossing off-by-one lengths (4095/4096/4097) take distinct remainder paths.",
+      "heuristic": "quadrupling_scale_64_to_262144",
+      "information_used": "EDL [in]/[inout] pointer count=/size= binding offsets and runtime heap chunk spans.",
+      "problem_addressed": "Trigger multi-page heap allocations, dlmalloc bin transitions, and multi-block loops.",
+      "underlying_assumption": "Heap and buffer footprint grows monotonically with power-of-four sizes."
+    },
+    {
+      "empirical_status_and_upgrade": "Explicitly labeled 'stop_stagnant_2_rounds' vs 'stop_budget_cap_reached' (never conflated with convergence proof).",
+      "failure_condition": "Indicates local operator stagnation, NOT formal whole-program convergence; if the budget cap (e.g. 262144) is reached while still gaining pages, it is a budget cutoff.",
+      "heuristic": "two_round_stagnation_stop",
+      "information_used": "New (page_rva, effect) count, heap_hi_rva delta, and stack low-water delta.",
+      "problem_addressed": "Bound exploration cost when larger scales or mutations stop yielding new (page, effect) pairs or heap/stack growth.",
+      "underlying_assumption": "Two consecutive zero-gain steps indicate local saturation of the current operator family."
+    },
+    {
+      "empirical_status_and_upgrade": "Upgraded in S3 to schedule history accumulation across all Field-bearing selectors with a reserved budget for delayed counter branches.",
+      "failure_condition": "Fails when an earlier Field selector also accumulates state or triggers periodic compaction/rekeying after N calls.",
+      "heuristic": "repeat_only_last_field_selector",
+      "information_used": "Ordered list of Field-bearing ECALL selectors.",
+      "problem_addressed": "Exercise cross-call state accumulation (counters, caches, pool reuse) via repeated invocations.",
+      "underlying_assumption": "The numerically last Field selector is the main steady-state data-plane operation."
+    },
+    {
+      "empirical_status_and_upgrade": "Upgraded in S3 to replay captured calls after general executable prefixes in fresh enclave instances.",
+      "failure_condition": "Fails when prerequisite state is established by a non-zero selector (e.g. ecall 1/2/3) or when two prefixes touch identical pages during setup but leave different latent state.",
+      "heuristic": "fixed_ecall0_cold_state_replay",
+      "information_used": "Captured typed ms snapshot replayed immediately after ecall_index == 0.",
+      "problem_addressed": "Exercise lazy library initialization and cold-cache branches when a Field is invoked before warm-up.",
+      "underlying_assumption": "ECALL 0 is always the enclave initialization entry point."
+    },
+    {
+      "empirical_status_and_upgrade": "Explicitly reported in a separate 'Bridge + Heuristic Assist' column in Table 1 and excluded from dynamic discovery claims.",
+      "failure_condition": "Does not cover indirect calls (vtable/function pointers) or deep call chains; it is a static heuristic aid, not a sound static call-graph upper bound.",
+      "heuristic": "depth_4_direct_call_assist",
+      "information_used": "Direct x86 call instructions (0xE8) starting from the Field entry symbol.",
+      "problem_addressed": "Include nearby direct-call error/cleanup code pages inside the enclave binary that were not taken dynamically.",
+      "underlying_assumption": "Shallow helper functions within 4 direct calls may be reached on rare error returns."
+    },
+    {
+      "empirical_status_and_upgrade": "Explicitly documented as an empirical margin and audited separately from observed S3 pages.",
+      "failure_condition": "Empirical safety margin only; evaluated against independent hold-out workloads under strict ReadyTable enforcement.",
+      "heuristic": "heap_plus2_stack_minus4_margin",
+      "information_used": "Observed heap_hi_rva and minimum gateB/gateD RSP RVA.",
+      "problem_addressed": "Provide a small guard band around observed dlmalloc heap high-water and stack low-water marks.",
+      "underlying_assumption": "Small allocator alignment or stack frame variations stay within +2 heap / -4 stack pages."
+    }
+  ],
+  "budget_per_case": 16,
+  "case_matrix": [
+    {
+      "S0": "MISS",
+      "S1": "MISS",
+      "S2": "MISS",
+      "S3": "PASS (step 12)",
+      "challenge_id": "C1_late_counter_branch",
+      "target": "0x90000:D",
+      "title": "Late Counter-Triggered Branch (Requires >=24 Stateful Invocations)"
+    },
+    {
+      "S0": "MISS",
+      "S1": "MISS",
+      "S2": "MISS",
+      "S3": "PASS (step 7)",
+      "challenge_id": "C2_cross_interface_prerequisite",
+      "target": "0xa0000:A",
+      "title": "Cross-Interface Non-Zero Prerequisite (ecall_configure(2) -> ecall_work)"
+    },
+    {
+      "S0": "MISS",
+      "S1": "MISS",
+      "S2": "PASS (step 11)",
+      "S3": "PASS (step 16)",
+      "challenge_id": "C3_non_monotonic_length_hole",
+      "target": "0xb0000:D",
+      "title": "Non-Monotonic Length Rejection Hole (scale=256 Fails, scale=4096 Succeeds)"
+    },
+    {
+      "S0": "MISS",
+      "S1": "MISS",
+      "S2": "PASS (step 4)",
+      "S3": "PASS (step 4)",
+      "challenge_id": "C4_joint_two_param_predicate",
+      "target": "0xc0000:A",
+      "title": "Joint Two-Parameter Predicate (scalar mode==2 AND buffer[0]^=0xff)"
+    },
+    {
+      "S0": "MISS",
+      "S1": "MISS",
+      "S2": "MISS",
+      "S3": "PASS (step 11)",
+      "challenge_id": "C5_same_pages_different_latent_state",
+      "target": "0xd0000:D",
+      "title": "Identical Prefix Page Set with Distinct Latent State"
+    },
+    {
+      "S0": "MISS",
+      "S1": "MISS",
+      "S2": "PASS (step 5)",
+      "S3": "PASS (step 5)",
+      "challenge_id": "C6_aliased_and_empty_boundary",
+      "target": "0xe0000:D",
+      "title": "Overlapping Buffer Aliasing (+4B) and Zero-Length Boundary"
+    }
+  ],
+  "summary_by_strategy": {
+    "S0": {
+      "budget_per_case": 16,
+      "challenges_solved": 0,
+      "challenges_total": 6,
+      "confirmed_new_effects": 0,
+      "field_entry_count": 6,
+      "field_entry_rate": 1.0,
+      "holdout_missed_effects": 6,
+      "new_effects_per_10_trials": 0.0,
+      "strategy": "S0",
+      "total_trials": 6,
+      "witnesses": []
+    },
+    "S1": {
+      "budget_per_case": 16,
+      "challenges_solved": 0,
+      "challenges_total": 6,
+      "confirmed_new_effects": 0,
+      "field_entry_count": 75,
+      "field_entry_rate": 0.9868,
+      "holdout_missed_effects": 6,
+      "new_effects_per_10_trials": 0.0,
+      "strategy": "S1",
+      "total_trials": 76,
+      "witnesses": []
+    },
+    "S2": {
+      "budget_per_case": 16,
+      "challenges_solved": 3,
+      "challenges_total": 6,
+      "confirmed_new_effects": 3,
+      "field_entry_count": 65,
+      "field_entry_rate": 0.9848,
+      "holdout_missed_effects": 3,
+      "new_effects_per_10_trials": 0.455,
+      "strategy": "S2",
+      "total_trials": 66,
+      "witnesses": [
+        {
+          "action": {
+            "family": "scale",
+            "kind": "scale_non_abort",
+            "scale": 4096,
+            "selector": 2
+          },
+          "challenge_id": "C3_non_monotonic_length_hole",
+          "new_effect": [
+            "0xb0000",
+            "D"
+          ],
+          "replayed_confirmed": true,
+          "step_discovered": 11,
+          "strategy": "S2"
+        },
+        {
+          "action": {
+            "byte_idx": 0,
+            "family": "joint",
+            "kind": "joint_scalar_xor",
+            "scalar_val": 2,
+            "selector": 2,
+            "xor_mask": 255
+          },
+          "challenge_id": "C4_joint_two_param_predicate",
+          "new_effect": [
+            "0xc0000",
+            "A"
+          ],
+          "replayed_confirmed": true,
+          "step_discovered": 4,
+          "strategy": "S2"
+        },
+        {
+          "action": {
+            "alias_shift": 4,
+            "family": "alias",
+            "kind": "aliased_pair",
+            "selector": 2
+          },
+          "challenge_id": "C6_aliased_and_empty_boundary",
+          "new_effect": [
+            "0xe0000",
+            "D"
+          ],
+          "replayed_confirmed": true,
+          "step_discovered": 5,
+          "strategy": "S2"
+        }
+      ]
+    },
+    "S3": {
+      "budget_per_case": 16,
+      "challenges_solved": 6,
+      "challenges_total": 6,
+      "confirmed_new_effects": 6,
+      "field_entry_count": 95,
+      "field_entry_rate": 0.9896,
+      "holdout_missed_effects": 0,
+      "new_effects_per_10_trials": 0.625,
+      "strategy": "S3",
+      "total_trials": 96,
+      "witnesses": [
+        {
+          "action": {
+            "family": "history",
+            "kind": "repeat",
+            "repeat_count": 32,
+            "selector": 1
+          },
+          "challenge_id": "C1_late_counter_branch",
+          "new_effect": [
+            "0x90000",
+            "D"
+          ],
+          "replayed_confirmed": true,
+          "step_discovered": 12,
+          "strategy": "S3"
+        },
+        {
+          "action": {
+            "family": "prefix",
+            "kind": "prefix_replay",
+            "prefix": [
+              [
+                "ecall_configure",
+                2
+              ]
+            ],
+            "prefix_id": "pi_cfg2",
+            "selector": 2
+          },
+          "challenge_id": "C2_cross_interface_prerequisite",
+          "new_effect": [
+            "0xa0000",
+            "A"
+          ],
+          "replayed_confirmed": true,
+          "step_discovered": 7,
+          "strategy": "S3"
+        },
+        {
+          "action": {
+            "family": "scale",
+            "kind": "scale_non_abort",
+            "scale": 4096,
+            "selector": 2
+          },
+          "challenge_id": "C3_non_monotonic_length_hole",
+          "new_effect": [
+            "0xb0000",
+            "D"
+          ],
+          "replayed_confirmed": true,
+          "step_discovered": 16,
+          "strategy": "S3"
+        },
+        {
+          "action": {
+            "byte_idx": 0,
+            "family": "joint",
+            "kind": "joint_scalar_xor",
+            "scalar_val": 2,
+            "selector": 2,
+            "xor_mask": 255
+          },
+          "challenge_id": "C4_joint_two_param_predicate",
+          "new_effect": [
+            "0xc0000",
+            "A"
+          ],
+          "replayed_confirmed": true,
+          "step_discovered": 4,
+          "strategy": "S3"
+        },
+        {
+          "action": {
+            "family": "prefix",
+            "kind": "prefix_replay",
+            "prefix": [
+              [
+                "ecall_init",
+                1
+              ],
+              [
+                "ecall_stage",
+                0
+              ]
+            ],
+            "prefix_id": "pi_2_staged",
+            "selector": 2
+          },
+          "challenge_id": "C5_same_pages_different_latent_state",
+          "new_effect": [
+            "0xd0000",
+            "D"
+          ],
+          "replayed_confirmed": true,
+          "step_discovered": 11,
+          "strategy": "S3"
+        },
+        {
+          "action": {
+            "alias_shift": 4,
+            "family": "alias",
+            "kind": "aliased_pair",
+            "selector": 2
+          },
+          "challenge_id": "C6_aliased_and_empty_boundary",
+          "new_effect": [
+            "0xe0000",
+            "D"
+          ],
+          "replayed_confirmed": true,
+          "step_discovered": 5,
+          "strategy": "S3"
+        }
+      ]
+    }
+  }
+}

@@ -67,14 +67,14 @@ static void run_interventions_if_matching(
     char *copy = strdup(spec);
     char *saveptr = NULL;
     for (char *tok = strtok_r(copy, ";", &saveptr); tok; tok = strtok_r(NULL, ";", &saveptr)) {
-        int t_idx = -1, t_seq = -1, p_idx = -1;
-        unsigned long off = 0, sub = 0, val = 0;
+        int t_idx = -1, t_seq = -1, p_idx = -1, p_idx2 = -1;
+        unsigned long sub = 0, val = 0, val2 = 0;
 
         if (sscanf(tok, "repeat:%d:%d:%lu", &t_idx, &t_seq, &val) == 3) {
             if (t_idx == index && t_seq == sseq && es) {
                 typed_ms_snapshot_t local_snap = {0};
                 if (typed_snapshot_ms((const uint8_t *)ms, es->ms_size, es, &local_snap) == 0) {
-                    uint8_t ms_work[256] = {0};
+                    uint8_t ms_work[MAX_MS_FRAME_BYTES] = {0};
                     for (unsigned long r = 1; r <= val; r++) {
                         typed_restore_ms_for_replay(&local_snap, es, ms_work);
                         char tag[64];
@@ -85,7 +85,6 @@ static void run_interventions_if_matching(
                 }
             }
         } else if (sscanf(tok, "xor_param:%d:%d:%d:%lu:%lu", &t_idx, &t_seq, &p_idx, &sub, &val) == 5) {
-            /* Alias-preserving, strictly bounded XOR mutation inside a typed snapshot */
             if (t_idx == index && t_seq == sseq && es && p_idx >= 0 && (uint32_t)p_idx < es->num_params) {
                 typed_ms_snapshot_t local_snap = {0};
                 if (typed_snapshot_ms((const uint8_t *)ms, es->ms_size, es, &local_snap) == 0) {
@@ -143,6 +142,60 @@ static void run_interventions_if_matching(
                     }
                 }
             }
+        } else if (sscanf(tok, "joint_scalar_xor:%d:%d:%d:%lu:%d:%lu:%lu", &t_idx, &t_seq, &p_idx, &val, &p_idx2, &sub, &val2) == 7) {
+            /* Joint 2-parameter mutation: scalar p_idx = val (with buffer rebind) + XOR byte sub of pointer p_idx2 */
+            if (t_idx == index && t_seq == sseq && es &&
+                p_idx >= 0 && (uint32_t)p_idx < es->num_params &&
+                p_idx2 >= 0 && (uint32_t)p_idx2 < es->num_params) {
+                typed_ms_snapshot_t local_snap = {0};
+                if (typed_snapshot_ms((const uint8_t *)ms, es->ms_size, es, &local_snap) == 0) {
+                    uint8_t ms_work[MAX_MS_FRAME_BYTES] = {0};
+                    if (mutate_scalar_and_rebind_buffers(&local_snap, es, ms_work, (uint32_t)p_idx, val) == 0) {
+                        const param_schema_t *ps2 = &es->params[p_idx2];
+                        size_t blen2 = 0, ulen2 = 0;
+                        if (ps2->is_pointer && compute_param_byte_len(ms_work, es->ms_size, ps2, &blen2, &ulen2) == 0) {
+                            uint8_t *ptr2 = *(uint8_t **)(ms_work + ps2->ms_offset);
+                            if (ptr2 && sub < ulen2) {
+                                ptr2[sub] ^= (uint8_t)val2;
+                                char tag[80];
+                                snprintf(tag, sizeof(tag), "schema_joint_s%d_%lu_x%d_%lu", p_idx, val, p_idx2, sub);
+                                execute_one_measured_ecall(eid, index, ocall_table, ms_work, tag, 1);
+                            }
+                        }
+                    }
+                    free_typed_snapshot(&local_snap);
+                }
+            }
+        } else if (sscanf(tok, "aliased_pair:%d:%d:%d:%d:%lu", &t_idx, &t_seq, &p_idx, &p_idx2, &sub) == 5) {
+            /* Overlapping/aliased buffer pair probe between pointer p_idx and pointer p_idx2 shifted by sub bytes */
+            if (t_idx == index && t_seq == sseq && es &&
+                p_idx >= 0 && (uint32_t)p_idx < es->num_params &&
+                p_idx2 >= 0 && (uint32_t)p_idx2 < es->num_params) {
+                const param_schema_t *pa = &es->params[p_idx];
+                const param_schema_t *pb = &es->params[p_idx2];
+                if (pa->is_pointer && pb->is_pointer) {
+                    typed_ms_snapshot_t local_snap = {0};
+                    if (typed_snapshot_ms((const uint8_t *)ms, es->ms_size, es, &local_snap) == 0) {
+                        uint8_t ms_work[MAX_MS_FRAME_BYTES] = {0};
+                        typed_restore_ms_for_replay(&local_snap, es, ms_work);
+                        size_t la = local_snap.param_byte_len[p_idx];
+                        size_t lb = local_snap.param_byte_len[p_idx2];
+                        size_t shared_sz = (la > lb + sub ? la : lb + sub) + 64;
+                        uint8_t *shared_buf = (uint8_t *)calloc(1, shared_sz);
+                        if (shared_buf) {
+                            if (local_snap.master_copy[p_idx] && la > 0)
+                                memcpy(shared_buf, local_snap.master_copy[p_idx], la);
+                            *(void **)(ms_work + pa->ms_offset) = shared_buf;
+                            *(void **)(ms_work + pb->ms_offset) = shared_buf + sub;
+                            char tag[80];
+                            snprintf(tag, sizeof(tag), "schema_alias_p%d_p%d_off_%lu", p_idx, p_idx2, sub);
+                            execute_one_measured_ecall(eid, index, ocall_table, ms_work, tag, 1);
+                            free(shared_buf);
+                        }
+                        free_typed_snapshot(&local_snap);
+                    }
+                }
+            }
         } else if (strncmp(tok, "typed_state_probe:", 18) == 0) {
             int tgt_idx = -1, cap_seq = -1, trig_idx = -1, trig_seq = -1;
             if (sscanf(tok, "typed_state_probe:%d:%d:%d:%d", &tgt_idx, &cap_seq, &trig_idx, &trig_seq) == 4) {
@@ -155,9 +208,9 @@ static void run_interventions_if_matching(
                 }
             }
         } else if (strncmp(tok, "scale_bound_v2:", 15) == 0) {
-            /* Generic schema-typed buffer scaling:
-             * scale_bound_v2:<ecall_idx>:<sseq>:<mode>:<cnt1_off>:<new_cnt1>:<cnt2_off>:<new_cnt2>
-             * Allocates each bound [in]/[out]/[inout] buffer strictly according to its OWN bound_ms_offset and elem_size!
+            /* Generic schema-typed buffer scaling with C flexible-array header preservation:
+             * If an [in]/[inout] [size=] struct begins with a uint32_t header equal to (orig_blen - 4),
+             * preserve the (total_bytes = 4 + payload_len) invariant and synchronized [inout]/[out] framing delta.
              */
             int sc_idx = -1, sc_seq = -1, sc_mode = 0;
             long cnt1_off = -1, cnt2_off = -1;
@@ -172,17 +225,61 @@ static void run_interventions_if_matching(
                     }
                     uint8_t ms_clone[MAX_MS_FRAME_BYTES] = {0};
                     memcpy(ms_clone, ms, es->ms_size);
-                    /* Update scalar count/size slots first */
+
+                    /* Detect if cnt1_off binds a flexible-array struct (orig_blen >= 4 && *(uint32_t*)ptr == orig_blen - 4) */
+                    int is_flex_struct = 0;
+                    size_t orig_primary_payload = 0;
+                    for (uint32_t pi = 0; pi < es->num_params; pi++) {
+                        const param_schema_t *ps = &es->params[pi];
+                        if (ps->is_pointer && ps->bound_kind == BOUND_SIZE && (long)ps->bound_ms_offset == cnt1_off) {
+                            size_t ob = 0, ou = 0;
+                            const uint8_t *op = *(const uint8_t *const *)((const uint8_t *)ms + ps->ms_offset);
+                            if (op && compute_param_byte_len((const uint8_t *)ms, es->ms_size, ps, &ob, &ou) == 0 && ob >= 4) {
+                                uint32_t hdr_len = *(const uint32_t *)op;
+                                if ((size_t)hdr_len + 4 == ob) {
+                                    is_flex_struct = 1;
+                                    orig_primary_payload = hdr_len;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    /* Update scalar count/size slots */
                     for (uint32_t pi = 0; pi < es->num_params; pi++) {
                         const param_schema_t *ps = &es->params[pi];
                         if (!ps->is_pointer) {
                             if ((long)ps->ms_offset == cnt1_off) {
-                                write_scalar_u64(ms_clone, es->ms_size, ps->ms_offset, ps->ms_size, new_cnt1);
+                                uint64_t v = is_flex_struct ? (uint64_t)(new_cnt1 + 4) : (uint64_t)new_cnt1;
+                                write_scalar_u64(ms_clone, es->ms_size, ps->ms_offset, ps->ms_size, v);
                             } else if ((long)ps->ms_offset == cnt2_off && new_cnt2 > 0) {
-                                write_scalar_u64(ms_clone, es->ms_size, ps->ms_offset, ps->ms_size, new_cnt2);
+                                uint64_t v = is_flex_struct ? (uint64_t)(new_cnt2 + 4) : (uint64_t)new_cnt2;
+                                write_scalar_u64(ms_clone, es->ms_size, ps->ms_offset, ps->ms_size, v);
                             }
                         }
                     }
+
+                    /* If is_flex_struct, also scale any companion [inout]/[out] flexible-array buffer whose original payload >= orig_primary_payload */
+                    if (is_flex_struct) {
+                        for (uint32_t pi = 0; pi < es->num_params; pi++) {
+                            const param_schema_t *ps = &es->params[pi];
+                            if (ps->is_pointer && (ps->direction == DIR_OUT || ps->direction == DIR_INOUT) &&
+                                ps->bound_kind == BOUND_SIZE && ps->bound_ms_offset >= 0 &&
+                                (long)ps->bound_ms_offset != cnt1_off) {
+                                size_t ob = 0, ou = 0;
+                                const uint8_t *op = *(const uint8_t *const *)((const uint8_t *)ms + ps->ms_offset);
+                                if (op && compute_param_byte_len((const uint8_t *)ms, es->ms_size, ps, &ob, &ou) == 0 && ob >= 4) {
+                                    uint32_t hdr_len = *(const uint32_t *)op;
+                                    if ((size_t)hdr_len + 4 == ob && hdr_len >= orig_primary_payload) {
+                                        size_t delta = hdr_len - orig_primary_payload;
+                                        size_t new_out_total = 4 + new_cnt1 + delta;
+                                        write_scalar_u64(ms_clone, es->ms_size, (uint32_t)ps->bound_ms_offset, ps->bound_ms_size, new_out_total);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     void *allocs[MAX_SCHEMA_PARAMS] = {0};
                     int alloc_ok = 1;
                     for (uint32_t pi = 0; pi < es->num_params; pi++) {
@@ -203,20 +300,34 @@ static void run_interventions_if_matching(
                         }
                         allocs[pi] = buf;
                         const uint8_t *orig_ptr = *(const uint8_t *const *)((const uint8_t *)ms + ps->ms_offset);
+                        int param_is_flex = 0;
+                        if (orig_ptr && orig_blen >= 4 && (*(const uint32_t *)orig_ptr) + 4 == orig_blen && new_blen >= 4) {
+                            param_is_flex = 1;
+                        }
                         if ((ps->direction == DIR_IN || ps->direction == DIR_INOUT) && orig_ptr && orig_blen > 0 && new_blen > 0) {
-                            size_t esz = (ps->bound_kind == BOUND_SIZE) ? 1 : (ps->elem_size ? ps->elem_size : 1);
-                            size_t orig_elems = orig_blen / esz;
-                            size_t new_elems = new_blen / esz;
-                            if (orig_elems == 0) orig_elems = 1;
-                            for (size_t ei = 0; ei < new_elems; ei++) {
-                                for (size_t b = 0; b < esz; b++) {
-                                    uint8_t sb = orig_ptr[(ei % orig_elems) * esz + b];
-                                    if (sc_mode == 0) {
-                                        buf[ei * esz + b] = (uint8_t)((sb + (ei * 2 + 1) * (b + 1)) & 0xff);
-                                    } else if (sc_mode == 1) {
-                                        buf[ei * esz + b] = sb;
-                                    } else {
-                                        buf[ei * esz + b] = (uint8_t)(sb ^ 0xaa ^ (ei & 0xff));
+                            if (param_is_flex) {
+                                *(uint32_t *)buf = (uint32_t)(new_blen - 4);
+                                size_t orig_pay = orig_blen - 4;
+                                size_t new_pay = new_blen - 4;
+                                for (size_t bi = 0; bi < new_pay; bi++) {
+                                    uint8_t sb = orig_pay ? orig_ptr[4 + (bi % orig_pay)] : (uint8_t)(bi & 0xff);
+                                    buf[4 + bi] = (sc_mode == 0) ? (uint8_t)((sb + bi * 31U) & 0xff) : sb;
+                                }
+                            } else {
+                                size_t esz = (ps->bound_kind == BOUND_SIZE) ? 1 : (ps->elem_size ? ps->elem_size : 1);
+                                size_t orig_elems = orig_blen / esz;
+                                size_t new_elems = new_blen / esz;
+                                if (orig_elems == 0) orig_elems = 1;
+                                for (size_t ei = 0; ei < new_elems; ei++) {
+                                    for (size_t b = 0; b < esz; b++) {
+                                        uint8_t sb = orig_ptr[(ei % orig_elems) * esz + b];
+                                        if (sc_mode == 0) {
+                                            buf[ei * esz + b] = (uint8_t)((sb + (ei * 2 + 1) * (b + 1)) & 0xff);
+                                        } else if (sc_mode == 1) {
+                                            buf[ei * esz + b] = sb;
+                                        } else {
+                                            buf[ei * esz + b] = (uint8_t)(sb ^ 0xaa ^ (ei & 0xff));
+                                        }
                                     }
                                 }
                             }

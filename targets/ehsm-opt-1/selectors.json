@@ -1,0 +1,38 @@
+{
+  "schema": "atfield-selectors-v1",
+  "selectors": [
+    {
+      "ecall_index": 0,
+      "name": "enclave_get_domain_key_from_local",
+      "reachable_functions": []
+    },
+    {
+      "ecall_index": 1,
+      "name": "enclave_create_key",
+      "reachable_functions": [
+        "_Z19ehsm_create_aes_keyP14ehsm_keyblob_t"
+      ]
+    },
+    {
+      "ecall_index": 2,
+      "name": "enclave_encrypt",
+      "reachable_functions": [
+        "_Z20ehsm_aes_gcm_encryptP11ehsm_data_tP14ehsm_keyblob_tS0_S0_"
+      ]
+    },
+    {
+      "ecall_index": 3,
+      "name": "enclave_decrypt",
+      "reachable_functions": [
+        "_Z20ehsm_aes_gcm_decryptP11ehsm_data_tP14ehsm_keyblob_tS0_S0_"
+      ]
+    },
+    {
+      "ecall_index": 4,
+      "name": "enclave_generate_datakey",
+      "reachable_functions": [
+        "_ZL21ehsm_generate_datakeyP14ehsm_keyblob_tP11ehsm_data_tS2_S2_"
+      ]
+    }
+  ]
+}

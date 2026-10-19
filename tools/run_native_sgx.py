@@ -13,7 +13,7 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, "/home/meandssh/islands-sgx/dynamic/tools")
-from elf_workset import ElfFile  # noqa: E402
+from elf_workset import ElfFile, parse_signed_metadata, signer_regions  # noqa: E402
 
 DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
 SAMPLE_ROOT = Path("/home/meandssh/islands-sgx/sample")
@@ -31,7 +31,7 @@ def sha256_file(p: Path) -> str:
     return hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else ""
 
 
-def make_layout_spec(sample: str) -> str:
+def make_layout_spec(sample: str, encl_path: Path | None = None) -> str:
     tdir = DYN_ROOT / "targets" / sample
     layout = json.loads((tdir / "signer_layout.json").read_text())
     elf = ElfFile(tdir / "enclave.profile.so")
@@ -39,10 +39,19 @@ def make_layout_spec(sample: str) -> str:
     gm_rva = syms.get("_gm_", syms.get("gm_", 0))
     active_rva = syms.get("__atfield_active", 0)
 
+    inc_regions = [r for r in layout["regions"] if r.get("kind") == "signer"]
+    excl_regions = layout["excluded_regions"]
+    if encl_path is not None and encl_path.is_file():
+        try:
+            meta = parse_signed_metadata(ElfFile(encl_path))
+            inc_regions, excl_regions = signer_regions(meta)
+        except Exception:
+            pass
+
     tcs_rva = 0
     ssa_rva = 0
     excl = []
-    for r in layout["excluded_regions"]:
+    for r in excl_regions:
         if r["name"] == "TCS":
             tcs_rva = r["start_rva"]
         elif r["name"] == "SSA":
@@ -50,8 +59,8 @@ def make_layout_spec(sample: str) -> str:
         excl.append(f"{r['start_rva']:x}:{r['end_rva']:x}")
 
     stack_lo = stack_hi = 0
-    for r in layout["regions"]:
-        if r.get("kind") == "signer" and r.get("name", "").startswith("STACK"):
+    for r in inc_regions:
+        if r.get("name", "").startswith("STACK"):
             stack_lo, stack_hi = r["start_rva"], r["end_rva"]
 
     p_start = layout["pretouch_start"]
@@ -141,7 +150,7 @@ def run_sample(
     tdir = DYN_ROOT / "targets" / sample
     host_bin = SAMPLE_ROOT / "build" / "real" / sample / "anchor" / "host"
     encl, use_4gate = resolve_enclave_path(tdir, mode)
-    spec = make_layout_spec(sample)
+    spec = make_layout_spec(sample, encl)
     schema_spec = make_schema_spec(sample)
     if strict_ready_file and not strict_mode:
         strict_mode = "ecall"
@@ -188,7 +197,10 @@ def run_sample(
             f"ATFIELD_STRICT_MODE={strict_mode}",
             f"ATFIELD_DUMP_DIR={dump_dir}",
         ]
-        if ready_bin and ready_bin.is_file() and is_pure_prod:
+        if ready_bin is not None and is_pure_prod:
+            if not ready_bin.is_file():
+                raise FileNotFoundError(f"Required ReadyTable missing for protected mode {mode}: {ready_bin}")
+            env_args.append("ATFIELD_REQUIRE_READINESS=1")
             env_args.append(f"ATFIELD_READY_TABLE={ready_bin}")
         if is_pure_prod:
             cmd = [

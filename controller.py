@@ -26,9 +26,12 @@ from elf_workset import (  # noqa: E402
     write_json,
 )
 from generic_explorer import (  # noqa: E402
+    AUDIT_OF_LEGACY_HEURISTICS,
     build_scale_bound_v2_spec,
+    evaluate_challenge_suite,
     generate_schema_mutations_for_ecall,
     get_scalable_bound_offsets,
+    round_robin_schedule_interventions,
 )
 from run_native_sgx import INTERPOSE_SO, run_sample, sha256_file  # noqa: E402
 
@@ -435,23 +438,31 @@ def explore_and_close_sample(sample: str) -> dict:
     )
     ingest_run(p0, res0, is_baseline_host=True, is_seed_isolated=False)
 
-    # Step B: Layer 2 Closed-Loop Feedback Scale Expansion (per scalable ECALL, isolated at first call selector_seq=0)
+    # Identify from the L1 seed trace the first selector_seq of each ECALL that actually enters a Field
     ecalls_by_idx = {e["ecall_index"]: e for e in edl_schema["ecalls"]}
     field_selectors = [s["ecall_index"] for s in selectors if s["reachable_fields"]]
     non_field_selectors = [s["ecall_index"] for s in selectors if not s["reachable_fields"]]
 
+    first_field_sseq_by_ecall = {}
+    for rec in res0["records"]:
+        if rec["fields"] and rec["ecall_index"] not in first_field_sseq_by_ecall:
+            first_field_sseq_by_ecall[rec["ecall_index"]] = rec["selector_seq"]
+
+    # Step B: Layer 2 Closed-Loop Feedback Scale Expansion (on executable prefix + first Field-entering sseq)
     for idx in field_selectors:
         ec = ecalls_by_idx.get(idx)
         if not ec or get_scalable_bound_offsets(ec) is None:
             continue
+        target_sseq = first_field_sseq_by_ecall.get(idx, 0)
         scale = 64
         seen_scale_effects: set[tuple[int, str]] = set()
         max_heap_span = 0
         stagnant_rounds = 0
+        consecutive_rejections = 0
         while scale <= 262144:
             q_scale = min(scale, 1024)
             specs = [
-                build_scale_bound_v2_spec(ec, scale, q_scale, mode=m, selector_seq=0)
+                build_scale_bound_v2_spec(ec, scale, q_scale, mode=m, selector_seq=target_sseq)
                 for m in ((0, 1, 2) if scale <= 4096 else (0,))
             ]
             spec_str = ";".join(s for s in specs if s)
@@ -460,20 +471,19 @@ def explore_and_close_sample(sample: str) -> dict:
                 "layer": "layer2_generic_schema",
                 "subkind": "feedback_scale_expansion",
                 "intervention": spec_str,
-                "desc": f"Closed-loop feedback scale step n={scale} on {ec['name']} (stop_after_selector={idx}:0)",
+                "desc": f"Closed-loop feedback scale step n={scale} on {ec['name']} (stop_after_selector={idx}:{target_sseq})",
             }
             res_sc = run_sample(
                 sample,
                 mode="profile_4gate",
                 ipi_mask=7,
                 intervention=spec_str,
-                stop_after_selector=f"{idx}:0",
+                stop_after_selector=f"{idx}:{target_sseq}",
                 allow_fast_forward=0,
                 persist_prefix=raw_trace_dir / plan["run_id"],
             )
             ingest_run(plan, res_sc, is_baseline_host=False, is_seed_isolated=True)
 
-            # Evaluate feedback from this scale step
             step_effs: set[tuple[int, str]] = set()
             step_heap_span = 0
             any_valid_return = False
@@ -498,18 +508,30 @@ def explore_and_close_sample(sample: str) -> dict:
                 max_heap_span = step_heap_span
 
             if not any_valid_return:
+                consecutive_rejections += 1
+                decision = "stop_enclave_rejected_scale" if (consecutive_rejections >= 2 or scale >= 262144) else "continue_past_rejected_scale"
                 feedback_trace.append({
                     "ecall_index": idx, "scale": scale, "valid_return": False,
                     "new_effects": new_sc_effs, "heap_span": step_heap_span,
-                    "decision": "stop_enclave_rejected_scale",
+                    "decision": decision,
                 })
-                break
+                if decision == "stop_enclave_rejected_scale":
+                    break
+                scale *= 4
+                continue
+
+            consecutive_rejections = 0
             if new_sc_effs == 0 and not heap_grew:
                 stagnant_rounds += 1
             else:
                 stagnant_rounds = 0
 
-            decision = "expand_4x" if (stagnant_rounds < 2 and scale < 262144) else "stop_converged"
+            if stagnant_rounds >= 2:
+                decision = "stop_stagnant_2_rounds"
+            elif scale >= 262144:
+                decision = "stop_budget_cap_reached"
+            else:
+                decision = "expand_4x"
             feedback_trace.append({
                 "ecall_index": idx, "scale": scale, "valid_return": True,
                 "new_effects": new_sc_effs, "heap_span": step_heap_span,
@@ -519,19 +541,15 @@ def explore_and_close_sample(sample: str) -> dict:
                 break
             scale *= 4
 
-    # Step C: Layer 2 Isolated Single-Mutation Replay per Field-bearing ECALL (zero sample/index heuristics)
-    # Determine from baseline trace which selector_seq (0 or 1) first enters a Field for each ECALL
-    first_field_sseq_by_ecall = {}
-    for rec in res0["records"]:
-        if rec["fields"] and rec["ecall_index"] not in first_field_sseq_by_ecall:
-            first_field_sseq_by_ecall[rec["ecall_index"]] = rec["selector_seq"]
-
+    # Step C: Layer 2 Round-Robin Structured & Joint Mutation Replay per Field-bearing ECALL
     for idx in field_selectors:
         ec = ecalls_by_idx.get(idx)
         if not ec:
             continue
         target_sseq = first_field_sseq_by_ecall.get(idx, 0)
-        muts = generate_schema_mutations_for_ecall(ec, selector_seq=target_sseq)
+        muts = round_robin_schedule_interventions(
+            generate_schema_mutations_for_ecall(ec, selector_seq=target_sseq, strategy="S3")
+        )
         for m_i, m in enumerate(muts):
             plan = {
                 "run_id": f"layer2_isolated_mut_ecall{idx}_s{target_sseq}_m{m_i}_{m['tag']}",
@@ -539,7 +557,7 @@ def explore_and_close_sample(sample: str) -> dict:
                 "subkind": "isolated_single_mutation_replay",
                 "intervention": m["spec"],
                 "allow_nonzero_rc": False,
-                "desc": f"Isolated fresh-enclave single mutation replay: {m['desc']} at sseq={target_sseq}",
+                "desc": f"Round-robin structured mutation ({m.get('family', 'content')}): {m['desc']} at sseq={target_sseq}",
             }
             res_m = run_sample(
                 sample,
@@ -552,55 +570,55 @@ def explore_and_close_sample(sample: str) -> dict:
             )
             ingest_run(plan, res_m, is_baseline_host=False, is_seed_isolated=True)
 
-    # Step D: Layer 2 Typed Cold-Enclave State Replay (typed_state_probe, zero msync guessing)
+    # Step D: Layer 2 Prefix-State Cold Enclave Replay (captures first Field-entering sseq, replays after init prefix)
     if 0 in non_field_selectors and len(field_selectors) > 1:
         for idx in field_selectors:
             ec = ecalls_by_idx.get(idx)
             if not ec or not ec.get("replay_supported", True):
                 continue
-            for cap_seq in (0, 1):
-                plan = {
-                    "run_id": f"layer2_cold_state_replay_ecall{idx}_cap{cap_seq}",
-                    "layer": "layer2_generic_schema",
-                    "subkind": "cold_enclave_state_replay",
-                    "intervention": f"typed_state_probe:{idx}:{cap_seq}:0:1",
-                    "allow_nonzero_rc": False,
-                    "desc": f"Schema-typed cold enclave state replay of {ec['name']} (cap_seq={cap_seq} -> after ecall 0 sseq=1)",
-                }
-                res_sr = run_sample(
-                    sample,
-                    mode="profile_4gate",
-                    ipi_mask=7,
-                    intervention=plan["intervention"],
-                    allow_fast_forward=0,
-                    persist_prefix=raw_trace_dir / plan["run_id"],
-                )
-                ingest_run(plan, res_sr, is_baseline_host=False, is_seed_isolated=True)
+            cap_seq = first_field_sseq_by_ecall.get(idx, 0)
+            plan = {
+                "run_id": f"layer2_cold_state_replay_ecall{idx}_cap{cap_seq}",
+                "layer": "layer2_generic_schema",
+                "subkind": "cold_enclave_state_replay",
+                "intervention": f"typed_state_probe:{idx}:{cap_seq}:0:1",
+                "allow_nonzero_rc": False,
+                "desc": f"Schema-typed cold enclave state replay of {ec['name']} (cap_seq={cap_seq} -> after ecall 0 sseq=1)",
+            }
+            res_sr = run_sample(
+                sample,
+                mode="profile_4gate",
+                ipi_mask=7,
+                intervention=plan["intervention"],
+                allow_fast_forward=0,
+                persist_prefix=raw_trace_dir / plan["run_id"],
+            )
+            ingest_run(plan, res_sr, is_baseline_host=False, is_seed_isolated=True)
 
-    # Step E: Layer 2 Doubling History Depth Scan (16 -> 64 -> 256 -> 1024 full calls, 0 skipped, isolated via stop_after_selector)
+    # Step E: Layer 2 Quadrupling History Depth Scan (16 -> 64 -> 256 -> 1024 full calls, 0 skipped, isolated via stop_after_selector)
     if field_selectors:
         last_idx = field_selectors[-1]
         ec = ecalls_by_idx[last_idx]
+        target_sseq = first_field_sseq_by_ecall.get(last_idx, 0)
         for depth in (16, 64, 256, 1024):
             plan = {
-                "run_id": f"layer2_doubling_history_n{depth}_ecall{last_idx}",
+                "run_id": f"layer2_quadrupling_history_n{depth}_ecall{last_idx}",
                 "layer": "layer2_generic_schema",
-                "subkind": "doubling_history_scan",
-                "intervention": f"repeat:{last_idx}:0:{depth}",
+                "subkind": "quadrupling_history_scan",
+                "intervention": f"repeat:{last_idx}:{target_sseq}:{depth}",
                 "allow_nonzero_rc": False,
-                "desc": f"Doubling history scan (depth={depth}, 0 skipped) on {ec['name']}",
+                "desc": f"Quadrupling history scan (4x progression, depth={depth}, 0 skipped) on {ec['name']}",
             }
             res_h = run_sample(
                 sample,
                 mode="profile_4gate",
                 ipi_mask=4,
                 intervention=plan["intervention"],
-                stop_after_selector=f"{last_idx}:0",
+                stop_after_selector=f"{last_idx}:{target_sseq}",
                 allow_fast_forward=0,
                 persist_prefix=raw_trace_dir / plan["run_id"],
             )
             ingest_run(plan, res_h, is_baseline_host=False, is_seed_isolated=True)
-            # Check if tsc_s3 max jumped > 2.5x over median (regime transition detected!)
             tscs = [f["tsc_s3"] for r in res_h["records"] for f in r["fields"] if r["tag"].startswith("generic_repeat_")]
             if tscs:
                 med_tsc = sorted(tscs)[len(tscs) // 2]
@@ -698,16 +716,16 @@ def explore_and_close_sample(sample: str) -> dict:
                     p_set.add(p)
                     heap_added.add(p)
         for clo, chi in set(dyn_chunks[fid]):
-            span = range(align_down(max(0, clo - 16)), align_up(chi + 16), PAGE)
-            if any(p in p_set for p in span):
+            span = list(range(align_down(max(0, clo - 16)), align_up(chi + 16), PAGE))
+            if len(span) <= 4 and any(p in obs_pages for p in span):
                 for p in span:
                     if p in committed_map and p not in p_set:
                         p_set.add(p)
                         heap_added.add(p)
-        touched_heap = [p for p in p_set if p in heap_pages]
+        touched_heap = [p for p in obs_pages if p in heap_pages]
         if touched_heap:
-            min_hp, max_hp = min(touched_heap), max(touched_heap)
-            for p in range(min_hp, min(max_hp + 3 * PAGE, max(heap_pages) + PAGE), PAGE):
+            max_hp = max(touched_heap)
+            for p in range(max(min(heap_pages), max_hp - PAGE), min(max_hp + 3 * PAGE, max(heap_pages) + PAGE), PAGE):
                 if p in committed_map and p not in p_set:
                     p_set.add(p)
                     heap_added.add(p)
@@ -874,7 +892,9 @@ def explore_and_close_sample(sample: str) -> dict:
 
 
 def main() -> None:
-    samples = sys.argv[1:] or ["qe3", "signal-cds", "sgxwallet", "ehsm"]
+    samples = sys.argv[1:] or ["qe3", "signal-cds", "sgxwallet", "ehsm", "ehsm-opt-1", "ehsm-opt-2"]
+    challenge_res = evaluate_challenge_suite(budget_per_case=16)
+    write_json(DYN_ROOT / "experiments" / "strategy_comparison.json", challenge_res)
     for s in samples:
         print(f"=== Exploring & building Group B/C variants for {s} ===", flush=True)
         res = explore_and_close_sample(s)
