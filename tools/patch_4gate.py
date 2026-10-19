@@ -15,8 +15,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-sys.path.insert(0, "/home/meandssh/islands-sgx/dynamic/vendor/implement/build/workset")
-from workset import PAGE, ElfFile, locate_pretouch_segment, normalized_fields, write_json  # noqa: E402
+sys.path.insert(0, "/home/meandssh/islands-sgx/dynamic/tools")
+from elf_workset import PAGE, ElfFile, locate_pretouch_segment, normalized_fields, write_json  # noqa: E402
 
 GATE_SHARED_VA = 0x700000000000
 SCRATCH_RAX_VA = 0x700000000100
@@ -333,7 +333,7 @@ def main() -> None:
     summary = patch_elf_4gate(
         args.input_elf, args.fields, args.capacity_q, args.out_elf, args.out_json
     )
-    sgx_sign = "/nix/store/2acwmnfcsz668csnyxn77brmllp7kx6s-sgx-sdk-2.29.100.1/bin/x64/sgx_sign"
+    sgx_sign = "/nix/store/w9361i2a8728720ll02ypv9nbbfzw5pj-sgx-sdk-2.29.100.1/bin/x64/sgx_sign"
     subprocess.run(
         [
             sgx_sign, "sign",

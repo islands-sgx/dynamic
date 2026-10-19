@@ -10152,10 +10152,12 @@
   ],
   "capacity_q": 16384,
   "code_bytes": 9060,
+  "fields_sha256": "804aecd814d5cb89fa5114e1e16f3cf05b2719036f9d85a261586b4d64e2f17a",
   "final_elf": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/enclave.all_reg.final.so",
   "final_elf_sha256": "bee0720aa281d0ceded93cc769e7622dcc3c9342300168b2149374a4b23c3342",
   "post_start": 155648,
   "schema": "atfield-pretouch-final-v1",
   "signed_final_elf": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/enclave.all_reg.final.signed.so",
-  "signed_final_elf_sha256": "8399743361761829b7a4a41d7dc95d32384c3c302f81ca66f0fd3a7818f199e8"
+  "signed_final_elf_sha256": "8399743361761829b7a4a41d7dc95d32384c3c302f81ca66f0fd3a7818f199e8",
+  "workset_sha256": "48a4a7c849a88691c01330ac16eeb703f46a150ab400ed94fa68aaee36ade7b1"
 }

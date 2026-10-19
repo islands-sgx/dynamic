@@ -83455,10 +83455,12 @@
   ],
   "capacity_q": 94208,
   "code_bytes": 84112,
+  "fields_sha256": "cef6fb59401336d50c6697a2b70fa3609cbbd196bdea4d6eab515aeeefba0811",
   "final_elf": "/home/meandssh/islands-sgx/dynamic/targets/ehsm/enclave.all_reg.final.so",
-  "final_elf_sha256": "3312f2ee383ef9cbb7cc0ba52f89e9c5e00813816e23845cb6ac2a853a98eb49",
+  "final_elf_sha256": "c15cf6cd9da98aa9ec8ccd6557bb0b024c9cdb049414c481fdc1ba0d56f69ba6",
   "post_start": 5169152,
   "profile_elf": "/home/meandssh/islands-sgx/dynamic/targets/ehsm/enclave.profile.so",
-  "profile_elf_sha256": "ede6eb635d897e5733691263e6bb82e4b6ea7740cb983d4a95d6c96843a8b96d",
-  "schema": "atfield-pretouch-finalized-v1"
+  "profile_elf_sha256": "6eaeff0d582965535bd721562d86137911382f7c1baab8af5a3b680c048a0627",
+  "schema": "atfield-pretouch-finalized-v1",
+  "workset_sha256": "ddd63e8f010b9ff06112b19c3a63f27df91aa8d7d09c4566cd238d3158db4717"
 }

@@ -1,6 +1,8 @@
 {
   "edl_manifest": "/home/meandssh/islands-sgx/sample/real/qe3/qe3_enclave.edl",
+  "edl_manifest_sha256": "871c472dcf03d076893e9f71cc9c183d3b18f506dac2d067ad1d15fe1e2a2404",
   "field_manifest": "/home/meandssh/islands-sgx/dynamic/targets/qe3/fields.json",
+  "field_manifest_sha256": "748095038f69f343aaf712dd9c5cba063ea0d01286b21684fc3a78156f67fe8d",
   "fields": [
     {
       "function": "_ZL31get_att_key_based_from_seal_keyP20_sgx_ec256_private_tP19_sgx_ec256_public_tPK13_sgx_key_id_t",
@@ -12,6 +14,7 @@
       ],
       "pages": [
         {
+          "active_permissions": 1,
           "data_anchor_rva": 0,
           "data_width": 1,
           "effects": [
@@ -25,6 +28,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 4096,
           "data_width": 1,
           "effects": [
@@ -38,6 +42,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 8192,
           "data_width": 1,
           "effects": [
@@ -51,6 +56,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 12288,
           "data_width": 1,
           "effects": [
@@ -64,6 +70,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 16384,
           "data_width": 1,
           "effects": [
@@ -77,6 +84,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 20480,
           "data_width": 1,
           "effects": [
@@ -90,6 +98,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 24576,
           "data_width": 1,
           "effects": [
@@ -103,6 +112,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 28672,
           "data_width": 1,
           "effects": [
@@ -116,6 +126,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 32768,
           "data_width": 1,
           "effects": [
@@ -129,6 +140,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 36864,
           "data_width": 1,
           "effects": [
@@ -142,6 +154,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 40960,
           "data_width": 1,
           "effects": [
@@ -155,6 +168,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 45056,
           "data_width": 1,
           "effects": [
@@ -168,6 +182,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 49152,
           "data_width": 1,
           "effects": [
@@ -181,6 +196,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 53248,
           "data_width": 1,
           "effects": [
@@ -194,6 +210,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 57344,
           "data_width": 1,
           "effects": [
@@ -207,6 +224,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 61440,
           "data_width": 1,
           "effects": [
@@ -220,6 +238,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 65536,
           "data_width": 1,
           "effects": [
@@ -233,6 +252,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 69632,
           "data_width": 1,
           "effects": [
@@ -246,6 +266,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 73728,
           "data_width": 1,
           "effects": [
@@ -259,6 +280,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 77824,
           "data_width": 1,
           "effects": [
@@ -272,6 +294,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 81920,
           "data_width": 1,
           "effects": [
@@ -285,6 +308,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 86016,
           "data_width": 1,
           "effects": [
@@ -298,6 +322,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 90112,
           "data_width": 1,
           "effects": [
@@ -311,6 +336,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 94208,
           "data_width": 1,
           "effects": [
@@ -324,6 +350,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 98304,
           "data_width": 1,
           "effects": [
@@ -337,6 +364,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 102400,
           "data_width": 1,
           "effects": [
@@ -350,6 +378,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 106496,
           "data_width": 1,
           "effects": [
@@ -363,6 +392,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 110592,
           "data_width": 1,
           "effects": [
@@ -376,6 +406,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 114688,
           "data_width": 1,
           "effects": [
@@ -389,6 +420,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 118784,
           "data_width": 1,
           "effects": [
@@ -402,6 +434,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 122880,
           "data_width": 1,
           "effects": [
@@ -415,6 +448,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 126976,
           "data_width": 1,
           "effects": [
@@ -428,6 +462,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 131072,
           "data_width": 1,
           "effects": [
@@ -441,6 +476,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 135168,
           "data_width": 1,
           "effects": [
@@ -454,6 +490,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 139264,
           "data_width": 1,
           "effects": [
@@ -467,6 +504,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 143360,
           "data_width": 1,
           "effects": [
@@ -480,6 +518,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 147456,
           "data_width": 1,
           "effects": [
@@ -493,6 +532,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 151552,
           "data_width": 1,
           "effects": [
@@ -506,6 +546,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 155648,
           "data_width": 1,
           "effects": [
@@ -519,6 +560,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 159744,
           "data_width": 1,
           "effects": [
@@ -532,6 +574,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 163840,
           "data_width": 1,
           "effects": [
@@ -545,6 +588,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 167936,
           "data_width": 1,
           "effects": [
@@ -558,6 +602,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 172032,
           "data_width": 1,
           "effects": [
@@ -571,6 +616,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 176128,
           "data_width": 1,
           "effects": [
@@ -584,6 +630,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 180224,
           "data_width": 1,
           "effects": [
@@ -597,6 +644,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 184320,
           "data_width": 1,
           "effects": [
@@ -610,6 +658,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 188416,
           "data_width": 1,
           "effects": [
@@ -623,6 +672,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 192512,
           "data_width": 1,
           "effects": [
@@ -636,6 +686,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 196608,
           "data_width": 1,
           "effects": [
@@ -649,6 +700,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 200704,
           "data_width": 1,
           "effects": [
@@ -662,6 +714,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 204800,
           "data_width": 1,
           "effects": [
@@ -675,6 +728,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 208896,
           "data_width": 1,
           "effects": [
@@ -688,6 +742,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 212992,
           "data_width": 1,
           "effects": [
@@ -701,6 +756,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 217088,
           "data_width": 1,
           "effects": [
@@ -714,6 +770,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 221184,
           "data_width": 1,
           "effects": [
@@ -727,6 +784,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 225280,
           "data_width": 1,
           "effects": [
@@ -740,6 +798,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 229376,
           "data_width": 1,
           "effects": [
@@ -753,6 +812,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 233472,
           "data_width": 1,
           "effects": [
@@ -766,6 +826,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 237568,
           "data_width": 1,
           "effects": [
@@ -779,6 +840,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 241664,
           "data_width": 1,
           "effects": [
@@ -792,6 +854,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 245760,
           "data_width": 1,
           "effects": [
@@ -805,6 +868,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 249856,
           "data_width": 1,
           "effects": [
@@ -818,6 +882,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 253952,
           "data_width": 1,
           "effects": [
@@ -831,6 +896,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 258048,
           "data_width": 1,
           "effects": [
@@ -844,6 +910,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 262144,
           "data_width": 1,
           "effects": [
@@ -857,6 +924,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 266240,
           "data_width": 1,
           "effects": [
@@ -870,6 +938,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 270336,
           "data_width": 1,
           "effects": [
@@ -883,6 +952,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 274432,
           "data_width": 1,
           "effects": [
@@ -896,6 +966,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 278528,
           "data_width": 1,
           "effects": [
@@ -909,6 +980,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 282624,
           "data_width": 1,
           "effects": [
@@ -922,6 +994,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 286720,
           "data_width": 1,
           "effects": [
@@ -935,6 +1008,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 290816,
           "data_width": 1,
           "effects": [
@@ -948,6 +1022,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 294912,
           "data_width": 1,
           "effects": [
@@ -961,6 +1036,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 299008,
           "data_width": 1,
           "effects": [
@@ -974,6 +1050,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 303104,
           "data_width": 1,
           "effects": [
@@ -987,6 +1064,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 307200,
           "data_width": 1,
           "effects": [
@@ -1000,6 +1078,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 311296,
           "data_width": 1,
           "effects": [
@@ -1013,6 +1092,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 315392,
           "data_width": 1,
           "effects": [
@@ -1026,6 +1106,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 319488,
           "data_width": 1,
           "effects": [
@@ -1039,6 +1120,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 323584,
           "data_width": 1,
           "effects": [
@@ -1052,6 +1134,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 327680,
           "data_width": 1,
           "effects": [
@@ -1065,6 +1148,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 331776,
           "data_width": 1,
           "effects": [
@@ -1078,6 +1162,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 335872,
           "data_width": 1,
           "effects": [
@@ -1091,6 +1176,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 339968,
           "data_width": 1,
           "effects": [
@@ -1104,6 +1190,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 344064,
           "data_width": 1,
           "effects": [
@@ -1117,6 +1204,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 348160,
           "data_width": 1,
           "effects": [
@@ -1130,6 +1218,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 352256,
           "data_width": 1,
           "effects": [
@@ -1143,6 +1232,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 356352,
           "data_width": 1,
           "effects": [
@@ -1156,6 +1246,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 360448,
           "data_width": 1,
           "effects": [
@@ -1169,6 +1260,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 364544,
           "data_width": 1,
           "effects": [
@@ -1182,6 +1274,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 368640,
           "data_width": 1,
           "effects": [
@@ -1195,6 +1288,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 372736,
           "data_width": 1,
           "effects": [
@@ -1208,6 +1302,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 376832,
           "data_width": 1,
           "effects": [
@@ -1221,6 +1316,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 380928,
           "data_width": 1,
           "effects": [
@@ -1234,6 +1330,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 385024,
           "data_width": 1,
           "effects": [
@@ -1247,6 +1344,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 389120,
           "data_width": 1,
           "effects": [
@@ -1260,6 +1358,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 393216,
           "data_width": 1,
           "effects": [
@@ -1273,6 +1372,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 397312,
           "data_width": 1,
           "effects": [
@@ -1286,6 +1386,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 401408,
           "data_width": 1,
           "effects": [
@@ -1299,6 +1400,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 405504,
           "data_width": 1,
           "effects": [
@@ -1312,6 +1414,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 409600,
           "data_width": 1,
           "effects": [
@@ -1325,6 +1428,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 413696,
           "data_width": 1,
           "effects": [
@@ -1338,6 +1442,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 417792,
           "data_width": 1,
           "effects": [
@@ -1351,6 +1456,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 421888,
           "data_width": 1,
           "effects": [
@@ -1364,6 +1470,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 425984,
           "data_width": 1,
           "effects": [
@@ -1377,6 +1484,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 430080,
           "data_width": 1,
           "effects": [
@@ -1390,6 +1498,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 434176,
           "data_width": 1,
           "effects": [
@@ -1403,6 +1512,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 438272,
           "data_width": 1,
           "effects": [
@@ -1416,6 +1526,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 442368,
           "data_width": 1,
           "effects": [
@@ -1429,6 +1540,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 446464,
           "data_width": 1,
           "effects": [
@@ -1442,6 +1554,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 450560,
           "data_width": 1,
           "effects": [
@@ -1455,6 +1568,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 454656,
           "data_width": 1,
           "effects": [
@@ -1468,6 +1582,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 458752,
           "data_width": 1,
           "effects": [
@@ -1481,6 +1596,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 462848,
           "data_width": 1,
           "effects": [
@@ -1494,6 +1610,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 466944,
           "data_width": 1,
           "effects": [
@@ -1507,6 +1624,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 471040,
           "data_width": 1,
           "effects": [
@@ -1520,6 +1638,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 475136,
           "data_width": 1,
           "effects": [
@@ -1533,6 +1652,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 479232,
           "data_width": 1,
           "effects": [
@@ -1546,6 +1666,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 483328,
           "data_width": 1,
           "effects": [
@@ -1559,6 +1680,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 487424,
           "data_width": 1,
           "effects": [
@@ -1572,6 +1694,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 491520,
           "data_width": 1,
           "effects": [
@@ -1585,6 +1708,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 495616,
           "data_width": 1,
           "effects": [
@@ -1598,6 +1722,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 499712,
           "data_width": 1,
           "effects": [
@@ -1611,6 +1736,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 503808,
           "data_width": 1,
           "effects": [
@@ -1624,6 +1750,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 507904,
           "data_width": 1,
           "effects": [
@@ -1637,6 +1764,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 512000,
           "data_width": 1,
           "effects": [
@@ -1650,6 +1778,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 516096,
           "data_width": 1,
           "effects": [
@@ -1663,6 +1792,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 520192,
           "data_width": 1,
           "effects": [
@@ -1676,6 +1806,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 524288,
           "data_width": 1,
           "effects": [
@@ -1689,6 +1820,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 528384,
           "data_width": 1,
           "effects": [
@@ -1702,6 +1834,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 532480,
           "data_width": 1,
           "effects": [
@@ -1715,6 +1848,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 536576,
           "data_width": 1,
           "effects": [
@@ -1728,6 +1862,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 540672,
           "data_width": 1,
           "effects": [
@@ -1741,6 +1876,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 544768,
           "data_width": 1,
           "effects": [
@@ -1754,6 +1890,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 548864,
           "data_width": 1,
           "effects": [
@@ -1767,6 +1904,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 552960,
           "data_width": 1,
           "effects": [
@@ -1780,6 +1918,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 557056,
           "data_width": 1,
           "effects": [
@@ -1793,6 +1932,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 561152,
           "data_width": 1,
           "effects": [
@@ -1806,6 +1946,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 565248,
           "data_width": 1,
           "effects": [
@@ -1819,6 +1960,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 569344,
           "data_width": 1,
           "effects": [
@@ -1832,6 +1974,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 573440,
           "data_width": 1,
           "effects": [
@@ -1845,6 +1988,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 577536,
           "data_width": 1,
           "effects": [
@@ -1858,6 +2002,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 581632,
           "data_width": 1,
           "effects": [
@@ -1871,6 +2016,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 585728,
           "data_width": 1,
           "effects": [
@@ -1884,6 +2030,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 589824,
           "data_width": 1,
           "effects": [
@@ -1897,6 +2044,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 593920,
           "data_width": 1,
           "effects": [
@@ -1910,6 +2058,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 598016,
           "data_width": 1,
           "effects": [
@@ -1923,6 +2072,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 602112,
           "data_width": 1,
           "effects": [
@@ -1936,6 +2086,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 606208,
           "data_width": 1,
           "effects": [
@@ -1949,6 +2100,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 610304,
           "data_width": 1,
           "effects": [
@@ -1962,6 +2114,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 614400,
           "data_width": 1,
           "effects": [
@@ -1975,6 +2128,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 618496,
           "data_width": 1,
           "effects": [
@@ -1988,6 +2142,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 622592,
           "data_width": 1,
           "effects": [
@@ -2001,6 +2156,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 626688,
           "data_width": 1,
           "effects": [
@@ -2014,6 +2170,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 630784,
           "data_width": 1,
           "effects": [
@@ -2027,6 +2184,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 634880,
           "data_width": 1,
           "effects": [
@@ -2040,6 +2198,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 638976,
           "data_width": 1,
           "effects": [
@@ -2053,6 +2212,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 643072,
           "data_width": 1,
           "effects": [
@@ -2066,6 +2226,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 647168,
           "data_width": 1,
           "effects": [
@@ -2079,6 +2240,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 651264,
           "data_width": 1,
           "effects": [
@@ -2092,6 +2254,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 655360,
           "data_width": 1,
           "effects": [
@@ -2105,6 +2268,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 659456,
           "data_width": 1,
           "effects": [
@@ -2118,6 +2282,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 663552,
           "data_width": 1,
           "effects": [
@@ -2131,6 +2296,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 667648,
           "data_width": 1,
           "effects": [
@@ -2144,6 +2310,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 671744,
           "data_width": 1,
           "effects": [
@@ -2157,6 +2324,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 675840,
           "data_width": 1,
           "effects": [
@@ -2170,6 +2338,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 679936,
           "data_width": 1,
           "effects": [
@@ -2183,6 +2352,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 684032,
           "data_width": 1,
           "effects": [
@@ -2196,6 +2366,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 688128,
           "data_width": 1,
           "effects": [
@@ -2209,6 +2380,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 692224,
           "data_width": 1,
           "effects": [
@@ -2222,6 +2394,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 696320,
           "data_width": 1,
           "effects": [
@@ -2235,6 +2408,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 700416,
           "data_width": 1,
           "effects": [
@@ -2248,6 +2422,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 704512,
           "data_width": 1,
           "effects": [
@@ -2261,6 +2436,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 708608,
           "data_width": 1,
           "effects": [
@@ -2274,6 +2450,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 712704,
           "data_width": 1,
           "effects": [
@@ -2287,6 +2464,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 716800,
           "data_width": 1,
           "effects": [
@@ -2300,6 +2478,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 720896,
           "data_width": 1,
           "effects": [
@@ -2313,6 +2492,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 724992,
           "data_width": 1,
           "effects": [
@@ -2326,6 +2506,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 729088,
           "data_width": 1,
           "effects": [
@@ -2339,6 +2520,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 733184,
           "data_width": 1,
           "effects": [
@@ -2352,6 +2534,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 737280,
           "data_width": 1,
           "effects": [
@@ -2365,6 +2548,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 741376,
           "data_width": 1,
           "effects": [
@@ -2378,6 +2562,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 745472,
           "data_width": 1,
           "effects": [
@@ -2391,6 +2576,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 752065,
             "symbol": "__atf_n_89b35b4100362666_0_0"
@@ -2409,6 +2595,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 753728,
             "symbol": "__atf_n_2e5607ebad3132a6_1_1"
@@ -2427,6 +2614,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 757768,
             "symbol": "__atf_n_38dd01f6cb0c3ebc_1_0"
@@ -2445,6 +2633,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 762553,
             "symbol": "__atf_n_a4e9b15c8e4d0df6_0_0"
@@ -2463,6 +2652,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 766056,
             "symbol": "__atf_n_d8aa1e254f49aa2a_7_0"
@@ -2481,6 +2671,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 770144,
             "symbol": "__atf_n_bbd50a5239189205_4_0"
@@ -2499,6 +2690,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 774185,
             "symbol": "__atf_n_a4d2370179a5e9df_d_0"
@@ -2517,6 +2709,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 778490,
             "symbol": "__atf_n_a4d2370179a5e9df_1c_0"
@@ -2535,6 +2728,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 782622,
             "symbol": "__atf_n_2800505f4bbe6bf1_0_0"
@@ -2553,6 +2747,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 787591,
             "symbol": "__atf_n_b504425f1efea5fb_0_0"
@@ -2571,6 +2766,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 791873,
             "symbol": "__atf_n_b504425f1efea5fb_1_0"
@@ -2589,6 +2785,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 794740,
             "symbol": "__atf_n_b504425f1efea5fb_8_1"
@@ -2607,6 +2804,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 798760,
             "symbol": "__atf_n_2697149dc8b63ccf_0_0"
@@ -2625,6 +2823,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 803187,
             "symbol": "__atf_n_877ea4acf52825f6_0_0"
@@ -2643,6 +2842,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 807002,
             "symbol": "__atf_n_b43255e597a2694d_0_0"
@@ -2661,6 +2861,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 811537,
             "symbol": "__atf_n_3a1c45eade311a80_2_0"
@@ -2679,6 +2880,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 815396,
             "symbol": "__atf_n_b232b79673df6c91_0_0"
@@ -2697,6 +2899,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 819395,
             "symbol": "__atf_n_b5aeffeedb9d11bb_0_0"
@@ -2715,6 +2918,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 823311,
             "symbol": "__atf_n_57b9a77ba178c612_2f_0"
@@ -2733,6 +2937,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 827450,
             "symbol": "__atf_n_1a52b96a56934b43_9_0"
@@ -2751,6 +2956,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 831886,
             "symbol": "__atf_n_ba61e8f1198e8e45_0_0"
@@ -2769,6 +2975,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 835758,
             "symbol": "__atf_n_224e75b027775c17_0_0"
@@ -2787,6 +2994,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 839750,
             "symbol": "__atf_n_a3ebbc2c7f4d467e_0_7"
@@ -2805,6 +3013,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 843936,
             "symbol": "__atf_n_a991436b7ac022d4_0_2"
@@ -2823,6 +3032,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 847927,
             "symbol": "__atf_n_67e7588fe746f406_0_1"
@@ -2841,6 +3051,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 852092,
             "symbol": "__atf_n_20b53d0f580fde00_0_0"
@@ -2859,6 +3070,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 856417,
             "symbol": "__atf_n_b8f5c56761fdedb8_0_0"
@@ -2877,6 +3089,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 860232,
             "symbol": "__atf_n_5b3312d7c6f0a238_0_0"
@@ -2895,6 +3108,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 864383,
             "symbol": "__atf_n_3724c100dbc0a370_0_0"
@@ -2913,6 +3127,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 868530,
             "symbol": "__atf_n_5afd4e6857be7686_0_0"
@@ -2931,6 +3146,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 872457,
             "symbol": "__atf_n_7d9aa485756bb830_0_0"
@@ -2949,6 +3165,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 876635,
             "symbol": "__atf_n_d9c6436c7e668d21_0_0"
@@ -2967,6 +3184,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 880642,
             "symbol": "__atf_n_e46cfa4eae310b45_0_1"
@@ -2985,6 +3203,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 884817,
             "symbol": "__atf_n_7ea6f81fd5c4aa5c_0_b"
@@ -3003,6 +3222,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 889152,
             "symbol": "__atf_n_fec5803b6edff272_0_0"
@@ -3021,6 +3241,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 892977,
             "symbol": "__atf_n_51f17dae390df247_0_0"
@@ -3039,6 +3260,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 897888,
             "symbol": "__atf_n_9e3359fdc2ce74a2_0_2f"
@@ -3057,6 +3279,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 901355,
             "symbol": "__atf_n_cd3eb3d7fe2d549c_0_0"
@@ -3075,6 +3298,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 905543,
             "symbol": "__atf_n_dbf872f537f8319e_0_2"
@@ -3093,6 +3317,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 909333,
             "symbol": "__atf_n_11436f223c1cce98_0_19"
@@ -3111,6 +3336,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 913656,
             "symbol": "__atf_n_97d26b223036fcf_0_0"
@@ -3129,6 +3355,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 917740,
             "symbol": "__atf_n_d0e3cf1c3468502d_0_1"
@@ -3147,6 +3374,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 921611,
             "symbol": "__atf_n_8000eb94414d9ca0_0_17"
@@ -3165,6 +3393,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 925780,
             "symbol": "__atf_n_1311db1ea4711eaa_0_1"
@@ -3183,6 +3412,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 929803,
             "symbol": "__atf_n_3a2e6e07ac109f30_0_2"
@@ -3201,6 +3431,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 934054,
             "symbol": "__atf_n_5c1e2709a17b0aeb_0_8"
@@ -3219,6 +3450,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 938079,
             "symbol": "__atf_n_5c1e2709a17b0aeb_0_2a"
@@ -3237,6 +3469,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 942200,
             "symbol": "__atf_n_e7d40824f1155ae5_0_0"
@@ -3255,6 +3488,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 946283,
             "symbol": "__atf_n_64c08cb12153ef5f_0_2"
@@ -3273,6 +3507,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 950313,
             "symbol": "__atf_n_61c3bf9eef80b53c_0_18"
@@ -3291,6 +3526,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 954420,
             "symbol": "__atf_n_90131d065efa9514_0_1"
@@ -3309,6 +3545,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 958683,
             "symbol": "__atf_n_b3ff6a2f9cebc25_0_0"
@@ -3327,6 +3564,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 962568,
             "symbol": "__atf_n_7d9f592a4832839_0_0"
@@ -3345,6 +3583,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 966669,
             "symbol": "__atf_n_cb6cc7616672fa7c_0_0"
@@ -3363,6 +3602,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 970865,
             "symbol": "__atf_n_3af893828d36197_1_0"
@@ -3381,6 +3621,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 974944,
             "symbol": "__atf_n_c5580d602544ee32_0_14"
@@ -3399,6 +3640,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 979032,
             "symbol": "__atf_n_1e28ddbc22905040_0_5"
@@ -3417,6 +3659,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 983186,
             "symbol": "__atf_n_1b74dc0e7d1aea6c_0_12"
@@ -3435,6 +3678,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 987406,
             "symbol": "__atf_n_2a43c1df92eabbe6_0_18"
@@ -3453,6 +3697,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 991250,
             "symbol": "__atf_n_9db59bb5ef222a4b_0_16"
@@ -3471,6 +3716,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 995445,
             "symbol": "__atf_n_ba61e8ffefc29e70_0_15"
@@ -3489,6 +3735,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 999769,
             "symbol": "__atf_n_223cc2653c27336e_5_0"
@@ -3507,6 +3754,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1003966,
             "symbol": "__atf_c_223cc2653c27336e_6_0"
@@ -3525,6 +3773,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1008057,
             "symbol": "__atf_c_223cc2653c27336e_6_1"
@@ -3543,6 +3792,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1012180,
             "symbol": "__atf_c_223cc2653c27336e_6_3"
@@ -3561,6 +3811,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1016283,
             "symbol": "__atf_c_223cc2653c27336e_6_5"
@@ -3579,6 +3830,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1019941,
             "symbol": "__atf_n_67e380300292a229_0_0"
@@ -3597,6 +3849,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1024183,
             "symbol": "__atf_n_4f7d804ca1da0a91_0_4"
@@ -3615,6 +3868,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1028691,
             "symbol": "__atf_n_d574215434bfbd38_0_0"
@@ -3633,6 +3887,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1032444,
             "symbol": "__atf_n_aa4980b1cf18f3b3_0_0"
@@ -3651,6 +3906,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1036863,
             "symbol": "__atf_n_8dd641c308239534_1_0"
@@ -3669,6 +3925,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1041359,
             "symbol": "__atf_n_588d7f2bfc8371db_0_0"
@@ -3687,6 +3944,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1044572,
             "symbol": "__atf_n_6797f3235cfccaaa_0_a"
@@ -3705,6 +3963,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1048692,
             "symbol": "__atf_n_c6c90ed994306cc9_0_2"
@@ -3723,6 +3982,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1052717,
             "symbol": "__atf_n_6cca06d0f03936be_0_0"
@@ -3741,6 +4001,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1057248,
             "symbol": "__atf_n_3a54d60732f782f8_0_6"
@@ -3759,6 +4020,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1061535,
             "symbol": "__atf_n_59f3f17e6d9feb8e_0_0"
@@ -3777,6 +4039,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1064963,
             "symbol": "__atf_n_5db377e99de57733_0_7"
@@ -3795,6 +4058,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1069096,
             "symbol": "__atf_n_5b8bda6fea9a7d84_0_1"
@@ -3813,6 +4077,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1073676,
             "symbol": "__atf_n_b664d9d7aee397ce_0_0"
@@ -3831,6 +4096,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1078457,
             "symbol": "__atf_n_7c791fb5c3d43f61_0_1"
@@ -3849,6 +4115,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1081700,
             "symbol": "__atf_n_7d28c823b79bd136_0_a"
@@ -3867,6 +4134,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1085473,
             "symbol": "__atf_n_85c26f9a91b3d8e9_0_10"
@@ -3885,6 +4153,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1089687,
             "symbol": "__atf_n_7fe1b5ac412fd428_0_11"
@@ -3903,6 +4172,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1093860,
             "symbol": "__atf_n_46b4238520b3c21d_0_0"
@@ -3921,6 +4191,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1097761,
             "symbol": "__atf_n_9f184d041bb431aa_0_0"
@@ -3939,6 +4210,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1102005,
             "symbol": "__atf_n_4e36e4add427ab06_3_0"
@@ -3957,6 +4229,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1106128,
             "symbol": "__atf_n_3d2fc55722d60300_0_0"
@@ -3975,6 +4248,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1110097,
             "symbol": "__atf_n_3d2fc55722d60300_0_23"
@@ -3993,6 +4267,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1114372,
             "symbol": "__atf_n_7ceb818dda941ece_0_20"
@@ -4011,6 +4286,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1118344,
             "symbol": "__atf_n_73b40f4df1674e7f_0_1"
@@ -4029,6 +4305,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1123372,
             "symbol": "__atf_n_405465a0445daa9e_0_0"
@@ -4047,6 +4324,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1126692,
             "symbol": "__atf_n_c15dfe1cdcd6ab40_0_a"
@@ -4065,6 +4343,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1130625,
             "symbol": "__atf_n_1e1045c6d3e834ba_0_11"
@@ -4083,6 +4362,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1134679,
             "symbol": "__atf_n_3ddb0984fe3ff0be_0_11"
@@ -4101,6 +4381,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1139964,
             "symbol": "__atf_n_7010ebbf9a8e7609_0_0"
@@ -4119,6 +4400,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1142885,
             "symbol": "__atf_n_59567ca4bf919998_0_4"
@@ -4137,6 +4419,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1147261,
             "symbol": "__atf_n_143bed6a22418d71_0_0"
@@ -4155,6 +4438,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1150981,
             "symbol": "__atf_n_4fa5af7bbdfc839b_2_2"
@@ -4173,6 +4457,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1155182,
             "symbol": "__atf_n_c623a475530156aa_0_18"
@@ -4191,6 +4476,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1159476,
             "symbol": "__atf_n_c623a475530156aa_0_28"
@@ -4209,6 +4495,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1163354,
             "symbol": "__atf_n_296b7c47b5e4a7db_0_18"
@@ -4227,6 +4514,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1167500,
             "symbol": "__atf_n_f424a7c6df1d15f4_0_17"
@@ -4245,6 +4533,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1171858,
             "symbol": "__atf_n_3ff4b0c3e36fe06e_0_0"
@@ -4263,6 +4552,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1175751,
             "symbol": "__atf_n_d24d4ae197152c70_0_0"
@@ -4281,6 +4571,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1181336,
             "symbol": "__atf_n_2d0823a11f84599_0_0"
@@ -4299,6 +4590,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1183848,
             "symbol": "__atf_n_1bd547f69260673a_6_3"
@@ -4317,6 +4609,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1187929,
             "symbol": "__atf_n_c8372f64fa7cc786_0_c"
@@ -4335,6 +4628,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1192674,
             "symbol": "__atf_n_c8372f64fa7cc786_0_14"
@@ -4353,6 +4647,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1196086,
             "symbol": "__atf_n_c8372f64fa7cc786_0_23"
@@ -4371,6 +4666,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1200305,
             "symbol": "__atf_n_c8372f64fa7cc786_0_3d"
@@ -4389,6 +4685,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1204618,
             "symbol": "__atf_n_c8372f64fa7cc786_0_4c"
@@ -4407,6 +4704,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1209274,
             "symbol": "__atf_n_c8372f64fa7cc786_0_57"
@@ -4425,6 +4723,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1212651,
             "symbol": "__atf_n_c8372f64fa7cc786_0_6f"
@@ -4443,6 +4742,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1216686,
             "symbol": "__atf_n_c8372f64fa7cc786_0_8a"
@@ -4461,6 +4761,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1220616,
             "symbol": "__atf_n_c8372f64fa7cc786_0_a0"
@@ -4479,6 +4780,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1224784,
             "symbol": "__atf_n_3f9fc3074075dd61_0_9"
@@ -4497,6 +4799,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1228822,
             "symbol": "__atf_n_3f9fc3074075dd61_0_26"
@@ -4515,6 +4818,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1232911,
             "symbol": "__atf_n_3f9fc3074075dd61_0_41"
@@ -4533,6 +4837,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1237254,
             "symbol": "__atf_n_3f9fc3074075dd61_0_5d"
@@ -4551,6 +4856,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1241147,
             "symbol": "__atf_n_3f9fc3074075dd61_0_76"
@@ -4569,6 +4875,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1245287,
             "symbol": "__atf_n_3f9fc3074075dd61_0_8f"
@@ -4587,6 +4894,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1249854,
             "symbol": "__atf_n_3f9fc3074075dd61_0_a3"
@@ -4605,6 +4913,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1254226,
             "symbol": "__atf_n_2c327a3ad355cd8f_0_0"
@@ -4623,6 +4932,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1257587,
             "symbol": "__atf_n_3800be754e29a457_1_0"
@@ -4641,6 +4951,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1263704,
             "symbol": "__atf_n_3409a114fdd6d585_0_0"
@@ -4659,6 +4970,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1265744,
             "symbol": "__atf_n_7b4e34cda4586c0d_5_0"
@@ -4677,6 +4989,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1270521,
             "symbol": "__atf_n_288b62a5daac585f_0_c"
@@ -4695,6 +5008,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1274178,
             "symbol": "__atf_n_288b62a5daac585f_0_13"
@@ -4713,6 +5027,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1278020,
             "symbol": "__atf_n_288b62a5daac585f_0_1d"
@@ -4731,6 +5046,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1282089,
             "symbol": "__atf_n_288b62a5daac585f_0_34"
@@ -4749,6 +5065,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1286223,
             "symbol": "__atf_n_288b62a5daac585f_0_49"
@@ -4767,6 +5084,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1290281,
             "symbol": "__atf_n_288b62a5daac585f_0_53"
@@ -4785,6 +5103,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1294446,
             "symbol": "__atf_n_288b62a5daac585f_0_67"
@@ -4803,6 +5122,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1298735,
             "symbol": "__atf_n_288b62a5daac585f_0_82"
@@ -4821,6 +5141,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1302891,
             "symbol": "__atf_n_288b62a5daac585f_0_98"
@@ -4839,6 +5160,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1307175,
             "symbol": "__atf_n_288b62a5daac585f_0_a5"
@@ -4857,6 +5179,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1310728,
             "symbol": "__atf_n_3338653589a9857_0_13"
@@ -4875,6 +5198,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1315097,
             "symbol": "__atf_n_3338653589a9857_0_2a"
@@ -4893,6 +5217,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1319087,
             "symbol": "__atf_n_3338653589a9857_0_4d"
@@ -4911,6 +5236,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1323011,
             "symbol": "__atf_n_3338653589a9857_0_5f"
@@ -4929,6 +5255,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1327126,
             "symbol": "__atf_n_3338653589a9857_0_78"
@@ -4947,6 +5274,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1331296,
             "symbol": "__atf_n_3338653589a9857_0_8e"
@@ -4965,6 +5293,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1335518,
             "symbol": "__atf_n_3338653589a9857_0_9f"
@@ -4983,6 +5312,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1339954,
             "symbol": "__atf_n_de8a5ea500910f94_0_0"
@@ -5001,6 +5331,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1343815,
             "symbol": "__atf_n_508f321eb49603d4_0_0"
@@ -5019,6 +5350,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1349368,
             "symbol": "__atf_n_78674a688af914f3_0_0"
@@ -5037,6 +5369,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1351864,
             "symbol": "__atf_n_4bf6eb93f7d0395d_6_3"
@@ -5055,6 +5388,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1356153,
             "symbol": "__atf_n_22ccfbc559ac3b53_0_c"
@@ -5073,6 +5407,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1360994,
             "symbol": "__atf_n_22ccfbc559ac3b53_0_14"
@@ -5091,6 +5426,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1364146,
             "symbol": "__atf_n_22ccfbc559ac3b53_0_20"
@@ -5109,6 +5445,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1368085,
             "symbol": "__atf_n_22ccfbc559ac3b53_0_37"
@@ -5127,6 +5464,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1372422,
             "symbol": "__atf_n_22ccfbc559ac3b53_0_4a"
@@ -5145,6 +5483,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1377006,
             "symbol": "__atf_n_22ccfbc559ac3b53_0_56"
@@ -5163,6 +5502,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1380611,
             "symbol": "__atf_n_22ccfbc559ac3b53_0_69"
@@ -5181,6 +5521,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1384735,
             "symbol": "__atf_n_22ccfbc559ac3b53_0_84"
@@ -5199,6 +5540,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1388561,
             "symbol": "__atf_n_22ccfbc559ac3b53_0_9a"
@@ -5217,6 +5559,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1392807,
             "symbol": "__atf_n_22ccfbc559ac3b53_0_a5"
@@ -5235,6 +5578,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1396792,
             "symbol": "__atf_n_2ce2a981254a41e9_0_19"
@@ -5253,6 +5597,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1401200,
             "symbol": "__atf_n_2ce2a981254a41e9_0_2b"
@@ -5271,6 +5616,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1404964,
             "symbol": "__atf_n_2ce2a981254a41e9_0_50"
@@ -5289,6 +5635,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1409077,
             "symbol": "__atf_n_2ce2a981254a41e9_0_61"
@@ -5307,6 +5654,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1413230,
             "symbol": "__atf_n_2ce2a981254a41e9_0_7c"
@@ -5325,6 +5673,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1417465,
             "symbol": "__atf_n_2ce2a981254a41e9_0_91"
@@ -5343,6 +5692,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1422001,
             "symbol": "__atf_n_2ce2a981254a41e9_0_a2"
@@ -5361,6 +5711,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1426253,
             "symbol": "__atf_n_1daaa11ff04340d5_5_0"
@@ -5379,6 +5730,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1430892,
             "symbol": "__atf_c_1daaa11ff04340d5_5_6"
@@ -5397,6 +5749,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1433658,
             "symbol": "__atf_n_7da28e0f33ab1ae0_0_0"
@@ -5415,6 +5768,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1438166,
             "symbol": "__atf_n_c05b79d71d969d05_1_0"
@@ -5433,6 +5787,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1441866,
             "symbol": "__atf_n_2841b145113dd638_0_0"
@@ -5451,6 +5806,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1446076,
             "symbol": "__atf_n_a5c3485b7460df72_0_0"
@@ -5469,6 +5825,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1451064,
             "symbol": "__atf_n_7d08fa124430487d_1_0"
@@ -5487,6 +5844,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1454424,
             "symbol": "__atf_n_e5792832d5bbf1e7_0_1"
@@ -5505,6 +5863,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1458571,
             "symbol": "__atf_n_721dcb11afd5f19f_0_0"
@@ -5523,6 +5882,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1465185,
             "symbol": "__atf_n_bfbdd00a84497f24_0_2"
@@ -5541,6 +5901,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1466823,
             "symbol": "__atf_n_80fc4a01d10c8a7d_0_0"
@@ -5559,6 +5920,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1470742,
             "symbol": "__atf_n_563be2378912d080_0_8"
@@ -5577,6 +5939,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1474919,
             "symbol": "__atf_n_9eeaf456ea9d4ff_0_0"
@@ -5595,6 +5958,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1479403,
             "symbol": "__atf_n_5bde7838c9518b9d_0_0"
@@ -5613,6 +5977,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1482799,
             "symbol": "__atf_n_54c42d3984870c0f_0_0"
@@ -5631,6 +5996,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1487986,
             "symbol": "__atf_n_ce53cfc4fe16b355_0_0"
@@ -5649,6 +6015,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1491909,
             "symbol": "__atf_n_7c882446498d3cb_0_0"
@@ -5667,6 +6034,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1495389,
             "symbol": "__atf_n_4b9c1eb2b41ef630_0_2"
@@ -5685,6 +6053,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1499831,
             "symbol": "__atf_n_ef5d54147bb8aade_0_0"
@@ -5703,6 +6072,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1503882,
             "symbol": "__atf_n_ef5d54147bb8aade_1_4"
@@ -5721,6 +6091,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1507382,
             "symbol": "__atf_n_d0052b4b2b9ac2b2_0_2"
@@ -5739,6 +6110,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1512643,
             "symbol": "__atf_n_cc4313acf86717b1_1_0"
@@ -5757,6 +6129,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1515683,
             "symbol": "__atf_n_47ea27754db77a3d_0_0"
@@ -5775,6 +6148,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1520491,
             "symbol": "__atf_n_1ccf052b83a1a504_0_0"
@@ -5793,6 +6167,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1526663,
             "symbol": "__atf_n_9989e691254bf3bd_0_2"
@@ -5811,6 +6186,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1528106,
             "symbol": "__atf_n_9989e691254bf3bd_0_3"
@@ -5829,6 +6205,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1532021,
             "symbol": "__atf_n_b10626c1a5c3b52b_0_2"
@@ -5847,6 +6224,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1536039,
             "symbol": "__atf_n_b10626c1a5c3b52b_1_7"
@@ -5865,6 +6243,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1540179,
             "symbol": "__atf_n_6dd23e52e830b47e_0_0"
@@ -5883,6 +6262,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1544841,
             "symbol": "__atf_n_de2c63db8032f2a_1_0"
@@ -5901,6 +6281,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1548494,
             "symbol": "__atf_n_adb6054cc6753a3_0_1"
@@ -5919,6 +6300,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1552691,
             "symbol": "__atf_n_753c919153b9a6de_0_a"
@@ -5937,6 +6319,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1557164,
             "symbol": "__atf_n_feac0bd66a74159c_0_0"
@@ -5955,6 +6338,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1563186,
             "symbol": "__atf_n_7d7d8732fc255de7_0_2"
@@ -5973,6 +6357,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1565191,
             "symbol": "__atf_n_7e6039f3159ecd76_0_0"
@@ -5991,6 +6376,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1569405,
             "symbol": "__atf_n_d213b58435612ad1_0_0"
@@ -6009,6 +6395,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1572964,
             "symbol": "__atf_n_d213b58435612ad1_0_7"
@@ -6027,6 +6414,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1577432,
             "symbol": "__atf_n_d213b58435612ad1_1_7"
@@ -6045,6 +6433,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1581109,
             "symbol": "__atf_n_c3a0872577bf54ef_0_b"
@@ -6063,6 +6452,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1587155,
             "symbol": "__atf_n_ea7c6f932f25fdab_1_0"
@@ -6081,6 +6471,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1589293,
             "symbol": "__atf_n_ea7c6f932f25fdab_7_0"
@@ -6099,6 +6490,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1594430,
             "symbol": "__atf_n_83f97e5d996ea159_0_0"
@@ -6117,6 +6509,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1597803,
             "symbol": "__atf_n_ac50940b485d1da8_1_0"
@@ -6135,6 +6528,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1601567,
             "symbol": "__atf_n_7ab6521e66042e10_2_0"
@@ -6153,6 +6547,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1606091,
             "symbol": "__atf_n_d69b65b79805889e_0_0"
@@ -6171,6 +6566,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1610879,
             "symbol": "__atf_n_3cdc58d496b2f5d2_0_2"
@@ -6189,6 +6585,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1613828,
             "symbol": "__atf_n_3cdc58d496b2f5d2_1_1"
@@ -6207,6 +6604,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1618115,
             "symbol": "__atf_n_d6444bfcc93eda33_0_0"
@@ -6225,6 +6623,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1622080,
             "symbol": "__atf_n_1f5e564d8f8cb757_0_0"
@@ -6243,6 +6642,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1626707,
             "symbol": "__atf_n_ed0369d8acc8a903_1_0"
@@ -6261,6 +6661,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1630300,
             "symbol": "__atf_n_e33724adad465aea_0_0"
@@ -6279,6 +6680,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1634335,
             "symbol": "__atf_n_f3a771a369957c73_2_0"
@@ -6297,6 +6699,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1640673,
             "symbol": "__atf_n_c78536dde51b6ac1_0_0"
@@ -6315,6 +6718,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1643938,
             "symbol": "__atf_n_fa98b592653fdcec_0_0"
@@ -6333,6 +6737,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1646824,
             "symbol": "__atf_n_d9a2b0850c5ddf85_0_10"
@@ -6351,6 +6756,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1652122,
             "symbol": "__atf_n_c3173d02df1136f5_0_4"
@@ -6369,6 +6775,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1654989,
             "symbol": "__atf_n_c3173d02df1136f5_1_4"
@@ -6387,6 +6794,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1659718,
             "symbol": "__atf_n_9b94338d62421330_0_c"
@@ -6405,6 +6813,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1666035,
             "symbol": "__atf_n_8092dd27478dcb43_1_0"
@@ -6423,6 +6832,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1667248,
             "symbol": "__atf_n_8092dd27478dcb43_5_2"
@@ -6441,6 +6851,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1672682,
             "symbol": "__atf_n_5bead01bcd68667b_0_5"
@@ -6459,6 +6870,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1675824,
             "symbol": "__atf_n_d87383d750a24b14_3_1"
@@ -6477,6 +6889,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1680089,
             "symbol": "__atf_n_d87383d750a24b14_9_0"
@@ -6495,6 +6908,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1685342,
             "symbol": "__atf_n_56aac2a6536d7ac2_0_0"
@@ -6513,6 +6927,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1688350,
             "symbol": "__atf_n_86d8df625b809fc8_0_0"
@@ -6531,6 +6946,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1692001,
             "symbol": "__atf_n_f571b2f623f8b37c_0_0"
@@ -6549,6 +6965,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1695878,
             "symbol": "__atf_n_6b0678b917e3a93c_0_2"
@@ -6567,6 +6984,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1700064,
             "symbol": "__atf_n_782fa557c098ca51_0_1"
@@ -6585,6 +7003,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1704196,
             "symbol": "__atf_n_782fa557c098ca51_1_1"
@@ -6603,6 +7022,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1708067,
             "symbol": "__atf_n_782fa557c098ca51_1_6"
@@ -6621,6 +7041,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1712153,
             "symbol": "__atf_n_f7befa13255e40f6_0_0"
@@ -6639,6 +7060,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1717638,
             "symbol": "__atf_n_22e703bbdb5d32d4_0_4"
@@ -6657,6 +7079,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1721453,
             "symbol": "__atf_n_f7384eaacf1277f8_2_2"
@@ -6675,6 +7098,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1726314,
             "symbol": "__atf_n_f7384eaacf1277f8_5_0"
@@ -6693,6 +7117,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1728825,
             "symbol": "__atf_n_bfc26642a2bc991_0_0"
@@ -6711,6 +7136,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1733061,
             "symbol": "__atf_n_bfc26642a2bc991_5_0"
@@ -6729,6 +7155,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1737566,
             "symbol": "__atf_n_bfc26642a2bc991_7_1"
@@ -6747,6 +7174,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1742728,
             "symbol": "__atf_n_bfc26642a2bc991_c_4"
@@ -6765,6 +7193,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1747100,
             "symbol": "__atf_n_bfc26642a2bc991_c_6"
@@ -6783,6 +7212,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1749212,
             "symbol": "__atf_n_bfc26642a2bc991_c_9"
@@ -6801,6 +7231,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1753768,
             "symbol": "__atf_n_5f61dbbead0c4b37_0_4"
@@ -6819,6 +7250,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1757533,
             "symbol": "__atf_n_8b30b26ac1c68ba0_1_0"
@@ -6837,6 +7269,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1762106,
             "symbol": "__atf_n_8b30b26ac1c68ba0_5_0"
@@ -6855,6 +7288,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1765674,
             "symbol": "__atf_n_f226460f55b2cbe4_3_0"
@@ -6873,6 +7307,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1772553,
             "symbol": "__atf_c_f226460f55b2cbe4_6_1"
@@ -6891,6 +7326,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1776646,
             "symbol": "__atf_c_f226460f55b2cbe4_6_2"
@@ -6909,6 +7345,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1780763,
             "symbol": "__atf_c_f226460f55b2cbe4_6_4"
@@ -6927,6 +7364,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1784859,
             "symbol": "__atf_c_f226460f55b2cbe4_6_6"
@@ -6945,6 +7383,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1785887,
             "symbol": "__atf_n_b6db2a9e9c87e67c_1_0"
@@ -6963,6 +7402,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1790072,
             "symbol": "__atf_n_54252b9cd0d35339_1_0"
@@ -6981,6 +7421,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1794236,
             "symbol": "__atf_n_dd276c53588e8290_0_0"
@@ -6999,6 +7440,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1798218,
             "symbol": "__atf_n_461c152149f15980_0_1"
@@ -7017,6 +7459,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1802606,
             "symbol": "__atf_n_d53f77dc4e591c3e_0_3"
@@ -7035,6 +7478,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1806547,
             "symbol": "__atf_n_b6c6a134da4e8477_1_0"
@@ -7053,6 +7497,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1810718,
             "symbol": "__atf_n_dd437ad37225602b_0_3"
@@ -7071,6 +7516,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1814542,
             "symbol": "__atf_n_f27d24ae65f8f1ad_0_0"
@@ -7089,6 +7535,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1819962,
             "symbol": "__atf_n_f27d24ae65f8f1ad_5_0"
@@ -7107,6 +7554,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1822797,
             "symbol": "__atf_n_741522708c82e42f_2_0"
@@ -7125,6 +7573,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1827077,
             "symbol": "__atf_n_741522708c82e42f_6_1"
@@ -7143,6 +7592,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1831000,
             "symbol": "__atf_n_741522708c82e42f_6_7"
@@ -7161,6 +7611,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1835090,
             "symbol": "__atf_n_741522708c82e42f_6_10"
@@ -7179,6 +7630,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1839840,
             "symbol": "__atf_c_741522708c82e42f_6_15"
@@ -7197,6 +7649,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1844670,
             "symbol": "__atf_n_e5d635bb960472_0_3"
@@ -7215,6 +7668,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1847314,
             "symbol": "__atf_n_70ab22636625776c_1_1"
@@ -7233,6 +7687,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1851528,
             "symbol": "__atf_n_4616ba54b3fc682_0_3"
@@ -7251,6 +7706,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1855966,
             "symbol": "__atf_n_b13967ee89cfce38_0_6"
@@ -7269,6 +7725,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1859668,
             "symbol": "__atf_n_7dd134151cfbc00d_0_0"
@@ -7287,6 +7744,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1864001,
             "symbol": "__atf_n_4c4dd3613f247b97_0_3"
@@ -7305,6 +7763,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1868770,
             "symbol": "__atf_n_b0e126bbcf0d2901_0_1"
@@ -7323,6 +7782,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1872229,
             "symbol": "__atf_n_a78a1ff5fb72d1f7_0_0"
@@ -7341,6 +7801,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1876713,
             "symbol": "__atf_n_b8fe97d0307ba45d_1_0"
@@ -7359,6 +7820,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1880853,
             "symbol": "__atf_n_b49c89c827006352_0_9"
@@ -7377,6 +7839,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1886050,
             "symbol": "__atf_n_31477b052e08b92_0_0"
@@ -7395,6 +7858,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1890163,
             "symbol": "__atf_n_5057dc303e2565a9_1_0"
@@ -7413,6 +7877,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1892767,
             "symbol": "__atf_n_9c65def9d2fb8668_0_2"
@@ -7431,6 +7896,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1896975,
             "symbol": "__atf_n_da3a2bc30d4a6ec4_0_7"
@@ -7449,6 +7915,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1903315,
             "symbol": "__atf_n_5b0952e7439ea9c3_1_0"
@@ -7467,6 +7934,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1904726,
             "symbol": "__atf_n_5b0952e7439ea9c3_4_0"
@@ -7485,6 +7953,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1908774,
             "symbol": "__atf_n_6d8a8ef20dee14c_0_3"
@@ -7503,6 +7972,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1913153,
             "symbol": "__atf_n_ce0f94080acf4355_0_0"
@@ -7521,6 +7991,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1916955,
             "symbol": "__atf_n_ce0f94080acf4355_2_1"
@@ -7539,6 +8010,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1921766,
             "symbol": "__atf_n_c3dca4747a3ff518_0_1"
@@ -7557,6 +8029,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1926242,
             "symbol": "__atf_n_c78bf0906cb2a188_0_1"
@@ -7575,6 +8048,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1931273,
             "symbol": "__atf_n_48c485a673f1279c_0_1"
@@ -7593,6 +8067,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1934316,
             "symbol": "__atf_n_ba5f92ee30f7d54c_0_6"
@@ -7611,6 +8086,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1939125,
             "symbol": "__atf_n_2fb494d2cfe903ec_0_0"
@@ -7629,6 +8105,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1941741,
             "symbol": "__atf_n_1a1c921049707b5a_0_5"
@@ -7647,6 +8124,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1945698,
             "symbol": "__atf_n_2da13a8182ec9a24_0_1c"
@@ -7665,6 +8143,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1949740,
             "symbol": "__atf_n_c64ce415995ea32f_0_3"
@@ -7683,6 +8162,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1953807,
             "symbol": "__atf_n_68ead4a58aaffc47_0_25"
@@ -7701,6 +8181,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1957963,
             "symbol": "__atf_n_179946c60fbe2214_0_1"
@@ -7719,6 +8200,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1962093,
             "symbol": "__atf_n_89870964776c11a7_1_0"
@@ -7737,6 +8219,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1966131,
             "symbol": "__atf_n_6726916323163fcb_1_0"
@@ -7755,6 +8238,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1970581,
             "symbol": "__atf_n_130c27deb4fa80ee_0_0"
@@ -7773,6 +8257,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1974869,
             "symbol": "__atf_n_ecafbbdbf13e7f7c_0_0"
@@ -7791,6 +8276,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1980557,
             "symbol": "__atf_n_b3fe0120d4553d1d_1_0"
@@ -7809,6 +8295,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1982522,
             "symbol": "__atf_n_ac8ae563124a8a3_0_0"
@@ -7827,6 +8314,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1986732,
             "symbol": "__atf_n_69876007d0c12dcb_0_1"
@@ -7845,6 +8333,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1990801,
             "symbol": "__atf_n_9c0e1bced8a07a3f_0_0"
@@ -7863,6 +8352,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1995037,
             "symbol": "__atf_n_9e9e892c1c6f19f5_0_0"
@@ -7881,6 +8371,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 1998933,
             "symbol": "__atf_n_8cfbe89be7adcac5_3_0"
@@ -7899,6 +8390,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 2002966,
             "symbol": "__atf_n_78edb61de295cd9d_0_0"
@@ -7917,6 +8409,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 2007067,
             "symbol": "__atf_n_245dc925483bac02_b_0"
@@ -7935,6 +8428,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 2011453,
             "symbol": "__atf_n_97dd6970fc8d7667_a_0"
@@ -7953,6 +8447,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 2015687,
             "symbol": "__atf_n_ce4ed61784fd25a6_0_0"
@@ -7971,6 +8466,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 2019451,
             "symbol": "__atf_n_ceca22678f33e71e_0_0"
@@ -7989,6 +8485,7 @@
           "relro": false
         },
         {
+          "active_permissions": 5,
           "code_anchor": {
             "rva": 2023482,
             "symbol": "__atf_n_648028c305af9c4a_0_0"
@@ -8007,6 +8504,7 @@
           "relro": false
         },
         {
+          "active_permissions": 1,
           "data_anchor_rva": 2027520,
           "data_width": 1,
           "effects": [
@@ -8020,6 +8518,7 @@
           "relro": true
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2035712,
           "data_width": 1,
           "effects": [
@@ -8034,6 +8533,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2039808,
           "data_width": 1,
           "effects": [
@@ -8048,6 +8548,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2043904,
           "data_width": 1,
           "effects": [
@@ -8062,6 +8563,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2048000,
           "data_width": 1,
           "effects": [
@@ -8076,6 +8578,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2052096,
           "data_width": 1,
           "effects": [
@@ -8090,6 +8593,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2056192,
           "data_width": 1,
           "effects": [
@@ -8104,6 +8608,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2060288,
           "data_width": 1,
           "effects": [
@@ -8118,6 +8623,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2064384,
           "data_width": 1,
           "effects": [
@@ -8132,6 +8638,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2068480,
           "data_width": 1,
           "effects": [
@@ -8146,6 +8653,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2072576,
           "data_width": 1,
           "effects": [
@@ -8160,6 +8668,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2076672,
           "data_width": 1,
           "effects": [
@@ -8174,6 +8683,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2080768,
           "data_width": 1,
           "effects": [
@@ -8188,6 +8698,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2084864,
           "data_width": 1,
           "effects": [
@@ -8202,6 +8713,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2088960,
           "data_width": 1,
           "effects": [
@@ -8216,6 +8728,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2093056,
           "data_width": 1,
           "effects": [
@@ -8230,6 +8743,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2097152,
           "data_width": 1,
           "effects": [
@@ -8244,6 +8758,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2101248,
           "data_width": 1,
           "effects": [
@@ -8258,6 +8773,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2105344,
           "data_width": 1,
           "effects": [
@@ -8272,6 +8788,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2109440,
           "data_width": 1,
           "effects": [
@@ -8286,6 +8803,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2113536,
           "data_width": 1,
           "effects": [
@@ -8300,6 +8818,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2117632,
           "data_width": 1,
           "effects": [
@@ -8314,6 +8833,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2121728,
           "data_width": 1,
           "effects": [
@@ -8328,6 +8848,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2125824,
           "data_width": 1,
           "effects": [
@@ -8342,6 +8863,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2129920,
           "data_width": 1,
           "effects": [
@@ -8356,6 +8878,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2134016,
           "data_width": 1,
           "effects": [
@@ -8370,6 +8893,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2138112,
           "data_width": 1,
           "effects": [
@@ -8384,6 +8908,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2142208,
           "data_width": 1,
           "effects": [
@@ -8398,6 +8923,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2146304,
           "data_width": 1,
           "effects": [
@@ -8412,6 +8938,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2150400,
           "data_width": 1,
           "effects": [
@@ -8426,6 +8953,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2154496,
           "data_width": 1,
           "effects": [
@@ -8440,6 +8968,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2158592,
           "data_width": 1,
           "effects": [
@@ -8454,6 +8983,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2162688,
           "data_width": 1,
           "effects": [
@@ -8468,6 +8998,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2166784,
           "data_width": 1,
           "effects": [
@@ -8482,6 +9013,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2183168,
           "data_width": 1,
           "effects": [
@@ -8496,6 +9028,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2187264,
           "data_width": 1,
           "effects": [
@@ -8510,6 +9043,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2191360,
           "data_width": 1,
           "effects": [
@@ -8524,6 +9058,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2195456,
           "data_width": 1,
           "effects": [
@@ -8538,6 +9073,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2199552,
           "data_width": 1,
           "effects": [
@@ -8552,6 +9088,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2203648,
           "data_width": 1,
           "effects": [
@@ -8566,6 +9103,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2207744,
           "data_width": 1,
           "effects": [
@@ -8580,6 +9118,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2211840,
           "data_width": 1,
           "effects": [
@@ -8594,6 +9133,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2215936,
           "data_width": 1,
           "effects": [
@@ -8608,6 +9148,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2220032,
           "data_width": 1,
           "effects": [
@@ -8622,6 +9163,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2224128,
           "data_width": 1,
           "effects": [
@@ -8636,6 +9178,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2228224,
           "data_width": 1,
           "effects": [
@@ -8650,6 +9193,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2232320,
           "data_width": 1,
           "effects": [
@@ -8664,6 +9208,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2236416,
           "data_width": 1,
           "effects": [
@@ -8678,6 +9223,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2240512,
           "data_width": 1,
           "effects": [
@@ -8692,6 +9238,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2244608,
           "data_width": 1,
           "effects": [
@@ -8706,6 +9253,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2248704,
           "data_width": 1,
           "effects": [
@@ -8720,6 +9268,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2252800,
           "data_width": 1,
           "effects": [
@@ -8734,6 +9283,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2256896,
           "data_width": 1,
           "effects": [
@@ -8748,6 +9298,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2260992,
           "data_width": 1,
           "effects": [
@@ -8762,6 +9313,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2265088,
           "data_width": 1,
           "effects": [
@@ -8776,6 +9328,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2269184,
           "data_width": 1,
           "effects": [
@@ -8790,6 +9343,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2273280,
           "data_width": 1,
           "effects": [
@@ -8804,6 +9358,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2277376,
           "data_width": 1,
           "effects": [
@@ -8818,6 +9373,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2281472,
           "data_width": 1,
           "effects": [
@@ -8832,6 +9388,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2285568,
           "data_width": 1,
           "effects": [
@@ -8846,6 +9403,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2289664,
           "data_width": 1,
           "effects": [
@@ -8860,6 +9418,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2293760,
           "data_width": 1,
           "effects": [
@@ -8874,6 +9433,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2297856,
           "data_width": 1,
           "effects": [
@@ -8888,6 +9448,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2301952,
           "data_width": 1,
           "effects": [
@@ -8902,6 +9463,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2306048,
           "data_width": 1,
           "effects": [
@@ -8916,6 +9478,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2310144,
           "data_width": 1,
           "effects": [
@@ -8930,6 +9493,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2314240,
           "data_width": 1,
           "effects": [
@@ -8944,6 +9508,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2318336,
           "data_width": 1,
           "effects": [
@@ -8958,6 +9523,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2322432,
           "data_width": 1,
           "effects": [
@@ -8972,6 +9538,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2326528,
           "data_width": 1,
           "effects": [
@@ -8986,6 +9553,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2330624,
           "data_width": 1,
           "effects": [
@@ -9000,6 +9568,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2334720,
           "data_width": 1,
           "effects": [
@@ -9014,6 +9583,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2338816,
           "data_width": 1,
           "effects": [
@@ -9028,6 +9598,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2342912,
           "data_width": 1,
           "effects": [
@@ -9042,6 +9613,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2347008,
           "data_width": 1,
           "effects": [
@@ -9056,6 +9628,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2351104,
           "data_width": 1,
           "effects": [
@@ -9070,6 +9643,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2355200,
           "data_width": 1,
           "effects": [
@@ -9084,6 +9658,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2359296,
           "data_width": 1,
           "effects": [
@@ -9098,6 +9673,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2363392,
           "data_width": 1,
           "effects": [
@@ -9112,6 +9688,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2367488,
           "data_width": 1,
           "effects": [
@@ -9126,6 +9703,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2371584,
           "data_width": 1,
           "effects": [
@@ -9140,6 +9718,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2375680,
           "data_width": 1,
           "effects": [
@@ -9154,6 +9733,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2379776,
           "data_width": 1,
           "effects": [
@@ -9168,6 +9748,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2383872,
           "data_width": 1,
           "effects": [
@@ -9182,6 +9763,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2387968,
           "data_width": 1,
           "effects": [
@@ -9196,6 +9778,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2392064,
           "data_width": 1,
           "effects": [
@@ -9210,6 +9793,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2396160,
           "data_width": 1,
           "effects": [
@@ -9224,6 +9808,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2400256,
           "data_width": 1,
           "effects": [
@@ -9238,6 +9823,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2404352,
           "data_width": 1,
           "effects": [
@@ -9252,6 +9838,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2408448,
           "data_width": 1,
           "effects": [
@@ -9266,6 +9853,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2412544,
           "data_width": 1,
           "effects": [
@@ -9280,6 +9868,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2416640,
           "data_width": 1,
           "effects": [
@@ -9294,6 +9883,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2420736,
           "data_width": 1,
           "effects": [
@@ -9308,6 +9898,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2424832,
           "data_width": 1,
           "effects": [
@@ -9322,6 +9913,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2428928,
           "data_width": 1,
           "effects": [
@@ -9336,6 +9928,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2433024,
           "data_width": 1,
           "effects": [
@@ -9350,6 +9943,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2437120,
           "data_width": 1,
           "effects": [
@@ -9364,6 +9958,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2441216,
           "data_width": 1,
           "effects": [
@@ -9378,6 +9973,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2445312,
           "data_width": 1,
           "effects": [
@@ -9392,6 +9988,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2449408,
           "data_width": 1,
           "effects": [
@@ -9406,6 +10003,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2453504,
           "data_width": 1,
           "effects": [
@@ -9420,6 +10018,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2457600,
           "data_width": 1,
           "effects": [
@@ -9434,6 +10033,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2461696,
           "data_width": 1,
           "effects": [
@@ -9448,6 +10048,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2465792,
           "data_width": 1,
           "effects": [
@@ -9462,6 +10063,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2469888,
           "data_width": 1,
           "effects": [
@@ -9476,6 +10078,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2473984,
           "data_width": 1,
           "effects": [
@@ -9490,6 +10093,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2478080,
           "data_width": 1,
           "effects": [
@@ -9504,6 +10108,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2482176,
           "data_width": 1,
           "effects": [
@@ -9518,6 +10123,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2486272,
           "data_width": 1,
           "effects": [
@@ -9532,6 +10138,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2490368,
           "data_width": 1,
           "effects": [
@@ -9546,6 +10153,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2494464,
           "data_width": 1,
           "effects": [
@@ -9560,6 +10168,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2498560,
           "data_width": 1,
           "effects": [
@@ -9574,6 +10183,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2502656,
           "data_width": 1,
           "effects": [
@@ -9588,6 +10198,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2506752,
           "data_width": 1,
           "effects": [
@@ -9602,6 +10213,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2510848,
           "data_width": 1,
           "effects": [
@@ -9616,6 +10228,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2514944,
           "data_width": 1,
           "effects": [
@@ -9630,6 +10243,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2519040,
           "data_width": 1,
           "effects": [
@@ -9644,6 +10258,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2523136,
           "data_width": 1,
           "effects": [
@@ -9658,6 +10273,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2527232,
           "data_width": 1,
           "effects": [
@@ -9672,6 +10288,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2531328,
           "data_width": 1,
           "effects": [
@@ -9686,6 +10303,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2535424,
           "data_width": 1,
           "effects": [
@@ -9700,6 +10318,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2539520,
           "data_width": 1,
           "effects": [
@@ -9714,6 +10333,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2543616,
           "data_width": 1,
           "effects": [
@@ -9728,6 +10348,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2547712,
           "data_width": 1,
           "effects": [
@@ -9742,6 +10363,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2551808,
           "data_width": 1,
           "effects": [
@@ -9756,6 +10378,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2555904,
           "data_width": 1,
           "effects": [
@@ -9770,6 +10393,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2560000,
           "data_width": 1,
           "effects": [
@@ -9784,6 +10408,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2564096,
           "data_width": 1,
           "effects": [
@@ -9798,6 +10423,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2568192,
           "data_width": 1,
           "effects": [
@@ -9812,6 +10438,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2572288,
           "data_width": 1,
           "effects": [
@@ -9826,6 +10453,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2576384,
           "data_width": 1,
           "effects": [
@@ -9840,6 +10468,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2580480,
           "data_width": 1,
           "effects": [
@@ -9854,6 +10483,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2584576,
           "data_width": 1,
           "effects": [
@@ -9868,6 +10498,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2588672,
           "data_width": 1,
           "effects": [
@@ -9882,6 +10513,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2592768,
           "data_width": 1,
           "effects": [
@@ -9896,6 +10528,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2596864,
           "data_width": 1,
           "effects": [
@@ -9910,6 +10543,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2600960,
           "data_width": 1,
           "effects": [
@@ -9924,6 +10558,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2605056,
           "data_width": 1,
           "effects": [
@@ -9938,6 +10573,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2609152,
           "data_width": 1,
           "effects": [
@@ -9952,6 +10588,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2613248,
           "data_width": 1,
           "effects": [
@@ -9966,6 +10603,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2617344,
           "data_width": 1,
           "effects": [
@@ -9980,6 +10618,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2621440,
           "data_width": 1,
           "effects": [
@@ -9994,6 +10633,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2625536,
           "data_width": 1,
           "effects": [
@@ -10008,6 +10648,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2629632,
           "data_width": 1,
           "effects": [
@@ -10022,6 +10663,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2633728,
           "data_width": 1,
           "effects": [
@@ -10036,6 +10678,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2637824,
           "data_width": 1,
           "effects": [
@@ -10050,6 +10693,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2641920,
           "data_width": 1,
           "effects": [
@@ -10064,6 +10708,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2646016,
           "data_width": 1,
           "effects": [
@@ -10078,6 +10723,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2650112,
           "data_width": 1,
           "effects": [
@@ -10092,6 +10738,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2654208,
           "data_width": 1,
           "effects": [
@@ -10106,6 +10753,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2658304,
           "data_width": 1,
           "effects": [
@@ -10120,6 +10768,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2662400,
           "data_width": 1,
           "effects": [
@@ -10134,6 +10783,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2666496,
           "data_width": 1,
           "effects": [
@@ -10148,6 +10798,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2670592,
           "data_width": 1,
           "effects": [
@@ -10162,6 +10813,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2674688,
           "data_width": 1,
           "effects": [
@@ -10176,6 +10828,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2678784,
           "data_width": 1,
           "effects": [
@@ -10190,6 +10843,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2682880,
           "data_width": 1,
           "effects": [
@@ -10204,6 +10858,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2686976,
           "data_width": 1,
           "effects": [
@@ -10218,6 +10873,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2691072,
           "data_width": 1,
           "effects": [
@@ -10232,6 +10888,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2695168,
           "data_width": 1,
           "effects": [
@@ -10246,6 +10903,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2699264,
           "data_width": 1,
           "effects": [
@@ -10260,6 +10918,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2703360,
           "data_width": 1,
           "effects": [
@@ -10274,6 +10933,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2707456,
           "data_width": 1,
           "effects": [
@@ -10288,6 +10948,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2711552,
           "data_width": 1,
           "effects": [
@@ -10302,6 +10963,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2715648,
           "data_width": 1,
           "effects": [
@@ -10316,6 +10978,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2719744,
           "data_width": 1,
           "effects": [
@@ -10330,6 +10993,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2723840,
           "data_width": 1,
           "effects": [
@@ -10344,6 +11008,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2727936,
           "data_width": 1,
           "effects": [
@@ -10358,6 +11023,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2732032,
           "data_width": 1,
           "effects": [
@@ -10372,6 +11038,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2736128,
           "data_width": 1,
           "effects": [
@@ -10386,6 +11053,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2740224,
           "data_width": 1,
           "effects": [
@@ -10400,6 +11068,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2744320,
           "data_width": 1,
           "effects": [
@@ -10414,6 +11083,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2748416,
           "data_width": 1,
           "effects": [
@@ -10428,6 +11098,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2752512,
           "data_width": 1,
           "effects": [
@@ -10442,6 +11113,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2756608,
           "data_width": 1,
           "effects": [
@@ -10456,6 +11128,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2760704,
           "data_width": 1,
           "effects": [
@@ -10470,6 +11143,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2764800,
           "data_width": 1,
           "effects": [
@@ -10484,6 +11158,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2768896,
           "data_width": 1,
           "effects": [
@@ -10498,6 +11173,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2772992,
           "data_width": 1,
           "effects": [
@@ -10512,6 +11188,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2777088,
           "data_width": 1,
           "effects": [
@@ -10526,6 +11203,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2781184,
           "data_width": 1,
           "effects": [
@@ -10540,6 +11218,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2785280,
           "data_width": 1,
           "effects": [
@@ -10554,6 +11233,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2789376,
           "data_width": 1,
           "effects": [
@@ -10568,6 +11248,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2793472,
           "data_width": 1,
           "effects": [
@@ -10582,6 +11263,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2797568,
           "data_width": 1,
           "effects": [
@@ -10596,6 +11278,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2801664,
           "data_width": 1,
           "effects": [
@@ -10610,6 +11293,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2805760,
           "data_width": 1,
           "effects": [
@@ -10624,6 +11308,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2809856,
           "data_width": 1,
           "effects": [
@@ -10638,6 +11323,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2813952,
           "data_width": 1,
           "effects": [
@@ -10652,6 +11338,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2818048,
           "data_width": 1,
           "effects": [
@@ -10666,6 +11353,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2822144,
           "data_width": 1,
           "effects": [
@@ -10680,6 +11368,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2826240,
           "data_width": 1,
           "effects": [
@@ -10694,6 +11383,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2830336,
           "data_width": 1,
           "effects": [
@@ -10708,6 +11398,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2834432,
           "data_width": 1,
           "effects": [
@@ -10722,6 +11413,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2838528,
           "data_width": 1,
           "effects": [
@@ -10736,6 +11428,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2842624,
           "data_width": 1,
           "effects": [
@@ -10750,6 +11443,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2846720,
           "data_width": 1,
           "effects": [
@@ -10764,6 +11458,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2850816,
           "data_width": 1,
           "effects": [
@@ -10778,6 +11473,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2854912,
           "data_width": 1,
           "effects": [
@@ -10792,6 +11488,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2859008,
           "data_width": 1,
           "effects": [
@@ -10806,6 +11503,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2863104,
           "data_width": 1,
           "effects": [
@@ -10820,6 +11518,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2867200,
           "data_width": 1,
           "effects": [
@@ -10834,6 +11533,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2871296,
           "data_width": 1,
           "effects": [
@@ -10848,6 +11548,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2875392,
           "data_width": 1,
           "effects": [
@@ -10862,6 +11563,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2879488,
           "data_width": 1,
           "effects": [
@@ -10876,6 +11578,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2883584,
           "data_width": 1,
           "effects": [
@@ -10890,6 +11593,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2887680,
           "data_width": 1,
           "effects": [
@@ -10904,6 +11608,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2891776,
           "data_width": 1,
           "effects": [
@@ -10918,6 +11623,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2895872,
           "data_width": 1,
           "effects": [
@@ -10932,6 +11638,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2899968,
           "data_width": 1,
           "effects": [
@@ -10946,6 +11653,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2904064,
           "data_width": 1,
           "effects": [
@@ -10960,6 +11668,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2908160,
           "data_width": 1,
           "effects": [
@@ -10974,6 +11683,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2912256,
           "data_width": 1,
           "effects": [
@@ -10988,6 +11698,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2916352,
           "data_width": 1,
           "effects": [
@@ -11002,6 +11713,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2920448,
           "data_width": 1,
           "effects": [
@@ -11016,6 +11728,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2924544,
           "data_width": 1,
           "effects": [
@@ -11030,6 +11743,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2928640,
           "data_width": 1,
           "effects": [
@@ -11044,6 +11758,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2932736,
           "data_width": 1,
           "effects": [
@@ -11058,6 +11773,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2936832,
           "data_width": 1,
           "effects": [
@@ -11072,6 +11788,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2940928,
           "data_width": 1,
           "effects": [
@@ -11086,6 +11803,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2945024,
           "data_width": 1,
           "effects": [
@@ -11100,6 +11818,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2949120,
           "data_width": 1,
           "effects": [
@@ -11114,6 +11833,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2953216,
           "data_width": 1,
           "effects": [
@@ -11128,6 +11848,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2957312,
           "data_width": 1,
           "effects": [
@@ -11142,6 +11863,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2961408,
           "data_width": 1,
           "effects": [
@@ -11156,6 +11878,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2965504,
           "data_width": 1,
           "effects": [
@@ -11170,6 +11893,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2969600,
           "data_width": 1,
           "effects": [
@@ -11184,6 +11908,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2973696,
           "data_width": 1,
           "effects": [
@@ -11198,6 +11923,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2977792,
           "data_width": 1,
           "effects": [
@@ -11212,6 +11938,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2981888,
           "data_width": 1,
           "effects": [
@@ -11226,6 +11953,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2985984,
           "data_width": 1,
           "effects": [
@@ -11240,6 +11968,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2990080,
           "data_width": 1,
           "effects": [
@@ -11254,6 +11983,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2994176,
           "data_width": 1,
           "effects": [
@@ -11268,6 +11998,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 2998272,
           "data_width": 1,
           "effects": [
@@ -11282,6 +12013,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3002368,
           "data_width": 1,
           "effects": [
@@ -11296,6 +12028,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3006464,
           "data_width": 1,
           "effects": [
@@ -11310,6 +12043,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3010560,
           "data_width": 1,
           "effects": [
@@ -11324,6 +12058,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3014656,
           "data_width": 1,
           "effects": [
@@ -11338,6 +12073,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3018752,
           "data_width": 1,
           "effects": [
@@ -11352,6 +12088,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3022848,
           "data_width": 1,
           "effects": [
@@ -11366,6 +12103,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3026944,
           "data_width": 1,
           "effects": [
@@ -11380,6 +12118,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3031040,
           "data_width": 1,
           "effects": [
@@ -11394,6 +12133,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3035136,
           "data_width": 1,
           "effects": [
@@ -11408,6 +12148,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3039232,
           "data_width": 1,
           "effects": [
@@ -11422,6 +12163,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3043328,
           "data_width": 1,
           "effects": [
@@ -11436,6 +12178,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3047424,
           "data_width": 1,
           "effects": [
@@ -11450,6 +12193,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3051520,
           "data_width": 1,
           "effects": [
@@ -11464,6 +12208,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3055616,
           "data_width": 1,
           "effects": [
@@ -11478,6 +12223,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3059712,
           "data_width": 1,
           "effects": [
@@ -11492,6 +12238,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3063808,
           "data_width": 1,
           "effects": [
@@ -11506,6 +12253,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3067904,
           "data_width": 1,
           "effects": [
@@ -11520,6 +12268,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3072000,
           "data_width": 1,
           "effects": [
@@ -11534,6 +12283,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3076096,
           "data_width": 1,
           "effects": [
@@ -11548,6 +12298,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3080192,
           "data_width": 1,
           "effects": [
@@ -11562,6 +12313,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3084288,
           "data_width": 1,
           "effects": [
@@ -11576,6 +12328,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3088384,
           "data_width": 1,
           "effects": [
@@ -11590,6 +12343,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3092480,
           "data_width": 1,
           "effects": [
@@ -11604,6 +12358,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3096576,
           "data_width": 1,
           "effects": [
@@ -11618,6 +12373,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3100672,
           "data_width": 1,
           "effects": [
@@ -11632,6 +12388,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3104768,
           "data_width": 1,
           "effects": [
@@ -11646,6 +12403,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3108864,
           "data_width": 1,
           "effects": [
@@ -11660,6 +12418,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3112960,
           "data_width": 1,
           "effects": [
@@ -11674,6 +12433,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3117056,
           "data_width": 1,
           "effects": [
@@ -11688,6 +12448,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3121152,
           "data_width": 1,
           "effects": [
@@ -11702,6 +12463,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3125248,
           "data_width": 1,
           "effects": [
@@ -11716,6 +12478,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3129344,
           "data_width": 1,
           "effects": [
@@ -11730,6 +12493,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3133440,
           "data_width": 1,
           "effects": [
@@ -11744,6 +12508,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3137536,
           "data_width": 1,
           "effects": [
@@ -11758,6 +12523,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3141632,
           "data_width": 1,
           "effects": [
@@ -11772,6 +12538,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3145728,
           "data_width": 1,
           "effects": [
@@ -11786,6 +12553,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3149824,
           "data_width": 1,
           "effects": [
@@ -11800,6 +12568,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3153920,
           "data_width": 1,
           "effects": [
@@ -11814,6 +12583,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3158016,
           "data_width": 1,
           "effects": [
@@ -11828,6 +12598,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3162112,
           "data_width": 1,
           "effects": [
@@ -11842,6 +12613,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3166208,
           "data_width": 1,
           "effects": [
@@ -11856,6 +12628,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3170304,
           "data_width": 1,
           "effects": [
@@ -11870,6 +12643,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3174400,
           "data_width": 1,
           "effects": [
@@ -11884,6 +12658,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3178496,
           "data_width": 1,
           "effects": [
@@ -11898,6 +12673,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3182592,
           "data_width": 1,
           "effects": [
@@ -11912,6 +12688,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3186688,
           "data_width": 1,
           "effects": [
@@ -11926,6 +12703,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3190784,
           "data_width": 1,
           "effects": [
@@ -11940,6 +12718,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3194880,
           "data_width": 1,
           "effects": [
@@ -11954,6 +12733,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3198976,
           "data_width": 1,
           "effects": [
@@ -11968,6 +12748,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3203072,
           "data_width": 1,
           "effects": [
@@ -11982,6 +12763,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3207168,
           "data_width": 1,
           "effects": [
@@ -11996,6 +12778,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3211264,
           "data_width": 1,
           "effects": [
@@ -12010,6 +12793,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3215360,
           "data_width": 1,
           "effects": [
@@ -12024,6 +12808,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3219456,
           "data_width": 1,
           "effects": [
@@ -12038,6 +12823,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3223552,
           "data_width": 1,
           "effects": [
@@ -12052,6 +12838,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3227648,
           "data_width": 1,
           "effects": [
@@ -12066,6 +12853,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3297280,
           "data_width": 1,
           "effects": [
@@ -12080,6 +12868,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3301376,
           "data_width": 1,
           "effects": [
@@ -12094,6 +12883,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3305472,
           "data_width": 1,
           "effects": [
@@ -12108,6 +12898,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3309568,
           "data_width": 1,
           "effects": [
@@ -12122,6 +12913,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3313664,
           "data_width": 1,
           "effects": [
@@ -12136,6 +12928,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3317760,
           "data_width": 1,
           "effects": [
@@ -12150,6 +12943,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3321856,
           "data_width": 1,
           "effects": [
@@ -12164,6 +12958,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3325952,
           "data_width": 1,
           "effects": [
@@ -12178,6 +12973,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3330048,
           "data_width": 1,
           "effects": [
@@ -12192,6 +12988,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3334144,
           "data_width": 1,
           "effects": [
@@ -12206,6 +13003,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3338240,
           "data_width": 1,
           "effects": [
@@ -12220,6 +13018,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3342336,
           "data_width": 1,
           "effects": [
@@ -12234,6 +13033,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3346432,
           "data_width": 1,
           "effects": [
@@ -12248,6 +13048,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3350528,
           "data_width": 1,
           "effects": [
@@ -12262,6 +13063,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3354624,
           "data_width": 1,
           "effects": [
@@ -12276,6 +13078,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3358720,
           "data_width": 1,
           "effects": [
@@ -12290,6 +13093,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3362816,
           "data_width": 1,
           "effects": [
@@ -12304,6 +13108,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3366912,
           "data_width": 1,
           "effects": [
@@ -12318,6 +13123,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3371008,
           "data_width": 1,
           "effects": [
@@ -12332,6 +13138,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3375104,
           "data_width": 1,
           "effects": [
@@ -12346,6 +13153,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3379200,
           "data_width": 1,
           "effects": [
@@ -12360,6 +13168,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3383296,
           "data_width": 1,
           "effects": [
@@ -12374,6 +13183,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3387392,
           "data_width": 1,
           "effects": [
@@ -12388,6 +13198,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3391488,
           "data_width": 1,
           "effects": [
@@ -12402,6 +13213,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3395584,
           "data_width": 1,
           "effects": [
@@ -12416,6 +13228,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3399680,
           "data_width": 1,
           "effects": [
@@ -12430,6 +13243,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3403776,
           "data_width": 1,
           "effects": [
@@ -12444,6 +13258,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3407872,
           "data_width": 1,
           "effects": [
@@ -12458,6 +13273,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3411968,
           "data_width": 1,
           "effects": [
@@ -12472,6 +13288,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3416064,
           "data_width": 1,
           "effects": [
@@ -12486,6 +13303,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3420160,
           "data_width": 1,
           "effects": [
@@ -12500,6 +13318,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3424256,
           "data_width": 1,
           "effects": [
@@ -12514,6 +13333,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3428352,
           "data_width": 1,
           "effects": [
@@ -12528,6 +13348,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3432448,
           "data_width": 1,
           "effects": [
@@ -12542,6 +13363,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3436544,
           "data_width": 1,
           "effects": [
@@ -12556,6 +13378,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3440640,
           "data_width": 1,
           "effects": [
@@ -12570,6 +13393,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3444736,
           "data_width": 1,
           "effects": [
@@ -12584,6 +13408,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3448832,
           "data_width": 1,
           "effects": [
@@ -12598,6 +13423,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3452928,
           "data_width": 1,
           "effects": [
@@ -12612,6 +13438,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3457024,
           "data_width": 1,
           "effects": [
@@ -12626,6 +13453,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3461120,
           "data_width": 1,
           "effects": [
@@ -12640,6 +13468,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3465216,
           "data_width": 1,
           "effects": [
@@ -12654,6 +13483,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3469312,
           "data_width": 1,
           "effects": [
@@ -12668,6 +13498,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3473408,
           "data_width": 1,
           "effects": [
@@ -12682,6 +13513,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3477504,
           "data_width": 1,
           "effects": [
@@ -12696,6 +13528,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3481600,
           "data_width": 1,
           "effects": [
@@ -12710,6 +13543,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3485696,
           "data_width": 1,
           "effects": [
@@ -12724,6 +13558,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3489792,
           "data_width": 1,
           "effects": [
@@ -12738,6 +13573,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3493888,
           "data_width": 1,
           "effects": [
@@ -12752,6 +13588,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3497984,
           "data_width": 1,
           "effects": [
@@ -12766,6 +13603,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3502080,
           "data_width": 1,
           "effects": [
@@ -12780,6 +13618,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3506176,
           "data_width": 1,
           "effects": [
@@ -12794,6 +13633,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3510272,
           "data_width": 1,
           "effects": [
@@ -12808,6 +13648,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3514368,
           "data_width": 1,
           "effects": [
@@ -12822,6 +13663,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3518464,
           "data_width": 1,
           "effects": [
@@ -12836,6 +13678,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3522560,
           "data_width": 1,
           "effects": [
@@ -12850,6 +13693,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3526656,
           "data_width": 1,
           "effects": [
@@ -12864,6 +13708,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3530752,
           "data_width": 1,
           "effects": [
@@ -12878,6 +13723,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3534848,
           "data_width": 1,
           "effects": [
@@ -12892,6 +13738,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3538944,
           "data_width": 1,
           "effects": [
@@ -12906,6 +13753,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3543040,
           "data_width": 1,
           "effects": [
@@ -12920,6 +13768,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3547136,
           "data_width": 1,
           "effects": [
@@ -12934,6 +13783,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3551232,
           "data_width": 1,
           "effects": [
@@ -12948,6 +13798,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3555328,
           "data_width": 1,
           "effects": [
@@ -12962,6 +13813,7 @@
           "relro": false
         },
         {
+          "active_permissions": 3,
           "data_anchor_rva": 3702784,
           "data_width": 1,
           "effects": [
@@ -13150,6 +14002,7 @@
   "page_size": 4096,
   "schema": "atfield-workset-v1",
   "selector_manifest": "/home/meandssh/islands-sgx/dynamic/targets/qe3/selectors.json",
+  "selector_manifest_sha256": "05fa014781e0df1f4c8d3902195d7eaa64dccb7941e8da2247170813c0b50283",
   "selectors": [
     {
       "ecall_index": 0,

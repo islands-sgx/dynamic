@@ -12,13 +12,13 @@ import tempfile
 import time
 from pathlib import Path
 
-sys.path.insert(0, "/home/meandssh/islands-sgx/dynamic/vendor/implement/build/workset")
-from workset import ElfFile  # noqa: E402
+sys.path.insert(0, "/home/meandssh/islands-sgx/dynamic/tools")
+from elf_workset import ElfFile  # noqa: E402
 
 DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
 SAMPLE_ROOT = Path("/home/meandssh/islands-sgx/sample")
 INTERPOSE_SO = DYN_ROOT / "build" / "libatfield_native_sgx.so"
-ATFIELD_RUN_BIN = DYN_ROOT / "vendor" / "implement" / "host" / "runner" / "atfield-run"
+ATFIELD_HOST_BIN = Path("/nix/store/6vyb98yh62as89qwndd4drgh7baxcw54-atfield-implement-bundle/bin/atfield-host")
 LD_LIB_PATH = (
     "/nix/store/hg41dqig0qxm7shyi0a0xkw29a14i3js-openssl-3.6.3/lib:"
     "/nix/store/j2kgllgds4w7na8zqv1msi0mpvpjxda8-gcc-15.2.0-lib/lib:"
@@ -192,7 +192,7 @@ def run_sample(
             env_args.append(f"ATFIELD_READY_TABLE={ready_bin}")
         if is_pure_prod:
             cmd = [
-                "sudo", "--", str(ATFIELD_RUN_BIN), "--", "/usr/bin/env",
+                "sudo", "--", str(ATFIELD_HOST_BIN), "run", "--", "/usr/bin/env",
                 *env_args, "setarch", "x86_64", "-R", str(host_bin), *(host_args or [])
             ]
         else:

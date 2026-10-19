@@ -17,11 +17,11 @@ All tables in this document are generated automatically from `experiments/evalua
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
 | `qe3` | `get_att_key_based_from_seal_key` | 69p / 77e | 69p (`+0p`) | **69p** (`+0p`) | **+0p / +0e** | +57p | **126p** | 850p | **85.18%** |
 | `signal-cds` | `sabd_lookup_hash` | 16p / 20e | 230p (`+214p`) | **554p** (`+538p`) | **+324p / +364e** | +12p | **566p** | 1127p | **49.78%** |
-| `sgxwallet` | `ecdsa_sign_field` | 70p / 78e | 76p (`+6p`) | **76p** (`+6p`) | **+0p / +0e** | +33p | **109p** | 1774p | **93.86%** |
-| `sgxwallet` | `get_public_ecdsa_key_field` | 68p / 74e | 68p (`+0p`) | **72p** (`+4p`) | **+4p / +4e** | +29p | **101p** | 1774p | **94.31%** |
+| `sgxwallet` | `ecdsa_sign_field` | 69p / 77e | 75p (`+6p`) | **75p** (`+6p`) | **+0p / +0e** | +34p | **109p** | 1774p | **93.86%** |
+| `sgxwallet` | `get_public_ecdsa_key_field` | 67p / 73e | 67p (`+0p`) | **71p** (`+4p`) | **+4p / +4e** | +30p | **101p** | 1774p | **94.31%** |
 | `sgxwallet` | `set_sek_field` | 45p / 52e | 45p (`+0p`) | **52p** (`+7p`) | **+7p / +7e** | +22p | **74p** | 1774p | **95.83%** |
-| `sgxwallet` | `generate_ecdsa_key_field` | 76p / 82e | 76p (`+0p`) | **76p** (`+0p`) | **+0p / +0e** | +31p | **107p** | 1774p | **93.97%** |
-| `sgxwallet` | `generate_sek_field` | 48p / 56e | 48p (`+0p`) | **48p** (`+0p`) | **+0p / +0e** | +24p | **72p** | 1774p | **95.94%** |
+| `sgxwallet` | `generate_ecdsa_key_field` | 75p / 81e | 75p (`+0p`) | **75p** (`+0p`) | **+0p / +0e** | +32p | **107p** | 1774p | **93.97%** |
+| `sgxwallet` | `generate_sek_field` | 49p / 57e | 49p (`+0p`) | **49p** (`+0p`) | **+0p / +0e** | +25p | **74p** | 1774p | **95.83%** |
 | `ehsm` | `ehsm_create_aes_key` | 263p / 332e | 263p (`+0p`) | **263p** (`+0p`) | **+0p / +0e** | +36p | **299p** | 2349p | **87.27%** |
 | `ehsm` | `ehsm_generate_datakey` | 90p / 98e | 90p (`+0p`) | **264p** (`+174p`) | **+174p / +236e** | +35p | **299p** | 2349p | **87.27%** |
 | `ehsm` | `ehsm_aes_gcm_encrypt` | 90p / 97e | 93p (`+3p`) | **266p** (`+176p`) | **+173p / +234e** | +36p | **302p** | 2349p | **87.14%** |
@@ -33,8 +33,8 @@ All tables in this document are generated automatically from `experiments/evalua
 |---|---|---|---|---|---:|---|---|---|---|---:|---:|---|
 | `qe3` | **PASS** | 69p vs 52p (`True`) | `True` | `0xd5000:True:X`, `0x2000:True:R`, `0x1f4000:True:W` | 0 | `0xd5000` -> **PASS** | `rc=0` (`PASS`) | **0p / 0e** | **0** | **0** | **PASS** |
 | `signal-cds` | **PASS** | 16p vs 1p (`True`) | `True` | `0xc000:True:X`, `0x10000:True:R`, `0x3d000:True:W` | 0 | `0xc000` -> **PASS** | `rc=0` (`PASS`) | **0p / 0e** | **0** | **0** | **PASS** |
-| `sgxwallet` | **PASS** | 48p vs 29p (`True`) | `True` | `0x16000:True:X`, `0x5000:True:R`, `0x28c000:True:W` | 0 | `0x16000` -> **PASS** | `rc=0` (`PASS`) | **0p / 0e** | **0** | **0** | **PASS** |
-| `ehsm` | **PASS** | 263p vs 245p (`True`) | `True` | `0xdb000:True:X`, `0x57000:True:R`, `0x4c9000:True:W` | 0 | `0xdb000` -> **PASS** | `rc=0` (`PASS`) | **0p / 0e** | **0** | **0** | **PASS** |
+| `sgxwallet` | **PASS** | 49p vs 31p (`True`) | `True` | `0x16000:True:X`, `0x5000:True:R`, `0x28c000:True:W` | 0 | `0x16000` -> **PASS** | `rc=0` (`PASS`) | **0p / 0e** | **0** | **0** | **PASS** |
+| `ehsm` | **PASS** | 263p vs 244p (`True`) | `True` | `0xdb000:True:X`, `0x57000:True:R`, `0x4c9000:True:W` | 0 | `0xdb000` -> **PASS** | `rc=0` (`PASS`) | **0p / 0e** | **0** | **0** | **PASS** |
 
 ## 3. Three-Group 5-Round Interleaved Diagnostic Ablation (Per-Observation Accounting)
 
@@ -45,17 +45,17 @@ All tables in this document are generated automatically from `experiments/evalua
 
 | Sample | Field | Total Attempts | Group A Clean `0`-Rewalk / Clean (`med / max`) | **Group B (`XR` Default) Clean `0`-Rewalk / Clean (`med / max`)** | Group B Interrupt-Contaminated Count (`max` pages) | Group C (`X-only`) Clean `0`-Rewalk / Clean (`med / max`) | Group C Interrupt-Contaminated Count (`max` pages) | Group A -> B -> C Cold-TLB `S2` Median TSC Ticks |
 |---|---|---:|---|---|---|---:|---|---|
-| `qe3` | `get_att_key_based_from_seal_key` | 15 | 0/15 (`3 / 5`) | **0/15** (`3 / 3`) | 0 (`max=0p`) | 0/15 (`3 / 3`) | 0 (`max=0p`) | `1,343,094` -> **`164,620`** -> `155,348` |
-| `signal-cds` | `sabd_lookup_hash` | 25 | 16/25 (`0 / 20`) | **25/25** (`0 / 0`) | 0 (`max=0p`) | 25/25 (`0 / 0`) | 0 (`max=0p`) | `1,275,788` -> **`642,572`** -> `640,726` |
-| `sgxwallet` | `generate_sek_field` | 5 | 0/5 (`12 / 15`) | **0/5** (`1 / 1`) | 0 (`max=0p`) | 0/5 (`1 / 1`) | 0 (`max=0p`) | `5,871,450` -> **`228,084`** -> `204,960` |
-| `sgxwallet` | `set_sek_field` | 5 | 0/5 (`10 / 11`) | **0/5** (`1 / 1`) | 0 (`max=0p`) | 0/5 (`1 / 1`) | 0 (`max=0p`) | `5,746,390` -> **`229,292`** -> `211,932` |
-| `sgxwallet` | `generate_ecdsa_key_field` | 5 | 0/5 (`23 / 25`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `3,003,770` -> **`206,286`** -> `195,682` |
-| `sgxwallet` | `get_public_ecdsa_key_field` | 5 | 0/5 (`14 / 23`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `2,068,158` -> **`130,180`** -> `127,890` |
-| `sgxwallet` | `ecdsa_sign_field` | 50 | 0/50 (`15 / 23`) | **50/50** (`0 / 0`) | 0 (`max=0p`) | 50/50 (`0 / 0`) | 0 (`max=0p`) | `2,032,920` -> **`144,740`** -> `144,655` |
-| `ehsm` | `ehsm_generate_datakey` | 5 | 0/5 (`42 / 45`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `2,817,912` -> **`437,696`** -> `443,212` |
-| `ehsm` | `ehsm_aes_gcm_encrypt` | 20 | 0/20 (`36 / 47`) | **20/20** (`0 / 0`) | 0 (`max=0p`) | 20/20 (`0 / 0`) | 0 (`max=0p`) | `2,883,352` -> **`448,603`** -> `434,922` |
-| `ehsm` | `ehsm_aes_gcm_decrypt` | 40 | 0/40 (`36 / 130`) | **40/40** (`0 / 0`) | 0 (`max=0p`) | 40/40 (`0 / 0`) | 0 (`max=0p`) | `2,850,213` -> **`444,100`** -> `437,250` |
-| `ehsm` | `ehsm_create_aes_key` | 5 | 0/5 (`130 / 149`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `7,839,046` -> **`936,988`** -> `897,494` |
+| `qe3` | `get_att_key_based_from_seal_key` | 15 | 0/15 (`3 / 6`) | **0/15** (`3 / 3`) | 0 (`max=0p`) | 0/15 (`3 / 3`) | 0 (`max=0p`) | `1,426,764` -> **`169,606`** -> `158,234` |
+| `signal-cds` | `sabd_lookup_hash` | 25 | 14/25 (`0 / 9`) | **25/25** (`0 / 0`) | 0 (`max=0p`) | 25/25 (`0 / 0`) | 0 (`max=0p`) | `1,276,994` -> **`631,600`** -> `641,960` |
+| `sgxwallet` | `generate_sek_field` | 5 | 0/5 (`13 / 15`) | **0/5** (`1 / 1`) | 0 (`max=0p`) | 0/5 (`1 / 1`) | 0 (`max=0p`) | `5,876,392` -> **`228,566`** -> `208,964` |
+| `sgxwallet` | `set_sek_field` | 5 | 0/5 (`13 / 15`) | **0/5** (`1 / 1`) | 0 (`max=0p`) | 0/5 (`1 / 1`) | 0 (`max=0p`) | `5,885,062` -> **`218,948`** -> `203,058` |
+| `sgxwallet` | `generate_ecdsa_key_field` | 5 | 0/5 (`19 / 24`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `2,991,386` -> **`205,008`** -> `190,396` |
+| `sgxwallet` | `get_public_ecdsa_key_field` | 5 | 0/5 (`14 / 18`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `2,047,334` -> **`133,346`** -> `124,860` |
+| `sgxwallet` | `ecdsa_sign_field` | 50 | 0/50 (`14 / 22`) | **50/50** (`0 / 0`) | 0 (`max=0p`) | 50/50 (`0 / 0`) | 0 (`max=0p`) | `2,035,311` -> **`144,486`** -> `143,354` |
+| `ehsm` | `ehsm_generate_datakey` | 5 | 0/5 (`31 / 45`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `2,884,748` -> **`427,886`** -> `435,452` |
+| `ehsm` | `ehsm_aes_gcm_encrypt` | 20 | 0/20 (`36 / 50`) | **20/20** (`0 / 0`) | 0 (`max=0p`) | 20/20 (`0 / 0`) | 0 (`max=0p`) | `2,889,163` -> **`437,617`** -> `424,875` |
+| `ehsm` | `ehsm_aes_gcm_decrypt` | 40 | 0/40 (`37 / 131`) | **40/40** (`0 / 0`) | 0 (`max=0p`) | 40/40 (`0 / 0`) | 0 (`max=0p`) | `2,872,028` -> **`435,248`** -> `431,927` |
+| `ehsm` | `ehsm_create_aes_key` | 5 | 0/5 (`122 / 132`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `7,874,926` -> **`944,958`** -> `899,506` |
 
 - **Exact Per-Observation Totals Across the 8 Non-`ENCLU` Fields (155 total Field entries across 5 rounds)**:
   - **Group B (`dynamic_xr`, Default `XR`)**: **155 / 155** clean (`s3_aex=0`) observations, **0 / 155** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **155 / 155** achieved `0` residual page-table A/D re-walks.
@@ -70,19 +70,19 @@ All tables in this document are generated automatically from `experiments/evalua
 
 | Sample | Protected Calls / Round | Group B Clean / Attempts | `No-PreTouch` Body (µs/call) | Group B `ACQUIRE + RELEASE` (µs/call) | Group B Warm `S2` Pre-Touch (`ΔBody`, µs/call) | **Group B Total (µs/call)** | **Group B Per-Call Overhead vs `No-PreTouch`** | Group A Total (µs/call) | **Group B Protection Overhead Reduction vs Group A** |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| `qe3` | 3 | **5/5** | 250.1 | **38.8** | **+9.7** | **298.6** | **+19.39%** (`+48.5 µs`) | 466.7 (`+216.6 µs`) | **4.47x** |
-| `signal-cds` | 5 | **5/5** | 87452.4 | **128.9** | **+5.2** | **87585.4** | **+0.15%** (`+133.0 µs`) | 87716.6 (`+264.1 µs`) | **1.99x** |
-| `sgxwallet` | 14 | **5/5** | 1353.1 | **34.9** | **-3.3** | **1384.8** | **+2.35%** (`+31.7 µs`) | 1801.2 (`+448.1 µs`) | **14.12x** |
-| `ehsm` | 14 | **5/5** | 141.3 | **70.8** | **+3.5** | **216.3** | **+53.09%** (`+75.0 µs`) | 708.0 (`+566.8 µs`) | **7.56x** |
+| `qe3` | 3 | **5/5** | 251.4 | **39.1** | **+8.2** | **298.7** | **+18.78%** (`+47.2 µs`) | 468.2 (`+216.7 µs`) | **4.59x** |
+| `signal-cds` | 5 | **5/5** | 87438.7 | **128.1** | **+35.6** | **87602.6** | **+0.19%** (`+163.9 µs`) | 87708.3 (`+269.6 µs`) | **1.64x** |
+| `sgxwallet` | 14 | **5/5** | 1353.1 | **34.9** | **-2.6** | **1385.2** | **+2.38%** (`+32.1 µs`) | 1800.4 (`+447.3 µs`) | **13.92x** |
+| `ehsm` | 14 | **5/5** | 140.3 | **72.9** | **+6.9** | **219.7** | **+56.66%** (`+79.5 µs`) | 708.0 (`+567.7 µs`) | **7.14x** |
 
 ### 4B. Whole-Workflow End-to-End ECALL Sum (`cat=1` Init + `cat=2` Early-Return + `cat=3` Field Calls) & Binary Footprint
 
 | Sample | Call Mix (`Field / Early-Ret / Init`) | Group B Clean / Attempts | `Raw` (ms) | `No-PreTouch` (ms) | Group A (`all_reg_xr`) (ms) | **Group B (`dynamic_xr` Default)** (ms) | Group C (`dynamic_refined`) (ms) | **Group B Workflow Overhead vs `No-PreTouch`** | Group B Speedup vs Group A | Loaded `PT_LOAD` MemSiz (`Raw -> Group B`) | `.atfield_pretouch` + `ReadyTable` Bytes |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| `qe3` | `3 / 0 / 0` | **5/5** | 0.74 | 0.75 | 1.40 | **0.90** | 0.90 | **+19.39%** (`+0.15 ms`) | **1.56x** | `2104.7 -> 2116.7 KiB` (**+0.57%**) | `1303 B + 1544 B` |
-| `signal-cds` | `5 / 1 / 0` | **5/5** | 437.16 | 437.27 | 438.81 | **438.05** | 438.06 | **+0.18%** (`+0.79 ms`) | **1.00x** | `140.3 -> 155.8 KiB` (**+11.06%**) | `4568 B + 5072 B` |
-| `sgxwallet` | `14 / 0 / 4` | **5/5** | 42.10 | 36.03 | 42.38 | **36.44** | 36.65 | **+1.15%** (`+0.41 ms`) | **1.16x** | `2722.2 -> 2818.2 KiB` (**+3.52%**) | `4460 B + 6288 B` |
-| `ehsm` | `14 / 16 / 2` | **5/5** | 2.21 | 2.25 | 17.47 | **4.44** | 4.44 | **+97.75%** (`+2.20 ms`) | **3.93x** | `5023.2 -> 5123.3 KiB` (**+1.99%**) | `10230 B + 11720 B` |
+| `qe3` | `3 / 0 / 0` | **5/5** | 0.75 | 0.75 | 1.40 | **0.90** | 0.89 | **+18.78%** (`+0.14 ms`) | **1.57x** | `2104.7 -> 2116.7 KiB` (**+0.57%**) | `1303 B + 1544 B` |
+| `signal-cds` | `5 / 1 / 0` | **5/5** | 439.46 | 437.20 | 438.78 | **438.14** | 438.10 | **+0.22%** (`+0.94 ms`) | **1.00x** | `140.3 -> 155.8 KiB` (**+11.06%**) | `4568 B + 5072 B` |
+| `sgxwallet` | `14 / 0 / 4` | **5/5** | 42.22 | 36.04 | 42.32 | **36.47** | 36.58 | **+1.20%** (`+0.43 ms`) | **1.16x** | `2722.2 -> 2818.2 KiB` (**+3.52%**) | `4482 B + 6304 B` |
+| `ehsm` | `14 / 3 / 2` | **5/5** | 2.16 | 2.15 | 11.42 | **3.46** | 3.45 | **+61.29%** (`+1.32 ms`) | **3.30x** | `5023.1 -> 5123.3 KiB` (**+1.99%**) | `10230 B + 11720 B` |
 
 ## 5. Clean-Checkout Reproducible Workflow
 

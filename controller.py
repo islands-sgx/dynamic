@@ -10,11 +10,10 @@ import sys
 from pathlib import Path
 
 DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
-VENDOR_IMPL = DYN_ROOT / "vendor" / "implement"
-sys.path.insert(0, str(VENDOR_IMPL / "build" / "workset"))
+IMPL_BUNDLE = Path("/nix/store/6vyb98yh62as89qwndd4drgh7baxcw54-atfield-implement-bundle")
 sys.path.insert(0, str(DYN_ROOT / "tools"))
 
-from workset import (  # noqa: E402
+from elf_workset import (  # noqa: E402
     PAGE,
     SI_FLAG_W,
     ElfFile,
@@ -34,10 +33,10 @@ from generic_explorer import (  # noqa: E402
 from run_native_sgx import INTERPOSE_SO, run_sample, sha256_file  # noqa: E402
 
 LLVM_OBJDUMP = "/nix/store/grw38wxqcn2k8bp9gm9b9h28ds3jgb9y-llvm-atfield-llc-22.1.8/bin/llvm-objdump"
-SGX_SIGN = "/nix/store/2acwmnfcsz668csnyxn77brmllp7kx6s-sgx-sdk-2.29.100.1/bin/x64/sgx_sign"
+SGX_SIGN = "/nix/store/w9361i2a8728720ll02ypv9nbbfzw5pj-sgx-sdk-2.29.100.1/bin/x64/sgx_sign"
 SIGN_KEY = "/home/meandssh/islands-sgx/sample/build/test-signing-key.pem"
-PRETOUCH_TOOL = VENDOR_IMPL / "build" / "pretouch" / "pretouch.py"
-READINESS_TOOL = VENDOR_IMPL / "build" / "readiness" / "readiness.py"
+PRETOUCH_TOOL = IMPL_BUNDLE / "build" / "pretouch" / "pretouch.ts"
+READINESS_TOOL = IMPL_BUNDLE / "build" / "readiness" / "readiness.ts"
 PATCH_4GATE_TOOL = DYN_ROOT / "tools" / "patch_4gate.py"
 
 
@@ -147,7 +146,7 @@ def emit_and_sign_variant(
     gate_json = tdir / f"enclave.{variant_name}.4gate.json"
 
     subprocess.run([
-        sys.executable, str(PRETOUCH_TOOL), "finalize",
+        str(PRETOUCH_TOOL), "finalize",
         "--profile-elf", str(tdir / "enclave.profile.so"),
         "--signed-profile-elf", str(tdir / "enclave.profile.signed.so"),
         "--workset", str(workset_path),
@@ -167,7 +166,7 @@ def emit_and_sign_variant(
         "-config", str(tdir / "Enclave.aex0.config.xml"),
     ], check=True, stdout=subprocess.DEVNULL)
     subprocess.run([
-        sys.executable, str(PRETOUCH_TOOL), "verify",
+        str(PRETOUCH_TOOL), "verify",
         "--profile-elf", str(tdir / "enclave.profile.so"),
         "--signed-profile-elf", str(tdir / "enclave.profile.signed.so"),
         "--final-elf", str(final_elf),
@@ -178,7 +177,7 @@ def emit_and_sign_variant(
         "--out-json", str(verify_json),
     ], check=True)
     subprocess.run([
-        sys.executable, str(READINESS_TOOL),
+        str(READINESS_TOOL),
         "--workset", str(workset_path),
         "--fields", str(tdir / "fields.json"),
         "--pretouch", str(verify_json),

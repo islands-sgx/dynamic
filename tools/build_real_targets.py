@@ -12,19 +12,20 @@ from pathlib import Path
 
 DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
 SAMPLE_ROOT = Path("/home/meandssh/islands-sgx/sample")
-VENDOR_IMPL = DYN_ROOT / "vendor" / "implement"
-COMPILE_WRAPPER = VENDOR_IMPL / "build" / "codegen" / "compile-ir-object.sh"
-FIELD_TOOL = VENDOR_IMPL / "build" / "field" / ".build-host" / "atfield-field"
-PRETOUCH_TOOL = VENDOR_IMPL / "build" / "pretouch" / "pretouch.py"
-POST_LD = VENDOR_IMPL / "build" / "pretouch" / "post-rx-segment.ld"
-PROFILE_LINK = VENDOR_IMPL / "cli" / "profile-link.py"
-PROTECT_CONFIG = VENDOR_IMPL / "cli" / "protect-config.py"
-WORKSET_TOOL = VENDOR_IMPL / "build" / "workset" / "workset.py"
-READINESS_TOOL = VENDOR_IMPL / "build" / "readiness" / "readiness.py"
+IMPL_BUNDLE = Path("/nix/store/6vyb98yh62as89qwndd4drgh7baxcw54-atfield-implement-bundle")
+VENDOR_IMPL = IMPL_BUNDLE
+COMPILE_WRAPPER = IMPL_BUNDLE / "build" / "codegen" / "compile-ir-object.ts"
+FIELD_TOOL = IMPL_BUNDLE / "bin" / "atfield-field"
+PRETOUCH_TOOL = IMPL_BUNDLE / "build" / "pretouch" / "pretouch.ts"
+POST_LD = IMPL_BUNDLE / "build" / "pretouch" / "post-rx-segment.ld"
+PROFILE_LINK = IMPL_BUNDLE / "cli" / "profile-link.ts"
+PROTECT_CONFIG = IMPL_BUNDLE / "cli" / "protect-config.ts"
+WORKSET_TOOL = IMPL_BUNDLE / "build" / "workset" / "workset.ts"
+READINESS_TOOL = IMPL_BUNDLE / "build" / "readiness" / "readiness.ts"
 
 LLC_BIN = "/nix/store/grw38wxqcn2k8bp9gm9b9h28ds3jgb9y-llvm-atfield-llc-22.1.8/bin/llc"
 OBJCOPY_BIN = "/nix/store/grw38wxqcn2k8bp9gm9b9h28ds3jgb9y-llvm-atfield-llc-22.1.8/bin/llvm-objcopy"
-SGX_SDK_ROOT = "/nix/store/2acwmnfcsz668csnyxn77brmllp7kx6s-sgx-sdk-2.29.100.1"
+SGX_SDK_ROOT = "/nix/store/w9361i2a8728720ll02ypv9nbbfzw5pj-sgx-sdk-2.29.100.1"
 SGX_SIGN = f"{SGX_SDK_ROOT}/bin/x64/sgx_sign"
 SIGN_KEY = str(SAMPLE_ROOT / "build" / "test-signing-key.pem")
 
@@ -81,7 +82,7 @@ TARGETS = {
         "stack": 0x40000,
         "capacity_q": 94208,
         "upstream_pkg": "ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-clang",
-        "upstream_root": "/nix/store/my840mbl3rj7gv78bmhbxxi48yznjfvp-ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-clang",
+        "upstream_root": "/nix/store/d7ag1nxkg4crmph9s7lvihih3wd5wicp-ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-clang",
         "extra_includes": [
             f"-I{SGX_SDK_ROOT}/include",
             "-I/nix/store/nfd9a0lbz3vjh19g3nw03vpsp1qkgki7-intel-sgx-ssl-anchor-3.0_Rev5.4/include",
@@ -180,7 +181,6 @@ def build_target(name: str) -> dict:
     ordered_objs = [str(obj_map[r]) for r in rel_objs]
     profile_elf = out_dir / "enclave.profile.so"
     link_cmd = [
-        sys.executable,
         str(PROFILE_LINK),
         "--field-tool", str(FIELD_TOOL),
         "--pretouch-tool", str(PRETOUCH_TOOL),
@@ -199,7 +199,7 @@ def build_target(name: str) -> dict:
     protect_xml = out_dir / "Enclave.protect.config.xml"
     aex0_xml = out_dir / "Enclave.aex0.config.xml"
     subprocess.run([
-        sys.executable, str(PROTECT_CONFIG),
+        str(PROTECT_CONFIG),
         str(orig_xml), str(protect_xml),
         "--heap", hex(cfg["heap"]), "--stack", hex(cfg["stack"]),
     ], check=True)
@@ -228,7 +228,7 @@ def build_target(name: str) -> dict:
     workset_all_reg = out_dir / "workset.all_reg.json"
     layout_json = out_dir / "signer_layout.json"
     subprocess.run([
-        sys.executable, str(WORKSET_TOOL),
+        str(WORKSET_TOOL),
         "--profile-elf", str(profile_elf),
         "--signed-elf", str(signed_profile),
         "--fields", str(out_dir / "fields.json"),
@@ -248,7 +248,7 @@ def build_target(name: str) -> dict:
     ready_all_reg_json = out_dir / "enclave.all_reg.ready.json"
 
     subprocess.run([
-        sys.executable, str(PRETOUCH_TOOL), "finalize",
+        str(PRETOUCH_TOOL), "finalize",
         "--profile-elf", str(profile_elf),
         "--signed-profile-elf", str(signed_profile),
         "--workset", str(workset_all_reg),
@@ -268,7 +268,7 @@ def build_target(name: str) -> dict:
         "-config", str(aex0_xml),
     ], check=True)
     subprocess.run([
-        sys.executable, str(PRETOUCH_TOOL), "verify",
+        str(PRETOUCH_TOOL), "verify",
         "--profile-elf", str(profile_elf),
         "--signed-profile-elf", str(signed_profile),
         "--final-elf", str(final_all_reg_elf),
@@ -279,7 +279,7 @@ def build_target(name: str) -> dict:
         "--out-json", str(verify_all_reg_json),
     ], check=True)
     subprocess.run([
-        sys.executable, str(READINESS_TOOL),
+        str(READINESS_TOOL),
         "--workset", str(workset_all_reg),
         "--fields", str(out_dir / "fields.json"),
         "--pretouch", str(verify_all_reg_json),

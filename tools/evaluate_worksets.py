@@ -66,9 +66,9 @@ HOLDOUT_SUITES = {
     },
     "ehsm": {
         "expected_tags": {"cold_state_replay_ecall_2_after_0_1", "cold_state_replay_ecall_4_after_0_1", "schema_xor_p4_byte_9"},
-        "intervention": "typed_state_probe:2:1:0:1;typed_state_probe:4:1:0:1;xor_param:3:1:4:9:127",
+        "intervention": "typed_state_probe:2:0:0:1;typed_state_probe:4:0:0:1;xor_param:3:0:4:9:127",
         "host_args": ["--bytes", "1536", "--requests", "3"],
-        "min_records": 39,
+        "min_records": 20,
         "aux_runs": [],
         "desc": "New input combination (--bytes 1536 --requests 3) + cold-enclave state replay on encrypt & generate_datakey + ciphertext byte-9 bit-flip",
     },

@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-root=${ATFIELD_IMPLEMENT_ROOT:?ATFIELD_IMPLEMENT_ROOT must name the implement repository}
-compiler=${ATFIELD_CC:?ATFIELD_CC must name the pinned Clang wrapper}
-export ATFIELD_PYTHON=${ATFIELD_PYTHON:-$(command -v python3)}
-exec bash "$root/build/codegen/compile-ir-object.sh" "$compiler" "$@"
