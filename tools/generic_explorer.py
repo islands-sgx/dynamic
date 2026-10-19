@@ -24,7 +24,7 @@ def generate_schema_mutations_for_ecall(ecall: dict, selector_seq: int = 0) -> l
                 static_b = p.get("static_byte_len")
                 is_str = p.get("is_string", False)
                 if static_b is not None:
-                    cands = [b for b in (0, 3, 15, 31, 60) if b < static_b]
+                    cands = [b for b in (0, 15, 60) if b < static_b]
                 elif is_str:
                     cands = [0]
                 else:
@@ -34,22 +34,18 @@ def generate_schema_mutations_for_ecall(ecall: dict, selector_seq: int = 0) -> l
                     interventions.append({
                         "kind": "schema_xor_param",
                         "param_index": pidx,
+                        "tag": f"schema_xor_p{pidx}_byte_{byte_idx}",
                         "spec": f"xor_param:{idx}:{selector_seq}:{pidx}:{byte_idx}:{mask}",
                         "desc": f"Bounded schema XOR on {ecall['name']}.{pname}[{byte_idx}] ^= 0x{mask:02x}",
                     })
-                interventions.append({
-                    "kind": "schema_null_param",
-                    "param_index": pidx,
-                    "spec": f"null_param:{idx}:{selector_seq}:{pidx}",
-                    "desc": f"Typed NULL pointer injection on {ecall['name']}.{pname}",
-                })
         else:
-            for val in (0, 2, 10, 16, 99):
+            for val in (0, 2, 99):
                 interventions.append({
                     "kind": "schema_scalar_boundary",
                     "param_index": pidx,
+                    "tag": f"schema_scalar_p{pidx}_val_{val}",
                     "spec": f"set_scalar:{idx}:{selector_seq}:{pidx}:{val}",
-                    "desc": f"Typed scalar boundary {ecall['name']}.{pname} = {val}",
+                    "desc": f"Typed scalar boundary (with dependent buffer rebind) {ecall['name']}.{pname} = {val}",
                 })
     return interventions
 

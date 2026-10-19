@@ -520,39 +520,38 @@ def explore_and_close_sample(sample: str) -> dict:
                 break
             scale *= 4
 
-    # Step C: Layer 2 Schema-Typed Pointer / Scalar / Bounded-XOR Mutations per Field-bearing ECALL
-    # Detect if an ECALL is a one-shot CALL_ONCE function (invoked at most once per enclave in baseline and has no loop)
+    # Step C: Layer 2 Isolated Single-Mutation Replay per Field-bearing ECALL (zero sample/index heuristics)
+    # Determine from baseline trace which selector_seq (0 or 1) first enters a Field for each ECALL
+    first_field_sseq_by_ecall = {}
+    for rec in res0["records"]:
+        if rec["fields"] and rec["ecall_index"] not in first_field_sseq_by_ecall:
+            first_field_sseq_by_ecall[rec["ecall_index"]] = rec["selector_seq"]
+
     for idx in field_selectors:
         ec = ecalls_by_idx.get(idx)
         if not ec:
             continue
-        muts = generate_schema_mutations_for_ecall(ec, selector_seq=0)
-        xor_and_scalar = [m["spec"] for m in muts if m["kind"] != "schema_null_param"]
-        if not xor_and_scalar:
-            continue
-        # Also include sseq=1 variants in case sseq=0 is a size-query call
-        xor_s1 = [sp.replace(f":{idx}:0:", f":{idx}:1:") for sp in xor_and_scalar]
-        # For sgxwallet ecall 2/3 (CALL_ONCE functions), stop_before_normal_ecall prevents calling the same CALL_ONCE function twice in one enclave
-        is_call_once_candidate = (not ec.get("has_retval") and idx in (2, 3))
-        plan = {
-            "run_id": f"layer2_schema_bounded_mut_ecall{idx}",
-            "layer": "layer2_generic_schema",
-            "subkind": "schema_bounded_xor_and_scalar",
-            "intervention": ";".join(xor_and_scalar if is_call_once_candidate else (xor_and_scalar + xor_s1)),
-            "allow_nonzero_rc": True,
-            "desc": f"Schema-typed bounded XOR and scalar boundary mutations on {ec['name']}",
-        }
-        res_m = run_sample(
-            sample,
-            mode="profile_4gate",
-            ipi_mask=7,
-            intervention=plan["intervention"],
-            stop_before_normal_ecall=f"{idx}:0" if is_call_once_candidate else "",
-            stop_after_selector="" if is_call_once_candidate else f"{idx}:1",
-            allow_fast_forward=0,
-            persist_prefix=raw_trace_dir / plan["run_id"],
-        )
-        ingest_run(plan, res_m, is_baseline_host=False, is_seed_isolated=True)
+        target_sseq = first_field_sseq_by_ecall.get(idx, 0)
+        muts = generate_schema_mutations_for_ecall(ec, selector_seq=target_sseq)
+        for m_i, m in enumerate(muts):
+            plan = {
+                "run_id": f"layer2_isolated_mut_ecall{idx}_s{target_sseq}_m{m_i}_{m['tag']}",
+                "layer": "layer2_generic_schema",
+                "subkind": "isolated_single_mutation_replay",
+                "intervention": m["spec"],
+                "allow_nonzero_rc": False,
+                "desc": f"Isolated fresh-enclave single mutation replay: {m['desc']} at sseq={target_sseq}",
+            }
+            res_m = run_sample(
+                sample,
+                mode="profile_4gate",
+                ipi_mask=7,
+                intervention=m["spec"],
+                stop_before_normal_ecall=f"{idx}:{target_sseq}",
+                allow_fast_forward=0,
+                persist_prefix=raw_trace_dir / plan["run_id"],
+            )
+            ingest_run(plan, res_m, is_baseline_host=False, is_seed_isolated=True)
 
     # Step D: Layer 2 Typed Cold-Enclave State Replay (typed_state_probe, zero msync guessing)
     if 0 in non_field_selectors and len(field_selectors) > 1:

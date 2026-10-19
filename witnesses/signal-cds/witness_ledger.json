@@ -25,10 +25,10 @@
       "call_statistics": {
         "abi_nonzero_return_entries": 0,
         "abi_void_return_entries": 0,
-        "abi_zero_return_entries": 1415,
-        "field_entries": 1415,
+        "abi_zero_return_entries": 1401,
+        "field_entries": 1401,
         "transport_error_entries": 0,
-        "transport_ok_entries": 1415
+        "transport_ok_entries": 1401
       },
       "dynamic_explored_obs_effects": 797,
       "dynamic_explored_obs_pages": 554,
@@ -89,15 +89,15 @@
   },
   "ecall_statistics": {
     "0": {
-      "abi_nonzero_return_calls": 4,
+      "abi_nonzero_return_calls": 0,
       "abi_return_type": "scalar",
       "abi_void_calls": 0,
-      "abi_zero_return_calls": 1418,
-      "ecall_invocations": 1422,
-      "field_entering_calls": 1415,
+      "abi_zero_return_calls": 1403,
+      "ecall_invocations": 1403,
+      "field_entering_calls": 1401,
       "out_status_nonzero_calls": 0,
       "out_status_zero_calls": 0,
-      "outer_non_field_calls": 7,
+      "outer_non_field_calls": 2,
       "transport_error_calls": 0
     }
   },
@@ -161,38 +161,38 @@
     {
       "ecall_index": 0,
       "history_depth": 16,
-      "max_tsc_s3": 32422,
-      "median_tsc_s3": 22014,
-      "regime_jump_ratio": 1.47
+      "max_tsc_s3": 33066,
+      "median_tsc_s3": 20836,
+      "regime_jump_ratio": 1.59
     },
     {
       "ecall_index": 0,
       "history_depth": 64,
-      "max_tsc_s3": 36014,
-      "median_tsc_s3": 20610,
-      "regime_jump_ratio": 1.75
+      "max_tsc_s3": 34680,
+      "median_tsc_s3": 21814,
+      "regime_jump_ratio": 1.59
     },
     {
       "ecall_index": 0,
       "history_depth": 256,
-      "max_tsc_s3": 35088,
-      "median_tsc_s3": 20152,
-      "regime_jump_ratio": 1.74
+      "max_tsc_s3": 34358,
+      "median_tsc_s3": 20404,
+      "regime_jump_ratio": 1.68
     },
     {
       "ecall_index": 0,
       "history_depth": 1024,
-      "max_tsc_s3": 34070,
-      "median_tsc_s3": 20272,
-      "regime_jump_ratio": 1.68
+      "max_tsc_s3": 35362,
+      "median_tsc_s3": 20220,
+      "regime_jump_ratio": 1.75
     }
   ],
-  "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+  "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
   "profile_elf_sha256": "d3673190dadcffaf4b3206ad33bdf769de0414d47a35b6a8f7886258308eaf42",
   "runs": [
     {
       "description": "Unmodified host binary full execution (first entry per Field = Layer 0; full run = Layer 1)",
-      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
       "layer": "layer1_full_host",
       "measurement_invalid": false,
       "new_page_effects_discovered": 433,
@@ -201,11 +201,11 @@
       "run_id": "layer0_and_layer1_unmodified_host",
       "subkind": "unmodified_host_full_trace",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer0_and_layer1_unmodified_host.jsonl",
-      "trace_sha256": "c234adc82071c235fd096ab928b568885d44ead0c67c71f750f4985ec16b3061"
+      "trace_sha256": "15ac6acd4b0d73ba98672417e5b306d1c4f530d59bb44cefed585cff004f0bb2"
     },
     {
       "description": "Closed-loop feedback scale step n=64 on ecall_lookup_hash (stop_after_selector=0:0)",
-      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 1,
@@ -214,11 +214,11 @@
       "run_id": "layer2_feedback_scale_ecall0_n64",
       "subkind": "feedback_scale_expansion",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n64.jsonl",
-      "trace_sha256": "d862f6797405ed3aca67f3608c389cd4c4a502644c93915614c9801a2aa8add8"
+      "trace_sha256": "fd7b90d0e6eb9573366328d4e48a0212f15af8c27c12c288d393df95902e4494"
     },
     {
       "description": "Closed-loop feedback scale step n=256 on ecall_lookup_hash (stop_after_selector=0:0)",
-      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 6,
@@ -227,11 +227,11 @@
       "run_id": "layer2_feedback_scale_ecall0_n256",
       "subkind": "feedback_scale_expansion",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n256.jsonl",
-      "trace_sha256": "36e59794641119dc9f0ebf1178aec1451647120e3145a1a9364be23cfc75846d"
+      "trace_sha256": "3e40307d6cce52972262717a85e282af48cc6e0a1b4b2d8eee9b80f872b74ca9"
     },
     {
       "description": "Closed-loop feedback scale step n=1024 on ecall_lookup_hash (stop_after_selector=0:0)",
-      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 8,
@@ -240,11 +240,11 @@
       "run_id": "layer2_feedback_scale_ecall0_n1024",
       "subkind": "feedback_scale_expansion",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n1024.jsonl",
-      "trace_sha256": "648bc16842f6aa164188ead36982a18d91b5e95a76c1734e683e8a62b3f675e8"
+      "trace_sha256": "9ca23e05ddbdd5767b02e9f8542053945a5baaa00ec78bd9e8c07d7594f7aa78"
     },
     {
       "description": "Closed-loop feedback scale step n=4096 on ecall_lookup_hash (stop_after_selector=0:0)",
-      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 0,
@@ -253,11 +253,11 @@
       "run_id": "layer2_feedback_scale_ecall0_n4096",
       "subkind": "feedback_scale_expansion",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n4096.jsonl",
-      "trace_sha256": "b3017deaf0300f7a4e9d6dd2bc051329b11a74cb5dd1129ed3a9bee2398ea155"
+      "trace_sha256": "30c19519b0e350804da939ba799d59047fce8b362ff2e61f4da3a49063d7ea29"
     },
     {
       "description": "Closed-loop feedback scale step n=16384 on ecall_lookup_hash (stop_after_selector=0:0)",
-      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 0,
@@ -266,11 +266,11 @@
       "run_id": "layer2_feedback_scale_ecall0_n16384",
       "subkind": "feedback_scale_expansion",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n16384.jsonl",
-      "trace_sha256": "b0c123e99195de100ebff9bbba261b7103dff4209c4a3bffb48ee206c9865df4"
+      "trace_sha256": "4191ac486316aba069a44e7ca127ad2fecd7a3205a8ae21b25ba721834e6642d"
     },
     {
       "description": "Closed-loop feedback scale step n=65536 on ecall_lookup_hash (stop_after_selector=0:0)",
-      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 0,
@@ -279,11 +279,11 @@
       "run_id": "layer2_feedback_scale_ecall0_n65536",
       "subkind": "feedback_scale_expansion",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n65536.jsonl",
-      "trace_sha256": "120ee52bc524d350be18be0601891e194f814cfee2af2264cad4afdbebc6b9ff"
+      "trace_sha256": "65f15f2f6c25d235f20c9b181e6857c99939c652a18cb796ec685c9a0d6eef21"
     },
     {
       "description": "Closed-loop feedback scale step n=262144 on ecall_lookup_hash (stop_after_selector=0:0)",
-      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 349,
@@ -292,24 +292,167 @@
       "run_id": "layer2_feedback_scale_ecall0_n262144",
       "subkind": "feedback_scale_expansion",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n262144.jsonl",
-      "trace_sha256": "c1e238a7ca4447688884d230ceba134077fad568a070f783c694f1a1a1cb3dc4"
+      "trace_sha256": "b4b11b7e0d364b8e7058feb240211bec5bdf62870fad15a1acc4065697c6ed52"
     },
     {
-      "description": "Schema-typed bounded XOR and scalar boundary mutations on ecall_lookup_hash",
-      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "description": "Isolated fresh-enclave single mutation replay: Bounded schema XOR on ecall_lookup_hash.in_jids[0] ^= 0xff at sseq=0",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 0,
-      "records_collected": 30,
+      "records_collected": 1,
       "returncode": 0,
-      "run_id": "layer2_schema_bounded_mut_ecall0",
-      "subkind": "schema_bounded_xor_and_scalar",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_schema_bounded_mut_ecall0.jsonl",
-      "trace_sha256": "747bd46e8244e56004b45069577ac3772552e03b93533cc986f2c5090cdea8f0"
+      "run_id": "layer2_isolated_mut_ecall0_s0_m0_schema_xor_p0_byte_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_isolated_mut_ecall0_s0_m0_schema_xor_p0_byte_0.jsonl",
+      "trace_sha256": "9dfb954cd6918b7001f82f245192dee2a52e600376f0bb4570a6696cfd92e058"
+    },
+    {
+      "description": "Isolated fresh-enclave single mutation replay: Bounded schema XOR on ecall_lookup_hash.in_jids[15] ^= 0xaa at sseq=0",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall0_s0_m1_schema_xor_p0_byte_15",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_isolated_mut_ecall0_s0_m1_schema_xor_p0_byte_15.jsonl",
+      "trace_sha256": "ea552bb3ce04dba54a5994cbdbb2d2fa8a51907797447e4ae781c626b91f3b6f"
+    },
+    {
+      "description": "Isolated fresh-enclave single mutation replay: Typed scalar boundary (with dependent buffer rebind) ecall_lookup_hash.in_jid_count = 0 at sseq=0",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall0_s0_m2_schema_scalar_p1_val_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_isolated_mut_ecall0_s0_m2_schema_scalar_p1_val_0.jsonl",
+      "trace_sha256": "0aacb2c1e1e1fcde99a12273d2c849d9817ee9140574f7ca1cfb0283a8b1a1f5"
+    },
+    {
+      "description": "Isolated fresh-enclave single mutation replay: Typed scalar boundary (with dependent buffer rebind) ecall_lookup_hash.in_jid_count = 2 at sseq=0",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall0_s0_m3_schema_scalar_p1_val_2",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_isolated_mut_ecall0_s0_m3_schema_scalar_p1_val_2.jsonl",
+      "trace_sha256": "84452a6b28c02e08d978b6b4fbde75888f5ba2737ed551c5c311cb151d0f125b"
+    },
+    {
+      "description": "Isolated fresh-enclave single mutation replay: Typed scalar boundary (with dependent buffer rebind) ecall_lookup_hash.in_jid_count = 99 at sseq=0",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall0_s0_m4_schema_scalar_p1_val_99",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_isolated_mut_ecall0_s0_m4_schema_scalar_p1_val_99.jsonl",
+      "trace_sha256": "536b76b53cc4d66068bbe3ff2a99efbb2d485e74c3ebad5a8269de4a25d646b0"
+    },
+    {
+      "description": "Isolated fresh-enclave single mutation replay: Bounded schema XOR on ecall_lookup_hash.ab_jids[0] ^= 0xff at sseq=0",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall0_s0_m5_schema_xor_p2_byte_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_isolated_mut_ecall0_s0_m5_schema_xor_p2_byte_0.jsonl",
+      "trace_sha256": "9e26be8fb93180a36f63387290b737c99aaa56ab5abb237f8fed15873f95c5e8"
+    },
+    {
+      "description": "Isolated fresh-enclave single mutation replay: Bounded schema XOR on ecall_lookup_hash.ab_jids[15] ^= 0xaa at sseq=0",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall0_s0_m6_schema_xor_p2_byte_15",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_isolated_mut_ecall0_s0_m6_schema_xor_p2_byte_15.jsonl",
+      "trace_sha256": "2c3d4d92c21f5a414d924780d59df7b1c69d70296e1e44f1cffa141299388cd1"
+    },
+    {
+      "description": "Isolated fresh-enclave single mutation replay: Typed scalar boundary (with dependent buffer rebind) ecall_lookup_hash.ab_jid_count = 0 at sseq=0",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall0_s0_m7_schema_scalar_p3_val_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_isolated_mut_ecall0_s0_m7_schema_scalar_p3_val_0.jsonl",
+      "trace_sha256": "d1b84e66b12618548e2e3e208c33eabf039566100fc8d19107048183d77ea7c5"
+    },
+    {
+      "description": "Isolated fresh-enclave single mutation replay: Typed scalar boundary (with dependent buffer rebind) ecall_lookup_hash.ab_jid_count = 2 at sseq=0",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall0_s0_m8_schema_scalar_p3_val_2",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_isolated_mut_ecall0_s0_m8_schema_scalar_p3_val_2.jsonl",
+      "trace_sha256": "5a5bf2dd601e40b6dce52e95b537679c09367b470265bd8a46e89cfd0775aac6"
+    },
+    {
+      "description": "Isolated fresh-enclave single mutation replay: Typed scalar boundary (with dependent buffer rebind) ecall_lookup_hash.ab_jid_count = 99 at sseq=0",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall0_s0_m9_schema_scalar_p3_val_99",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_isolated_mut_ecall0_s0_m9_schema_scalar_p3_val_99.jsonl",
+      "trace_sha256": "8b1c2777bee167d11b589487901dcfdda9937a65a838179077070bfa2576b415"
+    },
+    {
+      "description": "Isolated fresh-enclave single mutation replay: Bounded schema XOR on ecall_lookup_hash.in_ab_jids_result[0] ^= 0xff at sseq=0",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall0_s0_m10_schema_xor_p4_byte_0",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_isolated_mut_ecall0_s0_m10_schema_xor_p4_byte_0.jsonl",
+      "trace_sha256": "5f057e27833a37a556a39eddde346484dc5121df21029724517d8049058066d8"
+    },
+    {
+      "description": "Isolated fresh-enclave single mutation replay: Bounded schema XOR on ecall_lookup_hash.in_ab_jids_result[15] ^= 0xaa at sseq=0",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 0,
+      "returncode": 0,
+      "run_id": "layer2_isolated_mut_ecall0_s0_m11_schema_xor_p4_byte_15",
+      "subkind": "isolated_single_mutation_replay",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_isolated_mut_ecall0_s0_m11_schema_xor_p4_byte_15.jsonl",
+      "trace_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
       "description": "Doubling history scan (depth=16, 0 skipped) on ecall_lookup_hash",
-      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 0,
@@ -318,11 +461,11 @@
       "run_id": "layer2_doubling_history_n16_ecall0",
       "subkind": "doubling_history_scan",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_doubling_history_n16_ecall0.jsonl",
-      "trace_sha256": "323a64bd5cf0e2aa8c61c5bb4837aecc606fc99e7bc73389f506cd56b0507646"
+      "trace_sha256": "318ed6afdd2f00ed85ec640840a2eb1635def2f857529c2f46d0609fa8189845"
     },
     {
       "description": "Doubling history scan (depth=64, 0 skipped) on ecall_lookup_hash",
-      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 0,
@@ -331,11 +474,11 @@
       "run_id": "layer2_doubling_history_n64_ecall0",
       "subkind": "doubling_history_scan",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_doubling_history_n64_ecall0.jsonl",
-      "trace_sha256": "fdfe308e882460d80e969c4d7b680db6be99732ac941a533f0260ca2bba4dbdf"
+      "trace_sha256": "b98255419fda9703af9754b0593e50ab036153b1699c021412681f3f55869df4"
     },
     {
       "description": "Doubling history scan (depth=256, 0 skipped) on ecall_lookup_hash",
-      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 0,
@@ -344,11 +487,11 @@
       "run_id": "layer2_doubling_history_n256_ecall0",
       "subkind": "doubling_history_scan",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_doubling_history_n256_ecall0.jsonl",
-      "trace_sha256": "bae67adbcaaddd8972be428d9d2b5d3e4421b9ff7f686e9708d1b7e7035589d9"
+      "trace_sha256": "d445a2465ddea0232ab3281a5148f472332c076d14915765b2ffe36500c022f7"
     },
     {
       "description": "Doubling history scan (depth=1024, 0 skipped) on ecall_lookup_hash",
-      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 0,
@@ -357,7 +500,7 @@
       "run_id": "layer2_doubling_history_n1024_ecall0",
       "subkind": "doubling_history_scan",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_doubling_history_n1024_ecall0.jsonl",
-      "trace_sha256": "a911cd953aab3d89a20c0652ff7ddcb5b30a9f80d06a51965bc2b2c3e026975f"
+      "trace_sha256": "f5bf18861a6e34770c5d815e0df5fc6eadf56bd4cc09d8979ba2e520c793218f"
     }
   ],
   "sample": "signal-cds",
@@ -368,7 +511,7 @@
       "ecall_index": 0,
       "enclave_sha256": "9ddf5c160f43ee78e8666d6e610302a0a6d57b8c73cc62f663fef4f8996f78d6",
       "field_id": "0xd9e7e566ea39a756",
-      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
       "intervention": "",
       "layer": "layer0_first_call",
       "measurement_invalid": 0,
@@ -482,8 +625,8 @@
       "total_field_obs_effects": 20,
       "total_field_obs_pages": 16,
       "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer0_and_layer1_unmodified_host.jsonl",
-      "trace_sha256": "c234adc82071c235fd096ab928b568885d44ead0c67c71f750f4985ec16b3061",
-      "tsc_s3": 33048,
+      "trace_sha256": "15ac6acd4b0d73ba98672417e5b306d1c4f530d59bb44cefed585cff004f0bb2",
+      "tsc_s3": 37110,
       "witness_id": "signal-cds_layer0_and_layer1_unmodified_host_seq0_39a756"
     },
     {
@@ -491,7 +634,7 @@
       "ecall_index": 0,
       "enclave_sha256": "9ddf5c160f43ee78e8666d6e610302a0a6d57b8c73cc62f663fef4f8996f78d6",
       "field_id": "0xd9e7e566ea39a756",
-      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
       "intervention": "",
       "layer": "layer1_full_host",
       "measurement_invalid": 0,
@@ -2570,8 +2713,8 @@
       "total_field_obs_effects": 433,
       "total_field_obs_pages": 230,
       "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer0_and_layer1_unmodified_host.jsonl",
-      "trace_sha256": "c234adc82071c235fd096ab928b568885d44ead0c67c71f750f4985ec16b3061",
-      "tsc_s3": 953725628,
+      "trace_sha256": "15ac6acd4b0d73ba98672417e5b306d1c4f530d59bb44cefed585cff004f0bb2",
+      "tsc_s3": 952204512,
       "witness_id": "signal-cds_layer0_and_layer1_unmodified_host_seq5_39a756"
     },
     {
@@ -2579,7 +2722,7 @@
       "ecall_index": 0,
       "enclave_sha256": "9ddf5c160f43ee78e8666d6e610302a0a6d57b8c73cc62f663fef4f8996f78d6",
       "field_id": "0xd9e7e566ea39a756",
-      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
       "intervention": "scale_bound_v2:0:0:0:16:64:32:64;scale_bound_v2:0:0:1:16:64:32:64;scale_bound_v2:0:0:2:16:64:32:64",
       "layer": "layer2_generic_schema",
       "measurement_invalid": 0,
@@ -2598,8 +2741,8 @@
       "total_field_obs_effects": 434,
       "total_field_obs_pages": 230,
       "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n64.jsonl",
-      "trace_sha256": "d862f6797405ed3aca67f3608c389cd4c4a502644c93915614c9801a2aa8add8",
-      "tsc_s3": 97794,
+      "trace_sha256": "fd7b90d0e6eb9573366328d4e48a0212f15af8c27c12c288d393df95902e4494",
+      "tsc_s3": 99948,
       "witness_id": "signal-cds_layer2_feedback_scale_ecall0_n64_seq0_39a756"
     },
     {
@@ -2607,7 +2750,7 @@
       "ecall_index": 0,
       "enclave_sha256": "9ddf5c160f43ee78e8666d6e610302a0a6d57b8c73cc62f663fef4f8996f78d6",
       "field_id": "0xd9e7e566ea39a756",
-      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
       "intervention": "scale_bound_v2:0:0:0:16:256:32:256;scale_bound_v2:0:0:1:16:256:32:256;scale_bound_v2:0:0:2:16:256:32:256",
       "layer": "layer2_generic_schema",
       "measurement_invalid": 0,
@@ -2651,8 +2794,8 @@
       "total_field_obs_effects": 440,
       "total_field_obs_pages": 230,
       "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n256.jsonl",
-      "trace_sha256": "36e59794641119dc9f0ebf1178aec1451647120e3145a1a9364be23cfc75846d",
-      "tsc_s3": 975592,
+      "trace_sha256": "3e40307d6cce52972262717a85e282af48cc6e0a1b4b2d8eee9b80f872b74ca9",
+      "tsc_s3": 981528,
       "witness_id": "signal-cds_layer2_feedback_scale_ecall0_n256_seq0_39a756"
     },
     {
@@ -2660,7 +2803,7 @@
       "ecall_index": 0,
       "enclave_sha256": "9ddf5c160f43ee78e8666d6e610302a0a6d57b8c73cc62f663fef4f8996f78d6",
       "field_id": "0xd9e7e566ea39a756",
-      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
       "intervention": "scale_bound_v2:0:0:0:16:1024:32:1024;scale_bound_v2:0:0:1:16:1024:32:1024;scale_bound_v2:0:0:2:16:1024:32:1024",
       "layer": "layer2_generic_schema",
       "measurement_invalid": 0,
@@ -2714,8 +2857,8 @@
       "total_field_obs_effects": 448,
       "total_field_obs_pages": 230,
       "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n1024.jsonl",
-      "trace_sha256": "648bc16842f6aa164188ead36982a18d91b5e95a76c1734e683e8a62b3f675e8",
-      "tsc_s3": 15102528,
+      "trace_sha256": "9ca23e05ddbdd5767b02e9f8542053945a5baaa00ec78bd9e8c07d7594f7aa78",
+      "tsc_s3": 15110012,
       "witness_id": "signal-cds_layer2_feedback_scale_ecall0_n1024_seq0_39a756"
     },
     {
@@ -2723,7 +2866,7 @@
       "ecall_index": 0,
       "enclave_sha256": "9ddf5c160f43ee78e8666d6e610302a0a6d57b8c73cc62f663fef4f8996f78d6",
       "field_id": "0xd9e7e566ea39a756",
-      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "interpose_sha256": "d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644",
       "intervention": "scale_bound_v2:0:0:0:16:262144:32:1024",
       "layer": "layer2_generic_schema",
       "measurement_invalid": 0,
@@ -4482,8 +4625,8 @@
       "total_field_obs_effects": 797,
       "total_field_obs_pages": 554,
       "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n262144.jsonl",
-      "trace_sha256": "c1e238a7ca4447688884d230ceba134077fad568a070f783c694f1a1a1cb3dc4",
-      "tsc_s3": 23755160,
+      "trace_sha256": "b4b11b7e0d364b8e7058feb240211bec5bdf62870fad15a1acc4065697c6ed52",
+      "tsc_s3": 24121812,
       "witness_id": "signal-cds_layer2_feedback_scale_ecall0_n262144_seq0_39a756"
     }
   ]

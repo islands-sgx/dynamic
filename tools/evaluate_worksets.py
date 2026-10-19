@@ -25,6 +25,7 @@ SAMPLES = ["qe3", "signal-cds", "sgxwallet", "ehsm"]
 #   hold-out workflow completes all 1005 signatures + SEK reload cleanly with returncode=0 and stdout="PASS".
 HOLDOUT_SUITES = {
     "qe3": {
+        "expected_tags": {"schema_xor_p0_byte_3", "schema_xor_p0_byte_11", "schema_xor_p0_byte_19", "schema_xor_p0_byte_27"},
         "intervention": "xor_param:0:0:0:3:90;xor_param:0:0:0:11:165;xor_param:0:0:0:19:60;xor_param:0:0:0:27:195",
         "host_args": [],
         "min_records": 7,
@@ -32,6 +33,7 @@ HOLDOUT_SUITES = {
         "desc": "Disjoint key_id byte positions {3, 11, 19, 27} and masks {0x5a, 0xa5, 0x3c, 0xc3}",
     },
     "signal-cds": {
+        "expected_tags": {"schema_scale_cnt_384_q_96_m_0", "schema_scale_cnt_3072_q_384_m_1", "schema_scale_cnt_12288_q_512_m_2", "schema_scale_cnt_49152_q_512_m_0", "schema_scale_cnt_131072_q_512_m_1"},
         "intervention": (
             "scale_bound_v2:0:0:0:16:384:32:96;"
             "scale_bound_v2:0:0:1:16:3072:32:384;"
@@ -45,12 +47,14 @@ HOLDOUT_SUITES = {
         "desc": "Disjoint record scales {384, 3072, 12288, 49152, 131072} and query counts {96, 384, 512}",
     },
     "sgxwallet": {
+        "expected_tags": {"schema_xor_p4_byte_0", "schema_scalar_p8_val_37", "schema_xor_p2_byte_7"},
         "intervention": "xor_param:6:500:4:0:1;xor_param:6:999:4:0:1;set_scalar:6:2:8:37;xor_param:5:0:2:7:127",
         "host_args": ["--requests", "1005"],
         "min_records": 1020,
         "aux_runs": [
             {
                 "name": "call_once_set_sek_bitflip",
+                "expected_tags": {"schema_xor_p2_byte_45"},
                 "intervention": "xor_param:3:0:2:45:127",
                 "stop_before_normal_ecall": "3:0",
                 "host_args": ["--requests", "1"],
@@ -61,6 +65,7 @@ HOLDOUT_SUITES = {
         "desc": "Full 1005-request host workflow (0 skipped, rc=0, PASS) + disjoint hash/base=37/byte-7 mutations + isolated CALL_ONCE SetSEK byte-45 probe",
     },
     "ehsm": {
+        "expected_tags": {"cold_state_replay_ecall_2_after_0_1", "cold_state_replay_ecall_4_after_0_1", "schema_xor_p4_byte_9"},
         "intervention": "typed_state_probe:2:1:0:1;typed_state_probe:4:1:0:1;xor_param:3:1:4:9:127",
         "host_args": ["--bytes", "1536", "--requests", "3"],
         "min_records": 39,
@@ -179,11 +184,11 @@ def run_xrw_and_aex_calibration(sample: str, tdir: Path, raw_dir: Path) -> dict:
     r_cand = next(
         (
             p for p, ad in sorted(s3_ad_map.items())
-            if p in page_perm_map and (page_perm_map[p]["max_permissions"] & 4) == 0 and ad == "A"
+            if p > 0 and p in page_perm_map and page_perm_map[p]["effects"] == ["R"] and ad == "A"
         ),
         next(
             p for p, ad in sorted(s3_full_ad_map.items())
-            if p in page_perm_map and page_perm_map[p]["max_permissions"] == 1 and ad == "A"
+            if p > 0 and p in page_perm_map and page_perm_map[p]["effects"] == ["R"]
         ),
     )
     w_cand = next(
@@ -213,12 +218,13 @@ def run_xrw_and_aex_calibration(sample: str, tdir: Path, raw_dir: Path) -> dict:
             lines.append(f"{idx} " + " ".join(f"{p:x}" for p in mod))
         cal_file.write_text("\n".join(lines) + "\n")
 
+        use_field_win = (drop_rva in outside_field_rvas)
         res_drop = run_sample(
             sample,
-            mode="dynamic_xr_final_aex0",
-            ipi_mask=0,
+            mode="dynamic_xr_4gate" if use_field_win else "dynamic_xr_final_aex0",
+            ipi_mask=2 if use_field_win else 0,
             strict_ready_file=str(cal_file),
-            strict_mode="ecall",
+            strict_mode="field" if use_field_win else "ecall",
             host_args=h_args,
             persist_prefix=raw_dir / f"cal_drop_{label}_aex0",
         )
@@ -235,8 +241,11 @@ def run_xrw_and_aex_calibration(sample: str, tdir: Path, raw_dir: Path) -> dict:
             "expected_access_kind": exp_kind,
             "target_selector": sel_idx,
             "pte_healed_observed": bool(first_ev and first_ev.get("pte_healed_observed")),
+            "ea_verified": bool(first_ev and first_ev.get("ea_verified")),
+            "effective_addr_rva": first_ev.get("effective_addr_rva", "0x0") if first_ev else "0x0",
             "confirmed_access_kind": first_ev.get("confirmed_access_kind", "none") if first_ev else "none",
-            "access_kind_confirmed_match": bool(first_ev and first_ev.get("confirmed_access_kind") == exp_kind),
+            "inferred_post_window_kind": first_ev.get("inferred_post_window_kind", "none") if first_ev else "none",
+            "access_kind_confirmed_match": bool(first_ev and first_ev.get("ea_verified") and first_ev.get("confirmed_access_kind") == exp_kind),
             "matched_fault_count": len(matched_events),
             "first_matched_event": first_ev,
             "aex0_run_completed_cleanly": bool(res_drop["returncode"] == 0 and "PASS" in res_drop["stdout"]),
@@ -402,6 +411,7 @@ def evaluate_sample(sample: str) -> dict:
         expected_stdout_substr="PASS",
         expected_min_records=holdout_cfg["min_records"],
         expected_field_ids=expected_fids,
+        expected_tags=holdout_cfg["expected_tags"],
         require_ipi_mask=7,
         closed_workset_effects=closed_target_effects_by_fid,
     )
@@ -424,6 +434,7 @@ def evaluate_sample(sample: str) -> dict:
             expected_returncode=0,
             expected_stdout_substr=aux.get("expected_stdout_substr", ""),
             expected_min_records=aux["min_records"],
+            expected_tags=aux.get("expected_tags"),
             require_ipi_mask=7,
             closed_workset_effects=closed_target_effects_by_fid,
         )
@@ -449,6 +460,8 @@ def evaluate_sample(sample: str) -> dict:
         expected_stdout_substr="PASS",
         expected_min_records=holdout_cfg["min_records"],
         expected_field_ids=expected_fids,
+        expected_tags=holdout_cfg["expected_tags"],
+        require_strict_mode=2,
         require_zero_strict_faults=True,
     )
 
@@ -470,6 +483,8 @@ def evaluate_sample(sample: str) -> dict:
         expected_returncode=0,
         expected_stdout_substr="PASS",
         expected_min_records=holdout_cfg["min_records"],
+        expected_tags=holdout_cfg["expected_tags"],
+        require_strict_mode=1,
         require_zero_strict_faults=True,
     )
 
@@ -482,6 +497,8 @@ def evaluate_sample(sample: str) -> dict:
             {"interpose_sha256": calibration["restored_interpose_sha256"]},
             {"interpose_sha256": tlb_and_fixture["cold_vs_warm_tlb_calibration"]["interpose_sha256"]},
         ],
+        target_dir=tdir,
+        variant="dynamic_xr",
     )
 
     per_field_holdout = {
@@ -570,7 +587,9 @@ def evaluate_sample(sample: str) -> dict:
         }
         for g in groups
     }
-    prod_aex1_ecall_sum_ns = {g: [] for g in groups}
+    prod_keys = ("raw_unprotected", "profile_no_pretouch") + groups
+    prod_aex1_ecall_sum_ns = {g: [] for g in prod_keys}
+    prod_aex1_attempt_stats = {}
 
     group_modes_4gate = [
         ("groupA_all_reg_xr", "all_reg_4gate"),
@@ -578,6 +597,8 @@ def evaluate_sample(sample: str) -> dict:
         ("groupC_dynamic_refined", "dynamic_4gate"),
     ]
     group_modes_prod_aex1 = [
+        ("raw_unprotected", "raw_unprotected"),
+        ("profile_no_pretouch", "profile_signed"),
         ("groupA_all_reg_xr", "all_reg_final"),
         ("groupB_dynamic_xr", "dynamic_xr_final"),
         ("groupC_dynamic_refined", "dynamic_final"),
@@ -620,17 +641,27 @@ def evaluate_sample(sample: str) -> dict:
                         d["contaminated_s3_rewalk"].append(len(s3_set))
 
         for gname, pmode in group_modes_prod_aex1:
-            rp = run_sample(
-                sample,
-                mode=pmode,
-                ipi_mask=0,
-                host_args=perf_h_args,
-                allow_fast_forward=0,
-                persist_prefix=raw_dir / f"ablation_prod_aex1_r{rnd}_{gname}",
-            )
-            if rp["returncode"] != 0 or "PASS" not in rp["stdout"]:
-                raise RuntimeError(f"Production AEX1 run failed on {sample} {gname} r{rnd}: rc={rp['returncode']}")
-            prod_aex1_ecall_sum_ns[gname].append(sum(r["elapsed_ns"] for r in rp["records"]))
+            for att in range(4):
+                suffix = f"r{rnd}_{gname}" if att == 0 else f"r{rnd}_{gname}_retry{att}"
+                rp = run_sample(
+                    sample,
+                    mode=pmode,
+                    ipi_mask=0,
+                    host_args=perf_h_args,
+                    allow_fast_forward=0,
+                    persist_prefix=raw_dir / f"ablation_prod_aex1_{suffix}",
+                )
+                prod_aex1_attempt_stats.setdefault(gname, {"total_attempts": 0, "clean_completed": 0, "interrupt_aborted_0x1006": 0, "other_failures": 0})
+                prod_aex1_attempt_stats[gname]["total_attempts"] += 1
+                if rp["returncode"] == 0 and "PASS" in rp["stdout"]:
+                    prod_aex1_attempt_stats[gname]["clean_completed"] += 1
+                    prod_aex1_ecall_sum_ns[gname].append(sum(r["elapsed_ns"] for r in rp["records"]))
+                    break
+                elif any(r.get("sgx_status") == 0x1006 for r in rp["records"]):
+                    prod_aex1_attempt_stats[gname]["interrupt_aborted_0x1006"] += 1
+                else:
+                    prod_aex1_attempt_stats[gname]["other_failures"] += 1
+                    raise RuntimeError(f"Non-AEX failure on {sample} {gname} r{rnd}: rc={rp['returncode']}")
 
     ablation_summary_by_field = {}
     for fid in closed_target_pages_by_fid:
@@ -726,9 +757,36 @@ def evaluate_sample(sample: str) -> dict:
                     "readytable_bytes": ready_C["table_bytes"],
                 },
             },
+            "production_aex1_attempt_accounting": prod_aex1_attempt_stats,
             "production_aex1_per_round_ecall_sum_ns": {
                 g: dist_summary(prod_aex1_ecall_sum_ns[g])
-                for g in groups
+                for g in prod_keys
+            },
+            "binary_and_memory_size_comparison": {
+                "raw_unprotected": {
+                    "elf_file_bytes": (Path("/home/meandssh/islands-sgx/sample/build/real") / sample / "raw" / "enclave.signed.so").stat().st_size,
+                    "pt_load_memsz_bytes": sum(int(l.split()[5], 16) for l in __import__("subprocess").check_output(["readelf", "-lW", str(Path("/home/meandssh/islands-sgx/sample/build/real") / sample / "raw" / "enclave.signed.so")], text=True).splitlines() if l.split() and l.split()[0] == "LOAD"),
+                    "pretouch_code_bytes": 0,
+                    "readytable_bytes": 0,
+                },
+                "groupA_all_reg_xr": {
+                    "elf_file_bytes": (tdir / "enclave.all_reg.final.signed.so").stat().st_size,
+                    "pt_load_memsz_bytes": sum(int(l.split()[5], 16) for l in __import__("subprocess").check_output(["readelf", "-lW", str(tdir / "enclave.all_reg.final.signed.so")], text=True).splitlines() if l.split() and l.split()[0] == "LOAD"),
+                    "pretouch_code_bytes": pretouch_A["code_bytes"],
+                    "readytable_bytes": ready_A["table_bytes"],
+                },
+                "groupB_dynamic_xr": {
+                    "elf_file_bytes": (tdir / "enclave.dynamic_xr.final.signed.so").stat().st_size,
+                    "pt_load_memsz_bytes": sum(int(l.split()[5], 16) for l in __import__("subprocess").check_output(["readelf", "-lW", str(tdir / "enclave.dynamic_xr.final.signed.so")], text=True).splitlines() if l.split() and l.split()[0] == "LOAD"),
+                    "pretouch_code_bytes": pretouch_B["code_bytes"],
+                    "readytable_bytes": ready_B["table_bytes"],
+                },
+                "groupC_dynamic_refined": {
+                    "elf_file_bytes": (tdir / "enclave.dynamic.final.signed.so").stat().st_size,
+                    "pt_load_memsz_bytes": sum(int(l.split()[5], 16) for l in __import__("subprocess").check_output(["readelf", "-lW", str(tdir / "enclave.dynamic.final.signed.so")], text=True).splitlines() if l.split() and l.split()[0] == "LOAD"),
+                    "pretouch_code_bytes": pretouch_C["code_bytes"],
+                    "readytable_bytes": ready_C["table_bytes"],
+                },
             },
             "per_field_4gate_diagnostic_ablation": ablation_summary_by_field,
         },

@@ -247,10 +247,14 @@ def introspect_u_c(sample: str, cfg: dict, ecalls: list[dict]) -> list[dict]:
             param["bound_ms_size"] = None
             param["static_count"] = None
 
+            has_unsupported_bound_expr = False
             if param["is_pointer"]:
                 for a in attrs:
-                    mc = re.match(r"^(count|size)\s*=\s*(\w+)$", a)
-                    if mc:
+                    if a.startswith(("count", "size")):
+                        mc = re.match(r"^(count|size)\s*=\s*(\w+)$", a)
+                        if not mc:
+                            has_unsupported_bound_expr = True
+                            continue
                         kind, ref = mc.group(1), mc.group(2)
                         ref_ms = f"ms_{ref}"
                         param["bound_kind"] = kind
@@ -260,10 +264,15 @@ def introspect_u_c(sample: str, cfg: dict, ecalls: list[dict]) -> list[dict]:
                             param["bound_ms_size"] = flds[ref_ms]["size"]
                         elif param["name"] in pconsts:
                             param["static_count"] = pconsts[param["name"]]["value"]
-                if param["bound_kind"] is None and not param["is_string"] and not param["is_user_check"]:
+                        else:
+                            has_unsupported_bound_expr = True
+                if not has_unsupported_bound_expr and param["bound_kind"] is None and not param["is_string"] and not param["is_user_check"]:
                     if param["ptr_depth"] == 1 and "void" not in param["type"]:
                         param["bound_kind"] = "count"
                         param["static_count"] = 1
+                if has_unsupported_bound_expr:
+                    param["param_replay_supported"] = False
+                    replay_ok = False
                 if param["is_user_check"] or param["ptr_depth"] > 1:
                     param["param_replay_supported"] = False
                     replay_ok = False

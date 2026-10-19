@@ -2,7 +2,6 @@
 """Offline negative & positive unit tests for tools/acceptance_validator.py."""
 from __future__ import annotations
 
-import json
 import sys
 import unittest
 from pathlib import Path
@@ -28,6 +27,7 @@ def make_valid_mock_run() -> dict:
             {
                 "call_seq": 0,
                 "ecall_index": 0,
+                "tag": "schema_xor_p2_byte_45",
                 "sgx_status": 0,
                 "ms_retval_i32": 0,
                 "measurement_invalid": 0,
@@ -35,6 +35,7 @@ def make_valid_mock_run() -> dict:
                 "syscall_errors": 0,
                 "ipi_flush_failures": 0,
                 "fast_forwarded_prior": 0,
+                "strict_mode": 2,
                 "strict_non_ready_fault_count": 0,
                 "fields": [
                     {
@@ -61,6 +62,8 @@ class TestAcceptanceValidator(unittest.TestCase):
             run,
             expected_min_records=1,
             expected_field_ids={"0x1111111111111111"},
+            expected_tags={"schema_xor_p2_byte_45"},
+            require_strict_mode=2,
             require_ipi_mask=7,
             closed_workset_effects=ws,
             require_zero_strict_faults=True,
@@ -133,6 +136,27 @@ class TestAcceptanceValidator(unittest.TestCase):
         self.assertEqual(v["status"], "INVALID")
         self.assertTrue(any("INTERPOSE_HASH_MISMATCH" in r for r in v["reasons"]))
         self.assertTrue(any("LEDGER_RUN_INVALID" in r for r in v["reasons"]))
+
+    def test_10_strict_mode_disabled_rejected(self) -> None:
+        run = make_valid_mock_run()
+        run["records"][0]["strict_mode"] = 0
+        v = validate_run_result(run, require_strict_mode=2, require_zero_strict_faults=True)
+        self.assertEqual(v["status"], "INVALID")
+        self.assertTrue(any("STRICT_MODE" in r for r in v["reasons"]))
+
+    def test_11_missing_expected_mutation_tag_rejected(self) -> None:
+        run = make_valid_mock_run()
+        run["records"][0]["tag"] = "host_normal"
+        v = validate_run_result(run, expected_tags={"schema_xor_p2_byte_45"})
+        self.assertEqual(v["status"], "INVALID")
+        self.assertTrue(any("MISSING_EXPECTED_INTERVENTION_TAGS" in r for r in v["reasons"]))
+
+    def test_12_unknown_field_not_in_workset_rejected(self) -> None:
+        run = make_valid_mock_run()
+        ws = {"0x9999999999999999": {(0x1000, "A")}}
+        v = validate_run_result(run, closed_workset_effects=ws)
+        self.assertEqual(v["status"], "INVALID")
+        self.assertIn("UNKNOWN_FIELD_NOT_IN_WORKSET:0x1111111111111111", v["reasons"])
 
 
 if __name__ == "__main__":

@@ -56,13 +56,16 @@ typedef struct {
     int page_idx;
     uint64_t page_rva;
     uint64_t encl_rip_rva;
+    uint64_t effective_addr_rva;
+    int ea_verified;
     uint32_t exitinfo;
     uint32_t active_flag;
     char stage[16];
     int pte_healed_observed;
     uint64_t aep_pte;
     uint64_t final_pte;
-    char confirmed_access_kind[12]; /* "X", "R", "W", or "unknown" */
+    char confirmed_access_kind[12];      /* "X", "R", "W" ONLY when EA/RIP verified, else "unknown" */
+    char inferred_post_window_kind[24];  /* "W_inferred_post_d", "R_inferred_post_a", or "none" */
 } fault_event_t;
 
 typedef struct {
@@ -226,36 +229,50 @@ static const char *stage_name_from_code(uint32_t code, uint32_t active_val, uint
 
 static void classify_confirmed_access_kind(fault_event_t *fe, uint64_t final_pte) {
     fe->final_pte = final_pte;
+    fe->ea_verified = 0;
+    fe->effective_addr_rva = 0;
+    if (final_pte & D_MASK) {
+        snprintf(fe->inferred_post_window_kind, sizeof(fe->inferred_post_window_kind), "W_inferred_post_d");
+    } else if (final_pte & A_MASK) {
+        snprintf(fe->inferred_post_window_kind, sizeof(fe->inferred_post_window_kind), "R_inferred_post_a");
+    } else {
+        snprintf(fe->inferred_post_window_kind, sizeof(fe->inferred_post_window_kind), "none");
+    }
+
     if (fe->encl_rip_rva != 0 && (fe->encl_rip_rva & ~0xfffULL) == fe->page_rva) {
+        fe->effective_addr_rva = fe->encl_rip_rva;
+        fe->ea_verified = 1;
         snprintf(fe->confirmed_access_kind, sizeof(fe->confirmed_access_kind), "X");
         return;
     }
-    /* Inspect instruction at encl_rip_rva if inside .atfield_pretouch */
-    if (fe->encl_rip_rva >= pretouch_start_rva && fe->encl_rip_rva < pretouch_end_rva && fd_self_mem >= 0 && encl_base) {
+    /* Verify exact RIP-relative effective address EA = encl_rip_rva + insn_len + disp32 against fe->page_rva */
+    if (fe->encl_rip_rva != 0 && fd_self_mem >= 0 && encl_base) {
         uint8_t insn[8] = {0};
         if (pread(fd_self_mem, insn, sizeof(insn), encl_base + fe->encl_rip_rva) == sizeof(insn)) {
             if (insn[0] == 0xf0 && insn[1] == 0x80 && insn[2] == 0x0d) {
-                /* lock orb $0, disp32(%rip) */
-                snprintf(fe->confirmed_access_kind, sizeof(fe->confirmed_access_kind), "W");
-                return;
-            }
-            if (insn[0] == 0x8a && insn[1] == 0x05) {
-                /* movb disp32(%rip), %al */
-                snprintf(fe->confirmed_access_kind, sizeof(fe->confirmed_access_kind), "R");
-                return;
+                /* lock orb $0, disp32(%rip) : 8-byte instruction */
+                int32_t disp = *(int32_t *)(insn + 3);
+                uint64_t ea_rva = (uint64_t)((int64_t)fe->encl_rip_rva + 8LL + (int64_t)disp);
+                fe->effective_addr_rva = ea_rva;
+                if ((ea_rva & ~0xfffULL) == fe->page_rva) {
+                    fe->ea_verified = 1;
+                    snprintf(fe->confirmed_access_kind, sizeof(fe->confirmed_access_kind), "W");
+                    return;
+                }
+            } else if (insn[0] == 0x8a && insn[1] == 0x05) {
+                /* movb disp32(%rip), %al : 6-byte instruction */
+                int32_t disp = *(int32_t *)(insn + 2);
+                uint64_t ea_rva = (uint64_t)((int64_t)fe->encl_rip_rva + 6LL + (int64_t)disp);
+                fe->effective_addr_rva = ea_rva;
+                if ((ea_rva & ~0xfffULL) == fe->page_rva) {
+                    fe->ea_verified = 1;
+                    snprintf(fe->confirmed_access_kind, sizeof(fe->confirmed_access_kind), "R");
+                    return;
+                }
             }
         }
     }
-    if (fe->encl_rip_rva != 0 && (fe->encl_rip_rva & ~0xfffULL) != fe->page_rva) {
-        if (final_pte & D_MASK) {
-            snprintf(fe->confirmed_access_kind, sizeof(fe->confirmed_access_kind), "W");
-            return;
-        }
-        if (final_pte & A_MASK) {
-            snprintf(fe->confirmed_access_kind, sizeof(fe->confirmed_access_kind), "R");
-            return;
-        }
-    }
+    /* Never upgrade post-window D/A bit guesses to confirmed_access_kind! */
     snprintf(fe->confirmed_access_kind, sizeof(fe->confirmed_access_kind), "unknown");
 }
 
@@ -1152,14 +1169,17 @@ static sgx_status_t execute_one_measured_ecall(
             fault_event_t *fe = &cur_faults[fi];
             fprintf(trace_fp,
                     "%s{\"aex_seq\":%u,\"page_rva\":\"0x%" PRIx64 "\",\"encl_rip_rva\":\"0x%" PRIx64 "\","
+                    "\"effective_addr_rva\":\"0x%" PRIx64 "\",\"ea_verified\":%s,"
                     "\"exitinfo\":\"0x%x\",\"active_flag\":%u,\"stage\":\"%s\","
                     "\"pte_healed_observed\":%s,\"confirmed_access_kind\":\"%s\","
+                    "\"inferred_post_window_kind\":\"%s\","
                     "\"access_kind\":\"%s\",\"aep_pte\":\"0x%" PRIx64 "\",\"final_pte\":\"0x%" PRIx64 "\"}",
                     fi ? "," : "", fe->aex_seq, fe->page_rva, fe->encl_rip_rva,
+                    fe->effective_addr_rva, fe->ea_verified ? "true" : "false",
                     fe->exitinfo, fe->active_flag, fe->stage,
                     fe->pte_healed_observed ? "true" : "false",
-                    fe->confirmed_access_kind, fe->confirmed_access_kind,
-                    fe->aep_pte, fe->final_pte);
+                    fe->confirmed_access_kind, fe->inferred_post_window_kind,
+                    fe->confirmed_access_kind, fe->aep_pte, fe->final_pte);
         }
         fprintf(trace_fp, "],\"ecall_ad\":");
         write_ad_json_array(trace_fp, ecall_post_ad, 0);
@@ -1237,24 +1257,24 @@ static void run_interventions_if_matching(
                 }
             }
         } else if (sscanf(tok, "xor_param:%d:%d:%d:%lu:%lu", &t_idx, &t_seq, &p_idx, &sub, &val) == 5) {
-            /* Strictly bounded, schema-typed XOR mutation on a cloned buffer */
+            /* Alias-preserving, strictly bounded XOR mutation inside a typed snapshot */
             if (t_idx == index && t_seq == sseq && es && p_idx >= 0 && (uint32_t)p_idx < es->num_params) {
                 typed_ms_snapshot_t local_snap = {0};
                 if (typed_snapshot_ms((const uint8_t *)ms, es->ms_size, es, &local_snap) == 0) {
-                    uint8_t ms_base[256] = {0}, ms_work[256] = {0};
-                    typed_restore_ms_for_replay(&local_snap, es, ms_base);
-                    void *tmp_alloc = NULL;
-                    int mrc = mutate_xor_bounded(ms_work, ms_base, es->ms_size, &es->params[p_idx], sub, (uint8_t)val, &tmp_alloc);
+                    uint8_t ms_work[MAX_MS_FRAME_BYTES] = {0};
+                    int mrc = mutate_xor_in_snapshot(&local_snap, es, ms_work, (uint32_t)p_idx, sub, (uint8_t)val);
                     if (mrc == 0) {
                         char tag[64];
                         snprintf(tag, sizeof(tag), "schema_xor_p%d_byte_%lu", p_idx, sub);
                         execute_one_measured_ecall(eid, index, ocall_table, ms_work, tag, 1);
-                        free(tmp_alloc);
                     } else if (mrc != -ERANGE) {
                         mutation_oob_rejected_count++;
                         mark_invalid("mutation_xor_param_schema_error");
                     }
                     free_typed_snapshot(&local_snap);
+                } else {
+                    mutation_oob_rejected_count++;
+                    mark_invalid("xor_param_snapshot_failed");
                 }
             }
         } else if (sscanf(tok, "null_param:%d:%d:%d", &t_idx, &t_seq, &p_idx) == 3) {
@@ -1263,7 +1283,7 @@ static void run_interventions_if_matching(
                 if (ps->is_pointer) {
                     typed_ms_snapshot_t local_snap = {0};
                     if (typed_snapshot_ms((const uint8_t *)ms, es->ms_size, es, &local_snap) == 0) {
-                        uint8_t ms_work[256] = {0};
+                        uint8_t ms_work[MAX_MS_FRAME_BYTES] = {0};
                         typed_restore_ms_for_replay(&local_snap, es, ms_work);
                         *(void **)(ms_work + ps->ms_offset) = NULL;
                         char tag[64];
@@ -1279,14 +1299,19 @@ static void run_interventions_if_matching(
                 if (!ps->is_pointer) {
                     typed_ms_snapshot_t local_snap = {0};
                     if (typed_snapshot_ms((const uint8_t *)ms, es->ms_size, es, &local_snap) == 0) {
-                        uint8_t ms_work[256] = {0};
-                        typed_restore_ms_for_replay(&local_snap, es, ms_work);
-                        if (write_scalar_u64(ms_work, es->ms_size, ps->ms_offset, ps->ms_size, val) == 0) {
+                        uint8_t ms_work[MAX_MS_FRAME_BYTES] = {0};
+                        if (mutate_scalar_and_rebind_buffers(&local_snap, es, ms_work, (uint32_t)p_idx, val) == 0) {
                             char tag[64];
                             snprintf(tag, sizeof(tag), "schema_scalar_p%d_val_%lu", p_idx, val);
                             execute_one_measured_ecall(eid, index, ocall_table, ms_work, tag, 1);
+                        } else {
+                            mutation_oob_rejected_count++;
+                            mark_invalid("mutate_scalar_and_rebind_failed");
                         }
                         free_typed_snapshot(&local_snap);
+                    } else {
+                        mutation_oob_rejected_count++;
+                        mark_invalid("set_scalar_snapshot_failed");
                     }
                 }
             }
@@ -1312,7 +1337,12 @@ static void run_interventions_if_matching(
             if (sscanf(tok, "scale_bound_v2:%d:%d:%d:%ld:%lu:%ld:%lu",
                        &sc_idx, &sc_seq, &sc_mode, &cnt1_off, &new_cnt1, &cnt2_off, &new_cnt2) == 7) {
                 if (sc_idx == index && sc_seq == sseq && es) {
-                    uint8_t ms_clone[256] = {0};
+                    if (check_ms_frame_capacity(es, es->ms_size) != 0) {
+                        mutation_oob_rejected_count++;
+                        mark_invalid("scale_bound_v2_ms_frame_too_large");
+                        continue;
+                    }
+                    uint8_t ms_clone[MAX_MS_FRAME_BYTES] = {0};
                     memcpy(ms_clone, ms, es->ms_size);
                     /* Update scalar count/size slots first */
                     for (uint32_t pi = 0; pi < es->num_params; pi++) {
