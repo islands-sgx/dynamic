@@ -79,8 +79,12 @@ SAMPLES = {
         ],
     },
 }
-for _cdir in sorted((DYN_ROOT / "challenges").glob("challenge-*")):
+for _cdir in sorted((DYN_ROOT / "challenges").iterdir()):
+    if not _cdir.is_dir():
+        continue
     _cfg_f = _cdir / "challenge_config.json"
+    if not _cfg_f.is_file():
+        _cfg_f = _cdir / "calibration_config.json"
     if _cfg_f.is_file():
         _ccfg = json.loads(_cfg_f.read_text())
         _stem = _ccfg["edl_stem"]

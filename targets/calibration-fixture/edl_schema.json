@@ -1,0 +1,114 @@
+{
+  "sample": "calibration-fixture",
+  "edl_path": "/home/meandssh/islands-sgx/dynamic/challenges/calibration-fixture/calibration.edl",
+  "u_c_path": "/home/meandssh/islands-sgx/dynamic/targets/calibration-fixture/edl_gen/calibration_u.c",
+  "ecalls": [
+    {
+      "ecall_index": 0,
+      "name": "ecall_run_calibration",
+      "return_type": "sgx_status_t",
+      "params": [
+        {
+          "name": "repeat_field_count",
+          "type": "uint32_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "uint32_t repeat_field_count",
+          "ms_offset": 4,
+          "ms_size": 4,
+          "elem_size": 4,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "out_buf",
+          "type": "uint8_t *",
+          "attributes": [
+            "out",
+            "size=out_len"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "uint8_t *out_buf",
+          "ms_offset": 8,
+          "ms_size": 8,
+          "elem_size": 1,
+          "direction": "out",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "size",
+          "bound_param": "out_len",
+          "bound_ms_offset": 16,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "out_len",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t out_len",
+          "ms_offset": 16,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        }
+      ],
+      "ms_layout": {
+        "size": 24,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4,
+            "elem_size": 4,
+            "type": "sgx_status_t"
+          },
+          "ms_repeat_field_count": {
+            "offset": 4,
+            "size": 4,
+            "elem_size": 4,
+            "type": "uint32_t"
+          },
+          "ms_out_buf": {
+            "offset": 8,
+            "size": 8,
+            "elem_size": 1,
+            "type": "uint8_t*"
+          },
+          "ms_out_len": {
+            "offset": 16,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          }
+        },
+        "param_consts": {}
+      },
+      "has_retval": true,
+      "retval_offset": 0,
+      "retval_size": 4,
+      "replay_supported": true
+    }
+  ]
+}

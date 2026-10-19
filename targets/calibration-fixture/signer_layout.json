@@ -1,0 +1,168 @@
+{
+  "all_committed_reg_pages": 172,
+  "capacity_q": 16384,
+  "enclave_size": 1048576,
+  "excluded_regions": [
+    {
+      "attributes": 0,
+      "end_rva": 528384,
+      "excluded_reason": "TCS/SSA/guard control region",
+      "kind": "signer",
+      "layout_id": 10,
+      "name": "GUARD",
+      "pages": 16,
+      "permissions": 0,
+      "si_flags": 0,
+      "start_rva": 462848
+    },
+    {
+      "attributes": 0,
+      "end_rva": 856064,
+      "excluded_reason": "TCS/SSA/guard control region",
+      "kind": "signer",
+      "layout_id": 10,
+      "name": "GUARD",
+      "pages": 16,
+      "permissions": 0,
+      "si_flags": 0,
+      "start_rva": 790528
+    },
+    {
+      "attributes": 3,
+      "end_rva": 860160,
+      "excluded_reason": "TCS/SSA/guard control region",
+      "kind": "signer",
+      "layout_id": 4,
+      "name": "TCS",
+      "pages": 1,
+      "permissions": 0,
+      "si_flags": 256,
+      "start_rva": 856064
+    },
+    {
+      "attributes": 3,
+      "end_rva": 868352,
+      "excluded_reason": "TCS/SSA/guard control region",
+      "kind": "signer",
+      "layout_id": 6,
+      "name": "SSA",
+      "pages": 2,
+      "permissions": 3,
+      "si_flags": 515,
+      "start_rva": 860160
+    },
+    {
+      "attributes": 0,
+      "end_rva": 933888,
+      "excluded_reason": "TCS/SSA/guard control region",
+      "kind": "signer",
+      "layout_id": 10,
+      "name": "GUARD",
+      "pages": 16,
+      "permissions": 0,
+      "si_flags": 0,
+      "start_rva": 868352
+    }
+  ],
+  "metadata_version": 4294967301,
+  "ordinary_load_end": 181860,
+  "page_size": 4096,
+  "pretouch_segment": true,
+  "pretouch_start": 184320,
+  "profile_elf": "/home/meandssh/islands-sgx/dynamic/targets/calibration-fixture/enclave.profile.so",
+  "profile_elf_sha256": "06f9d6e5348243333abb664780dafcaeb0480c592dc2853bb47fb22097cbad14",
+  "regions": [
+    {
+      "end_rva": 16384,
+      "kind": "PT_LOAD",
+      "pages": 4,
+      "permissions": 1,
+      "segment_index": 2,
+      "start_rva": 0
+    },
+    {
+      "end_rva": 81920,
+      "kind": "PT_LOAD",
+      "pages": 15,
+      "permissions": 5,
+      "segment_index": 3,
+      "start_rva": 20480
+    },
+    {
+      "end_rva": 86016,
+      "kind": "PT_LOAD",
+      "pages": 1,
+      "permissions": 3,
+      "segment_index": 4,
+      "start_rva": 81920
+    },
+    {
+      "end_rva": 184320,
+      "kind": "PT_LOAD",
+      "pages": 23,
+      "permissions": 3,
+      "segment_index": 5,
+      "start_rva": 90112
+    },
+    {
+      "attributes": 1,
+      "end_rva": 204800,
+      "kind": "signer",
+      "layout_id": 1,
+      "name": "HEAP_MIN",
+      "pages": 1,
+      "permissions": 3,
+      "si_flags": 515,
+      "start_rva": 200704
+    },
+    {
+      "attributes": 17,
+      "end_rva": 462848,
+      "kind": "signer",
+      "layout_id": 2,
+      "name": "HEAP_INIT",
+      "pages": 63,
+      "permissions": 3,
+      "si_flags": 515,
+      "start_rva": 204800
+    },
+    {
+      "attributes": 3,
+      "end_rva": 790528,
+      "kind": "signer",
+      "layout_id": 8,
+      "name": "STACK_MIN",
+      "pages": 64,
+      "permissions": 3,
+      "si_flags": 515,
+      "start_rva": 528384
+    },
+    {
+      "attributes": 3,
+      "end_rva": 937984,
+      "kind": "signer",
+      "layout_id": 5,
+      "name": "TD",
+      "pages": 1,
+      "permissions": 3,
+      "si_flags": 515,
+      "start_rva": 933888
+    }
+  ],
+  "relro_pages": [
+    81920
+  ],
+  "relro_ranges": [
+    {
+      "end_rva": 86016,
+      "protected_end_rva": 86016,
+      "protected_start_rva": 81920,
+      "segment_index": 8,
+      "start_rva": 84480
+    }
+  ],
+  "schema": "atfield-signer-layout-v1",
+  "signed_elf": "/home/meandssh/islands-sgx/dynamic/targets/calibration-fixture/enclave.profile.signed.so",
+  "signed_elf_sha256": "3bd4357b46b2fb5ab75bfbbfabcdbd6dc0aac37c0fddf1ca793b7b630900b946",
+  "ssa_frame_pages": 1
+}

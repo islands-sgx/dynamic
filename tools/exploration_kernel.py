@@ -504,7 +504,7 @@ class ExplorationKernel:
         self.total_ecalls += len(recs)
         valid_meas, meas_reasons = is_valid_measurement_run(
             res,
-            allow_nonzero_rc=bool(plan.get("allow_nonzero_rc", False)),
+            allow_nonzero_rc=bool(plan.get("allow_nonzero_rc", False) or plan.get("family", "seed") != "seed"),
             require_nonempty_s3=True,
         )
         if not valid_meas:

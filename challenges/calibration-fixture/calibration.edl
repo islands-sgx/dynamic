@@ -1,0 +1,9 @@
+enclave {
+    trusted {
+        public sgx_status_t ecall_run_calibration(
+            uint32_t repeat_field_count,
+            [out, size=out_len] uint8_t *out_buf,
+            size_t out_len
+        );
+    };
+};

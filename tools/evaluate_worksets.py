@@ -10,7 +10,8 @@ from pathlib import Path
 DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
 sys.path.insert(0, str(DYN_ROOT / "tools"))
 
-from acceptance_validator import (  # noqa: E402
+from acceptance_validator import (
+    is_valid_measurement_run,  # noqa: E402
     sha256_path,
     validate_diagnostic_4gate_run,
     validate_production_run_result,
@@ -404,6 +405,414 @@ def run_tlb_and_fixture_checks(sample: str, raw_dir: Path) -> dict:
             "ecall_status_sequence_identical": uninst_rets == gate_rets,
             "stdout_identical": r_uninst["stdout"] == r_cold["stdout"],
         },
+    }
+
+
+def run_known_answer_measurement_calibration() -> dict:
+    """Execute the Known-Answer 7-Case Hardware Measurement Calibration Fixture (`calibration-fixture`):
+    1. Pages accessed first in S0/S1 (before Gate B), then in S3 across 2 repeated Field entries in one ECALL:
+       - X_code_page (`cal_code_target_fn`, expected `['A']`)
+       - RX_data_read_page (`cal_rx_data_table_fn`, RX page read as data without calling it in S3, expected `['A']`)
+       - R_rodata_page (`cal_rodata_page`, expected `['A']`)
+       - W_writable_page (`cal_writable_page`, expected `['A', 'D']`)
+       - Cross_page_0 & Cross_page_1 (`cal_cross_page_buf` spanning 2 pages, expected `['A', 'D']` on both)
+       - Temporary 4-page deep stack frame (`cal_deep_stack_helper`) that returns before Gate D
+         so `gateB_rsp_rva == gateD_rsp_rva`, verifying S3 still captures >= 4 dirty (`D`) stack pages!
+    2. Full pre-touch positive control (`dynamic_xr_4gate`, `ipi_mask=3`): verifies `0` clean S3 rewalk pages.
+    3. Deliberate 1-page omission negative control (`omit_one_4gate`, omitting `W_writable_page` from pre-touch
+       and workset): verifies both `validate_run_result` (`UNCOVERED_PAGE_...`) and 4-Gate `S3` rewalk catch the
+       exact omitted page.
+    4. Active permission retraction negative control (`ATFIELD_STRICT_READY_FILE` dropping `W_writable_page`):
+       verifies `AEX0` heals and logs exact EA (`confirmed_access_kind == 'W'`), `AEX1` aborts with `0x1006`,
+       and restoring full `ReadyTable` yields `0` faults and `rc=0, PASS`.
+    """
+    import subprocess
+    import sys
+    sys.path.insert(0, str(DYN_ROOT))
+    from controller import PRETOUCH_TOOL
+    from elf_workset import ElfFile, normalized_fields
+
+    sample = "calibration-fixture"
+    tdir = DYN_ROOT / "targets" / sample
+    cdir = DYN_ROOT / "challenges" / sample
+    raw_dir = DYN_ROOT / "experiments" / "raw_traces" / sample
+    raw_dir.mkdir(parents=True, exist_ok=True)
+    for old_f in raw_dir.glob("cal_fix_*"):
+        old_f.unlink(missing_ok=True)
+
+    cfg = json.loads((cdir / "calibration_config.json").read_text())
+    elf = ElfFile(tdir / "enclave.profile.so")
+    syms = {s["name"]: s["value"] for s in elf.symbols()}
+    fields = normalized_fields(tdir / "fields.json")
+    fid = f"0x{fields[0]['_id_value']:016x}"
+
+    # 1. S0/S1 pre-access -> S3 measurement across 2 repeated Field entries in one ECALL
+    r_prof = run_sample(
+        sample,
+        mode="profile_4gate",
+        ipi_mask=7,
+        allow_fast_forward=0,
+        persist_prefix=raw_dir / "cal_fix_01_profile_s0_then_s3",
+    )
+    val_prof = validate_run_result(
+        r_prof,
+        expected_returncode=0,
+        expected_stdout_substr="PASS",
+        expected_min_records=1,
+        expected_field_ids={fid},
+        require_ipi_mask=7,
+    )
+    rec = r_prof["records"][0]
+    repeated_entries = len(rec["fields"])
+    declared_cases_report = {}
+    total_expected_effects = 0
+    total_observed_effects = 0
+
+    for entry_idx, fobs in enumerate(rec["fields"]):
+        s0_rvas = {int(x["rva"], 16) for x in fobs["s0"]}
+        s3_raw = {(int(x["rva"], 16), x["ad"]) for x in fobs["s3"]}
+        s3_exp = set()
+        for rva, ad in s3_raw:
+            s3_exp.add((rva, "A"))
+            if ad == "D":
+                s3_exp.add((rva, "D"))
+        gb = int(fobs["gateB_rsp_rva"], 16)
+        gd = int(fobs["gateD_rsp_rva"], 16)
+        stack_dirty_rvas = sorted(hex(rva) for rva, ad in s3_raw if ad == "D" and abs(rva - gb) <= 8 * 4096)
+
+        for cname, cspec in cfg["declared_symbols"].items():
+            page_rva = (syms[cspec["symbol"]] + cspec["page_offset"]) & ~0xFFF
+            exp_effs = cspec["effects"]
+            total_expected_effects += len(exp_effs)
+            obs_cnt = sum(1 for e in exp_effs if (page_rva, e) in s3_exp)
+            total_observed_effects += obs_cnt
+            if entry_idx == 0:
+                declared_cases_report[cname] = {
+                    "page_rva": hex(page_rva),
+                    "expected_effects": exp_effs,
+                    "pre_accessed_in_s0": page_rva in s0_rvas,
+                    "observed_in_s3_entry0": obs_cnt == len(exp_effs),
+                    "observed_in_s3_entry1": False,
+                }
+            else:
+                declared_cases_report[cname]["observed_in_s3_entry1"] = (obs_cnt == len(exp_effs))
+
+        req_stack_pages = cfg["min_temp_deep_stack_dirty_pages"]
+        total_expected_effects += req_stack_pages * 2
+        total_observed_effects += min(len(stack_dirty_rvas), req_stack_pages) * 2
+        if entry_idx == 0:
+            declared_cases_report["Temp_deep_stack_4pages"] = {
+                "gateB_rsp_rva": hex(gb),
+                "gateD_rsp_rva": hex(gd),
+                "rsp_endpoint_delta_bytes": abs(gb - gd),
+                "dirty_stack_pages_entry0": stack_dirty_rvas,
+                "dirty_stack_pages_entry1": [],
+            }
+        else:
+            declared_cases_report["Temp_deep_stack_4pages"]["dirty_stack_pages_entry1"] = stack_dirty_rvas
+
+    missed_effects = total_expected_effects - total_observed_effects
+    omission_rate = missed_effects / total_expected_effects if total_expected_effects > 0 else 0.0
+
+    # 2. Full pre-touch positive control (dynamic_xr_4gate, ipi_mask=3) -> 0 clean S3 rewalks
+    r_full_4g = run_sample(
+        sample,
+        mode="dynamic_xr_4gate",
+        ipi_mask=3,
+        allow_fast_forward=0,
+        persist_prefix=raw_dir / "cal_fix_02_full_pretouch_4gate",
+    )
+    val_full_4g = validate_diagnostic_4gate_run(
+        r_full_4g,
+        expected_field_ids={fid},
+        expected_ecall_seq=[0],
+        expected_field_call_seqs={0},
+        require_ipi_mask=3,
+        require_clean_observation_per_field=True,
+    )
+    full_pretouch_rewalks = [
+        len(fo["s3"])
+        for r in r_full_4g["records"]
+        for fo in r["fields"]
+        if fo.get("s3_active_aex_count") == 0
+    ]
+
+    # 3. Deliberate 1-page omission negative control (omit W_writable_page from workset & pre-touch)
+    w_rva = (syms[cfg["declared_symbols"]["W_writable_page"]["symbol"]]) & ~0xFFF
+    ws_full = json.loads((tdir / "workset.dynamic_xr.json").read_text())
+    ws_omit = json.loads((tdir / "workset.dynamic_xr.json").read_text())
+    ws_omit["fields"][0]["pages"] = [
+        pg for pg in ws_omit["fields"][0]["pages"] if pg["page_rva"] != w_rva
+    ]
+    ws_omit_path = tdir / "workset.omit_one.json"
+    ws_omit_path.write_text(json.dumps(ws_omit, indent=2) + "\n")
+
+    omit_effects_by_fid = {
+        fid: {
+            (pg["page_rva"], "A") for pg in ws_omit["fields"][0]["pages"]
+        } | {
+            (pg["page_rva"], "D") for pg in ws_omit["fields"][0]["pages"] if "W" in pg["effects"]
+        }
+    }
+    val_omit_workset = validate_run_result(
+        r_prof,
+        expected_returncode=0,
+        expected_stdout_substr="PASS",
+        expected_min_records=1,
+        expected_field_ids={fid},
+        require_ipi_mask=7,
+        closed_workset_effects=omit_effects_by_fid,
+    )
+
+    cap_q = ws_full["layout"]["capacity_q"]
+    omit_final_elf = tdir / "enclave.omit_one.final.so"
+    omit_final_json = tdir / "pretouch.omit_one.finalized.json"
+    subprocess.run([
+        str(PRETOUCH_TOOL), "finalize",
+        "--profile-elf", str(tdir / "enclave.profile.so"),
+        "--signed-profile-elf", str(tdir / "enclave.profile.signed.so"),
+        "--workset", str(ws_omit_path),
+        "--fields", str(tdir / "fields.json"),
+        "--capacity-q", str(cap_q),
+        "--out-elf", str(omit_final_elf),
+        "--out-json", str(omit_final_json),
+    ], check=True, capture_output=True)
+    subprocess.run([
+        sys.executable, str(DYN_ROOT / "tools" / "patch_4gate.py"),
+        "--input-elf", str(omit_final_elf),
+        "--fields", str(tdir / "fields.json"),
+        "--capacity-q", str(cap_q),
+        "--config-xml", str(tdir / "Enclave.aex0.config.xml"),
+        "--out-elf", str(tdir / "enclave.omit_one.4gate.so"),
+        "--out-signed-elf", str(tdir / "enclave.omit_one.4gate.aex0.signed.so"),
+        "--out-json", str(tdir / "enclave.omit_one.4gate.json"),
+    ], check=True, capture_output=True)
+
+    r_omit_4g = run_sample(
+        sample,
+        mode="omit_one_4gate",
+        ipi_mask=3,
+        allow_fast_forward=0,
+        persist_prefix=raw_dir / "cal_fix_03_omit_one_4gate",
+    )
+    omit_s3_detected = any(
+        int(it["rva"], 16) == w_rva and it["ad"] == "D"
+        for r in r_omit_4g["records"]
+        for fo in r["fields"]
+        for it in fo["s3"]
+    )
+
+    # 4. Active permission retraction negative control (drop w_rva in strict_ready_file) + restored control
+    rdy = json.loads((tdir / "enclave.dynamic_xr.ready.json").read_text())
+    sel_rvas = set(rdy["selectors"][0]["page_rvas"])
+    drop_file = tdir / "strict_cal_drop_w.txt"
+    drop_file.write_text("0 " + " ".join(f"{p:x}" for p in sorted(sel_rvas - {w_rva})) + "\n")
+    full_file = tdir / "strict_cal_full.txt"
+    full_file.write_text("0 " + " ".join(f"{p:x}" for p in sorted(sel_rvas)) + "\n")
+
+    r_retract_aex0 = run_sample(
+        sample,
+        mode="dynamic_xr_final_aex0",
+        ipi_mask=0,
+        strict_ready_file=str(drop_file),
+        strict_mode="ecall",
+        host_args=["1"],
+        persist_prefix=raw_dir / "cal_fix_04_retract_w_aex0",
+    )
+    matched_faults = [
+        fe
+        for r in r_retract_aex0["records"]
+        for fe in r.get("fault_events", [])
+        if int(fe["page_rva"], 16) == w_rva
+    ]
+    r_retract_aex1 = run_sample(
+        sample,
+        mode="dynamic_xr_final",
+        ipi_mask=0,
+        strict_ready_file=str(drop_file),
+        strict_mode="ecall",
+        host_args=["1"],
+        persist_prefix=raw_dir / "cal_fix_05_retract_w_aex1",
+    )
+    r_restored = run_sample(
+        sample,
+        mode="dynamic_xr_final_aex0",
+        ipi_mask=0,
+        strict_ready_file=str(full_file),
+        strict_mode="ecall",
+        host_args=["1"],
+        persist_prefix=raw_dir / "cal_fix_06_restored_full_aex0",
+    )
+    restored_faults = sum(r["strict_non_ready_fault_count"] for r in r_restored["records"])
+
+    all_pass = bool(
+        val_prof["status"] == "PASS"
+        and repeated_entries == cfg["expected_repeated_field_entries_per_ecall"]
+        and missed_effects == 0
+        and val_full_4g["status"] == "PASS"
+        and len(full_pretouch_rewalks) == 2 and all(x == 0 for x in full_pretouch_rewalks)
+        and val_omit_workset["status"] == "FAIL"
+        and any(f"UNCOVERED_PAGE_{hex(w_rva)}" in x for x in val_omit_workset["reasons"])
+        and omit_s3_detected
+        and len(matched_faults) > 0 and matched_faults[0].get("pte_healed_observed") and matched_faults[0].get("confirmed_access_kind") == "W"
+        and r_retract_aex1["records"][-1]["sgx_status"] == 0x1006
+        and restored_faults == 0 and r_restored["returncode"] == 0
+    )
+    if not all_pass:
+        raise RuntimeError(f"Known-answer measurement calibration fixture failed! missed={missed_effects} rewalks={full_pretouch_rewalks} omit_det={omit_s3_detected}")
+
+    return {
+        "fixture": sample,
+        "repeated_field_entries_per_ecall": repeated_entries,
+        "total_declared_effects_across_entries": total_expected_effects,
+        "observed_declared_effects": total_observed_effects,
+        "missed_declared_effects": missed_effects,
+        "measurement_omission_rate": omission_rate,
+        "declared_cases": declared_cases_report,
+        "full_pretouch_clean_rewalk_pages": full_pretouch_rewalks,
+        "deliberate_omission_control": {
+            "omitted_page_rva": hex(w_rva),
+            "validator_status": val_omit_workset["status"],
+            "validator_reasons": val_omit_workset["reasons"],
+            "caught_by_4gate_s3_rewalk": omit_s3_detected,
+        },
+        "active_retraction_and_restore_control": {
+            "retracted_page_rva": hex(w_rva),
+            "aex0_pte_healed_and_ea_verified": bool(matched_faults and matched_faults[0].get("ea_verified")),
+            "aex0_confirmed_kind": matched_faults[0].get("confirmed_access_kind", "") if matched_faults else "",
+            "aex1_fail_stop_status": hex(r_retract_aex1["records"][-1]["sgx_status"]),
+            "restored_control_faults": restored_faults,
+        },
+        "verdict": "PASS" if all_pass else "FAIL",
+    }
+
+
+def run_frozen_workset_generalization_suite(
+    sample: str,
+    tdir: Path,
+    raw_dir: Path,
+    expected_fids: set[str],
+    closed_target_effects_by_fid: dict[str, set[tuple[int, str]]],
+    ready_sel_set: set[int],
+) -> dict:
+    """Evaluate the FROZEN Group B workset (`workset.dynamic_xr.json` & `enclave.dynamic_xr.final.signed.so`)
+    across 10 independent unseen multi-step workflows per configuration varying input lengths, contents,
+    and valid call histories (including the ported 6-case upstream `sabd-enclave-test.c` Cmockery suite
+    on `signal-cds`).
+    """
+    if sample == "signal-cds":
+        unseen_specs = [
+            {"id": "upstream_cmockery_seed10001_n128", "host_args": ["--upstream-cmockery-test", "--seed", "10001", "--in-jids", "128"], "intervention": "", "min_rec": 95},
+            {"id": "upstream_cmockery_seed20002_n512", "host_args": ["--upstream-cmockery-test", "--seed", "20002", "--in-jids", "512"], "intervention": "", "min_rec": 95},
+            {"id": "upstream_cmockery_seed30003_n1024", "host_args": ["--upstream-cmockery-test", "--seed", "30003", "--in-jids", "1024"], "intervention": "", "min_rec": 95},
+            {"id": "upstream_cmockery_seed40004_n2048", "host_args": ["--upstream-cmockery-test", "--seed", "40004", "--in-jids", "2048"], "intervention": "", "min_rec": 95},
+            {"id": "upstream_cmockery_seed50005_n4096", "host_args": ["--upstream-cmockery-test", "--seed", "50005", "--in-jids", "4096"], "intervention": "", "min_rec": 95},
+            {"id": "unseen_grid_r19_q13_req3", "host_args": ["--records", "19", "--queries", "13", "--requests", "3"], "intervention": "", "min_rec": 9},
+            {"id": "unseen_grid_r63_q37_req4", "host_args": ["--records", "63", "--queries", "37", "--requests", "4"], "intervention": "", "min_rec": 10},
+            {"id": "unseen_grid_r250_q99_req3", "host_args": ["--records", "250", "--queries", "99", "--requests", "3"], "intervention": "", "min_rec": 9},
+            {"id": "unseen_grid_r1023_q255_req2", "host_args": ["--records", "1023", "--queries", "255", "--requests", "2"], "intervention": "", "min_rec": 8},
+            {"id": "unseen_grid_r2047_q511_req2", "host_args": ["--records", "2047", "--queries", "511", "--requests", "2"], "intervention": "", "min_rec": 8},
+        ]
+    elif sample == "qe3":
+        unseen_specs = [
+            {"id": f"unseen_keyid_xor_b{b}_m{m}", "host_args": [], "intervention": f"xor_param:0:0:0:{b}:{m}", "min_rec": 3}
+            for b, m in ((2, 0x3C), (5, 0x5A), (9, 0xA5), (13, 0xC3), (19, 0x7E), (23, 0xE7), (27, 0x1B), (29, 0xB1))
+        ] + [
+            {"id": "unseen_history_rep3", "host_args": [], "intervention": "repeat:0:0:3", "min_rec": 5},
+            {"id": "unseen_history_rep5", "host_args": [], "intervention": "repeat:0:0:5", "min_rec": 7},
+        ]
+    elif sample == "sgxwallet":
+        unseen_specs = [
+            {"id": f"unseen_msg_xor_s0_b{b}", "host_args": [], "intervention": f"xor_param:6:0:2:{b}:90", "min_rec": 18}
+            for b in (3, 7, 11, 19, 23, 29)
+        ] + [
+            {"id": "unseen_sign_history_rep4", "host_args": [], "intervention": "repeat:6:0:4", "min_rec": 21},
+            {"id": "unseen_sign_history_rep8", "host_args": [], "intervention": "repeat:6:0:8", "min_rec": 25},
+            {"id": "unseen_pubkey_history_rep3", "host_args": [], "intervention": "repeat:5:0:3", "min_rec": 20},
+            {"id": "unseen_keygen_history_rep2", "host_args": [], "intervention": "repeat:4:0:2", "min_rec": 19},
+        ]
+    else:
+        base_min = 32 if sample == "ehsm" else 19
+        sseq_enc = 1 if sample == "ehsm" else 0
+        unseen_specs = [
+            {"id": "unseen_compat_or_b1024_r3", "host_args": ["--bytes", "1024", "--requests", "3"] if sample == "ehsm" else ["--compat-check"], "intervention": "", "min_rec": 24},
+            {"id": "unseen_host_b48_r2", "host_args": ["--bytes", "48", "--requests", "2"], "intervention": "", "min_rec": base_min},
+            {"id": "unseen_host_b192_r3", "host_args": ["--bytes", "192", "--requests", "3"], "intervention": "", "min_rec": base_min},
+            {"id": "unseen_host_b384_r2", "host_args": ["--bytes", "384", "--requests", "2"], "intervention": "", "min_rec": base_min},
+            {"id": "unseen_host_b768_r3", "host_args": ["--bytes", "768", "--requests", "3"], "intervention": "", "min_rec": base_min},
+            {"id": "unseen_host_b1536_r4", "host_args": ["--bytes", "1536", "--requests", "4"], "intervention": "", "min_rec": base_min},
+            {"id": "unseen_host_b3072_r2", "host_args": ["--bytes", "3072", "--requests", "2"], "intervention": "", "min_rec": base_min},
+            {"id": "unseen_aad_xor_b3", "host_args": [], "intervention": f"xor_param:2:{sseq_enc}:2:3:90", "min_rec": base_min + 1},
+            {"id": "unseen_plain_xor_b15", "host_args": [], "intervention": f"xor_param:2:{sseq_enc}:4:15:165", "min_rec": base_min + 1},
+            {"id": "unseen_decrypt_rep4", "host_args": [], "intervention": f"repeat:3:{sseq_enc}:4", "min_rec": base_min + 3},
+        ]
+
+    workflows_with_omission = 0
+    max_omitted_pages = 0
+    max_omitted_effects = 0
+    total_ecalls_evaluated = 0
+    total_field_entries = 0
+    workflow_details = []
+
+    for idx_w, wsp in enumerate(unseen_specs):
+        rw = run_sample(
+            sample,
+            mode="profile_4gate",
+            ipi_mask=7,
+            intervention=wsp["intervention"],
+            host_args=wsp["host_args"],
+            allow_fast_forward=0,
+            persist_prefix=raw_dir / f"holdout_unseen_wf_{idx_w:02d}_{wsp['id']}",
+        )
+        ok_m, m_reasons = is_valid_measurement_run(rw, allow_nonzero_rc=True, require_ipi_mask=7, require_nonempty_s3=True)
+        if not ok_m:
+            raise RuntimeError(f"Unseen workflow {wsp['id']} on {sample} failed measurement admission: {m_reasons}")
+
+        omitted_pages_wf: set[tuple[str, int]] = set()
+        omitted_effects_wf: set[tuple[str, int, str]] = set()
+        wf_fentries = 0
+        for rec in rw["records"]:
+            for fo in rec["fields"]:
+                wf_fentries += 1
+                fid = fo["field_id"]
+                allowed = closed_target_effects_by_fid.get(fid, set())
+                for it in fo["s3"]:
+                    rva = int(it["rva"], 16)
+                    ad = it["ad"]
+                    if (rva, "A") not in allowed:
+                        omitted_pages_wf.add((fid, rva))
+                        omitted_effects_wf.add((fid, rva, "A"))
+                    if ad == "D" and (rva, "D") not in allowed:
+                        omitted_pages_wf.add((fid, rva))
+                        omitted_effects_wf.add((fid, rva, "D"))
+
+        total_ecalls_evaluated += len(rw["records"])
+        total_field_entries += wf_fentries
+        if omitted_effects_wf:
+            workflows_with_omission += 1
+        max_omitted_pages = max(max_omitted_pages, len(omitted_pages_wf))
+        max_omitted_effects = max(max_omitted_effects, len(omitted_effects_wf))
+        workflow_details.append({
+            "workflow_id": wsp["id"],
+            "ecalls": len(rw["records"]),
+            "field_entries": wf_fentries,
+            "omitted_pages_count": len(omitted_pages_wf),
+            "omitted_effects_count": len(omitted_effects_wf),
+            "trace_sha256": rw["trace_sha256"],
+        })
+
+    n_wf = len(unseen_specs)
+    p_upper_95 = round(1.0 - (0.05 ** (1.0 / n_wf)), 4) if workflows_with_omission == 0 else 1.0
+    return {
+        "independent_workflows_evaluated": n_wf,
+        "total_ecalls_evaluated": total_ecalls_evaluated,
+        "total_field_entries_evaluated": total_field_entries,
+        "workflows_with_any_omission": workflows_with_omission,
+        "workflow_omission_rate": round(workflows_with_omission / n_wf, 4),
+        "clopper_pearson_95_upper_bound_on_tested_distribution": p_upper_95,
+        "worst_case_omitted_pages_per_workflow": max_omitted_pages,
+        "worst_case_omitted_effects_per_workflow": max_omitted_effects,
+        "workflows": workflow_details,
     }
 
 
@@ -1065,6 +1474,14 @@ def evaluate_sample(sample: str) -> dict:
                 "measurement_invalid": res_ho_strict_ecall["measurement_invalid"],
             },
             "overall_holdout_and_strict_verdict": overall_verdict,
+            "unseen_input_history_generalization": run_frozen_workset_generalization_suite(
+                sample,
+                tdir,
+                raw_dir,
+                expected_fids,
+                closed_target_effects_by_fid,
+                ready_sel_set,
+            ),
             "sm4_two_tier_accounting": (
                 evaluate_sm4_two_tier(
                     sample,
@@ -1167,7 +1584,10 @@ def main() -> None:
 def _run_main_body() -> None:
     out_dir = DYN_ROOT / "experiments"
     out_dir.mkdir(parents=True, exist_ok=True)
-    summary = {}
+    print("=== Running Known-Answer 7-Case Hardware Measurement Calibration Fixture ===", flush=True)
+    cal_fixture_res = run_known_answer_measurement_calibration()
+    print(f"  [Calibration Fixture] omission_rate={cal_fixture_res['measurement_omission_rate']} verdict={cal_fixture_res['verdict']}", flush=True)
+    summary = {"_calibration_fixture": cal_fixture_res}
     for s in SAMPLES:
         print(f"=== Running Strict Hardware Evaluation for {s} ===", flush=True)
         summary[s] = evaluate_sample(s)
@@ -1187,7 +1607,7 @@ def _run_main_body() -> None:
 
     manifest_entries = []
     raw_root = out_dir / "raw_traces"
-    active_trace_dirs = list(SAMPLES) + [
+    active_trace_dirs = ["calibration-fixture"] + list(SAMPLES) + [
         cdir.name for cdir in sorted((DYN_ROOT / "challenges").glob("challenge-*"))
     ]
     if raw_root.is_dir():

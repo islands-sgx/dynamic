@@ -24,11 +24,11 @@
       "all_business_reg_pages": 1774,
       "call_statistics": {
         "abi_nonzero_return_entries": 0,
-        "abi_void_return_entries": 42746,
+        "abi_void_return_entries": 41741,
         "abi_zero_return_entries": 0,
-        "field_entries": 42746,
+        "field_entries": 41741,
         "transport_error_entries": 0,
-        "transport_ok_entries": 42746
+        "transport_ok_entries": 41741
       },
       "dynamic_explored_obs_effects": 83,
       "dynamic_explored_obs_pages": 75,
@@ -90,11 +90,11 @@
       "all_business_reg_pages": 1774,
       "call_statistics": {
         "abi_nonzero_return_entries": 0,
-        "abi_void_return_entries": 1515,
+        "abi_void_return_entries": 1514,
         "abi_zero_return_entries": 0,
-        "field_entries": 1515,
+        "field_entries": 1514,
         "transport_error_entries": 0,
-        "transport_ok_entries": 1515
+        "transport_ok_entries": 1514
       },
       "dynamic_explored_obs_effects": 77,
       "dynamic_explored_obs_pages": 71,
@@ -156,11 +156,11 @@
       "all_business_reg_pages": 1774,
       "call_statistics": {
         "abi_nonzero_return_entries": 0,
-        "abi_void_return_entries": 41,
+        "abi_void_return_entries": 40,
         "abi_zero_return_entries": 0,
-        "field_entries": 41,
+        "field_entries": 40,
         "transport_error_entries": 0,
-        "transport_ok_entries": 41
+        "transport_ok_entries": 40
       },
       "dynamic_explored_obs_effects": 59,
       "dynamic_explored_obs_pages": 52,
@@ -222,11 +222,11 @@
       "all_business_reg_pages": 1774,
       "call_statistics": {
         "abi_nonzero_return_entries": 0,
-        "abi_void_return_entries": 1525,
+        "abi_void_return_entries": 1524,
         "abi_zero_return_entries": 0,
-        "field_entries": 1525,
+        "field_entries": 1524,
         "transport_error_entries": 0,
-        "transport_ok_entries": 1525
+        "transport_ok_entries": 1524
       },
       "dynamic_explored_obs_effects": 81,
       "dynamic_explored_obs_pages": 75,
@@ -288,11 +288,11 @@
       "all_business_reg_pages": 1774,
       "call_statistics": {
         "abi_nonzero_return_entries": 0,
-        "abi_void_return_entries": 160,
+        "abi_void_return_entries": 158,
         "abi_zero_return_entries": 0,
-        "field_entries": 160,
+        "field_entries": 158,
         "transport_error_entries": 0,
-        "transport_ok_entries": 160
+        "transport_ok_entries": 158
       },
       "dynamic_explored_obs_effects": 57,
       "dynamic_explored_obs_pages": 49,
@@ -355,84 +355,84 @@
     "0": {
       "abi_nonzero_return_calls": 0,
       "abi_return_type": "void",
-      "abi_void_calls": 200,
+      "abi_void_calls": 197,
       "abi_zero_return_calls": 0,
-      "ecall_invocations": 200,
+      "ecall_invocations": 197,
       "field_entering_calls": 0,
       "out_status_nonzero_calls": 0,
       "out_status_zero_calls": 0,
-      "outer_non_field_calls": 200,
+      "outer_non_field_calls": 197,
       "transport_error_calls": 0
     },
     "1": {
       "abi_nonzero_return_calls": 0,
       "abi_return_type": "void",
-      "abi_void_calls": 53,
+      "abi_void_calls": 52,
       "abi_zero_return_calls": 0,
-      "ecall_invocations": 53,
+      "ecall_invocations": 52,
       "field_entering_calls": 0,
       "out_status_nonzero_calls": 0,
       "out_status_zero_calls": 0,
-      "outer_non_field_calls": 53,
+      "outer_non_field_calls": 52,
       "transport_error_calls": 0
     },
     "2": {
       "abi_nonzero_return_calls": 0,
       "abi_return_type": "void",
-      "abi_void_calls": 160,
+      "abi_void_calls": 158,
       "abi_zero_return_calls": 0,
-      "ecall_invocations": 160,
-      "field_entering_calls": 160,
+      "ecall_invocations": 158,
+      "field_entering_calls": 158,
       "out_status_nonzero_calls": 0,
-      "out_status_zero_calls": 160,
+      "out_status_zero_calls": 158,
       "outer_non_field_calls": 0,
       "transport_error_calls": 0
     },
     "3": {
       "abi_nonzero_return_calls": 0,
       "abi_return_type": "void",
-      "abi_void_calls": 41,
+      "abi_void_calls": 40,
       "abi_zero_return_calls": 0,
-      "ecall_invocations": 41,
-      "field_entering_calls": 41,
+      "ecall_invocations": 40,
+      "field_entering_calls": 40,
       "out_status_nonzero_calls": 5,
-      "out_status_zero_calls": 36,
+      "out_status_zero_calls": 35,
       "outer_non_field_calls": 0,
       "transport_error_calls": 0
     },
     "4": {
       "abi_nonzero_return_calls": 0,
       "abi_return_type": "void",
-      "abi_void_calls": 1525,
+      "abi_void_calls": 1524,
       "abi_zero_return_calls": 0,
-      "ecall_invocations": 1525,
-      "field_entering_calls": 1525,
+      "ecall_invocations": 1524,
+      "field_entering_calls": 1524,
       "out_status_nonzero_calls": 0,
-      "out_status_zero_calls": 1525,
+      "out_status_zero_calls": 1524,
       "outer_non_field_calls": 0,
       "transport_error_calls": 0
     },
     "5": {
       "abi_nonzero_return_calls": 0,
       "abi_return_type": "void",
-      "abi_void_calls": 1515,
+      "abi_void_calls": 1514,
       "abi_zero_return_calls": 0,
-      "ecall_invocations": 1515,
-      "field_entering_calls": 1515,
+      "ecall_invocations": 1514,
+      "field_entering_calls": 1514,
       "out_status_nonzero_calls": 18,
-      "out_status_zero_calls": 1497,
+      "out_status_zero_calls": 1496,
       "outer_non_field_calls": 0,
       "transport_error_calls": 0
     },
     "6": {
       "abi_nonzero_return_calls": 0,
       "abi_return_type": "void",
-      "abi_void_calls": 42746,
+      "abi_void_calls": 41741,
       "abi_zero_return_calls": 0,
-      "ecall_invocations": 42746,
-      "field_entering_calls": 42746,
-      "out_status_nonzero_calls": 144,
-      "out_status_zero_calls": 42602,
+      "ecall_invocations": 41741,
+      "field_entering_calls": 41741,
+      "out_status_nonzero_calls": 142,
+      "out_status_zero_calls": 41599,
       "outer_non_field_calls": 0,
       "transport_error_calls": 0
     }
@@ -443,11 +443,11 @@
       "tag": "scalar_e5_s0_p3_v1"
     },
     {
-      "decision": "repeat_attempt_failed_rc_-4",
+      "decision": "measurement_invalid_ignored:SIGNAL_EXIT_-4",
       "tag": "history_e2_s0_n24"
     },
     {
-      "decision": "repeat_attempt_failed_rc_-4",
+      "decision": "measurement_invalid_ignored:SIGNAL_EXIT_-4",
       "tag": "history_e3_s0_n24"
     },
     {
@@ -457,6 +457,14 @@
     {
       "decision": "demote_s0_rejected_joint_selector_e6",
       "tag": "joint_e6_s0_s3_3_x2_0"
+    },
+    {
+      "decision": "measurement_invalid_ignored:SIGNAL_EXIT_-4",
+      "tag": "history_e2_s0_n64"
+    },
+    {
+      "decision": "measurement_invalid_ignored:SIGNAL_EXIT_-4",
+      "tag": "history_e3_s0_n64"
     },
     {
       "decision": "demote_history_stagnant_at_64",
@@ -469,6 +477,22 @@
     {
       "decision": "demote_history_stagnant_at_64",
       "tag": "history_e6_s0_n64"
+    },
+    {
+      "decision": "measurement_invalid_ignored:SIGNAL_EXIT_-4",
+      "tag": "history_e2_s0_n256"
+    },
+    {
+      "decision": "measurement_invalid_ignored:SIGNAL_EXIT_-4",
+      "tag": "history_e3_s0_n256"
+    },
+    {
+      "decision": "measurement_invalid_ignored:SIGNAL_EXIT_-4",
+      "tag": "history_e2_s0_n1024"
+    },
+    {
+      "decision": "measurement_invalid_ignored:SIGNAL_EXIT_-4",
+      "tag": "history_e3_s0_n1024"
     },
     {
       "decision": "demote_history_stagnant_at_64",
@@ -511,7 +535,7 @@
       "run_id": "layer0_and_layer1_unmodified_host",
       "subkind": "unmodified_host_full_trace",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer0_and_layer1_unmodified_host.jsonl",
-      "trace_sha256": "33df8320b62fd6ba77b0bf61b8e5868c4d3004121218263d81b724749776019f"
+      "trace_sha256": "fd0750c9a30a483154f3d9b855878c68c157451c93630869298316efc3495002"
     },
     {
       "description": "In-place replacement trustedEnclaveInit@0._logLevel=4 + host continuation",
@@ -524,7 +548,7 @@
       "run_id": "layer2_replace_prefix_e0_s0_p0_v4",
       "subkind": "in_place_prefix_replacement",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_replace_prefix_e0_s0_p0_v4.jsonl",
-      "trace_sha256": "4f3897be1ce14148d97e0af0ba7f657354203244cf41e68a66c0224fa9e320aa"
+      "trace_sha256": "1396c5f71fd22cbd1eef7416d2ecb6e03e4dd3c7fad115ab61a596e9249f23e5"
     },
     {
       "description": "Scalar boundary (replace_scalar) trustedGetPublicEcdsaKey@0.dec_len=1",
@@ -537,7 +561,7 @@
       "run_id": "layer2_scalar_e5_s0_p3_v1",
       "subkind": "in_place_scalar_boundary",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e5_s0_p3_v1.jsonl",
-      "trace_sha256": "40310b7797320fe4d46ac3f0afa0fd0da828b0abc1de9a2e3da69d74bba867eb"
+      "trace_sha256": "34cefbf3a6e989e680777c6ab2da24e6bba17c7fff938fc1cd92c94ccf4552c5"
     },
     {
       "description": "Joint 2-param trustedGetPublicEcdsaKey@0: dec_len=4 & encrypted_key[0]^=0xff",
@@ -550,7 +574,7 @@
       "run_id": "layer2_joint_e5_s0_s3_4_x2_0",
       "subkind": "joint_two_param_mutation",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e5_s0_s3_4_x2_0.jsonl",
-      "trace_sha256": "8a44ef1725e70b8a5e1c473a45e20fd076f82c2fdd4463ec0100c51c4ad8b199"
+      "trace_sha256": "76a252f81bc31f23da212de3b04b69e838686bdc81ee34687c7b13c25e63326b"
     },
     {
       "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.enc_len=4",
@@ -563,7 +587,7 @@
       "run_id": "layer2_scalar_e6_s0_p3_v4",
       "subkind": "in_place_scalar_boundary",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p3_v4.jsonl",
-      "trace_sha256": "ff52cf0b699e797fc13ffc25191a731f9d569c658ac0e8d758923eae7df711da"
+      "trace_sha256": "f15271d6963f44ec975101258f9a8540b3a727648ec7a5490b2b8aab89834d55"
     },
     {
       "description": "Cross-buffer slice relation trustedGenerateSEK@0: err_string := errStatus+4",
@@ -576,7 +600,7 @@
       "run_id": "layer2_slice_rel_e2_s0_p0_p1_off4",
       "subkind": "cross_buffer_slice_relation",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_slice_rel_e2_s0_p0_p1_off4.jsonl",
-      "trace_sha256": "a0f2fa37ab4272120efcc0ea7c48d1dd262b422be354798128a0fae7be73b70b"
+      "trace_sha256": "c3732c2c1c38e6628a0df73c08d9bbfcc888bacc2f00e392d132feb3e7006494"
     },
     {
       "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1.enc_len=8",
@@ -589,7 +613,7 @@
       "run_id": "layer2_scalar_e6_s1_p3_v8",
       "subkind": "in_place_scalar_boundary",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1_p3_v8.jsonl",
-      "trace_sha256": "0c11bba380318017d3f64bdc8fee6a6b412d045e82c1c07134d291d9917f3768"
+      "trace_sha256": "4d26513c17d061e70369480c09b022ae4372faff3545f8c76ea36c7e05036f33"
     },
     {
       "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.enc_len=8",
@@ -602,7 +626,7 @@
       "run_id": "layer2_scalar_e6_s2_p3_v8",
       "subkind": "in_place_scalar_boundary",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p3_v8.jsonl",
-      "trace_sha256": "a313e12ae52238730f6761cc44257ff6d025b9c37e890c5d3323dfe7f589087e"
+      "trace_sha256": "fc118b8f81374548d3056de5238d46a4dea8e6967e1de64d52d76134fa192ef9"
     },
     {
       "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.enc_len=8",
@@ -615,20 +639,7 @@
       "run_id": "layer2_scalar_e6_s1005_p3_v8",
       "subkind": "in_place_scalar_boundary",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p3_v8.jsonl",
-      "trace_sha256": "bc13b27c06e4b83551034a791b2d11057fb675e8661220a1065514e6ac97bcbc"
-    },
-    {
-      "description": "History accumulation (depth=24) on trustedGenerateSEK@0",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 2,
-      "returncode": -4,
-      "run_id": "layer2_history_e2_s0_n24",
-      "subkind": "quadrupling_history_scan",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e2_s0_n24.jsonl",
-      "trace_sha256": "c974a7189eaaf9b16073e5cf69f5a70f1cb9ae5ff731395d38f86c3c4092302b"
+      "trace_sha256": "ee2556832158b5d37f4487752c93c4e9e21f73c113be05d07f8594d35ccbe810"
     },
     {
       "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.enc_len=99",
@@ -641,7 +652,7 @@
       "run_id": "layer2_scalar_e6_s0_p3_v99",
       "subkind": "in_place_scalar_boundary",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p3_v99.jsonl",
-      "trace_sha256": "a1629ff5903561250933f1a20dfb915da9807d875be9d485537c510f90f76919"
+      "trace_sha256": "c083cc54a0951c52dfbef97db204857fdbbeae523c02371f5a83424ab9205a90"
     },
     {
       "description": "In-place replacement trustedEnclaveInit@0._logLevel=1 + host continuation",
@@ -654,7 +665,7 @@
       "run_id": "layer2_replace_prefix_e0_s0_p0_v1",
       "subkind": "in_place_prefix_replacement",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_replace_prefix_e0_s0_p0_v1.jsonl",
-      "trace_sha256": "337ffadfc4a3211cff37bb452f0d5381b6baca9a96366ee49d6cce1a6c5013bf"
+      "trace_sha256": "85acda6c2b9fd194b445050cc3d63c7209b766bf5f98834e9966f3d632e49985"
     },
     {
       "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1.enc_len=1",
@@ -667,7 +678,7 @@
       "run_id": "layer2_scalar_e6_s1_p3_v1",
       "subkind": "in_place_scalar_boundary",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1_p3_v1.jsonl",
-      "trace_sha256": "f59b3b2c71fd7e99d206459b37ef6e91b7c673e652af8da5508fac516969dc90"
+      "trace_sha256": "9784b0cfc283980c1eca6afc3bd9ecef62916b29ffe25c83a14e809ae67335ed"
     },
     {
       "description": "Joint 2-param trustedEcdsaSign@0: enc_len=16 & encrypted_key[0]^=0xff",
@@ -680,7 +691,7 @@
       "run_id": "layer2_joint_e6_s0_s3_16_x2_0",
       "subkind": "joint_two_param_mutation",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s3_16_x2_0.jsonl",
-      "trace_sha256": "79e6e871e5797cc1a2433cd7cc984260d121da4fc7377bdf37a1cd36eb7bc614"
+      "trace_sha256": "dff3c50656efa46c76ea7cb48e72fb5ac300157831f8990f14eaed75c4319ec8"
     },
     {
       "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.enc_len=16",
@@ -693,7 +704,7 @@
       "run_id": "layer2_scalar_e6_s2_p3_v16",
       "subkind": "in_place_scalar_boundary",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p3_v16.jsonl",
-      "trace_sha256": "9609bc06f459293c69328e51b61b807037a049721ed77ae19970ef236f92df4a"
+      "trace_sha256": "7677b9cbccc1cb9f4ba84ffcd06812a0f5cadae2ac667a06fb2eab4d76a18c15"
     },
     {
       "description": "Cross-buffer slice relation trustedSetSEK@0: err_string := errStatus+4",
@@ -706,7 +717,7 @@
       "run_id": "layer2_slice_rel_e3_s0_p0_p1_off4",
       "subkind": "cross_buffer_slice_relation",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_slice_rel_e3_s0_p0_p1_off4.jsonl",
-      "trace_sha256": "9bd667b6830cf7defe29fee9e2d28f1350bd2845434ed4e2df0de853428f9ce0"
+      "trace_sha256": "3cdc7638c608b2487b78e74300e23c1553aa60bfbb8314da4bae332d7ed187d1"
     },
     {
       "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.enc_len=4",
@@ -719,7 +730,7 @@
       "run_id": "layer2_scalar_e6_s1005_p3_v4",
       "subkind": "in_place_scalar_boundary",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p3_v4.jsonl",
-      "trace_sha256": "cbb6e3ca7ce0a22e407a2d413c24dc5774c75f889dd590ae5b67c48b1450ef97"
+      "trace_sha256": "e7f295a356182c927f13635052b7fb7f4ba895dfe472d89e4feec77b3e17bf6a"
     },
     {
       "description": "Scalar boundary (replace_scalar) trustedGetPublicEcdsaKey@0.dec_len=3",
@@ -732,7 +743,7 @@
       "run_id": "layer2_scalar_e5_s0_p3_v3",
       "subkind": "in_place_scalar_boundary",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e5_s0_p3_v3.jsonl",
-      "trace_sha256": "10f1276c27c0199af936c9fe675a0f7d60e7b523695615833d01cdc62cec9987"
+      "trace_sha256": "01fb01639ce2199226a90bfb280f186dbc361493939dbfad94644824f8e92e35"
     },
     {
       "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.enc_len=8",
@@ -745,7 +756,7 @@
       "run_id": "layer2_scalar_e6_s0_p3_v8",
       "subkind": "in_place_scalar_boundary",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p3_v8.jsonl",
-      "trace_sha256": "737c1c3f6bf3845620572def4f6d0a42f590a486d131cfbf8667213748c67db2"
+      "trace_sha256": "0b81c4edc44dd69c10eccde4f781198d4d0d98d46f85187fc410b7a00cf0fc11"
     },
     {
       "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1.enc_len=2",
@@ -758,7 +769,7 @@
       "run_id": "layer2_scalar_e6_s1_p3_v2",
       "subkind": "in_place_scalar_boundary",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1_p3_v2.jsonl",
-      "trace_sha256": "d894319115b21f30f67db558d20f6aa57bf6496d411ff887eabd8bd2e9e72866"
+      "trace_sha256": "d11db0df52d144d3f990826a116efd1b1f936c28dd2a99e5b2955b34862e9579"
     },
     {
       "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.enc_len=3",
@@ -771,20 +782,7 @@
       "run_id": "layer2_scalar_e6_s2_p3_v3",
       "subkind": "in_place_scalar_boundary",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p3_v3.jsonl",
-      "trace_sha256": "55216e8bbf215a80c82ff57b575bc97e426af44eb180b779d78a8add1a7481d3"
-    },
-    {
-      "description": "History accumulation (depth=24) on trustedSetSEK@0",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 1012,
-      "returncode": -4,
-      "run_id": "layer2_history_e3_s0_n24",
-      "subkind": "quadrupling_history_scan",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e3_s0_n24.jsonl",
-      "trace_sha256": "609c1103bd54578dbaeb6d8d2e6bd0c3d21b4c3da52bf6ed3b38a80c978a5b37"
+      "trace_sha256": "e1734047fd524d9ce22066c75fe0977993b0a5b052f6e41048ee892d2903a924"
     },
     {
       "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.enc_len=16",
@@ -797,7 +795,7 @@
       "run_id": "layer2_scalar_e6_s1005_p3_v16",
       "subkind": "in_place_scalar_boundary",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p3_v16.jsonl",
-      "trace_sha256": "ca9397827acd6f71b4f30cb6a84a14366e40b46f58b1ebcf4fd4d5dc3489e2bb"
+      "trace_sha256": "3145944f4c4af2e0ede5de31687bc542b14e18373e82bf816aee4fecefc55f2a"
     },
     {
       "description": "In-place replacement trustedEnclaveInit@0._logLevel=16 + host continuation",
@@ -810,7 +808,7 @@
       "run_id": "layer2_replace_prefix_e0_s0_p0_v16",
       "subkind": "in_place_prefix_replacement",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_replace_prefix_e0_s0_p0_v16.jsonl",
-      "trace_sha256": "27b55bee05f1a99c8317aae539a2d4ef0a8014e634ee35934ed009f1ac675311"
+      "trace_sha256": "63ae986dd785ac77b50daa2488965be4c32531b02da03358f02174838f11e58c"
     },
     {
       "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.enc_len=1",
@@ -823,7 +821,7 @@
       "run_id": "layer2_scalar_e6_s0_p3_v1",
       "subkind": "in_place_scalar_boundary",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p3_v1.jsonl",
-      "trace_sha256": "cd8978e372784c7ef201fbe79849bb1466a0a336c46aad647fc2d0e6d45e60c3"
+      "trace_sha256": "90a51599a917d883b2224b7303c6f40cca619062053f3f5e37a8b4faea8d0c02"
     },
     {
       "description": "Joint 2-param trustedGetPublicEcdsaKey@0: dec_len=1 & encrypted_key[0]^=0xff",
@@ -836,7 +834,7 @@
       "run_id": "layer2_joint_e5_s0_s3_1_x2_0",
       "subkind": "joint_two_param_mutation",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e5_s0_s3_1_x2_0.jsonl",
-      "trace_sha256": "494dccdae5346eaee38e89c2678db7bb1d17e0877f5c44fcfbb7d09cd2e37630"
+      "trace_sha256": "d416104bf999210468d6dd6e644b52bf759d4ca7b045ba140f15d01c7757dec7"
     },
     {
       "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1.enc_len=4",
@@ -849,1034 +847,7 @@
       "run_id": "layer2_scalar_e6_s1_p3_v4",
       "subkind": "in_place_scalar_boundary",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1_p3_v4.jsonl",
-      "trace_sha256": "449843029b5eeb7b9ea375208c60c497c1a5291365a766c6aa8b16f253489177"
-    },
-    {
-      "description": "Cross-buffer slice relation trustedGenerateEcdsaKey@0: err_string := errStatus+4",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 3,
-      "returncode": 0,
-      "run_id": "layer2_slice_rel_e4_s0_p0_p1_off4",
-      "subkind": "cross_buffer_slice_relation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_slice_rel_e4_s0_p0_p1_off4.jsonl",
-      "trace_sha256": "e79ded9bd1a57f43a23105230c71da0533a68d227143f0f99db419c236e4ce85"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.enc_len=2",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 7,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s2_p3_v2",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p3_v2.jsonl",
-      "trace_sha256": "0526fa4d26091d05e1472d6514ee4cf0da8df0bbd07a792e59b5990b47a9484a"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.enc_len=2",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 1013,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s1005_p3_v2",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p3_v2.jsonl",
-      "trace_sha256": "d7a503abd3c0798c3e0545f278f5a760862e97fc5cbe659fb3618cccca850cf9"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.enc_len=16",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s0_p3_v16",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p3_v16.jsonl",
-      "trace_sha256": "cca39dbfb1c2199c306148f43082cdaec90f0466256456f0a5cdef219b897e99"
-    },
-    {
-      "description": "History accumulation (depth=24) on trustedGenerateEcdsaKey@0",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 27,
-      "returncode": 0,
-      "run_id": "layer2_history_e4_s0_n24",
-      "subkind": "quadrupling_history_scan",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e4_s0_n24.jsonl",
-      "trace_sha256": "e0ef0c7342fac915100027a87fadbc45dd50c3eedda3259dc361f1e267312def"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1.enc_len=3",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 6,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s1_p3_v3",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1_p3_v3.jsonl",
-      "trace_sha256": "f695723defe6e98b9c6073ac96279e0164fa2da91c9371bb05065b5adcbb7930"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedGetPublicEcdsaKey@0.dec_len=4",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 4,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e5_s0_p3_v4",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e5_s0_p3_v4.jsonl",
-      "trace_sha256": "eb56593b600d194a8669ed900c74db4ed6d30b934c7bfc1c99095bd5740148f6"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.enc_len=4",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 7,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s2_p3_v4",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p3_v4.jsonl",
-      "trace_sha256": "77dcb085bd32cb5cdc05e679ae9cf6c4021d69a6c603e571dd09fb932e4e9a45"
-    },
-    {
-      "description": "In-place replacement trustedEnclaveInit@0._logLevel=3 + host continuation",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 1014,
-      "returncode": 0,
-      "run_id": "layer2_replace_prefix_e0_s0_p0_v3",
-      "subkind": "in_place_prefix_replacement",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_replace_prefix_e0_s0_p0_v3.jsonl",
-      "trace_sha256": "7b1ddce3954b830d2a3deb8d0bc1ac9a1949490f038ef6d4ae99b50439e62f5a"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.enc_len=3",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 1013,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s1005_p3_v3",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p3_v3.jsonl",
-      "trace_sha256": "d692a20b60cb5a7e11ced865ade236ca5a21375ebc8534ed34eed55013c52b72"
-    },
-    {
-      "description": "Joint 2-param trustedEcdsaSign@0: enc_len=3 & encrypted_key[0]^=0xff",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_joint_e6_s0_s3_3_x2_0",
-      "subkind": "joint_two_param_mutation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s3_3_x2_0.jsonl",
-      "trace_sha256": "4c8e501fd02ba6c49e40a4b869cbfecfb02eeef981b9b72ddac28f9143f4e2f7"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.enc_len=2",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s0_p3_v2",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p3_v2.jsonl",
-      "trace_sha256": "72954ffc4e4d128706b19bde7137a0b68afe33447b68c6895f656aefc415956a"
-    },
-    {
-      "description": "Cross-buffer slice relation trustedGetPublicEcdsaKey@0: err_string := errStatus+4",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 4,
-      "returncode": 0,
-      "run_id": "layer2_slice_rel_e5_s0_p0_p1_off4",
-      "subkind": "cross_buffer_slice_relation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_slice_rel_e5_s0_p0_p1_off4.jsonl",
-      "trace_sha256": "1d4975ddce2516581d3e13f4a80a636c9a2b8b0fb8e55377b6482e467f36d588"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1.enc_len=16",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 6,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s1_p3_v16",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1_p3_v16.jsonl",
-      "trace_sha256": "8da9cb39d8c81fe03cb1e2bf4d9dfe5032e37732ff5f72826206b0d1dc6b7354"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.enc_len=1",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 7,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s2_p3_v1",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p3_v1.jsonl",
-      "trace_sha256": "819a0256b854b2784b7da21305a283213886943534ca4eba105979e1f2747c31"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.enc_len=1",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 1013,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s1005_p3_v1",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p3_v1.jsonl",
-      "trace_sha256": "b171de6f335277a824c0db0ad42a0667ea8a41630fc8d818ef8e7c08e0b81911"
-    },
-    {
-      "description": "History accumulation (depth=24) on trustedGetPublicEcdsaKey@0",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 28,
-      "returncode": 0,
-      "run_id": "layer2_history_e5_s0_n24",
-      "subkind": "quadrupling_history_scan",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e5_s0_n24.jsonl",
-      "trace_sha256": "3fab3c7853da53f67c218daba1dfe14c78353610fcc2476fdc60c214fadaaaaf"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.enc_len=3",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s0_p3_v3",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p3_v3.jsonl",
-      "trace_sha256": "f1d10304a7c69fe0434d5be8ff7cdc626296054b4e1b6eb6af7faba606110e7e"
-    },
-    {
-      "description": "In-place replacement trustedEnclaveInit@0._logLevel=2 + host continuation",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 1014,
-      "returncode": 0,
-      "run_id": "layer2_replace_prefix_e0_s0_p0_v2",
-      "subkind": "in_place_prefix_replacement",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_replace_prefix_e0_s0_p0_v2.jsonl",
-      "trace_sha256": "fabbd098a06b9bdc7cbe9eb5259407190922f4d86a6cd78b53c8da72c66fec14"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1.base=8",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 6,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s1_p8_v8",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1_p8_v8.jsonl",
-      "trace_sha256": "b156a84da21e24d04dd887e2e4539d8043ee1c8bbcf59ccf1c514126abf7bf18"
-    },
-    {
-      "description": "Cross-buffer slice relation trustedEcdsaSign@0: err_string := errStatus+4",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_slice_rel_e6_s0_p0_p1_off4",
-      "subkind": "cross_buffer_slice_relation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_slice_rel_e6_s0_p0_p1_off4.jsonl",
-      "trace_sha256": "a0e83b4094cb3dffac55db9dcd6a58ea90521c6c43c62926e35a167efb136771"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.base=8",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 7,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s2_p8_v8",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p8_v8.jsonl",
-      "trace_sha256": "df8e243ae567bb4ea073aaeabb381c607e9af7c515455347518232f65c9b62ab"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedGetPublicEcdsaKey@0.dec_len=99",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 4,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e5_s0_p3_v99",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e5_s0_p3_v99.jsonl",
-      "trace_sha256": "2754dad3ac35cde0a52453abe329187c9b939bd45ee7f4addd9515b9dbcdeecb"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.base=8",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 1013,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s1005_p8_v8",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p8_v8.jsonl",
-      "trace_sha256": "de1fcaf17d794c5e66453c8c1d49ab444df91ad59a992185cca9f68f203d0478"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.base=1",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s0_p8_v1",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p8_v1.jsonl",
-      "trace_sha256": "9e1fd578404d677b76429891e7ec4bd4c36a6e435ef0116fb256fdd4ee1b3ff0"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1.base=2",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 6,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s1_p8_v2",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1_p8_v2.jsonl",
-      "trace_sha256": "bb7e2755d0aaf997948b0b47a92cca585c49cbacdf5d7c25919eeafbde11e736"
-    },
-    {
-      "description": "History accumulation (depth=24) on trustedEcdsaSign@0",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 29,
-      "returncode": 0,
-      "run_id": "layer2_history_e6_s0_n24",
-      "subkind": "quadrupling_history_scan",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e6_s0_n24.jsonl",
-      "trace_sha256": "0ac23edcb3c5b5eaeff3eecec5b4655cf53a71cc15143ffaf639f2d1c5e05de1"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.base=2",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 7,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s2_p8_v2",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p8_v2.jsonl",
-      "trace_sha256": "04617397a8117beb771d29b44f4bcb358ed215c335ff7f619a31af67dc0ef4a8"
-    },
-    {
-      "description": "In-place replacement trustedEnclaveInit@0._logLevel=8 + host continuation",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 1014,
-      "returncode": 0,
-      "run_id": "layer2_replace_prefix_e0_s0_p0_v8",
-      "subkind": "in_place_prefix_replacement",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_replace_prefix_e0_s0_p0_v8.jsonl",
-      "trace_sha256": "fed636ad2a018978c96555c616299f27259915e08dad5174ca22d83449e237a0"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.base=16",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 1013,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s1005_p8_v16",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p8_v16.jsonl",
-      "trace_sha256": "9584c5467d2d0d6e73899258936da2a6424d784966430fea0c496fe1c2a61968"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.base=16",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s0_p8_v16",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p8_v16.jsonl",
-      "trace_sha256": "337d055ae5232e014eab17e35b95f5be1a7adb9950f0299b2b235ba28d11f896"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1.base=3",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 6,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s1_p8_v3",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1_p8_v3.jsonl",
-      "trace_sha256": "03a465aea66df87ef27e9f1cf17102cd7cf63e818aba943745b540dd7b4d81fb"
-    },
-    {
-      "description": "History accumulation (depth=64) on trustedGenerateEcdsaKey@0",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 67,
-      "returncode": 0,
-      "run_id": "layer2_history_e4_s0_n64",
-      "subkind": "quadrupling_history_scan",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e4_s0_n64.jsonl",
-      "trace_sha256": "4ae85a3604d9d8ba1ffe98cd8420ad6a557fb2e13602d8cfd8023661e922dbf1"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.base=4",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 7,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s2_p8_v4",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p8_v4.jsonl",
-      "trace_sha256": "8ae7dd955aafa5f76870192f285407ca79c716f3e4a5fffb7bd6ec9f5e5b1a48"
-    },
-    {
-      "description": "Cross-buffer slice relation trustedGenerateSEK@0: err_string := errStatus+8",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 2,
-      "returncode": 0,
-      "run_id": "layer2_slice_rel_e2_s0_p0_p1_off8",
-      "subkind": "cross_buffer_slice_relation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_slice_rel_e2_s0_p0_p1_off8.jsonl",
-      "trace_sha256": "aad480e3feac4ca0988da3078a4b45d00a8f2a68d40d229b053b4dd372a54d8b"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.base=4",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 1013,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s1005_p8_v4",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p8_v4.jsonl",
-      "trace_sha256": "02846111ec17a724f4af612e985efe9ef066a34c41854170054e0ad10fc92529"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.base=8",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s0_p8_v8",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p8_v8.jsonl",
-      "trace_sha256": "d0c8149d36b716ae8e5061fb88c3b27992a94dfce8fcc93e1124d4927627ff5c"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1.base=16",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 6,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s1_p8_v16",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1_p8_v16.jsonl",
-      "trace_sha256": "68145388cb52a3f415c0d8c32e33f5e2a15379d919faaba8a0c0099207e6a072"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedGetPublicEcdsaKey@0.dec_len=2",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 4,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e5_s0_p3_v2",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e5_s0_p3_v2.jsonl",
-      "trace_sha256": "476e3b50316d75afb6166e1b289989e07f23d850a615868c060ac3b19294658c"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.base=16",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 7,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s2_p8_v16",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p8_v16.jsonl",
-      "trace_sha256": "2b5c5b05bccb91b601fbd5072a4fc07a435dc4a44f621f1f4845d2dd0560b503"
-    },
-    {
-      "description": "History accumulation (depth=64) on trustedGetPublicEcdsaKey@0",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 68,
-      "returncode": 0,
-      "run_id": "layer2_history_e5_s0_n64",
-      "subkind": "quadrupling_history_scan",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e5_s0_n64.jsonl",
-      "trace_sha256": "1c1e627085d0af3655e577244c71ca1acf381cb2198704e0c07452b279f4c315"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.base=1",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 1013,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s1005_p8_v1",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p8_v1.jsonl",
-      "trace_sha256": "a49352534d4723828035ac6a1fa3cae883ebb6b46eddd55ca6291f02af4a2266"
-    },
-    {
-      "description": "Cross-buffer slice relation trustedSetSEK@0: err_string := errStatus+8",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 1012,
-      "returncode": 0,
-      "run_id": "layer2_slice_rel_e3_s0_p0_p1_off8",
-      "subkind": "cross_buffer_slice_relation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_slice_rel_e3_s0_p0_p1_off8.jsonl",
-      "trace_sha256": "4f6a3172abfb0e9861652e3e5678e47a794778099f725cc92c4cfd90a8b3c7f3"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.base=99",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s0_p8_v99",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p8_v99.jsonl",
-      "trace_sha256": "c9977b9599b00cdc2d13f609137cf7b09d4fef14316fcdbe43fc12989f905dd5"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1.base=1",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 6,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s1_p8_v1",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1_p8_v1.jsonl",
-      "trace_sha256": "a0a95906d232be79b571b564fe4d952cc27b0ca30be4083a8b8721d0b14b7375"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.base=1",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 7,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s2_p8_v1",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p8_v1.jsonl",
-      "trace_sha256": "ea34560970a55ee09bcad74e44c1ea5a56eac4e7bd8ef4eeeda7b390dfc189b1"
-    },
-    {
-      "description": "History accumulation (depth=64) on trustedEcdsaSign@0",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 69,
-      "returncode": 0,
-      "run_id": "layer2_history_e6_s0_n64",
-      "subkind": "quadrupling_history_scan",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e6_s0_n64.jsonl",
-      "trace_sha256": "e0c64a4a21c7016d61c4ade59c89bdec89f0b2f73c912471950e3bbfff798da3"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.base=3",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 1013,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s1005_p8_v3",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p8_v3.jsonl",
-      "trace_sha256": "a4b5958d9d50bd65d0f7425c6a6ffa6f30c582eada1dbfaf522685b5fcc07c5d"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.base=3",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s0_p8_v3",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p8_v3.jsonl",
-      "trace_sha256": "b7a166442cf4b1d63601a7d7d17bdeadcd3cebd34107bac810653cb1324a92c6"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1.base=4",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 6,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s1_p8_v4",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1_p8_v4.jsonl",
-      "trace_sha256": "668166671ee49e346e302e2157c33933ddb2210b75b3cf2b7ed796bba25e5d98"
-    },
-    {
-      "description": "Cross-buffer slice relation trustedGenerateEcdsaKey@0: err_string := errStatus+8",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 3,
-      "returncode": 0,
-      "run_id": "layer2_slice_rel_e4_s0_p0_p1_off8",
-      "subkind": "cross_buffer_slice_relation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_slice_rel_e4_s0_p0_p1_off8.jsonl",
-      "trace_sha256": "85a0acca88b886c8de35c83956bca7780a9289ba8f4b96e6c5ee4ca9a98bb09d"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.base=3",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 7,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s2_p8_v3",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p8_v3.jsonl",
-      "trace_sha256": "04597891f2d5b63c9846213769ed312288257b404a4d166c81a144174c7b3578"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.base=2",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 1013,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s1005_p8_v2",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p8_v2.jsonl",
-      "trace_sha256": "03cc7efa3097b3f9c022b23de7bc5fb7dbc3ee72d11f10fdd83c9d59dc427adc"
-    },
-    {
-      "description": "Cross-buffer slice relation trustedGetPublicEcdsaKey@0: err_string := errStatus+8",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 4,
-      "returncode": 0,
-      "run_id": "layer2_slice_rel_e5_s0_p0_p1_off8",
-      "subkind": "cross_buffer_slice_relation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_slice_rel_e5_s0_p0_p1_off8.jsonl",
-      "trace_sha256": "4d3636f184afa3dfc5174a70510ba8312a0c3d9627e3dbeaee4f71f13b8cc334"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedGetPublicEcdsaKey@0.dec_len=8",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 4,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e5_s0_p3_v8",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e5_s0_p3_v8.jsonl",
-      "trace_sha256": "10c7037431edd641dd11e4d1044a34299b2b47b89d6e3493983dc3dc75459ac4"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.base=4",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s0_p8_v4",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p8_v4.jsonl",
-      "trace_sha256": "fe15c85a54cb36162308077b604bec201b52da34b83b713241b101732223ca7d"
-    },
-    {
-      "description": "Cross-buffer slice relation trustedEcdsaSign@0: err_string := errStatus+8",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_slice_rel_e6_s0_p0_p1_off8",
-      "subkind": "cross_buffer_slice_relation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_slice_rel_e6_s0_p0_p1_off8.jsonl",
-      "trace_sha256": "d16b6f598062642ff110c2952c4ce82e8048e5eceb2906751d29d3f4fa0e6e92"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.base=2",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e6_s0_p8_v2",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p8_v2.jsonl",
-      "trace_sha256": "3e4a1f73dc020a7a2c545b34836575cc26c4b7f2b3410590e2c57365637260ca"
-    },
-    {
-      "description": "Scalar boundary (replace_scalar) trustedGetPublicEcdsaKey@0.dec_len=16",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 4,
-      "returncode": 0,
-      "run_id": "layer2_scalar_e5_s0_p3_v16",
-      "subkind": "in_place_scalar_boundary",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e5_s0_p3_v16.jsonl",
-      "trace_sha256": "3587bb8699317f03e4d57b2d294d9c988e013d8eef7efd9f7a85a5783e8ab0a7"
-    },
-    {
-      "description": "Joint 2-param trustedGetPublicEcdsaKey@0: dec_len=8 & encrypted_key[0]^=0xff",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 4,
-      "returncode": 0,
-      "run_id": "layer2_joint_e5_s0_s3_8_x2_0",
-      "subkind": "joint_two_param_mutation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e5_s0_s3_8_x2_0.jsonl",
-      "trace_sha256": "277471039ecea4989b2bc6dbe4edf54f421d47f5c3b597c087d6c546d6005ced"
-    },
-    {
-      "description": "Joint 2-param trustedGetPublicEcdsaKey@0: dec_len=3 & encrypted_key[0]^=0xff",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 4,
-      "returncode": 0,
-      "run_id": "layer2_joint_e5_s0_s3_3_x2_0",
-      "subkind": "joint_two_param_mutation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e5_s0_s3_3_x2_0.jsonl",
-      "trace_sha256": "3fac7700cbe6e3c2b6d2c0099cc9aa3d1d346eef9bc8df571eff12cd1519b804"
-    },
-    {
-      "description": "Joint 2-param trustedGetPublicEcdsaKey@0: dec_len=2 & encrypted_key[0]^=0xff",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 4,
-      "returncode": 0,
-      "run_id": "layer2_joint_e5_s0_s3_2_x2_0",
-      "subkind": "joint_two_param_mutation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e5_s0_s3_2_x2_0.jsonl",
-      "trace_sha256": "07e3d27140bc9a3146fe3bbb275c392d6c45d8466f0bf3de0e6775e2d227c626"
-    },
-    {
-      "description": "Joint 2-param trustedGetPublicEcdsaKey@0: dec_len=16 & encrypted_key[0]^=0xff",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 4,
-      "returncode": 0,
-      "run_id": "layer2_joint_e5_s0_s3_16_x2_0",
-      "subkind": "joint_two_param_mutation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e5_s0_s3_16_x2_0.jsonl",
-      "trace_sha256": "57c7090f84b7b3432fc0628571624ae89256182f55d3505a17abbf42034229f9"
-    },
-    {
-      "description": "Joint 2-param trustedEcdsaSign@0: enc_len=8 & encrypted_key[0]^=0xff",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_joint_e6_s0_s3_8_x2_0",
-      "subkind": "joint_two_param_mutation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s3_8_x2_0.jsonl",
-      "trace_sha256": "f58568644919993c21efbec3f720d6b6818615cef856a243e3abdac55b4efc6a"
-    },
-    {
-      "description": "Joint 2-param trustedEcdsaSign@0: enc_len=1 & encrypted_key[0]^=0xff",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_joint_e6_s0_s3_1_x2_0",
-      "subkind": "joint_two_param_mutation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s3_1_x2_0.jsonl",
-      "trace_sha256": "c58e1eabf34bf39d106f54b51f0a502d51d92c2dce3534f9d8c4045c85324007"
-    },
-    {
-      "description": "Joint 2-param trustedEcdsaSign@0: enc_len=2 & encrypted_key[0]^=0xff",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_joint_e6_s0_s3_2_x2_0",
-      "subkind": "joint_two_param_mutation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s3_2_x2_0.jsonl",
-      "trace_sha256": "8d4bd686b621b7447ac190a2ae104f74ed4aea2b06ee1df11d050e93e179e5c7"
-    },
-    {
-      "description": "Joint 2-param trustedEcdsaSign@0: enc_len=4 & encrypted_key[0]^=0xff",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_joint_e6_s0_s3_4_x2_0",
-      "subkind": "joint_two_param_mutation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s3_4_x2_0.jsonl",
-      "trace_sha256": "675bcf47914ce793f9e09853d3729d2ed4a108362c425249a009312ea43b6d07"
-    },
-    {
-      "description": "Joint 2-param trustedEcdsaSign@0: base=4 & encrypted_key[0]^=0xff",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_joint_e6_s0_s8_4_x2_0",
-      "subkind": "joint_two_param_mutation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s8_4_x2_0.jsonl",
-      "trace_sha256": "f7a09be33366c7509bdf0dff80f0dd8a034959440fdaec7e7d816b7169e22c19"
-    },
-    {
-      "description": "Joint 2-param trustedEcdsaSign@0: base=8 & encrypted_key[0]^=0xff",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_joint_e6_s0_s8_8_x2_0",
-      "subkind": "joint_two_param_mutation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s8_8_x2_0.jsonl",
-      "trace_sha256": "d617f3c00ad5c7ae9dd8daa1209909dffaed8bdfa6fb7a9b2cb5432b3013ef74"
-    },
-    {
-      "description": "Joint 2-param trustedEcdsaSign@0: base=16 & encrypted_key[0]^=0xff",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_joint_e6_s0_s8_16_x2_0",
-      "subkind": "joint_two_param_mutation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s8_16_x2_0.jsonl",
-      "trace_sha256": "71e7bab8a3c9af36d5ac60fbdf0b9e0d80883f8166df10fd759d960d253da0c7"
-    },
-    {
-      "description": "Joint 2-param trustedEcdsaSign@0: base=1 & encrypted_key[0]^=0xff",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_joint_e6_s0_s8_1_x2_0",
-      "subkind": "joint_two_param_mutation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s8_1_x2_0.jsonl",
-      "trace_sha256": "aef3fbb3b74efa5e43a7f128c043a38938781f85b0ab714f7449d7270f1632c6"
-    },
-    {
-      "description": "Joint 2-param trustedEcdsaSign@0: base=2 & encrypted_key[0]^=0xff",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_joint_e6_s0_s8_2_x2_0",
-      "subkind": "joint_two_param_mutation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s8_2_x2_0.jsonl",
-      "trace_sha256": "4bd928c780255b9d000fa9ec6e1102be4a6b335b0114b91bdd3d8cdcb36daf31"
-    },
-    {
-      "description": "Joint 2-param trustedEcdsaSign@0: base=3 & encrypted_key[0]^=0xff",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 5,
-      "returncode": 0,
-      "run_id": "layer2_joint_e6_s0_s8_3_x2_0",
-      "subkind": "joint_two_param_mutation",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s8_3_x2_0.jsonl",
-      "trace_sha256": "3511fc58cd098354128e532f635463ca16e5275678a9c802f6aa06a34f4fc464"
-    },
-    {
-      "description": "History accumulation (depth=256) on trustedGenerateEcdsaKey@0",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 259,
-      "returncode": 0,
-      "run_id": "layer2_history_e4_s0_n256",
-      "subkind": "quadrupling_history_scan",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e4_s0_n256.jsonl",
-      "trace_sha256": "8716f0ff894e7dffed13fe3b1784a79003f7d2350b06a83290281dc105b191a7"
-    },
-    {
-      "description": "History accumulation (depth=1024) on trustedGenerateEcdsaKey@0",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 1027,
-      "returncode": 0,
-      "run_id": "layer2_history_e4_s0_n1024",
-      "subkind": "quadrupling_history_scan",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e4_s0_n1024.jsonl",
-      "trace_sha256": "883e7cf4bee7f1e5cadf5e841d3df2ce29ecddc8cc62c1ae382da333c2f9d25b"
-    },
-    {
-      "description": "History accumulation (depth=256) on trustedGetPublicEcdsaKey@0",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 260,
-      "returncode": 0,
-      "run_id": "layer2_history_e5_s0_n256",
-      "subkind": "quadrupling_history_scan",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e5_s0_n256.jsonl",
-      "trace_sha256": "74a46ef9a93aff442ac188dc323efaa824a44537d6edc6c68091447e5ea8ea06"
-    },
-    {
-      "description": "History accumulation (depth=1024) on trustedGetPublicEcdsaKey@0",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 1028,
-      "returncode": 0,
-      "run_id": "layer2_history_e5_s0_n1024",
-      "subkind": "quadrupling_history_scan",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e5_s0_n1024.jsonl",
-      "trace_sha256": "85edd968dea6479d6ac6d18eb79b1d6c1f4addb05ab35085555f8c3fe5bc8fab"
-    },
-    {
-      "description": "History accumulation (depth=256) on trustedEcdsaSign@0",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 261,
-      "returncode": 0,
-      "run_id": "layer2_history_e6_s0_n256",
-      "subkind": "quadrupling_history_scan",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e6_s0_n256.jsonl",
-      "trace_sha256": "b4225a037250e456723aec6c46a4cd137ecdd6ab210ca1d93a20a0c989cdfa8c"
-    },
-    {
-      "description": "History accumulation (depth=1024) on trustedEcdsaSign@0",
-      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
-      "layer": "layer2_generic_schema",
-      "measurement_invalid": false,
-      "new_page_effects_discovered": 0,
-      "records_collected": 1029,
-      "returncode": 0,
-      "run_id": "layer2_history_e6_s0_n1024",
-      "subkind": "quadrupling_history_scan",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e6_s0_n1024.jsonl",
-      "trace_sha256": "b5c565676390edc4f3526f15fd45c4128961daf12cd469f5d95631e528b64261"
+      "trace_sha256": "ebc55d08d39c9d339a94294c88d7c466091d8bf90a5d7e388e62e5568a6ac597"
     },
     {
       "description": "Cold-enclave state replay of trustedEcdsaSign@0 after ecall 0",
@@ -1889,7 +860,462 @@
       "run_id": "layer2_cold_replay_e6_cap0_after_e0",
       "subkind": "cold_enclave_state_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_cold_replay_e6_cap0_after_e0.jsonl",
-      "trace_sha256": "511b186f6e125290eedbb3a3fa5ddfc811bf03ca5e646287690dfcac00360abc"
+      "trace_sha256": "24b4170738fed95c59dd85e304eae441bd003222c7b090b115f60713ac148127"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.enc_len=2",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s2_p3_v2",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p3_v2.jsonl",
+      "trace_sha256": "5c4f885a3c331f5036dd7141236734a64ce1e4a3e6219b492fc3bcac06ea4fe5"
+    },
+    {
+      "description": "Cross-buffer slice relation trustedGenerateEcdsaKey@0: err_string := errStatus+4",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_slice_rel_e4_s0_p0_p1_off4",
+      "subkind": "cross_buffer_slice_relation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_slice_rel_e4_s0_p0_p1_off4.jsonl",
+      "trace_sha256": "2b2c50c8c5b6875d03cbc8dbd5f7c8049f2700e0c64e710fd3c795621be66ba7"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.enc_len=2",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1013,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s1005_p3_v2",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p3_v2.jsonl",
+      "trace_sha256": "9e8ad455bc966ab1f7094fdb5391e2a7c27a601bd0f7134c7323b5b113e0c562"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.enc_len=16",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s0_p3_v16",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p3_v16.jsonl",
+      "trace_sha256": "ca4fc8e7a6f8c8071318e0f2cbfe387d19cf5989ae36e5dcb8d6813acdff09f4"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1.enc_len=3",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 6,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s1_p3_v3",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1_p3_v3.jsonl",
+      "trace_sha256": "ebbec9e7e82029438e3a576979939851e065c52095d1e0cb5f866f0a1c924dcc"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedGetPublicEcdsaKey@0.dec_len=4",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e5_s0_p3_v4",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e5_s0_p3_v4.jsonl",
+      "trace_sha256": "a77c7be11f0a26b8b32552559ef33a556d671181b03991515844bff62246e735"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.enc_len=4",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s2_p3_v4",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p3_v4.jsonl",
+      "trace_sha256": "427ec212b39ef2235abf39061e2bae41fc9f93786334c88fa8bab8d8638e2dff"
+    },
+    {
+      "description": "History accumulation (depth=24) on trustedGenerateEcdsaKey@0",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 27,
+      "returncode": 0,
+      "run_id": "layer2_history_e4_s0_n24",
+      "subkind": "quadrupling_history_scan",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e4_s0_n24.jsonl",
+      "trace_sha256": "d37413b91be83cb2916deb700d28f5494e7cb3d6bdd5d86e8e2a8c40f64f30c0"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.enc_len=3",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1013,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s1005_p3_v3",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p3_v3.jsonl",
+      "trace_sha256": "d8439705e716664d22d6bd03ef3f3242f7e2f64374169038c0f18ffb2ad4dcc5"
+    },
+    {
+      "description": "In-place replacement trustedEnclaveInit@0._logLevel=3 + host continuation",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1014,
+      "returncode": 0,
+      "run_id": "layer2_replace_prefix_e0_s0_p0_v3",
+      "subkind": "in_place_prefix_replacement",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_replace_prefix_e0_s0_p0_v3.jsonl",
+      "trace_sha256": "22f124f7fe1bda3fb86913e0b2de3eea0e89029d9dfb19d492c0aaaf818d2032"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.enc_len=2",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s0_p3_v2",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p3_v2.jsonl",
+      "trace_sha256": "ee3727d3d43055302b7b433187df807af0a07f0f46bffcb2fd98cdcefbfd5495"
+    },
+    {
+      "description": "Joint 2-param trustedEcdsaSign@0: enc_len=3 & encrypted_key[0]^=0xff",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_joint_e6_s0_s3_3_x2_0",
+      "subkind": "joint_two_param_mutation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s3_3_x2_0.jsonl",
+      "trace_sha256": "686032611b47eeb23037be3dc560885fd75af5b659d25046fbde63b5bbfc292c"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1.enc_len=16",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 6,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s1_p3_v16",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1_p3_v16.jsonl",
+      "trace_sha256": "c85f506348077d5272bdb719d974194c2a15a269cdc103b51cd1a0658a25b50a"
+    },
+    {
+      "description": "Cross-buffer slice relation trustedGetPublicEcdsaKey@0: err_string := errStatus+4",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_slice_rel_e5_s0_p0_p1_off4",
+      "subkind": "cross_buffer_slice_relation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_slice_rel_e5_s0_p0_p1_off4.jsonl",
+      "trace_sha256": "c9861f764978d2705e085df1065c4d781c5c7aa322dce68de66c5f7133d697bb"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.enc_len=1",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s2_p3_v1",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p3_v1.jsonl",
+      "trace_sha256": "ade28561b2bd213ac7045adceea03f36757c0f7cebb926f12621e6bbda67ea1c"
+    },
+    {
+      "description": "Joint 2-param trustedGetPublicEcdsaKey@0: dec_len=8 & encrypted_key[0]^=0xff",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_joint_e5_s0_s3_8_x2_0",
+      "subkind": "joint_two_param_mutation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e5_s0_s3_8_x2_0.jsonl",
+      "trace_sha256": "99c6c6584662d688a6b83c2eb9bf5c6f349674a48eed67766be940f11346326f"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.enc_len=1",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1013,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s1005_p3_v1",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p3_v1.jsonl",
+      "trace_sha256": "f75f1a334c3974e05ee740dc27e9455abacdd383acfc6e9750a6e9795b3730df"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.enc_len=3",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s0_p3_v3",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p3_v3.jsonl",
+      "trace_sha256": "138331bca6babdfdee30d6dfcdb4a877f9fccaac32cbe410a84333fa760086ea"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1.base=8",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 6,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s1_p8_v8",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1_p8_v8.jsonl",
+      "trace_sha256": "c8dc9f8e6b30139194f41c13ccef73938b10dd4cc88666dd871f4d720f9595d0"
+    },
+    {
+      "description": "History accumulation (depth=24) on trustedGetPublicEcdsaKey@0",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 28,
+      "returncode": 0,
+      "run_id": "layer2_history_e5_s0_n24",
+      "subkind": "quadrupling_history_scan",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e5_s0_n24.jsonl",
+      "trace_sha256": "a9be8f14e2898a538ce7ad14f4ffc22e933b71d0253f31ddc064a924999376f6"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.base=8",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s2_p8_v8",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p8_v8.jsonl",
+      "trace_sha256": "5188eb5217db6b48de35603fe668564d9ed55b8619ca36e3cac3ac2efb785a23"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedGetPublicEcdsaKey@0.dec_len=99",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e5_s0_p3_v99",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e5_s0_p3_v99.jsonl",
+      "trace_sha256": "eedf0546017525bffc345ebee7fe369a51865e9bcfd10464b8267362ec27bd08"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.base=8",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1013,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s1005_p8_v8",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p8_v8.jsonl",
+      "trace_sha256": "7e03824b355db574ec13de7d96d4efed12ca6a32cf6ed99d4876e7e4df8248ca"
+    },
+    {
+      "description": "In-place replacement trustedEnclaveInit@0._logLevel=2 + host continuation",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1014,
+      "returncode": 0,
+      "run_id": "layer2_replace_prefix_e0_s0_p0_v2",
+      "subkind": "in_place_prefix_replacement",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_replace_prefix_e0_s0_p0_v2.jsonl",
+      "trace_sha256": "974abfadb69f49e03fa9a380506c97ab0a5ecfa2b1495e8c7f80e1bab18d13d2"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.base=1",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s0_p8_v1",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p8_v1.jsonl",
+      "trace_sha256": "2ba07f1d4acd32001cf91fb3baa4ed0729eefd196ffa2625a0bea0c72bdcfdee"
+    },
+    {
+      "description": "Cross-buffer slice relation trustedEcdsaSign@0: err_string := errStatus+4",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_slice_rel_e6_s0_p0_p1_off4",
+      "subkind": "cross_buffer_slice_relation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_slice_rel_e6_s0_p0_p1_off4.jsonl",
+      "trace_sha256": "5ccee71fda9c72d831282c03c784396ba84fefff122dbb19f2906c5662e317b8"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1.base=2",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 6,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s1_p8_v2",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1_p8_v2.jsonl",
+      "trace_sha256": "8158102baa8280745e883019aa44fcbb48feeee0083eb618c569919897252aa3"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.base=2",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s2_p8_v2",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p8_v2.jsonl",
+      "trace_sha256": "3587120cb426c539fcaea81c3d4e701be18f644f11b0b4a909cb3c74035a045f"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.base=16",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1013,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s1005_p8_v16",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p8_v16.jsonl",
+      "trace_sha256": "bd285313db2bb220bd5e530f9f5008cc4b134dec1a8bf72537f0f0531b6eb343"
+    },
+    {
+      "description": "History accumulation (depth=24) on trustedEcdsaSign@0",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 29,
+      "returncode": 0,
+      "run_id": "layer2_history_e6_s0_n24",
+      "subkind": "quadrupling_history_scan",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e6_s0_n24.jsonl",
+      "trace_sha256": "478621cfb63df03cc0acb459c65ff32b3f1bd395ba90232cd02a77d168ea15b0"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.base=16",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s0_p8_v16",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p8_v16.jsonl",
+      "trace_sha256": "7e71c9592d7e858f6044768ff3bde37c50cde6419d422017b176b3fedccd0553"
+    },
+    {
+      "description": "In-place replacement trustedEnclaveInit@0._logLevel=8 + host continuation",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1014,
+      "returncode": 0,
+      "run_id": "layer2_replace_prefix_e0_s0_p0_v8",
+      "subkind": "in_place_prefix_replacement",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_replace_prefix_e0_s0_p0_v8.jsonl",
+      "trace_sha256": "152dda299fd04ed7e4104112aac88f80e6f79bab73c53c028adb6a2574d262e6"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1.base=3",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 6,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s1_p8_v3",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1_p8_v3.jsonl",
+      "trace_sha256": "1d4a85a00ac30033bc9cea2c7909b36f22841beebca8304f5fcbb7c51ab251bd"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.base=4",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s2_p8_v4",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p8_v4.jsonl",
+      "trace_sha256": "81c9b0170e9516581b62e26cfa1181cad2e7ea9aaee74072193fdf25f3de7558"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.base=4",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1013,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s1005_p8_v4",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p8_v4.jsonl",
+      "trace_sha256": "61c2513ddb4b044f68bff5c293407f5767042f18de9b5c233fb49191e4dcfbbb"
     },
     {
       "description": "Cold-enclave state replay of trustedGetPublicEcdsaKey@0 after ecall 0",
@@ -1902,7 +1328,579 @@
       "run_id": "layer2_cold_replay_e5_cap0_after_e0",
       "subkind": "cold_enclave_state_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_cold_replay_e5_cap0_after_e0.jsonl",
-      "trace_sha256": "861855452571e28f5bfde95ce73ad4aa643a0e2473610cce3b3a0586fc8e7156"
+      "trace_sha256": "36308ccf76e12168d9886e9339423b0aa4bd515120e873382842519285e3496f"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedGetPublicEcdsaKey@0.dec_len=2",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e5_s0_p3_v2",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e5_s0_p3_v2.jsonl",
+      "trace_sha256": "1d916bdaf0770103c842ee1e303e93af68eccd860ce880274897a9d7098a3296"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.base=8",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s0_p8_v8",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p8_v8.jsonl",
+      "trace_sha256": "7321f6679e7446019373994b80b6428a55ec81e6c4445c4892171e7c91849b97"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1.base=16",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 6,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s1_p8_v16",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1_p8_v16.jsonl",
+      "trace_sha256": "70a5be48cfbd54c179bfed21985d3dca19ff404864004e344b1c9122fa785c3b"
+    },
+    {
+      "description": "Cross-buffer slice relation trustedGenerateSEK@0: err_string := errStatus+8",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 2,
+      "returncode": 0,
+      "run_id": "layer2_slice_rel_e2_s0_p0_p1_off8",
+      "subkind": "cross_buffer_slice_relation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_slice_rel_e2_s0_p0_p1_off8.jsonl",
+      "trace_sha256": "422d8da157a8d32cb305b6de62d8e1b2cc94cf70a87855b192b68b19b3df46e5"
+    },
+    {
+      "description": "History accumulation (depth=64) on trustedGenerateEcdsaKey@0",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 67,
+      "returncode": 0,
+      "run_id": "layer2_history_e4_s0_n64",
+      "subkind": "quadrupling_history_scan",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e4_s0_n64.jsonl",
+      "trace_sha256": "25ecd2ceeae60326d465097380c7794b099e9eaa4efab3c0ba7ac900395a59b0"
+    },
+    {
+      "description": "Joint 2-param trustedGetPublicEcdsaKey@0: dec_len=3 & encrypted_key[0]^=0xff",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_joint_e5_s0_s3_3_x2_0",
+      "subkind": "joint_two_param_mutation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e5_s0_s3_3_x2_0.jsonl",
+      "trace_sha256": "76d1d4ea4fafd6b3a3a038db29d8016dc6f917459e6debd99c6b51751cd6c5d1"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.base=16",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s2_p8_v16",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p8_v16.jsonl",
+      "trace_sha256": "82ab707a84f7cf1d78a5a1ae896c7133eb170b7b9cf6b1073be361c8903d21fe"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.base=1",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1013,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s1005_p8_v1",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p8_v1.jsonl",
+      "trace_sha256": "8ae1f0c68af59259956a1f7ec70a88bb9f704fe565ee1a8a474fd02e861237aa"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.base=99",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s0_p8_v99",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p8_v99.jsonl",
+      "trace_sha256": "a386c4cd82eed41535e16cc2764ca939a9e20aef25f9ccdd01338895e07f9afa"
+    },
+    {
+      "description": "History accumulation (depth=64) on trustedGetPublicEcdsaKey@0",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 68,
+      "returncode": 0,
+      "run_id": "layer2_history_e5_s0_n64",
+      "subkind": "quadrupling_history_scan",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e5_s0_n64.jsonl",
+      "trace_sha256": "b26d9dab15a48a7b8a887c19be1a8580ca3775547204327c4afbb651368b65c4"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1.base=1",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 6,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s1_p8_v1",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1_p8_v1.jsonl",
+      "trace_sha256": "c93a08a94cb117a741feb8db0513a3afe370f71dbeb51683cbb635f51b591bed"
+    },
+    {
+      "description": "Cross-buffer slice relation trustedSetSEK@0: err_string := errStatus+8",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1012,
+      "returncode": 0,
+      "run_id": "layer2_slice_rel_e3_s0_p0_p1_off8",
+      "subkind": "cross_buffer_slice_relation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_slice_rel_e3_s0_p0_p1_off8.jsonl",
+      "trace_sha256": "87374992144ba22a3bc27310f89eee9beba89cadefe5339dcf4e616ec309cca3"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.base=1",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s2_p8_v1",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p8_v1.jsonl",
+      "trace_sha256": "d5f357d2bedc01383af1cb9a55c8d0868eef175e28e72c73a27bf06d6595fcbb"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.base=3",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1013,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s1005_p8_v3",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p8_v3.jsonl",
+      "trace_sha256": "8861a9522736391d05c0e74556bf16b78e3211ba19327c87cb796dfbfa852bb6"
+    },
+    {
+      "description": "History accumulation (depth=64) on trustedEcdsaSign@0",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 69,
+      "returncode": 0,
+      "run_id": "layer2_history_e6_s0_n64",
+      "subkind": "quadrupling_history_scan",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e6_s0_n64.jsonl",
+      "trace_sha256": "4e43363e542c14179aedaa99b677a3d0e488dc371b987a558712ab8f3c151d7e"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedGetPublicEcdsaKey@0.dec_len=8",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e5_s0_p3_v8",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e5_s0_p3_v8.jsonl",
+      "trace_sha256": "b07d0fbd79942cc1b447c1be9f58406518852c606b963dcbb0a559ac8b88b9a1"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.base=3",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s0_p8_v3",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p8_v3.jsonl",
+      "trace_sha256": "6fcd9d2158d4814dd34a6e120b2eeccad32c448dbfd2af0539bd941ce369ad7e"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1.base=4",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 6,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s1_p8_v4",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1_p8_v4.jsonl",
+      "trace_sha256": "2214733c401ce0a21b514a65c767dd76410783475e356bd87c4312ddf3fb3e00"
+    },
+    {
+      "description": "Cross-buffer slice relation trustedGenerateEcdsaKey@0: err_string := errStatus+8",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 3,
+      "returncode": 0,
+      "run_id": "layer2_slice_rel_e4_s0_p0_p1_off8",
+      "subkind": "cross_buffer_slice_relation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_slice_rel_e4_s0_p0_p1_off8.jsonl",
+      "trace_sha256": "4ea577bc0f886b53e5474de4c9f7fd7601ba07a9c5da1be26746875bb8308640"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@2.base=3",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 7,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s2_p8_v3",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s2_p8_v3.jsonl",
+      "trace_sha256": "aa9aa0f87ed75373361a2e5de4da6eeda5b2fe9397eac08ba2862674f9c6b0de"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@1005.base=2",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1013,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s1005_p8_v2",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s1005_p8_v2.jsonl",
+      "trace_sha256": "b03758ea5dc055059f4bda94a2608c06ea2086a59240d0d02e2b32996e8a184a"
+    },
+    {
+      "description": "Cross-buffer slice relation trustedGetPublicEcdsaKey@0: err_string := errStatus+8",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_slice_rel_e5_s0_p0_p1_off8",
+      "subkind": "cross_buffer_slice_relation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_slice_rel_e5_s0_p0_p1_off8.jsonl",
+      "trace_sha256": "71543fe9fce164ad17eb3edd3f1390cbd2ce91197c4ee66fc1e058d91e736cea"
+    },
+    {
+      "description": "Cross-buffer slice relation trustedEcdsaSign@0: err_string := errStatus+8",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_slice_rel_e6_s0_p0_p1_off8",
+      "subkind": "cross_buffer_slice_relation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_slice_rel_e6_s0_p0_p1_off8.jsonl",
+      "trace_sha256": "432fbd68d376fd981abb9d8cd65b485cce7a8b95a79f7edd4db04a7c1300417d"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.base=4",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s0_p8_v4",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p8_v4.jsonl",
+      "trace_sha256": "31f0125c676de84aaa1e7d10d2f2e2321a5c7465604c23e87a0bc0e6739b5b59"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedEcdsaSign@0.base=2",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e6_s0_p8_v2",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e6_s0_p8_v2.jsonl",
+      "trace_sha256": "265687956317fdac20f0491bd70d987c50285a991babd8e1b5da1977ad3a24c1"
+    },
+    {
+      "description": "Scalar boundary (replace_scalar) trustedGetPublicEcdsaKey@0.dec_len=16",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_scalar_e5_s0_p3_v16",
+      "subkind": "in_place_scalar_boundary",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e5_s0_p3_v16.jsonl",
+      "trace_sha256": "4a6326a72b97ee74a40d1380fe92b59ee9189e79bf703f13ec0f164617a03df1"
+    },
+    {
+      "description": "Joint 2-param trustedGetPublicEcdsaKey@0: dec_len=2 & encrypted_key[0]^=0xff",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_joint_e5_s0_s3_2_x2_0",
+      "subkind": "joint_two_param_mutation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e5_s0_s3_2_x2_0.jsonl",
+      "trace_sha256": "34473a5608a340f0178073b7482eaf79ad46da9fa604de29444eb6374b77cec3"
+    },
+    {
+      "description": "Joint 2-param trustedGetPublicEcdsaKey@0: dec_len=16 & encrypted_key[0]^=0xff",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_joint_e5_s0_s3_16_x2_0",
+      "subkind": "joint_two_param_mutation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e5_s0_s3_16_x2_0.jsonl",
+      "trace_sha256": "df9ea023e37ac008c35145b66d5980819efcd90ed35b852c9f2b9e9df5959995"
+    },
+    {
+      "description": "Joint 2-param trustedEcdsaSign@0: enc_len=8 & encrypted_key[0]^=0xff",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_joint_e6_s0_s3_8_x2_0",
+      "subkind": "joint_two_param_mutation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s3_8_x2_0.jsonl",
+      "trace_sha256": "68d0e4e315a83e8721db56a3343817651e05f04dc11bdac8a17985799d71b969"
+    },
+    {
+      "description": "Joint 2-param trustedEcdsaSign@0: enc_len=1 & encrypted_key[0]^=0xff",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_joint_e6_s0_s3_1_x2_0",
+      "subkind": "joint_two_param_mutation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s3_1_x2_0.jsonl",
+      "trace_sha256": "205144f57988cef6b8f97c070335e803f3b0cbb340ebc6a9ac9b005ff8a677f8"
+    },
+    {
+      "description": "Joint 2-param trustedEcdsaSign@0: enc_len=2 & encrypted_key[0]^=0xff",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_joint_e6_s0_s3_2_x2_0",
+      "subkind": "joint_two_param_mutation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s3_2_x2_0.jsonl",
+      "trace_sha256": "034beba3b0a300555860c9c162b11e170b93f7e008acedcf55db7b2f6bbca437"
+    },
+    {
+      "description": "Joint 2-param trustedEcdsaSign@0: enc_len=4 & encrypted_key[0]^=0xff",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_joint_e6_s0_s3_4_x2_0",
+      "subkind": "joint_two_param_mutation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s3_4_x2_0.jsonl",
+      "trace_sha256": "61b8d0e6625ba74d606551d635b79f0ac13fd00dd62f4209bc37a0195b17b26e"
+    },
+    {
+      "description": "Joint 2-param trustedEcdsaSign@0: base=4 & encrypted_key[0]^=0xff",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_joint_e6_s0_s8_4_x2_0",
+      "subkind": "joint_two_param_mutation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s8_4_x2_0.jsonl",
+      "trace_sha256": "290811b687757627e6b3363a70aa30da718b5b59cc81147e65ad9ac61ca52bb7"
+    },
+    {
+      "description": "Joint 2-param trustedEcdsaSign@0: base=8 & encrypted_key[0]^=0xff",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_joint_e6_s0_s8_8_x2_0",
+      "subkind": "joint_two_param_mutation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s8_8_x2_0.jsonl",
+      "trace_sha256": "9fa2a17e18ebcb38ff55c4e7df03822b061527b4306db8b33c7cf8073ae5da59"
+    },
+    {
+      "description": "Joint 2-param trustedEcdsaSign@0: base=16 & encrypted_key[0]^=0xff",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_joint_e6_s0_s8_16_x2_0",
+      "subkind": "joint_two_param_mutation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s8_16_x2_0.jsonl",
+      "trace_sha256": "a10a1376c0d648aa86fc94ad8e0662a92a4ea108d7be97120a605d47ae1458ab"
+    },
+    {
+      "description": "Joint 2-param trustedEcdsaSign@0: base=1 & encrypted_key[0]^=0xff",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_joint_e6_s0_s8_1_x2_0",
+      "subkind": "joint_two_param_mutation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s8_1_x2_0.jsonl",
+      "trace_sha256": "151a23a57c8e48be4045cafa9086274df226687b439885f5107aa1f6987ac8e8"
+    },
+    {
+      "description": "Joint 2-param trustedEcdsaSign@0: base=2 & encrypted_key[0]^=0xff",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_joint_e6_s0_s8_2_x2_0",
+      "subkind": "joint_two_param_mutation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s8_2_x2_0.jsonl",
+      "trace_sha256": "e4f9487268e00ac54197dd47e57d242c3aea65f563cf51e368cf127c95b2fb95"
+    },
+    {
+      "description": "Joint 2-param trustedEcdsaSign@0: base=3 & encrypted_key[0]^=0xff",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 5,
+      "returncode": 0,
+      "run_id": "layer2_joint_e6_s0_s8_3_x2_0",
+      "subkind": "joint_two_param_mutation",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_joint_e6_s0_s8_3_x2_0.jsonl",
+      "trace_sha256": "f267f8549640a0c8dd257b0b546549d0d0a749c23577fa22afb40d6610a8db6f"
+    },
+    {
+      "description": "History accumulation (depth=256) on trustedGenerateEcdsaKey@0",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 259,
+      "returncode": 0,
+      "run_id": "layer2_history_e4_s0_n256",
+      "subkind": "quadrupling_history_scan",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e4_s0_n256.jsonl",
+      "trace_sha256": "6936193fa936a81d8895ba92e94169360f0067f87b7bded7519ed72eccaafe04"
+    },
+    {
+      "description": "History accumulation (depth=1024) on trustedGenerateEcdsaKey@0",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1027,
+      "returncode": 0,
+      "run_id": "layer2_history_e4_s0_n1024",
+      "subkind": "quadrupling_history_scan",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e4_s0_n1024.jsonl",
+      "trace_sha256": "ecb5e1cee95cc376fc500cefdc4b6042c8b30b22c9d4f8b1086b12b9a2e74a11"
+    },
+    {
+      "description": "History accumulation (depth=256) on trustedGetPublicEcdsaKey@0",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 260,
+      "returncode": 0,
+      "run_id": "layer2_history_e5_s0_n256",
+      "subkind": "quadrupling_history_scan",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e5_s0_n256.jsonl",
+      "trace_sha256": "428b4ed590480a736ef96071039eb5ce23665c5f7c38f34e159f64c561ea12f2"
+    },
+    {
+      "description": "History accumulation (depth=1024) on trustedGetPublicEcdsaKey@0",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1028,
+      "returncode": 0,
+      "run_id": "layer2_history_e5_s0_n1024",
+      "subkind": "quadrupling_history_scan",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e5_s0_n1024.jsonl",
+      "trace_sha256": "de0533e52c40a1f2032ebfa18694a2dd0496fda7cbf65260da05289b4ff7f75e"
+    },
+    {
+      "description": "History accumulation (depth=256) on trustedEcdsaSign@0",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 261,
+      "returncode": 0,
+      "run_id": "layer2_history_e6_s0_n256",
+      "subkind": "quadrupling_history_scan",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e6_s0_n256.jsonl",
+      "trace_sha256": "618c7d25f36e2a0fb665611ba278f52525cb6c74410ad8c197eb9fa40a9c8134"
+    },
+    {
+      "description": "History accumulation (depth=1024) on trustedEcdsaSign@0",
+      "interpose_sha256": "0770a77da1a9b9211c3980aaa2aff9105b6c9c5a44e8ef7a314f62d99827cfb7",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1029,
+      "returncode": 0,
+      "run_id": "layer2_history_e6_s0_n1024",
+      "subkind": "quadrupling_history_scan",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_history_e6_s0_n1024.jsonl",
+      "trace_sha256": "cc9ef08e6a0d814905a81ddbf4a843dcb3f0d55300315913ebc10211c996833f"
     },
     {
       "description": "Cold-enclave state replay of trustedGenerateEcdsaKey@0 after ecall 0",
@@ -1915,7 +1913,7 @@
       "run_id": "layer2_cold_replay_e4_cap0_after_e0",
       "subkind": "cold_enclave_state_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_cold_replay_e4_cap0_after_e0.jsonl",
-      "trace_sha256": "5c7f714c3b776652560039fa8009f3570d7e57456ede1aaf43fc2755cb81a886"
+      "trace_sha256": "64c1d21f640bab72d85b41b8c2f6363b154ba1702afd6250d17ec39237af53e9"
     },
     {
       "description": "Cold-enclave state replay of trustedSetSEK@0 after ecall 0",
@@ -1928,7 +1926,7 @@
       "run_id": "layer2_cold_replay_e3_cap0_after_e0",
       "subkind": "cold_enclave_state_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_cold_replay_e3_cap0_after_e0.jsonl",
-      "trace_sha256": "b2ec2ffbb022bfeb5a8f31b772f68c9b45f06f3b024c823b605c072bc208ec5f"
+      "trace_sha256": "738c8ef7fe893c28a7af0721de0aac7f766e46564312b5853c4984b48faf9770"
     },
     {
       "description": "Cold-enclave state replay of trustedGenerateSEK@0 after ecall 0",
@@ -1941,7 +1939,7 @@
       "run_id": "layer2_cold_replay_e2_cap0_after_e0",
       "subkind": "cold_enclave_state_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_cold_replay_e2_cap0_after_e0.jsonl",
-      "trace_sha256": "6588f447b90d0d50d906880a054e42adae31cbd03b37a04955d90b9360fc34f7"
+      "trace_sha256": "0bc2fb68d81f11ed494a069a339070b5b9c9af3ce6464ac6358185e1d42a73af"
     },
     {
       "description": "Bounded XOR trustedSetSEK@0.encrypted_SEK[0] ^= 0xff",
@@ -1954,7 +1952,7 @@
       "run_id": "layer2_xor_e3_s0_p2_b0",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e3_s0_p2_b0.jsonl",
-      "trace_sha256": "695e1b60eeec28d20ca54249c1dc4720e1093c8887a275c228d2c40cbec43635"
+      "trace_sha256": "7ad57520d9ea0f7a4339e6bf67ff16051e420b92d2efc53d970ebbbe58c03b24"
     },
     {
       "description": "Bounded XOR trustedGenerateEcdsaKey@0.is_exportable[0] ^= 0xff",
@@ -1967,7 +1965,7 @@
       "run_id": "layer2_xor_e4_s0_p2_b0",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e4_s0_p2_b0.jsonl",
-      "trace_sha256": "50bf7efb966e88377dfe8c8284d3159bd859812ab1f98dec818daa8b33396767"
+      "trace_sha256": "0525f91849b74a6710b9a5835c4de39a8065d4f4d79c07b83d3043133862899b"
     },
     {
       "description": "Bounded XOR trustedGetPublicEcdsaKey@0.encrypted_key[0] ^= 0xff",
@@ -1980,7 +1978,7 @@
       "run_id": "layer2_xor_e5_s0_p2_b0",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e5_s0_p2_b0.jsonl",
-      "trace_sha256": "bc442cbf3bf48fc049c2c893daf5c3be6ac31f9e722e132c50403cb55be91251"
+      "trace_sha256": "3b61f6b699b1ddb2e3f60a498051f0633dcf969bfb226bd747956c66d23df28d"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@0.encrypted_key[0] ^= 0xff",
@@ -1993,7 +1991,7 @@
       "run_id": "layer2_xor_e6_s0_p2_b0",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s0_p2_b0.jsonl",
-      "trace_sha256": "484d7f160e0e1851a891da2f03126ad7bc700503ee82bd12b5a2ea36b8686302"
+      "trace_sha256": "fc82906b4494e48045efb20113a081d158d0a1dfd57c919ae171fd940fde93f3"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@1.encrypted_key[0] ^= 0xff",
@@ -2006,7 +2004,7 @@
       "run_id": "layer2_xor_e6_s1_p2_b0",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s1_p2_b0.jsonl",
-      "trace_sha256": "35a82925a5f655477299b07b09f98a0595a373dde88b2710ec2199f88fdc06a4"
+      "trace_sha256": "00b0f64b416011269718c0b652114644e10ce5eba1b1804ce6ea5e02805d544b"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@2.encrypted_key[0] ^= 0xff",
@@ -2019,7 +2017,7 @@
       "run_id": "layer2_xor_e6_s2_p2_b0",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s2_p2_b0.jsonl",
-      "trace_sha256": "5a79074e69716905385c5ebf15319fde041e5306927b327bbff280fffa58ed23"
+      "trace_sha256": "472c759aad74de4f1bc61e8e9af4be78d6ce46c64ca9321b76ea560f0544bf3f"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@1005.encrypted_key[0] ^= 0xff",
@@ -2032,7 +2030,7 @@
       "run_id": "layer2_xor_e6_s1005_p2_b0",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s1005_p2_b0.jsonl",
-      "trace_sha256": "1d23b9aa96a00596d4b60e4fed6203b8551a4c124fd0336d726a28a3c01befdd"
+      "trace_sha256": "f2cd115cd097ba6a09f83fe45369c65d14a28323c50db55f2ae9e1f01be18a4b"
     },
     {
       "description": "Bounded XOR trustedSetSEK@0.encrypted_SEK[1] ^= 0xaa",
@@ -2045,7 +2043,7 @@
       "run_id": "layer2_xor_e3_s0_p2_b1",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e3_s0_p2_b1.jsonl",
-      "trace_sha256": "016fd515bb49f73ecf84be6268b1f5d84662f151a1efcb861a747680f4b43994"
+      "trace_sha256": "5f387b2f15d59fb66fca4eb098bec23195baf008e6df70b8f85404fb2c0add79"
     },
     {
       "description": "Bounded XOR trustedGenerateEcdsaKey@0.is_exportable[1] ^= 0xaa",
@@ -2058,7 +2056,7 @@
       "run_id": "layer2_xor_e4_s0_p2_b1",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e4_s0_p2_b1.jsonl",
-      "trace_sha256": "bc9e2a7086e11fb27983a91814304f15bddb7ccc3d3a515fc9e44db4a06f8d5e"
+      "trace_sha256": "e85c874769ebb618a42d3a0e61abcd057bc476cef603a7681e7c26626791b643"
     },
     {
       "description": "Bounded XOR trustedGetPublicEcdsaKey@0.encrypted_key[1] ^= 0xaa",
@@ -2071,7 +2069,7 @@
       "run_id": "layer2_xor_e5_s0_p2_b1",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e5_s0_p2_b1.jsonl",
-      "trace_sha256": "2ae5e18662575c9878f9d23cf80a2400a738823b5ec202bfb5cd71dc057481e6"
+      "trace_sha256": "807a09f20efe24bfe2e4a81e2854971f3ced75b03919e2a2fe1356229e57ad76"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@0.encrypted_key[1] ^= 0xaa",
@@ -2084,7 +2082,7 @@
       "run_id": "layer2_xor_e6_s0_p2_b1",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s0_p2_b1.jsonl",
-      "trace_sha256": "088f2897abd956301e7c31a755f893ac1c67a67c548c7d71f6d324372ecc7af3"
+      "trace_sha256": "9f719500072e4c8ac8889c72077f3290c507a0fa37aa56d7c62b575e52c46bad"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@1.encrypted_key[1] ^= 0xaa",
@@ -2097,7 +2095,7 @@
       "run_id": "layer2_xor_e6_s1_p2_b1",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s1_p2_b1.jsonl",
-      "trace_sha256": "8198c27d0ae2dbce0bf7d6dcbb9b907d46f91c7658aeb95a5a105a99446fb346"
+      "trace_sha256": "f8fb4ca4da836c2d390e65b5a16053ac9980f15e30ddd1b0ab8ff2a901e5f78b"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@2.encrypted_key[1] ^= 0xaa",
@@ -2110,7 +2108,7 @@
       "run_id": "layer2_xor_e6_s2_p2_b1",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s2_p2_b1.jsonl",
-      "trace_sha256": "0bd989a76fb299a2c5519b9ebca41ef17eff848fee677a3660541421188a6549"
+      "trace_sha256": "8f3bcc598bd7ce908ef8f6d2a3db5fccc36bc9005c0eaec4e17d6d50b036feb8"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@1005.encrypted_key[1] ^= 0xaa",
@@ -2123,7 +2121,7 @@
       "run_id": "layer2_xor_e6_s1005_p2_b1",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s1005_p2_b1.jsonl",
-      "trace_sha256": "94b7ad7af1f852639e4d219b66cd9af195ce67433adbec4e40c4a20dded45c7c"
+      "trace_sha256": "01082cbd7af5d53eb7867e019d57b28bedc0ba53a008acd04666ae53944d426b"
     },
     {
       "description": "Bounded XOR trustedSetSEK@0.encrypted_SEK[15] ^= 0xaa",
@@ -2136,7 +2134,7 @@
       "run_id": "layer2_xor_e3_s0_p2_b15",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e3_s0_p2_b15.jsonl",
-      "trace_sha256": "6893e5e1c1d0882c0d3cb94e8793c05621591baac6975a88e920abc0f4ac37ef"
+      "trace_sha256": "38acbc3250519a4df5b75db5e6284ce4dae7f720a8df7042ba77ae9250100776"
     },
     {
       "description": "Bounded XOR trustedGenerateEcdsaKey@0.is_exportable[2] ^= 0xaa",
@@ -2149,7 +2147,7 @@
       "run_id": "layer2_xor_e4_s0_p2_b2",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e4_s0_p2_b2.jsonl",
-      "trace_sha256": "7fa659fbae3f2ac1e7907b83b525576e762f1012b0194098c28720d217bab1f8"
+      "trace_sha256": "8662ad4af418c830aed3cbe23441711810feda63d1cb918c3eb25f9f15623814"
     },
     {
       "description": "Bounded XOR trustedGetPublicEcdsaKey@0.encrypted_key[15] ^= 0xaa",
@@ -2162,7 +2160,7 @@
       "run_id": "layer2_xor_e5_s0_p2_b15",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e5_s0_p2_b15.jsonl",
-      "trace_sha256": "7b1a29a8a4cac0c919ccadcc76b41971eaf219de6a59e6cfd06e4ad89f896adb"
+      "trace_sha256": "3f0944bf3debe4fea05159170f2a21d0ef4f97e3eed024f9d6dcd9b98c490b1c"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@0.encrypted_key[15] ^= 0xaa",
@@ -2175,7 +2173,7 @@
       "run_id": "layer2_xor_e6_s0_p2_b15",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s0_p2_b15.jsonl",
-      "trace_sha256": "858a83fe62b22b54059be6911ecfd4874d1883b68555013d6924e0c4eb047d5a"
+      "trace_sha256": "29666e5e1cd36bdbf5bf979c633c418345056d0fc898c77e005b9c5f75d19a08"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@1.encrypted_key[15] ^= 0xaa",
@@ -2188,7 +2186,7 @@
       "run_id": "layer2_xor_e6_s1_p2_b15",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s1_p2_b15.jsonl",
-      "trace_sha256": "e196c7d92188181e69995b14e4a22acaaa037f871487e9ff99e7fb5d4b1fe536"
+      "trace_sha256": "aba008b7ff528dceb8fe817b1f593d748307aa2ab2716b6a22851c138bacca06"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@2.encrypted_key[15] ^= 0xaa",
@@ -2201,7 +2199,7 @@
       "run_id": "layer2_xor_e6_s2_p2_b15",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s2_p2_b15.jsonl",
-      "trace_sha256": "673cfd833d2aa1b794c4acd737999f3c24ba27cb57a61244e08c1b54dff3a734"
+      "trace_sha256": "d374d3ee0633ba06c88badd878c1d60afed9a3c6616a9f337594f48a3abb4c13"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@1005.encrypted_key[15] ^= 0xaa",
@@ -2214,7 +2212,7 @@
       "run_id": "layer2_xor_e6_s1005_p2_b15",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s1005_p2_b15.jsonl",
-      "trace_sha256": "9f0380fbae95deeba1b8d379882881c87ffa13c070e380e0289c20d85f6b22bf"
+      "trace_sha256": "43a80d04339cc4cac5584df27d8550aab29535ccf0dd2c69c3e7642a5be4ee4d"
     },
     {
       "description": "Bounded XOR trustedSetSEK@0.encrypted_SEK[60] ^= 0xff",
@@ -2227,7 +2225,7 @@
       "run_id": "layer2_xor_e3_s0_p2_b60",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e3_s0_p2_b60.jsonl",
-      "trace_sha256": "625bb0844f71d0e2f2d7ef00acf51c865d6800afe7d2fd77fdeaff0c6d90e82e"
+      "trace_sha256": "d3ec9463865e3cf5abc4561364fb91bcacbaffb7c36e15cea4cb0e99d9dcfc21"
     },
     {
       "description": "Bounded XOR trustedGenerateEcdsaKey@0.is_exportable[3] ^= 0xaa",
@@ -2240,7 +2238,7 @@
       "run_id": "layer2_xor_e4_s0_p2_b3",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e4_s0_p2_b3.jsonl",
-      "trace_sha256": "cf1d0a51bdad130d21cfafc46a99c1e3452463b0a2f6564e2db5c79bd545b5f9"
+      "trace_sha256": "c9ff6ba1a63b504570ae714509582c9ff61f49074877c5c0cd92e4296a3e0c01"
     },
     {
       "description": "Bounded XOR trustedGetPublicEcdsaKey@0.encrypted_key[60] ^= 0xff",
@@ -2253,7 +2251,7 @@
       "run_id": "layer2_xor_e5_s0_p2_b60",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e5_s0_p2_b60.jsonl",
-      "trace_sha256": "4da9e22b2a7091c71d07b054cf29e9d910ef255915ae7bcbadfdd160e9a670b4"
+      "trace_sha256": "ee7c89389201ee3e49562507ff9f53553f2f5b6321e9baf8ea25a803572622b8"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@0.encrypted_key[60] ^= 0xff",
@@ -2266,7 +2264,7 @@
       "run_id": "layer2_xor_e6_s0_p2_b60",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s0_p2_b60.jsonl",
-      "trace_sha256": "ec2972eb84ddb20cec7a07ce5797622a486d0f754b5befc672d5424dc2b9a257"
+      "trace_sha256": "22b6d617b1075037bc13a34c6d988bdec30f3e832f82ae597dbe1bfa364a5735"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@1.encrypted_key[60] ^= 0xff",
@@ -2279,7 +2277,7 @@
       "run_id": "layer2_xor_e6_s1_p2_b60",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s1_p2_b60.jsonl",
-      "trace_sha256": "0c2fd2a198bb88d39d281eabbfe751375106edf6a07029bed95d6e02e380d77f"
+      "trace_sha256": "59d5a609ea44bf5fce32a966cb225ddcc26c5b5b7062bd996f9ce936ae53b819"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@2.encrypted_key[60] ^= 0xff",
@@ -2292,7 +2290,7 @@
       "run_id": "layer2_xor_e6_s2_p2_b60",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s2_p2_b60.jsonl",
-      "trace_sha256": "f1043fdd2e145519e28bd98283244ac2152727d9f901cacc3254bbc2393ddd13"
+      "trace_sha256": "61a3ed11be3ee8c8b87c21a2c6c766a9660decf3a7ceec15269f7a0a4845c578"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@1005.encrypted_key[60] ^= 0xff",
@@ -2305,7 +2303,7 @@
       "run_id": "layer2_xor_e6_s1005_p2_b60",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s1005_p2_b60.jsonl",
-      "trace_sha256": "dc49015f06df652ed6d5e9740c42f1c085838f0e4a68453041647daea44763a5"
+      "trace_sha256": "3c7e63150d31eb1237b59df68347d58e72e9ca046fd90cd610c350536adf2cf1"
     },
     {
       "description": "Bounded XOR trustedSetSEK@0.encrypted_SEK[512] ^= 0xaa",
@@ -2318,7 +2316,7 @@
       "run_id": "layer2_xor_e3_s0_p2_b512",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e3_s0_p2_b512.jsonl",
-      "trace_sha256": "ec2e450a32985bd98088f8fe68b60639b1acd82faaaf69e8ead0fda49dc5f676"
+      "trace_sha256": "af986b4c630994061ee12a0a16dc6fddc1f77948dd581965d5422113989f9ecb"
     },
     {
       "description": "Bounded XOR trustedGetPublicEcdsaKey@0.encrypted_key[512] ^= 0xaa",
@@ -2331,7 +2329,7 @@
       "run_id": "layer2_xor_e5_s0_p2_b512",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e5_s0_p2_b512.jsonl",
-      "trace_sha256": "ba02f00840ce6cd526fbb8e16eaee8299070ac362b0b8ddb76ba2f91e29477cb"
+      "trace_sha256": "e19dd8a57d964d3f5ac4ccece2e287824b726a7c0873186223c08d71c2ecbe58"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@0.encrypted_key[512] ^= 0xaa",
@@ -2344,7 +2342,7 @@
       "run_id": "layer2_xor_e6_s0_p2_b512",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s0_p2_b512.jsonl",
-      "trace_sha256": "b6aea0fc1748c80e241eeef5ad86dd198a38bad21b37bf35444065aa4144d7fb"
+      "trace_sha256": "417ffc80b79e85e884147c7035041b39ffdf15708d57d4dae94b433b9ea0012f"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@1.encrypted_key[512] ^= 0xaa",
@@ -2357,7 +2355,7 @@
       "run_id": "layer2_xor_e6_s1_p2_b512",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s1_p2_b512.jsonl",
-      "trace_sha256": "cb1d06bc1c46c99ff3b5201c3dea95b85ce6aa4354f031c7328eeb3efb9fb962"
+      "trace_sha256": "0160fab0bbcbaa5d8ec287f06d1ea1891d37c46f363a32390af328e6ff95978d"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@2.encrypted_key[512] ^= 0xaa",
@@ -2370,7 +2368,7 @@
       "run_id": "layer2_xor_e6_s2_p2_b512",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s2_p2_b512.jsonl",
-      "trace_sha256": "6a1ce90f8778a36b6f365fb7283cad7df98edeb8c7afe10a3b6f7d77e14dc248"
+      "trace_sha256": "16fd0a5665dff085fab82ceb64ecfe23861ad7c6218e4d47d6b7310681cbe1d7"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@1005.encrypted_key[512] ^= 0xaa",
@@ -2383,7 +2381,7 @@
       "run_id": "layer2_xor_e6_s1005_p2_b512",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s1005_p2_b512.jsonl",
-      "trace_sha256": "ebc7d05393e3561f997c1f6c19c6a21834bc3e030f910d3d697776485de66be0"
+      "trace_sha256": "8a4f1ac1a6786f884aaad9ff567a1283c1495185310da08391db8c4b04c23f1f"
     },
     {
       "description": "Bounded XOR trustedSetSEK@0.encrypted_SEK[1023] ^= 0xaa",
@@ -2396,7 +2394,7 @@
       "run_id": "layer2_xor_e3_s0_p2_b1023",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e3_s0_p2_b1023.jsonl",
-      "trace_sha256": "5c434774d5a6f2fc955056000f45d73c595db08cab3c56a197ffbc9820d6cca5"
+      "trace_sha256": "e84a80c36cb840b68e543179735e61ea9a9c839cb87aad1ef2e28aeef3306bda"
     },
     {
       "description": "Bounded XOR trustedGetPublicEcdsaKey@0.encrypted_key[1023] ^= 0xaa",
@@ -2409,7 +2407,7 @@
       "run_id": "layer2_xor_e5_s0_p2_b1023",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e5_s0_p2_b1023.jsonl",
-      "trace_sha256": "bdcb40b494c459c602884297357dc576dfcbd7a2cda874cae57c66dcc215c721"
+      "trace_sha256": "051e636a16b9e73b14ecc47ea5e3db24ca4b689a53a07c3f63ca4acc3849d913"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@0.encrypted_key[1023] ^= 0xaa",
@@ -2422,7 +2420,7 @@
       "run_id": "layer2_xor_e6_s0_p2_b1023",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s0_p2_b1023.jsonl",
-      "trace_sha256": "1ed1cefe6c450fa81ec45af135db669c567e54d46dda78de6fb72deecb487779"
+      "trace_sha256": "ff559190bb2b4bc938dd18cf560524fabb0e458ebc849b36559ca4e485c7d960"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@1.encrypted_key[1023] ^= 0xaa",
@@ -2435,7 +2433,7 @@
       "run_id": "layer2_xor_e6_s1_p2_b1023",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s1_p2_b1023.jsonl",
-      "trace_sha256": "2004d9b6431cffb8a12b5568e57c0e5e531942b45bc45d9a2a56a9cb960a4631"
+      "trace_sha256": "8ed108976b63f094d358e63a49670adea8bc54f4014332844160fb46f950e0b7"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@2.encrypted_key[1023] ^= 0xaa",
@@ -2448,7 +2446,7 @@
       "run_id": "layer2_xor_e6_s2_p2_b1023",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s2_p2_b1023.jsonl",
-      "trace_sha256": "05b1ef1676230ab852f42fdc09a53b48442afd4276db69edbc96418c98f0996d"
+      "trace_sha256": "d99ea9e18139e5a1885d21d01808f58b5610342e7acd11e7cd3a788d0e85671c"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@1005.encrypted_key[1023] ^= 0xaa",
@@ -2461,7 +2459,7 @@
       "run_id": "layer2_xor_e6_s1005_p2_b1023",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s1005_p2_b1023.jsonl",
-      "trace_sha256": "d6e68d395cd1e77dac2a87460bc7cea90e801d3eb5a46c05a0edfae41b0c3eb0"
+      "trace_sha256": "db4f97dece669895053637f61e65ba392bb8558ce0c88f6656ee585ebdcd004d"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@0.hash[0] ^= 0xff",
@@ -2474,7 +2472,7 @@
       "run_id": "layer2_xor_e6_s0_p4_b0",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s0_p4_b0.jsonl",
-      "trace_sha256": "210da35233c4e1138d823abea1cdf4958af4eac31eec10f40a4c02d12b4be858"
+      "trace_sha256": "97532bb09f8ea23831c81bdc31a0c11aa82534938ecb02303eb633b58294c734"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@1.hash[0] ^= 0xff",
@@ -2487,7 +2485,7 @@
       "run_id": "layer2_xor_e6_s1_p4_b0",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s1_p4_b0.jsonl",
-      "trace_sha256": "5a65860f19c379e6e07fb312770b5d0aac1c0373c5bc63b5cb922190308de59e"
+      "trace_sha256": "e977f44a47ee74eb3da6d6734782ed5ec397798d4d88cac02e0ed30c1c1578fe"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@2.hash[0] ^= 0xff",
@@ -2500,7 +2498,7 @@
       "run_id": "layer2_xor_e6_s2_p4_b0",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s2_p4_b0.jsonl",
-      "trace_sha256": "2031f7b66e83712078793b65ac180aed3c837946eaaf5030c0ec803dfb7c5a86"
+      "trace_sha256": "2e664d9638966a42080aa02937910af8aaedc4467d84537b1696b7ea2481449e"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@1005.hash[0] ^= 0xff",
@@ -2513,7 +2511,7 @@
       "run_id": "layer2_xor_e6_s1005_p4_b0",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s1005_p4_b0.jsonl",
-      "trace_sha256": "23210ff963caff1ed54e1eb62d1788bd1e54e6f662c79dfbdb9fec68d9e761a9"
+      "trace_sha256": "2e55779caed3bbd339d79efb9d0377964a359c8e11728093069253fba39fe849"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@0.hash[1] ^= 0xaa",
@@ -2526,7 +2524,7 @@
       "run_id": "layer2_xor_e6_s0_p4_b1",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s0_p4_b1.jsonl",
-      "trace_sha256": "bb4b0e3aa9cb6dba7475dd000a7ef8132643601e7d04091165bd222b151dcbe2"
+      "trace_sha256": "83315eaec6b76aa1b0655e5f57eb767fccb871f9a2c4ad66d7301bce97b73209"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@1.hash[1] ^= 0xaa",
@@ -2539,7 +2537,7 @@
       "run_id": "layer2_xor_e6_s1_p4_b1",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s1_p4_b1.jsonl",
-      "trace_sha256": "2a95c411a43e06af23c5a8992dcf212763557f46fcab8be5b11e192f75f2421c"
+      "trace_sha256": "6024fbe9d593294e620f63aecb77d6d851d0bf5f8264b1e8d70184ab10832bea"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@2.hash[1] ^= 0xaa",
@@ -2552,7 +2550,7 @@
       "run_id": "layer2_xor_e6_s2_p4_b1",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s2_p4_b1.jsonl",
-      "trace_sha256": "513be3c6e09522b36a374408768aaed8aa07acae32d71920a1551d2034d527df"
+      "trace_sha256": "05cfe522cac434890ef8943fbcb9f337c4a4e3ffadd9d5ba011c12cdc1526da4"
     },
     {
       "description": "Bounded XOR trustedEcdsaSign@1005.hash[1] ^= 0xaa",
@@ -2565,16 +2563,14 @@
       "run_id": "layer2_xor_e6_s1005_p4_b1",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e6_s1005_p4_b1.jsonl",
-      "trace_sha256": "b03f9fbc80abe5a4d3fb13a3457a5f1b24c28b50fa6dd79c8b2e7ddd240e1ecc"
+      "trace_sha256": "161906d57aab53ad424a3076091c23642a647654d0bc95a6fc293cd4df28dfab"
     }
   ],
   "sample": "sgxwallet",
   "schema": "atfield-witness-ledger-v3",
   "unexplored_frontier": {
-    "failed_repeat_selectors": {
-      "2": "repeat_attempt_failed_rc_-4",
-      "3": "repeat_attempt_failed_rc_-4"
-    },
+    "all_generated_specs_count": 164,
+    "failed_repeat_selectors": {},
     "observed_field_positions": {
       "2": [
         0
@@ -3603,6 +3599,7 @@
     "remaining_low_priority_candidates": 0,
     "remaining_low_priority_tags": [],
     "remaining_secondary_branch_candidates": 0,
+    "remaining_specs": [],
     "selected_field_positions": [
       [
         2,
@@ -4951,8 +4948,8 @@
       "total_field_obs_effects": 57,
       "total_field_obs_pages": 49,
       "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer0_and_layer1_unmodified_host.jsonl",
-      "trace_sha256": "33df8320b62fd6ba77b0bf61b8e5868c4d3004121218263d81b724749776019f",
-      "tsc_s3": 218144,
+      "trace_sha256": "fd0750c9a30a483154f3d9b855878c68c157451c93630869298316efc3495002",
+      "tsc_s3": 235556,
       "witness_id": "sgxwallet_layer0_and_layer1_unmodified_host_seq1_c13244"
     },
     {
@@ -5379,8 +5376,8 @@
       "total_field_obs_effects": 81,
       "total_field_obs_pages": 75,
       "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer0_and_layer1_unmodified_host.jsonl",
-      "trace_sha256": "33df8320b62fd6ba77b0bf61b8e5868c4d3004121218263d81b724749776019f",
-      "tsc_s3": 3767948,
+      "trace_sha256": "fd0750c9a30a483154f3d9b855878c68c157451c93630869298316efc3495002",
+      "tsc_s3": 4222898,
       "witness_id": "sgxwallet_layer0_and_layer1_unmodified_host_seq2_c68a33"
     },
     {
@@ -5767,8 +5764,8 @@
       "total_field_obs_effects": 73,
       "total_field_obs_pages": 67,
       "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer0_and_layer1_unmodified_host.jsonl",
-      "trace_sha256": "33df8320b62fd6ba77b0bf61b8e5868c4d3004121218263d81b724749776019f",
-      "tsc_s3": 6959504,
+      "trace_sha256": "fd0750c9a30a483154f3d9b855878c68c157451c93630869298316efc3495002",
+      "tsc_s3": 7713412,
       "witness_id": "sgxwallet_layer0_and_layer1_unmodified_host_seq3_e7f5f1"
     },
     {
@@ -6175,8 +6172,8 @@
       "total_field_obs_effects": 77,
       "total_field_obs_pages": 69,
       "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer0_and_layer1_unmodified_host.jsonl",
-      "trace_sha256": "33df8320b62fd6ba77b0bf61b8e5868c4d3004121218263d81b724749776019f",
-      "tsc_s3": 3744174,
+      "trace_sha256": "fd0750c9a30a483154f3d9b855878c68c157451c93630869298316efc3495002",
+      "tsc_s3": 3770630,
       "witness_id": "sgxwallet_layer0_and_layer1_unmodified_host_seq4_83b2b7"
     },
     {
@@ -6223,8 +6220,8 @@
       "total_field_obs_effects": 82,
       "total_field_obs_pages": 74,
       "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer0_and_layer1_unmodified_host.jsonl",
-      "trace_sha256": "33df8320b62fd6ba77b0bf61b8e5868c4d3004121218263d81b724749776019f",
-      "tsc_s3": 100170,
+      "trace_sha256": "fd0750c9a30a483154f3d9b855878c68c157451c93630869298316efc3495002",
+      "tsc_s3": 104470,
       "witness_id": "sgxwallet_layer0_and_layer1_unmodified_host_seq1005_83b2b7"
     },
     {
@@ -6251,8 +6248,8 @@
       "total_field_obs_effects": 83,
       "total_field_obs_pages": 75,
       "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer0_and_layer1_unmodified_host.jsonl",
-      "trace_sha256": "33df8320b62fd6ba77b0bf61b8e5868c4d3004121218263d81b724749776019f",
-      "tsc_s3": 81742,
+      "trace_sha256": "fd0750c9a30a483154f3d9b855878c68c157451c93630869298316efc3495002",
+      "tsc_s3": 82950,
       "witness_id": "sgxwallet_layer0_and_layer1_unmodified_host_seq1007_83b2b7"
     },
     {
@@ -6534,8 +6531,8 @@
       "total_field_obs_effects": 52,
       "total_field_obs_pages": 45,
       "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer0_and_layer1_unmodified_host.jsonl",
-      "trace_sha256": "33df8320b62fd6ba77b0bf61b8e5868c4d3004121218263d81b724749776019f",
-      "tsc_s3": 195478,
+      "trace_sha256": "fd0750c9a30a483154f3d9b855878c68c157451c93630869298316efc3495002",
+      "tsc_s3": 206660,
       "witness_id": "sgxwallet_layer0_and_layer1_unmodified_host_seq1011_5cef0a"
     },
     {
@@ -6577,8 +6574,8 @@
       "total_field_obs_effects": 77,
       "total_field_obs_pages": 71,
       "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_scalar_e5_s0_p3_v1.jsonl",
-      "trace_sha256": "40310b7797320fe4d46ac3f0afa0fd0da828b0abc1de9a2e3da69d74bba867eb",
-      "tsc_s3": 45834,
+      "trace_sha256": "34cefbf3a6e989e680777c6ab2da24e6bba17c7fff938fc1cd92c94ccf4552c5",
+      "tsc_s3": 44742,
       "witness_id": "sgxwallet_layer2_scalar_e5_s0_p3_v1_seq3_e7f5f1"
     },
     {
@@ -6635,8 +6632,8 @@
       "total_field_obs_effects": 59,
       "total_field_obs_pages": 52,
       "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_xor_e3_s0_p2_b0.jsonl",
-      "trace_sha256": "695e1b60eeec28d20ca54249c1dc4720e1093c8887a275c228d2c40cbec43635",
-      "tsc_s3": 76800,
+      "trace_sha256": "7ad57520d9ea0f7a4339e6bf67ff16051e420b92d2efc53d970ebbbe58c03b24",
+      "tsc_s3": 80216,
       "witness_id": "sgxwallet_layer2_xor_e3_s0_p2_b0_seq1011_5cef0a"
     }
   ]

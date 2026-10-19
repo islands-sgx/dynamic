@@ -1,0 +1,672 @@
+{
+  "edl_manifest": "/home/meandssh/islands-sgx/dynamic/challenges/calibration-fixture/calibration.edl",
+  "edl_manifest_sha256": "5ee14779cf4d916e84fee7eb487aa52a3762254eb191a3dd98fea78ce2cb5b14",
+  "field_manifest": "/home/meandssh/islands-sgx/dynamic/targets/calibration-fixture/fields.json",
+  "field_manifest_sha256": "a4f7fca622e4a774fcecd6bef562a5368bdcf936730b1aedf4e2229c7b962bd1",
+  "fields": [
+    {
+      "function": "cal_field_entry",
+      "id": "0xe1b7d61bdf80222f",
+      "name": "cal_field_entry",
+      "order": [
+        15651500390988927470,
+        5
+      ],
+      "pages": [
+        {
+          "data_anchor_rva": 0,
+          "data_width": 1,
+          "effects": [
+            "R"
+          ],
+          "max_permissions": 1,
+          "origins": [
+            "PT_LOAD[2]"
+          ],
+          "page_rva": 0,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 8192,
+          "data_width": 1,
+          "effects": [
+            "R"
+          ],
+          "max_permissions": 1,
+          "origins": [
+            "PT_LOAD[2]"
+          ],
+          "page_rva": 8192,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 12288,
+          "data_width": 1,
+          "effects": [
+            "R"
+          ],
+          "max_permissions": 1,
+          "origins": [
+            "PT_LOAD[2]"
+          ],
+          "page_rva": 12288,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 20768,
+            "symbol": "__atf_n_e8fb81ab564858b0_0_0"
+          },
+          "data_anchor_rva": 20480,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 20480,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 24585,
+            "symbol": "__atf_n_d9354cae2ec851ee_1_0"
+          },
+          "data_anchor_rva": 24576,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 24576,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 28681,
+            "symbol": "__atf_n_d9354cae2ec851ee_3_0"
+          },
+          "data_anchor_rva": 28672,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 28672,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 32888,
+            "symbol": "__atf_n_38dd01f6cb0c3ebc_1_0"
+          },
+          "data_anchor_rva": 32768,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 32768,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 37673,
+            "symbol": "__atf_n_a4e9b15c8e4d0df6_0_0"
+          },
+          "data_anchor_rva": 36864,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 36864,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 40984,
+            "symbol": "__atf_n_d8aa1e254f49aa2a_7_0"
+          },
+          "data_anchor_rva": 40960,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 40960,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 45072,
+            "symbol": "__atf_n_bbd50a5239189205_4_0"
+          },
+          "data_anchor_rva": 45056,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 45056,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 57550,
+            "symbol": "__atf_n_2800505f4bbe6bf1_0_0"
+          },
+          "data_anchor_rva": 57344,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 57344,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 62519,
+            "symbol": "__atf_n_b504425f1efea5fb_0_0"
+          },
+          "data_anchor_rva": 61440,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 61440,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 66801,
+            "symbol": "__atf_n_b504425f1efea5fb_1_0"
+          },
+          "data_anchor_rva": 65536,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 65536,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 69668,
+            "symbol": "__atf_n_b504425f1efea5fb_8_1"
+          },
+          "data_anchor_rva": 69632,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 69632,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 73739,
+            "symbol": "__atf_n_961040f0f28e2351_1_0"
+          },
+          "data_anchor_rva": 73728,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 73728,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 77914,
+            "symbol": "__atf_n_4468e44683d3a51c_0_0"
+          },
+          "data_anchor_rva": 77824,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 77824,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 81920,
+          "data_width": 1,
+          "effects": [
+            "R"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "PT_LOAD[4]"
+          ],
+          "page_rva": 81920,
+          "relro": true
+        },
+        {
+          "data_anchor_rva": 90112,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "PT_LOAD[5]"
+          ],
+          "page_rva": 90112,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 94208,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "PT_LOAD[5]"
+          ],
+          "page_rva": 94208,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 98304,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "PT_LOAD[5]"
+          ],
+          "page_rva": 98304,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 102400,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "PT_LOAD[5]"
+          ],
+          "page_rva": 102400,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 110592,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "PT_LOAD[5]"
+          ],
+          "page_rva": 110592,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 180224,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "PT_LOAD[5]"
+          ],
+          "page_rva": 180224,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 200704,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_MIN"
+          ],
+          "page_rva": 200704,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 770048,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "STACK_MIN"
+          ],
+          "page_rva": 770048,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 774144,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "STACK_MIN"
+          ],
+          "page_rva": 774144,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 778240,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "STACK_MIN"
+          ],
+          "page_rva": 778240,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 782336,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "STACK_MIN"
+          ],
+          "page_rva": 782336,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 786432,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "STACK_MIN"
+          ],
+          "page_rva": 786432,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 933888,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "TD"
+          ],
+          "page_rva": 933888,
+          "relro": false
+        }
+      ],
+      "stack_bytes": null
+    }
+  ],
+  "layout": {
+    "all_committed_reg_pages": 172,
+    "capacity_q": 16384,
+    "enclave_size": 1048576,
+    "excluded_regions": [
+      {
+        "attributes": 0,
+        "end_rva": 528384,
+        "excluded_reason": "TCS/SSA/guard control region",
+        "kind": "signer",
+        "layout_id": 10,
+        "name": "GUARD",
+        "pages": 16,
+        "permissions": 0,
+        "si_flags": 0,
+        "start_rva": 462848
+      },
+      {
+        "attributes": 0,
+        "end_rva": 856064,
+        "excluded_reason": "TCS/SSA/guard control region",
+        "kind": "signer",
+        "layout_id": 10,
+        "name": "GUARD",
+        "pages": 16,
+        "permissions": 0,
+        "si_flags": 0,
+        "start_rva": 790528
+      },
+      {
+        "attributes": 3,
+        "end_rva": 860160,
+        "excluded_reason": "TCS/SSA/guard control region",
+        "kind": "signer",
+        "layout_id": 4,
+        "name": "TCS",
+        "pages": 1,
+        "permissions": 0,
+        "si_flags": 256,
+        "start_rva": 856064
+      },
+      {
+        "attributes": 3,
+        "end_rva": 868352,
+        "excluded_reason": "TCS/SSA/guard control region",
+        "kind": "signer",
+        "layout_id": 6,
+        "name": "SSA",
+        "pages": 2,
+        "permissions": 3,
+        "si_flags": 515,
+        "start_rva": 860160
+      },
+      {
+        "attributes": 0,
+        "end_rva": 933888,
+        "excluded_reason": "TCS/SSA/guard control region",
+        "kind": "signer",
+        "layout_id": 10,
+        "name": "GUARD",
+        "pages": 16,
+        "permissions": 0,
+        "si_flags": 0,
+        "start_rva": 868352
+      }
+    ],
+    "metadata_version": 4294967301,
+    "ordinary_load_end": 181860,
+    "page_size": 4096,
+    "pretouch_segment": true,
+    "pretouch_start": 184320,
+    "profile_elf": "/home/meandssh/islands-sgx/dynamic/targets/calibration-fixture/enclave.profile.so",
+    "profile_elf_sha256": "06f9d6e5348243333abb664780dafcaeb0480c592dc2853bb47fb22097cbad14",
+    "regions": [
+      {
+        "end_rva": 16384,
+        "kind": "PT_LOAD",
+        "pages": 4,
+        "permissions": 1,
+        "segment_index": 2,
+        "start_rva": 0
+      },
+      {
+        "end_rva": 81920,
+        "kind": "PT_LOAD",
+        "pages": 15,
+        "permissions": 5,
+        "segment_index": 3,
+        "start_rva": 20480
+      },
+      {
+        "end_rva": 86016,
+        "kind": "PT_LOAD",
+        "pages": 1,
+        "permissions": 3,
+        "segment_index": 4,
+        "start_rva": 81920
+      },
+      {
+        "end_rva": 184320,
+        "kind": "PT_LOAD",
+        "pages": 23,
+        "permissions": 3,
+        "segment_index": 5,
+        "start_rva": 90112
+      },
+      {
+        "attributes": 1,
+        "end_rva": 204800,
+        "kind": "signer",
+        "layout_id": 1,
+        "name": "HEAP_MIN",
+        "pages": 1,
+        "permissions": 3,
+        "si_flags": 515,
+        "start_rva": 200704
+      },
+      {
+        "attributes": 17,
+        "end_rva": 462848,
+        "kind": "signer",
+        "layout_id": 2,
+        "name": "HEAP_INIT",
+        "pages": 63,
+        "permissions": 3,
+        "si_flags": 515,
+        "start_rva": 204800
+      },
+      {
+        "attributes": 3,
+        "end_rva": 790528,
+        "kind": "signer",
+        "layout_id": 8,
+        "name": "STACK_MIN",
+        "pages": 64,
+        "permissions": 3,
+        "si_flags": 515,
+        "start_rva": 528384
+      },
+      {
+        "attributes": 3,
+        "end_rva": 937984,
+        "kind": "signer",
+        "layout_id": 5,
+        "name": "TD",
+        "pages": 1,
+        "permissions": 3,
+        "si_flags": 515,
+        "start_rva": 933888
+      }
+    ],
+    "relro_pages": [
+      81920
+    ],
+    "relro_ranges": [
+      {
+        "end_rva": 86016,
+        "protected_end_rva": 86016,
+        "protected_start_rva": 81920,
+        "segment_index": 8,
+        "start_rva": 84480
+      }
+    ],
+    "schema": "atfield-signer-layout-v1",
+    "signed_elf": "/home/meandssh/islands-sgx/dynamic/targets/calibration-fixture/enclave.profile.signed.so",
+    "signed_elf_sha256": "3bd4357b46b2fb5ab75bfbbfabcdbd6dc0aac37c0fddf1ca793b7b630900b946",
+    "ssa_frame_pages": 1
+  },
+  "page_size": 4096,
+  "schema": "atfield-workset-v1",
+  "selector_manifest": "/home/meandssh/islands-sgx/dynamic/targets/calibration-fixture/selectors.json",
+  "selector_manifest_sha256": "45c5471100645c1c4558456625ca87578c78c70a6cd9b8d0f6b5c33d897a30d9",
+  "selectors": [
+    {
+      "ecall_index": 0,
+      "name": "ecall_run_calibration",
+      "reachable_fields": [
+        "0xe1b7d61bdf80222f"
+      ],
+      "reachable_functions": [
+        "cal_field_entry"
+      ]
+    }
+  ]
+}

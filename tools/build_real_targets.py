@@ -339,6 +339,25 @@ def build_target(name: str) -> dict:
             "--out-json", str(out_dir / f"enclave.{prefix}.4gate.json"),
         ], check=True)
 
+    if name == "signal-cds":
+        cc_bin = "/nix/store/fys2jh0y4iisx69yf73b3z8k048cqx95-llvm-atfield-llc-wrapper-22.1.8/bin/cc"
+        psw_lib = "/nix/store/a1fx7mb2366qs2i5bd9mci3nis495wcb-sgx-psw-2.29.100.1/lib64"
+        u_obj = anchor_dir / "real/signal-cds/CMakeFiles/host.dir/signal_cds_enclave_edl_untrusted/sabd_enclave_u.c.o"
+        for h_out in (out_dir / "host", anchor_dir / "host"):
+            subprocess.run([
+                cc_bin, "-m64", "-O2", "-fPIC", "-Wstrict-prototypes", "-DNDEBUG", "-DEDEBUG", "-UDEBUG",
+                f'-DENCLAVE_PATH="{anchor_dir / "enclave.signed.so"}"',
+                f"-I{SGX_SDK_ROOT}/include",
+                f"-I{anchor_dir / 'real/signal-cds/signal_cds_enclave_edl_untrusted'}",
+                f"-I{SAMPLE_ROOT / 'real/signal-cds'}",
+                f"-I{cfg['upstream_root']}/enclave/include",
+                str((out_dir / "host.c") if (out_dir / "host.c").is_file() else (SAMPLE_ROOT / "real/signal-cds/host.c")),
+                str(u_obj),
+                f"-Wl,-rpath,{psw_lib}:/nix/store/a1fx7mb2366qs2i5bd9mci3nis495wcb-sgx-psw-2.29.100.1/lib",
+                f"{psw_lib}/libsgx_urts.so", "-lpthread",
+                "-o", str(h_out),
+            ], check=True)
+
     fields_data = json.loads((out_dir / "fields.json").read_text())
     ver_data = json.loads(verify_all_reg_json.read_text())
     ws_data = json.loads(workset_all_reg.read_text())
@@ -355,8 +374,12 @@ def build_target(name: str) -> dict:
 
 def load_challenge_targets() -> dict[str, dict]:
     out: dict[str, dict] = {}
-    for cdir in sorted((DYN_ROOT / "challenges").glob("challenge-*")):
+    for cdir in sorted((DYN_ROOT / "challenges").iterdir()):
+        if not cdir.is_dir():
+            continue
         cfg_file = cdir / "challenge_config.json"
+        if not cfg_file.is_file():
+            cfg_file = cdir / "calibration_config.json"
         if cfg_file.is_file():
             cfg = json.loads(cfg_file.read_text())
             cfg["src_dir"] = cdir

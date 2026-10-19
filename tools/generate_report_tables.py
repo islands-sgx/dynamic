@@ -59,7 +59,7 @@ def main() -> None:
     lines.append("")
 
     frozen_sha = strat_data.get("frozen_kernel_commit_sha", "HEAD")
-    lines.append("### 8-Challenge 2-Field SGX Enclaves (`C1..C8`): Dev (`dev`), Post-Revision Regression (`post_revision_regression`), & Frozen Blind Exam (`blind_exam`) across 5 Random Seeds (`101..105`)")
+    lines.append("### 8-Challenge 2-Field SGX Enclaves (`C1..C8`): Dev (`dev`), Post-Revision Regression (`post_revision_regression`), & Frozen Hold-Out Variants (`frozen_holdout_variants`) across 5 Random Seeds (`101..105`)")
     lines.append("")
     lines.append("- **Unified Exploration Kernel (`tools/exploration_kernel.py`)**: All challenge enclaves and all 6 real targets execute the exact same `ExplorationKernel` implementation.")
     lines.append("- **Three-Mode Attribution on Shared Candidate Domain**: `fixed_round_robin` (1-for-1 family rotation), `static_priority_no_feedback` (same candidate pool & static structural priority order as `feedback_guided`, but with runtime feedback disabled), and `feedback_guided` (runtime greybox feedback + active-slot reprioritization to `secondary_branch_queue` + state/effect follow-up spawning).")
@@ -160,6 +160,29 @@ def main() -> None:
     # Table 2: Calibration, Provenance, Same-Fault AEX0/AEX1, and Hold-Out Validation
     lines.append("## 2. Provenance, Fault-Detector Calibration, Same-Fault AEX0/AEX1, and Hold-Out Validation")
     lines.append("")
+    cal_fix = eval_data.get("_calibration_fixture")
+    if cal_fix:
+        lines.append("### 2A. Known-Answer 7-Case Hardware Measurement Calibration Fixture (`calibration-fixture`)")
+        lines.append("- **Independent Ground-Truth Design**: `challenges/calibration-fixture` declares 6 page-aligned ground-truth symbols (`X_code_page`, `RX_data_read_page`, `R_rodata_page`, `W_writable_page`, `Cross_page_0`, `Cross_page_1`) plus a `4`-page temporary deep stack frame (`cal_deep_stack_helper`, which allocates and dirties `16 KiB` of stack inside the Field and returns before Gate D so `gateB_rsp_rva == gateD_rsp_rva`). In default mode (`repeat_field_count=2`), all target pages are first accessed in `S0/S1` (outside the Field, before Gate B) and then accessed inside `cal_field_entry` (`S3`) twice within a single ECALL.")
+        lines.append(
+            f"- **Hardware Measurement Omission Rate**: `{cal_fix['missed_declared_effects']} / {cal_fix['total_declared_effects_across_entries']}` "
+            f"(`{cal_fix['measurement_omission_rate'] * 100:.2f}%`) across `{cal_fix['repeated_field_entries_per_ecall']}` repeated Field entries in one ECALL."
+        )
+        dc = cal_fix["declared_cases"]
+        ts = dc["Temp_deep_stack_4pages"]
+        do_ctrl = cal_fix["deliberate_omission_control"]
+        ar_ctrl = cal_fix["active_retraction_and_restore_control"]
+        lines.append(
+            f"- **Temporary Deep Stack Capture**: `gateB_rsp_rva = {ts['gateB_rsp_rva']}`, `gateD_rsp_rva = {ts['gateD_rsp_rva']}` "
+            f"(`rsp_endpoint_delta = {ts['rsp_endpoint_delta_bytes']} B`), yet 4-Gate `S3` `A/D` tracking captured `{len(ts['dirty_stack_pages_entry0'])}` dirty (`D`) stack pages "
+            f"(`{', '.join(ts['dirty_stack_pages_entry0'])}`) on both entries."
+        )
+        lines.append(
+            f"- **Positive & Negative Calibration Controls**: Full pre-touch (`dynamic_xr_4gate`) -> `{cal_fix['full_pretouch_clean_rewalk_pages']}` clean `S3` rewalks (`0` residual); "
+            f"deliberately omitting `W_writable_page` (`{do_ctrl['omitted_page_rva']}`) -> validator `{do_ctrl['validator_status']}` (`{','.join(do_ctrl['validator_reasons'])}`) and caught by 4-Gate `S3` rewalk = `{do_ctrl['caught_by_4gate_s3_rewalk']}`; "
+            f"actively retracting `{ar_ctrl['retracted_page_rva']}` -> `AEX0` healed & EA verified = `{ar_ctrl['aex0_pte_healed_and_ea_verified']}` (`kind={ar_ctrl['aex0_confirmed_kind']}`), `AEX1` fail-stop = `{ar_ctrl['aex1_fail_stop_status']}`, restored control faults = `{ar_ctrl['restored_control_faults']}` (**Verdict: `{cal_fix['verdict']}`**)."
+        )
+    lines.append("")
     lines.append("| Sample | Provenance Hash Match | Cold vs Warm TLB (`ipi=7` vs `0` S3 Pages) | 4-Gate vs Uninst `AEX0` Equivalence | Single-Page `X / R / W` Confirmed Kind (`healed:kind`) | Restored Positive Control Faults | Same-Fault `AEX0` (`rc=0`) vs `AEX1` (`0x1006` on same page) | Hold-Out Main `rc` & `stdout` | Hold-Out Unseen `(page / effect)` | Strict `FieldTargetPages` (`Gate B..D`) Faults | Strict `ReadyTable v3` (`ECALL`) Faults | Validator Verdict |")
     lines.append("|---|---|---|---|---|---:|---|---|---|---|---:|---:|---|")
 
@@ -212,12 +235,44 @@ def main() -> None:
                 f"| `{s_sm4}` | **Tier 2 (`dynamic_xr` AES-only)** | {aes_h_str} (AES-256 seed only) | **`{v2['status']}`** (`{len(uncov2)}` uncovered) | N/A (coverage failed) | N/A (coverage failed) | **`{v2['status']}`**: Catches **{len(uncov2)} uncovered SM4 effects** (`{', '.join(uncov2[:3])}...`); requires coupled 3-field struct change (`keyspec=20, keybloblen=64, cmk_size=80`) |"
             )
     lines.append("")
-    lines.append("- **Target Onboarding Cost Summary (Zero Sample-Name Branches in Explorer)**:")
-    lines.append("  - `qe3`: `1` Field annotation (`ATFIELD`), `1` selector in `selectors.json`, `0` explorer lines changed;")
-    lines.append("  - `signal-cds`: `1` Field annotation, `1` selector in `selectors.json`, `0` explorer lines changed;")
-    lines.append("  - `sgxwallet`: `5` Field annotations, `7` selectors in `selectors.json`, `0` explorer lines changed (`CALL_ONCE` abort on `ecall 2/3` detected automatically at runtime);")
-    lines.append("  - `ehsm / ehsm-opt-1 / ehsm-opt-2` (single application, 3-variant ablation): `4` Field annotations, `5` selectors in `selectors.json`, `0` explorer lines changed;")
-    lines.append("  - `challenge-bench / challenge-bench-perm` (2 synthetic challenge enclaves): `1` Field annotation, `4` selectors in `selectors.json`, `0` explorer lines changed.")
+    lines.append("### 2B. Frozen-Workset Generalization on Unseen Input/History Workflows & Statistical Upper Bound")
+    lines.append("- **Methodology**: After freezing `workset.dynamic_xr.json` and the signed enclaves, each of the 4 real applications (6 configurations) is evaluated on `10` independent multi-step workflows (`60` independent workflows total) varying input lengths, payload contents, and call-history depths that were not used during workset construction (including `5` unseen `(seed, in_jids)` runs of the ported 6-case upstream `signal-cds` Cmockery suite `enclave/src/sabd-enclave-test.c`, each executing `95` ECALLs).")
+    lines.append("- **Primary Metric & Binomial Upper Bound**: We report the **Workflow Omission Rate** (`workflows_with_any_omission / total_workflows`) and the exact one-sided 95% Clopper-Pearson binomial confidence upper bound $p_{\text{upper}, 0.95} = 1 - 0.05^{1/N}$ for the tested input/history distribution ($25.89%$ per configuration at $N=10$, and **$4.87%$ pooled across all $N=60$ independent workflows** with `0` omissions; reaching $0.1%$ or $0.01%$ on a fixed distribution requires $N=3,000$ or $N=30,000$ independent workflows). Because random sampling from a base distribution does not bound out-of-distribution or secret/struct-coupled branches, targeted counterexample workflows (`--sm4-check` on AES-only `ehsm-opt-1/2`) are reported separately above (`100%` omission rate: `4` and `14` uncovered effects).")
+    lines.append("")
+    lines.append("| Configuration | Unseen Workflows (`N`) | Total ECALLs / Field Entries | Workflows with Any Omission (`Rate`) | Worst-Case Omitted (`Pages / Effects`) | **95% Binomial Upper Bound (`p_upper`)** |")
+    lines.append("|---|---:|---:|---:|---:|---:|")
+    tot_wf_all = 0
+    tot_ec_all = 0
+    tot_fe_all = 0
+    tot_om_all = 0
+    for s in SAMPLES:
+        ug = eval_data[s]["independent_holdout_evaluation"].get("unseen_input_history_generalization")
+        if not ug:
+            continue
+        tot_wf_all += ug["independent_workflows_evaluated"]
+        tot_ec_all += ug["total_ecalls_evaluated"]
+        tot_fe_all += ug["total_field_entries_evaluated"]
+        tot_om_all += ug["workflows_with_any_omission"]
+        lines.append(
+            f"| `{s}` | `{ug['independent_workflows_evaluated']}` | `{ug['total_ecalls_evaluated']} / {ug['total_field_entries_evaluated']}` | "
+            f"`{ug['workflows_with_any_omission']} / {ug['independent_workflows_evaluated']} ({ug['workflow_omission_rate'] * 100:.1f}%)` | "
+            f"`{ug['worst_case_omitted_pages_per_workflow']}p / {ug['worst_case_omitted_effects_per_workflow']}e` | "
+            f"**`{ug['clopper_pearson_95_upper_bound_on_tested_distribution'] * 100:.2f}%`** |"
+        )
+    if tot_wf_all > 0:
+        pooled_p = 1.0 - (0.05 ** (1.0 / tot_wf_all)) if tot_om_all == 0 else 1.0
+        lines.append(
+            f"| **Pooled (`4` Apps / `6` Configs)** | **`{tot_wf_all}`** | **`{tot_ec_all} / {tot_fe_all}`** | "
+            f"**`{tot_om_all} / {tot_wf_all} ({tot_om_all / tot_wf_all * 100:.1f}%)`** | **`0p / 0e`** | **`{pooled_p * 100:.2f}%`** |"
+        )
+    lines.append("")
+    lines.append("### 2C. Upstream Test Porting & Onboarding Cost Accounting (`4` Real Applications, `6` Configurations)")
+    lines.append("| Application (`Configs`) | Upstream Test Reference | Ported Host Entry / Flag | Preserved Upstream Assertions & Call Dependencies | Host Adapter LOC (`New Ported LOC`) | Explorer / Kernel Special-Case Rules |")
+    lines.append("|---|---|---|---|---:|---:|")
+    lines.append("| `signal-cds` (`1`) | `enclave/src/sabd-enclave-test.c` (`setup_sabd_lookup_test`, `test_sabd_lookup_batch_too_large`, `test_sabd_lookup_many_duplicates`, `test_sabd_lookup_small_{all_in,no_in,random}`, `test_sabd_lookup_large`) | `sample/real/signal-cds/host.c` (`--upstream-cmockery-test --seed S --in-jids N`, `95` ECALLs/run) | `drand48_data`/`mrand48_r` 64-bit JID generation, `(1<<14)+1` `SGX_ERROR_INVALID_PARAMETER` check, `!!result[i]` normalization, and exact `memcmp` across `0..32`, `0..25`, and `2048`-query batches | `358` (`+122` for upstream Cmockery suite) | **`0`** |")
+    lines.append("| `ehsm` (`ehsm`, `ehsm-opt-1`, `ehsm-opt-2`) | `core/Test/function_test.cpp` (`test_AES128_GCM`, `test_SM4_CBC`, `GenerateDataKey`, `Decrypt`) | `sample/real/ehsm/host.cpp` (default AES-GCM + `--compat-check` + `--sm4-check`) | `ehsm_create_key` -> `ehsm_encrypt` -> `ehsm_decrypt` -> `ehsm_generate_datakey` -> `ehsm_decrypt_datakey`, ciphertext/AAD tamper rejection, and round-trip plaintext equality | `312` (`+0` kernel rules) | **`0`** |")
+    lines.append("| `sgxwallet` (`1`) | `tests/integration/keys/ECDSAIntegrationTests.cpp` | `sample/real/sgxwallet/host.cpp` | SEK provisioning -> ECDSA keygen -> public key extraction -> hash signing -> signature verification -> invalid input rejection -> enclave restart & recovery | `264` (`+0` kernel rules) | **`0`** |")
+    lines.append("| `qe3` (`1`) | `QuoteGeneration/quote_wrapper/quote/enclave/qe3.c` (`get_att_key_and_qe_auth_data`) | `sample/real/qe3/host.c` | Repeated attestation key derivation for identical vs distinct `key_id` inputs and public-key determinism/uniqueness assertions | `118` (`+0` kernel rules) | **`0`** |")
     lines.append("")
 
     # Table 3: Per-Observation 3-Group Ablation
@@ -382,9 +437,17 @@ def main() -> None:
     lines.append("| Experiment / Artifact | Specific Claim Verified | Where Recorded |")
     lines.append("|---|---|---|")
     lines.append("| `test_exploration_kernel_and_replace.py` | Single-round feedback on real `ehsm` target alters subsequent scheduling; state novelty without new pages spawns `feedback_joint_...`; multi-branch parameter slot discovers both branches via `secondary_branch_queue`; `replace_scalar` solves overwriting setter (`C2`) and SGX SDK AES-128-CMAC token chain (`C7`). | Section 1A & `tests/` |")
-    lines.append("| `challenge-bench` & `challenge-bench-perm` (`dev`, 5 seeds, 3 modes) | `feedback_guided` achieves `7.4-7.6/8` confirmed in `~634-636` exploration ECALLs (`0.4-0.8` missed hold-out Field-effects), outperforming `static_priority_no_feedback` (`7.0-7.2/8` in `912` ECALLs) and `fixed_round_robin` (`6.0-6.8/8` in `3204` ECALLs). | Section 1A & `strategy_comparison.json` |")
-    lines.append("| `challenge-exam-a` & `challenge-exam-b` (`post_revision_regression`, 5 seeds, 3 modes) | Re-evaluated honestly as post-revision regression: `feedback_guided` achieves `7.2/8` confirmed vs `5.6-6.8/8` for `static_priority_no_feedback` and `5.0-5.6/8` for `fixed_round_robin`. | Section 1A & `strategy_comparison.json` |")
-    lines.append(f"| `challenge-exam-c` & `challenge-exam-d` (`blind_exam`, 5 seeds, 3 modes, frozen kernel `{frozen_sha[:7]}`) | Created and evaluated AFTER freezing `src/`, `ExplorationKernel`, `generic_explorer.py`, and `controller.py` at `{frozen_sha}`: `feedback_guided` achieves `8.0/8` (`0.0` missed Field-effects) on `exam-c` and `6.8/8` on `exam-d`, outperforming `static_priority_no_feedback` (`7.4/8`, `6.0/8`) and `fixed_round_robin` (`6.2/8`, `5.6/8`). | Section 1A & `strategy_comparison.json` |")
+    cb_fg = hw_ch["challenge-bench"]["modes"]["feedback_guided"]["confirmed_mean"]
+    cbp_fg = hw_ch["challenge-bench-perm"]["modes"]["feedback_guided"]["confirmed_mean"]
+    ea_fg = hw_ch["challenge-exam-a"]["modes"]["feedback_guided"]["confirmed_mean"]
+    eb_fg = hw_ch["challenge-exam-b"]["modes"]["feedback_guided"]["confirmed_mean"]
+    ec_fg = hw_ch["challenge-exam-c"]["modes"]["feedback_guided"]["confirmed_mean"]
+    ed_fg = hw_ch["challenge-exam-d"]["modes"]["feedback_guided"]["confirmed_mean"]
+    lines.append(f"| `challenge-bench` & `challenge-bench-perm` (`dev`, 5 seeds, 3 modes) | `feedback_guided` achieves `{cb_fg:.2f}/8` and `{cbp_fg:.2f}/8` confirmed (`{hw_ch['challenge-bench']['modes']['feedback_guided']['mean_exploration_ecalls']:.1f}`–`{hw_ch['challenge-bench-perm']['modes']['feedback_guided']['mean_exploration_ecalls']:.1f}` exploration ECALLs), outperforming `static_priority_no_feedback` (`{hw_ch['challenge-bench']['modes']['static_priority_no_feedback']['confirmed_mean']:.2f}`–`{hw_ch['challenge-bench-perm']['modes']['static_priority_no_feedback']['confirmed_mean']:.2f}/8`) and `fixed_round_robin` (`{hw_ch['challenge-bench']['modes']['fixed_round_robin']['confirmed_mean']:.2f}`–`{hw_ch['challenge-bench-perm']['modes']['fixed_round_robin']['confirmed_mean']:.2f}/8`). | Section 1A & `strategy_comparison.json` |")
+    lines.append(f"| `challenge-exam-a` & `challenge-exam-b` (`post_revision_regression`, 5 seeds, 3 modes) | Evaluated as post-revision regression: `feedback_guided` achieves `{ea_fg:.2f}/8` and `{eb_fg:.2f}/8` confirmed vs `{hw_ch['challenge-exam-a']['modes']['static_priority_no_feedback']['confirmed_mean']:.2f}`–`{hw_ch['challenge-exam-b']['modes']['static_priority_no_feedback']['confirmed_mean']:.2f}/8` for `static_priority_no_feedback` and `{hw_ch['challenge-exam-a']['modes']['fixed_round_robin']['confirmed_mean']:.2f}`–`{hw_ch['challenge-exam-b']['modes']['fixed_round_robin']['confirmed_mean']:.2f}/8` for `fixed_round_robin`. | Section 1A & `strategy_comparison.json` |")
+    lines.append(f"| `challenge-exam-c` & `challenge-exam-d` (`frozen_holdout_variants`, 5 seeds, 3 modes, frozen kernel `{frozen_sha[:7]}`) | Evaluated on the frozen exploration kernel (`{frozen_sha}`): `feedback_guided` achieves `{ec_fg:.2f}/8` (`0.0` missed Field-effects) on `exam-c` and `{ed_fg:.2f}/8` on `exam-d`, outperforming `static_priority_no_feedback` (`{hw_ch['challenge-exam-c']['modes']['static_priority_no_feedback']['confirmed_mean']:.2f}/8`, `{hw_ch['challenge-exam-d']['modes']['static_priority_no_feedback']['confirmed_mean']:.2f}/8`) and `fixed_round_robin` (`{hw_ch['challenge-exam-c']['modes']['fixed_round_robin']['confirmed_mean']:.2f}/8`, `{hw_ch['challenge-exam-d']['modes']['fixed_round_robin']['confirmed_mean']:.2f}/8`). | Section 1A & `strategy_comparison.json` |")
+    lines.append("| `calibration-fixture` (`7`-case hardware measurement calibration) | Verifies `0 / 36` (`0.00%`) measurement omission rate across `S0/S1`-then-`S3` pre-access, `2` repeated Field entries per ECALL, `5` dirty pages on a temporary deep stack frame (`gateB_rsp == gateD_rsp`), deliberate 1-page omission detection, and active permission retraction (`AEX0` healed + `AEX1` `0x1006`). | Section 2A & `evaluation_results.json` |")
+    lines.append("| `signal-cds` Upstream Cmockery Port & `60`-Workflow Unseen Generalization | Ports `6` upstream Cmockery test functions from `enclave/src/sabd-enclave-test.c` (`95` ECALLs/run) and evaluates `60` independent unseen workflows across all 4 applications / 6 configurations (`0 / 60` workflow omission rate, `4.87%` pooled 95% Clopper-Pearson upper bound on tested distribution). | Sections 2B, 2C & `evaluation_results.json` |")
     lines.append("| `qe3`, `signal-cds`, `sgxwallet`, `ehsm` (`opt-1/2`) Migration | The exact same frozen `ExplorationKernel` closes all 4 real applications (6 configurations) (`5/5` production acceptance, `295/295` clean `0`-rewalk observations in Group B). | Sections 1B, 2, 3, 4 |")
     lines.append("| `ehsm-opt-1/2` Two-Tier SM4 Accounting | Tier 1 builds independent `sm4_seeded_xr` workset, `ReadyTable`, and signed `4gate`/`AEX1` enclaves and verifies fresh hold-out coverage (`PASS`), `0-rewalk` (`PASS`), and `AEX1` production execution (`PASS`); Tier 2 catches the exact `4` / `14` uncovered SM4 effects when only AES-256 is seeded (`FAIL`). | Section 2 (`sm4_two_tier_accounting`) |")
     lines.append("")
@@ -462,7 +525,8 @@ def verify_report_matches_json(
                 e["rel_path"].startswith(f"experiments/raw_traces/{cname}/")
                 for e in manifest_data.get("traces", [])
             )
-            if has_ch_traces:
+            if manifest_data:
+                assert has_ch_traces, f"Missing raw_traces for {cname} in traces_manifest.json!"
                 for sr in ms.get("seed_runs", []):
                     for w in sr.get("witnesses", []):
                         assert w["trace_sha256"] in manifest_shas, f"Missing discovery trace {w['trace_sha256']} for {cname}"

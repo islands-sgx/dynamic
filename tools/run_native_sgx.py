@@ -124,6 +124,7 @@ def resolve_enclave_path(tdir: Path, mode: str) -> tuple[Path, int]:
         "dynamic_xr_final": (tdir / "enclave.dynamic_xr.final.signed.so", 0),
         "dynamic_xr_final_aex0": (tdir / "enclave.dynamic_xr.final.aex0.signed.so", 0),
         "sm4_seeded_xr_4gate": (tdir / "enclave.sm4_seeded_xr.4gate.aex0.signed.so", 1),
+        "omit_one_4gate": (tdir / "enclave.omit_one.4gate.aex0.signed.so", 1),
         "sm4_seeded_xr_final": (tdir / "enclave.sm4_seeded_xr.final.signed.so", 0),
         "sm4_seeded_xr_final_aex0": (tdir / "enclave.sm4_seeded_xr.final.aex0.signed.so", 0),
     }
