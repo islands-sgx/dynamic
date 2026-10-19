@@ -62,6 +62,42 @@ def make_layout_spec(sample: str) -> str:
     )
 
 
+def make_schema_spec(sample: str) -> str:
+    tdir = DYN_ROOT / "targets" / sample
+    sch = json.loads((tdir / "edl_schema.json").read_text())
+    dir_map = {"val": 0, "in": 1, "out": 2, "inout": 3}
+    bkind_map = {None: 0, "count": 1, "size": 2}
+    tokens = []
+    for ec in sch["ecalls"]:
+        idx = ec["ecall_index"]
+        ms = ec.get("ms_layout")
+        ms_sz = ms["size"] if ms else 0
+        has_ret = 1 if ec.get("has_retval") else 0
+        ret_off = ec.get("retval_offset") or 0
+        ret_sz = ec.get("retval_size") or 0
+        rep_ok = 1 if ec.get("replay_supported", True) else 0
+        params = ec.get("params", [])
+        tokens.append(f"E:{idx}:{ms_sz}:{has_ret}:{ret_off}:{ret_sz}:{rep_ok}:{len(params)}")
+        for pidx, p in enumerate(params):
+            moff = p.get("ms_offset") or 0
+            msz = p.get("ms_size") or 0
+            esz = p.get("elem_size") or 1
+            is_ptr = 1 if p.get("is_pointer") else 0
+            pdepth = p.get("ptr_depth") or 0
+            dcode = dir_map.get(p.get("direction", "val"), 0)
+            is_str = 1 if p.get("is_string") else 0
+            is_uc = 1 if p.get("is_user_check") else 0
+            bk = bkind_map.get(p.get("bound_kind"), 0)
+            boff = p.get("bound_ms_offset") if p.get("bound_ms_offset") is not None else -1
+            bsz = p.get("bound_ms_size") or 0
+            scnt = p.get("static_count") if p.get("static_count") is not None else -1
+            prok = 1 if p.get("param_replay_supported", True) else 0
+            tokens.append(
+                f"P:{idx}:{pidx}:{moff}:{msz}:{esz}:{is_ptr}:{pdepth}:{dcode}:{is_str}:{is_uc}:{bk}:{boff}:{bsz}:{scnt}:{prok}"
+            )
+    return ";".join(tokens)
+
+
 def resolve_enclave_path(tdir: Path, mode: str) -> tuple[Path, int]:
     mapping = {
         "profile_4gate": (tdir / "enclave.profile.4gate.aex0.signed.so", 1),
@@ -93,6 +129,8 @@ def run_sample(
     watch_cpu: int = 1,
     allow_fast_forward: int = 0,
     stop_after_call: int | None = None,
+    stop_after_selector: str = "",
+    stop_before_normal_ecall: str = "",
     host_args: list[str] | None = None,
     persist_prefix: Path | None = None,
     timeout_sec: int = 300,
@@ -101,6 +139,7 @@ def run_sample(
     host_bin = SAMPLE_ROOT / "build" / "real" / sample / "anchor" / "host"
     encl, use_4gate = resolve_enclave_path(tdir, mode)
     spec = make_layout_spec(sample)
+    schema_spec = make_schema_spec(sample)
     if strict_ready_file and not strict_mode:
         strict_mode = "ecall"
 
@@ -113,6 +152,7 @@ def run_sample(
             f"LD_LIBRARY_PATH={LD_LIB_PATH}",
             f"ATFIELD_ENCLAVE_PATH={encl}",
             f"ATFIELD_LAYOUT_SPEC={spec}",
+            f"ATFIELD_SCHEMA_SPEC={schema_spec}",
             f"ATFIELD_TRACE_OUT={trace_file}",
             f"ATFIELD_USE_4GATE={use_4gate}",
             f"ATFIELD_IPI_MASK={ipi_mask}",
@@ -120,6 +160,8 @@ def run_sample(
             f"ATFIELD_WATCH_CPU={watch_cpu}",
             f"ATFIELD_ALLOW_FAST_FORWARD={allow_fast_forward}",
             f"ATFIELD_STOP_AFTER_CALL={'' if stop_after_call is None else stop_after_call}",
+            f"ATFIELD_STOP_AFTER_SELECTOR={stop_after_selector}",
+            f"ATFIELD_STOP_BEFORE_NORMAL_ECALL={stop_before_normal_ecall}",
             f"ATFIELD_INTERVENTION={intervention}",
             f"ATFIELD_STRICT_READY_FILE={strict_ready_file}",
             f"ATFIELD_STRICT_MODE={strict_mode}",
@@ -143,7 +185,9 @@ def run_sample(
             stderr = (exc.stderr or b"").decode("utf-8", errors="replace").strip() if isinstance(exc.stderr, bytes) else (exc.stderr or "").strip()
 
         records = []
+        trace_sha256 = ""
         if trace_file.is_file():
+            trace_sha256 = sha256_file(trace_file)
             for line in trace_file.read_text().splitlines():
                 if line.strip():
                     records.append(json.loads(line))
@@ -160,12 +204,17 @@ def run_sample(
             "host_path": str(host_bin),
             "host_sha256": sha256_file(host_bin),
             "interpose_sha256": sha256_file(INTERPOSE_SO),
+            "trace_sha256": trace_sha256,
             "command": cmd,
             "ipi_mask": ipi_mask,
             "intervention": intervention,
             "strict_mode": strict_mode,
             "strict_ready_file": strict_ready_file,
             "allow_fast_forward": allow_fast_forward,
+            "stop_after_call": stop_after_call,
+            "stop_after_selector": stop_after_selector,
+            "stop_before_normal_ecall": stop_before_normal_ecall,
+            "host_args": host_args or [],
             "timed_out": timed_out,
             "measurement_invalid": any_invalid,
             "returncode": rc,
@@ -180,38 +229,10 @@ def run_sample(
         return result
 
 
-def main() -> None:
+if __name__ == "__main__":
     sample = sys.argv[1]
     mode = sys.argv[2] if len(sys.argv) > 2 else "profile_4gate"
     ipi = int(sys.argv[3]) if len(sys.argv) > 3 else (7 if "profile" in mode else 3)
     interv = sys.argv[4] if len(sys.argv) > 4 else ""
     res = run_sample(sample, mode=mode, ipi_mask=ipi, intervention=interv)
-    print(
-        f"returncode={res['returncode']} timed_out={res['timed_out']} "
-        f"invalid={res['measurement_invalid']} stdout={res['stdout']} records={len(res['records'])}"
-    )
-    for r in res["records"]:
-        f_summaries = [
-            {
-                "field_id": f["field_id"],
-                "s0": len(f["s0"]),
-                "s1": len(f["s1"]),
-                "s2": len(f["s2"]),
-                "s3": len(f["s3"]),
-                "ipi_ok": f["ipi_aex_verified_mask"],
-                "s3_aex": f["s3_active_aex_count"],
-                "tsc_s2": f["tsc_s2"],
-                "tsc_s3": f["tsc_s3"],
-            }
-            for f in r["fields"]
-        ]
-        print(
-            f"  seq={r['call_seq']} ecall={r['ecall_index']} tag={r['tag']} "
-            f"st={r['sgx_status']} ret={r['ms_retval_i32']} aex={r['total_aex_count']} "
-            f"ipi_aex={r['gate_ipi_aex_count']} inv={r['measurement_invalid']} "
-            f"faults={r['strict_non_ready_fault_count']} fields={f_summaries}"
-        )
-
-
-if __name__ == "__main__":
-    main()
+    print(f"rc={res['returncode']} invalid={res['measurement_invalid']} stdout={res['stdout']} records={len(res['records'])}")

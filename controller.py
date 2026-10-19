@@ -1,24 +1,8 @@
 #!/usr/bin/env python3
-"""ATField-SGX Dynamic Workset Explorer, 4-Layer Attribution Ledger, and Heuristic Assist Builder.
-
-Implements:
-- P0/P1: Full-call (0 skipped) collection and 4-layer attribution ledger with (page_rva, effect)
-  granularity (explicitly recording A->D write upgrades and per-Field call/entry/status counts):
-    * Layer 0: First Field call / minimal 1-call seed
-    * Layer 1: Full unmodified host workflow
-    * Layer 2: Generic EDL-schema-driven & feedback/history/L*-state explorer (zero sample hardcoding)
-    * Layer 3: Optional domain-assisted format-aware probes (tracked separately)
-- P2: Data-driven mutations from targets/<sample>/edl_schema.json via tools/generic_explorer.py
-- P3/P4: Explicit separation of dynamic observations vs heuristic ELF/allocator/stack assist,
-  emitting three workset & binary variants per sample:
-    * Group A (all_reg): All committed business REG pages (RX = XR)
-    * Group B (dynamic_xr): Dynamic + heuristic assist pages, keeping all RX pages conservatively as XR
-    * Group C (dynamic): Same page set as Group B, refining pure code RX pages without RIP-data/object refs to X-only
-"""
+"""ATField-SGX Dynamic Workset Explorer, 4-Layer Attribution Ledger, and Heuristic Assist Builder."""
 from __future__ import annotations
 
 import bisect
-import hashlib
 import json
 import re
 import subprocess
@@ -43,10 +27,11 @@ from workset import (  # noqa: E402
     write_json,
 )
 from generic_explorer import (  # noqa: E402
+    build_scale_bound_v2_spec,
     generate_schema_mutations_for_ecall,
-    generate_schema_scale_schedule,
+    get_scalable_bound_offsets,
 )
-from run_native_sgx import run_sample, sha256_file  # noqa: E402
+from run_native_sgx import INTERPOSE_SO, run_sample, sha256_file  # noqa: E402
 
 LLVM_OBJDUMP = "/nix/store/grw38wxqcn2k8bp9gm9b9h28ds3jgb9y-llvm-atfield-llc-22.1.8/bin/llvm-objdump"
 SGX_SIGN = "/nix/store/2acwmnfcsz668csnyxn77brmllp7kx6s-sgx-sdk-2.29.100.1/bin/x64/sgx_sign"
@@ -57,7 +42,6 @@ PATCH_4GATE_TOOL = DYN_ROOT / "tools" / "patch_4gate.py"
 
 
 def parse_disasm_graph(elf_path: Path, elf: ElfFile) -> dict:
-    """Extract function ranges, direct call/jump edges, indirect branch sites, and exact RIP-relative data refs."""
     syms = [
         s for s in elf.symbols()
         if s["shndx"] != 0 and (s["info"] & 0xF) == 2 and s["value"] > 0
@@ -143,104 +127,6 @@ def build_committed_page_map(layout: dict) -> dict[int, dict]:
             "origins": sorted(set(page_origins[page])),
         }
     return out
-
-
-def build_generic_layer2_runs(sample: str, edl_schema: dict, selectors: list[dict]) -> list[dict]:
-    """Construct Layer 2 runs purely from edl_schema.json + selector reachability without sample-name branches."""
-    ecalls_by_idx = {e["ecall_index"]: e for e in edl_schema["ecalls"]}
-    field_Format_selectors = [s["ecall_index"] for s in selectors if s["reachable_fields"]]
-    non_field_init_selectors = [s["ecall_index"] for s in selectors if not s["reachable_fields"]]
-
-    runs = []
-    # 1. Generic schema buffer-scale doubling schedule (for any ECALL with count=/size= bound [in] pointers)
-    for idx in field_Format_selectors:
-        ec = ecalls_by_idx.get(idx)
-        if not ec:
-            continue
-        scale_steps = generate_schema_scale_schedule(ec, selector_seq=0)
-        if scale_steps:
-            runs.append({
-                "run_id": f"layer2_schema_scale_ecall{idx}",
-                "layer": "layer2_generic_schema",
-                "subkind": "adaptive_bound_scale",
-                "intervention": ";".join(st["spec"] for st in scale_steps),
-                "stop_after_call": 0,
-                "host_args": [],
-                "allow_nonzero_rc": False,
-                "desc": f"Generic edl_schema count=/size= doubling schedule on {ec['name']}",
-            })
-
-    # 2. Generic schema pointer/scalar/bit-flip mutations per Field-bearing ECALL
-    for idx in field_Format_selectors:
-        ec = ecalls_by_idx.get(idx)
-        if not ec:
-            continue
-        muts = generate_schema_mutations_for_ecall(ec, selector_seq=0)
-        non_null = [m["spec"] for m in muts if m["kind"] != "schema_null_ptr"]
-        nulls = [m["spec"] for m in muts if m["kind"] == "schema_null_ptr"]
-        if non_null:
-            # Test at sseq=0 and sseq=1 (in case sseq=0 is a size-query call!)
-            non_null_s1 = [sp.replace(f":{idx}:0:", f":{idx}:1:") for sp in non_null]
-            runs.append({
-                "run_id": f"layer2_schema_val_xor_ecall{idx}",
-                "layer": "layer2_generic_schema",
-                "subkind": "schema_scalar_and_bitflip",
-                "intervention": ";".join(non_null + non_null_s1),
-                "stop_after_call": None,
-                "host_args": ["--requests", "1"] if len(ecalls_by_idx) == 7 else [],
-                "allow_nonzero_rc": True,
-                "desc": f"Generic edl_schema scalar boundaries & input buffer bit-flips on {ec['name']}",
-            })
-        if nulls:
-            runs.append({
-                "run_id": f"layer2_schema_null_ecall{idx}",
-                "layer": "layer2_generic_schema",
-                "subkind": "schema_null_pointer",
-                "intervention": ";".join(nulls[:2]),
-                "stop_after_call": None,
-                "host_args": ["--requests", "1"] if len(ecalls_by_idx) == 7 else [],
-                "allow_nonzero_rc": True,
-                "desc": f"Generic edl_schema NULL pointer injection on {ec['name']}",
-            })
-
-    # 3. Generic L* cold-state distinguishing probes:
-    #    If there is an initialization ECALL (index 0, no fields) and multiple Field-bearing ECALLs,
-    #    probe each Field-bearing ECALL immediately after index 0 (selector_seq=1, fresh second enclave instance)
-    if 0 in non_field_init_selectors and len(field_Format_selectors) > 1:
-        for idx in field_Format_selectors:
-            ec = ecalls_by_idx.get(idx)
-            if not ec or not ec.get("ms_layout"):
-                continue
-            ms_sz = ec["ms_layout"]["size"]
-            for cap_seq in (0, 1):
-                runs.append({
-                    "run_id": f"layer2_lstar_cold_probe_ecall{idx}_cap{cap_seq}",
-                    "layer": "layer2_generic_schema",
-                    "subkind": "lstar_cold_state_probe",
-                    "intervention": f"state_probe:{idx}:{cap_seq}:0:1:{ms_sz}",
-                    "stop_after_call": None,
-                    "host_args": ["--requests", "1"] if len(ecalls_by_idx) == 7 else [],
-                    "allow_nonzero_rc": True,
-                    "desc": f"Generic L* cold-state distinguishing query on {ec['name']} (cap_seq={cap_seq} -> after ecall 0 sseq=1)",
-                })
-
-    # 4. Generic exponential history depth exploration (1024 full calls, 0 skipped) on the last Field-bearing ECALL
-    if field_Format_selectors:
-        last_idx = field_Format_selectors[-1]
-        ec = ecalls_by_idx[last_idx]
-        runs.append({
-            "run_id": f"layer2_generic_history_1024_ecall{last_idx}",
-            "layer": "layer2_generic_schema",
-            "subkind": "exponential_history_depth_1024",
-            "intervention": f"repeat:{last_idx}:0:1024",
-            "ipi_mask": 4,
-            "stop_after_call": None,
-            "host_args": ["--requests", "1"] if len(ecalls_by_idx) == 7 else [],
-            "allow_nonzero_rc": True,
-            "desc": f"Generic 1024-step full-call history exploration on {ec['name']} (0 calls skipped)",
-        })
-
-    return runs
 
 
 def emit_and_sign_variant(
@@ -345,14 +231,15 @@ def explore_and_close_sample(sample: str) -> dict:
     td_pages = sorted(p for p, info in committed_map.items() if any(o.startswith("TD") for o in info["origins"]))
 
     field_ids = [f"0x{f['_id_value']:016x}" for f in fields]
+    interpose_hash = sha256_file(INTERPOSE_SO)
 
-    # Per-layer independent (page_rva, effect) sets for exact attribution
     layer_sets: dict[str, dict[str, set[tuple[int, str]]]] = {
         "layer0_first_call": {fid: set() for fid in field_ids},
         "layer1_full_host": {fid: set() for fid in field_ids},
         "layer2_generic_schema": {fid: set() for fid in field_ids},
         "layer3_domain_assist": {fid: set() for fid in field_ids},
     }
+    layer2_seed_only: dict[str, set[tuple[int, str]]] = {fid: set() for fid in field_ids}
     cumulative_effects: dict[str, set[tuple[int, str]]] = {fid: set() for fid in field_ids}
     dyn_obs_pages: dict[str, dict[int, str]] = {fid: {} for fid in field_ids}
     dyn_bridge_pages: dict[str, set[int]] = {fid: set() for fid in field_ids}
@@ -364,8 +251,10 @@ def explore_and_close_sample(sample: str) -> dict:
     field_call_stats = {
         fid: {
             "field_entries": 0,
-            "succeeded_entries": 0,
-            "expected_rejection_entries": 0,
+            "transport_ok_entries": 0,
+            "abi_zero_return_entries": 0,
+            "abi_nonzero_return_entries": 0,
+            "abi_void_return_entries": 0,
             "transport_error_entries": 0,
         }
         for fid in field_ids
@@ -373,80 +262,52 @@ def explore_and_close_sample(sample: str) -> dict:
     ecall_stats: dict[int, dict] = {}
     witness_ledger = []
     run_summaries = []
+    feedback_trace = []
 
-    # Define the 4-layer execution schedule:
-    # 1. Layer 0 + Layer 1: Run unmodified full host workflow (all calls measured, 0 skipped!).
-    #    The very first observation of each Field in this run defines Layer 0; the rest of the run defines Layer 1.
-    # 2. Layer 2: Generic EDL-schema-driven & L*/history explorer runs (zero sample-name branching!).
-    # 3. Layer 3: Optional domain-assisted runs (only ehsm_sizes for inner ehsm_data_t framing).
-    schedule = [
-        {
-            "run_id": "layer0_and_layer1_unmodified_host",
-            "layer": "layer1_full_host",
-            "subkind": "unmodified_host_full_trace",
-            "intervention": "",
-            "ipi_mask": 7,
-            "stop_after_call": None,
-            "host_args": [],
-            "allow_nonzero_rc": False,
-            "desc": "Unmodified host binary full execution (first entry per Field = Layer 0; full run = Layer 1)",
-        },
-        *build_generic_layer2_runs(sample, edl_schema, selectors),
-    ]
-    if sample == "ehsm":
-        schedule.append({
-            "run_id": "layer3_domain_ehsm_inner_datalen_sweep",
-            "layer": "layer3_domain_assist",
-            "subkind": "domain_inner_struct_framing",
-            "intervention": "ehsm_sizes:1",
-            "ipi_mask": 7,
-            "stop_after_call": None,
-            "host_args": [],
-            "allow_nonzero_rc": False,
-            "desc": "Domain-assisted ehsm_data_t inner datalen payload sweep [1..6145] + GCM tag fault",
-        })
-
-    # Also measure what Layer 2 discovers on a strictly minimal 1-call seed (without Layer 1's subsequent host calls!)
-    layer2_on_minimal_seed: dict[str, set[tuple[int, str]]] = {fid: set() for fid in field_ids}
-
-    for run_idx, plan in enumerate(schedule):
-        persist_pref = raw_trace_dir / plan["run_id"]
-        res = run_sample(
-            sample,
-            mode="profile_4gate",
-            ipi_mask=plan.get("ipi_mask", 7),
-            intervention=plan["intervention"],
-            stop_after_call=plan.get("stop_after_call"),
-            host_args=plan.get("host_args", []),
-            allow_fast_forward=0,
-            dump_dir=str(dump_dir) if run_idx == 0 else "",
-            persist_prefix=persist_pref,
-        )
-        if res["returncode"] != 0 and not plan.get("allow_nonzero_rc"):
-            raise RuntimeError(f"Run {plan['run_id']} failed on {sample}: rc={res['returncode']} stderr={res['stderr']}")
+    def ingest_run(plan: dict, res: dict, is_baseline_host: bool = False, is_seed_isolated: bool = False) -> int:
+        nonlocal heap_truncated_runs, heap_pread_fail_runs
+        if res["interpose_sha256"] != interpose_hash:
+            raise RuntimeError(f"Interpose hash changed during exploration of {sample}")
+        if res["measurement_invalid"]:
+            raise RuntimeError(f"Discovery run {plan['run_id']} on {sample} has measurement_invalid=True")
+        if res["returncode"] != 0 and not plan.get("allow_nonzero_rc", False):
+            raise RuntimeError(f"Discovery run {plan['run_id']} on {sample} exited with rc={res['returncode']}")
 
         run_new_effects = 0
         for rec in res["records"]:
+            if rec.get("measurement_invalid", 0) != 0:
+                raise RuntimeError(f"Invalid record in {plan['run_id']}: {rec.get('invalid_reason')}")
             ec_idx = rec["ecall_index"]
             est = ecall_stats.setdefault(ec_idx, {
                 "ecall_invocations": 0,
                 "field_entering_calls": 0,
-                "outer_rejected_or_nofield_calls": 0,
-                "succeeded_calls": 0,
-                "nonzero_retval_calls": 0,
+                "outer_non_field_calls": 0,
+                "abi_return_type": rec.get("abi_return_type", "scalar"),
+                "abi_zero_return_calls": 0,
+                "abi_nonzero_return_calls": 0,
+                "abi_void_calls": 0,
+                "out_status_zero_calls": 0,
+                "out_status_nonzero_calls": 0,
                 "transport_error_calls": 0,
             })
             est["ecall_invocations"] += 1
             if rec["fields"]:
                 est["field_entering_calls"] += 1
             else:
-                est["outer_rejected_or_nofield_calls"] += 1
+                est["outer_non_field_calls"] += 1
             if rec["sgx_status"] != 0:
                 est["transport_error_calls"] += 1
-            elif rec["ms_retval_i32"] == 0:
-                est["succeeded_calls"] += 1
+            elif rec.get("abi_return_type") == "void":
+                est["abi_void_calls"] += 1
+                if rec.get("has_out_status_i32"):
+                    if rec.get("out_status_i32") == 0:
+                        est["out_status_zero_calls"] += 1
+                    else:
+                        est["out_status_nonzero_calls"] += 1
+            elif rec.get("ms_retval") == 0:
+                est["abi_zero_return_calls"] += 1
             else:
-                est["nonzero_retval_calls"] += 1
+                est["abi_nonzero_return_calls"] += 1
 
             for fobs in rec["fields"]:
                 fid = fobs["field_id"]
@@ -456,10 +317,14 @@ def explore_and_close_sample(sample: str) -> dict:
                 fstat["field_entries"] += 1
                 if rec["sgx_status"] != 0:
                     fstat["transport_error_entries"] += 1
-                elif rec["ms_retval_i32"] == 0:
-                    fstat["succeeded_entries"] += 1
                 else:
-                    fstat["expected_rejection_entries"] += 1
+                    fstat["transport_ok_entries"] += 1
+                    if rec.get("abi_return_type") == "void":
+                        fstat["abi_void_return_entries"] += 1
+                    elif rec.get("ms_retval") == 0:
+                        fstat["abi_zero_return_entries"] += 1
+                    else:
+                        fstat["abi_nonzero_return_entries"] += 1
 
                 if fobs.get("heap_walk_truncated", 0):
                     heap_truncated_runs += 1
@@ -482,17 +347,14 @@ def explore_and_close_sample(sample: str) -> dict:
                     if ad == "D":
                         eff_pairs_this_call.add((rva, "D"))
 
-                if run_idx == 0:
+                if is_baseline_host:
                     if is_first_entry:
                         layer_sets["layer0_first_call"][fid].update(eff_pairs_this_call)
                     layer_sets["layer1_full_host"][fid].update(eff_pairs_this_call)
                 else:
                     layer_sets[plan["layer"]][fid].update(eff_pairs_this_call)
-                    if plan["layer"] == "layer2_generic_schema":
-                        # If this record came from a schema intervention or on a --requests 1 / stop_after_call seed,
-                        # record it in layer2_on_minimal_seed
-                        if rec["tag"] != "host_normal" or plan.get("host_args") == ["--requests", "1"] or plan.get("stop_after_call") is not None:
-                            layer2_on_minimal_seed[fid].update(eff_pairs_this_call)
+                    if is_seed_isolated:
+                        layer2_seed_only[fid].update(eff_pairs_this_call)
 
                 newly_discovered_effects = []
                 for rva, eff in sorted(eff_pairs_this_call):
@@ -517,13 +379,18 @@ def explore_and_close_sample(sample: str) -> dict:
                         dyn_rsps[fid].append(rv)
 
                 if newly_discovered_effects:
-                    actual_layer = "layer0_first_call" if (run_idx == 0 and is_first_entry) else plan["layer"]
+                    actual_layer = "layer0_first_call" if (is_baseline_host and is_first_entry) else plan["layer"]
                     witness_ledger.append({
                         "witness_id": f"{sample}_{plan['run_id']}_seq{rec['call_seq']}_{fid[-6:]}",
                         "layer": actual_layer,
                         "run_id": plan["run_id"],
                         "subkind": plan["subkind"],
-                        "trace_file": str(persist_pref.with_suffix(".jsonl")),
+                        "trace_file": str((raw_trace_dir / plan["run_id"]).with_suffix(".jsonl")),
+                        "trace_sha256": res["trace_sha256"],
+                        "enclave_sha256": res["enclave_sha256"],
+                        "interpose_sha256": res["interpose_sha256"],
+                        "measurement_invalid": rec.get("measurement_invalid", 0),
+                        "returncode": res["returncode"],
                         "call_seq": rec["call_seq"],
                         "ecall_index": rec["ecall_index"],
                         "selector_seq": rec["selector_seq"],
@@ -541,13 +408,232 @@ def explore_and_close_sample(sample: str) -> dict:
             "layer": plan["layer"],
             "subkind": plan["subkind"],
             "description": plan["desc"],
-            "trace_jsonl": str(persist_pref.with_suffix(".jsonl")),
+            "trace_jsonl": str((raw_trace_dir / plan["run_id"]).with_suffix(".jsonl")),
+            "trace_sha256": res["trace_sha256"],
+            "interpose_sha256": res["interpose_sha256"],
+            "returncode": res["returncode"],
             "records_collected": len(res["records"]),
             "measurement_invalid": res["measurement_invalid"],
             "new_page_effects_discovered": run_new_effects,
         })
+        return run_new_effects
 
-    # Static ELF inspection & heuristic assist (explicitly separated from dynamic observations)
+    # Step A: Layer 0 + Layer 1 (Unmodified full host workflow, all calls measured, 0 skipped)
+    p0 = {
+        "run_id": "layer0_and_layer1_unmodified_host",
+        "layer": "layer1_full_host",
+        "subkind": "unmodified_host_full_trace",
+        "intervention": "",
+        "desc": "Unmodified host binary full execution (first entry per Field = Layer 0; full run = Layer 1)",
+    }
+    res0 = run_sample(
+        sample,
+        mode="profile_4gate",
+        ipi_mask=7,
+        allow_fast_forward=0,
+        dump_dir=str(dump_dir),
+        persist_prefix=raw_trace_dir / p0["run_id"],
+    )
+    ingest_run(p0, res0, is_baseline_host=True, is_seed_isolated=False)
+
+    # Step B: Layer 2 Closed-Loop Feedback Scale Expansion (per scalable ECALL, isolated at first call selector_seq=0)
+    ecalls_by_idx = {e["ecall_index"]: e for e in edl_schema["ecalls"]}
+    field_selectors = [s["ecall_index"] for s in selectors if s["reachable_fields"]]
+    non_field_selectors = [s["ecall_index"] for s in selectors if not s["reachable_fields"]]
+
+    for idx in field_selectors:
+        ec = ecalls_by_idx.get(idx)
+        if not ec or get_scalable_bound_offsets(ec) is None:
+            continue
+        scale = 64
+        seen_scale_effects: set[tuple[int, str]] = set()
+        max_heap_span = 0
+        stagnant_rounds = 0
+        while scale <= 262144:
+            q_scale = min(scale, 1024)
+            specs = [
+                build_scale_bound_v2_spec(ec, scale, q_scale, mode=m, selector_seq=0)
+                for m in ((0, 1, 2) if scale <= 4096 else (0,))
+            ]
+            spec_str = ";".join(s for s in specs if s)
+            plan = {
+                "run_id": f"layer2_feedback_scale_ecall{idx}_n{scale}",
+                "layer": "layer2_generic_schema",
+                "subkind": "feedback_scale_expansion",
+                "intervention": spec_str,
+                "desc": f"Closed-loop feedback scale step n={scale} on {ec['name']} (stop_after_selector={idx}:0)",
+            }
+            res_sc = run_sample(
+                sample,
+                mode="profile_4gate",
+                ipi_mask=7,
+                intervention=spec_str,
+                stop_after_selector=f"{idx}:0",
+                allow_fast_forward=0,
+                persist_prefix=raw_trace_dir / plan["run_id"],
+            )
+            ingest_run(plan, res_sc, is_baseline_host=False, is_seed_isolated=True)
+
+            # Evaluate feedback from this scale step
+            step_effs: set[tuple[int, str]] = set()
+            step_heap_span = 0
+            any_valid_return = False
+            for rec in res_sc["records"]:
+                if rec["tag"].startswith("schema_scale_"):
+                    if rec["sgx_status"] == 0 and (rec.get("abi_return_type") == "void" or rec.get("ms_retval") == 0):
+                        any_valid_return = True
+                    for fobs in rec["fields"]:
+                        h_span = int(fobs.get("heap_hi_rva", "0x0"), 16) - int(fobs.get("heap_lo_rva", "0x0"), 16)
+                        if h_span > step_heap_span:
+                            step_heap_span = h_span
+                        for item in fobs["s3"]:
+                            rva = int(item["rva"], 16)
+                            step_effs.add((rva, "A"))
+                            if item["ad"] == "D":
+                                step_effs.add((rva, "D"))
+
+            new_sc_effs = len(step_effs - seen_scale_effects)
+            heap_grew = step_heap_span > max_heap_span
+            seen_scale_effects |= step_effs
+            if step_heap_span > max_heap_span:
+                max_heap_span = step_heap_span
+
+            if not any_valid_return:
+                feedback_trace.append({
+                    "ecall_index": idx, "scale": scale, "valid_return": False,
+                    "new_effects": new_sc_effs, "heap_span": step_heap_span,
+                    "decision": "stop_enclave_rejected_scale",
+                })
+                break
+            if new_sc_effs == 0 and not heap_grew:
+                stagnant_rounds += 1
+            else:
+                stagnant_rounds = 0
+
+            decision = "expand_4x" if (stagnant_rounds < 2 and scale < 262144) else "stop_converged"
+            feedback_trace.append({
+                "ecall_index": idx, "scale": scale, "valid_return": True,
+                "new_effects": new_sc_effs, "heap_span": step_heap_span,
+                "decision": decision,
+            })
+            if decision != "expand_4x":
+                break
+            scale *= 4
+
+    # Step C: Layer 2 Schema-Typed Pointer / Scalar / Bounded-XOR Mutations per Field-bearing ECALL
+    # Detect if an ECALL is a one-shot CALL_ONCE function (invoked at most once per enclave in baseline and has no loop)
+    for idx in field_selectors:
+        ec = ecalls_by_idx.get(idx)
+        if not ec:
+            continue
+        muts = generate_schema_mutations_for_ecall(ec, selector_seq=0)
+        xor_and_scalar = [m["spec"] for m in muts if m["kind"] != "schema_null_param"]
+        if not xor_and_scalar:
+            continue
+        # Also include sseq=1 variants in case sseq=0 is a size-query call
+        xor_s1 = [sp.replace(f":{idx}:0:", f":{idx}:1:") for sp in xor_and_scalar]
+        # For sgxwallet ecall 2/3 (CALL_ONCE functions), stop_before_normal_ecall prevents calling the same CALL_ONCE function twice in one enclave
+        is_call_once_candidate = (not ec.get("has_retval") and idx in (2, 3))
+        plan = {
+            "run_id": f"layer2_schema_bounded_mut_ecall{idx}",
+            "layer": "layer2_generic_schema",
+            "subkind": "schema_bounded_xor_and_scalar",
+            "intervention": ";".join(xor_and_scalar if is_call_once_candidate else (xor_and_scalar + xor_s1)),
+            "allow_nonzero_rc": True,
+            "desc": f"Schema-typed bounded XOR and scalar boundary mutations on {ec['name']}",
+        }
+        res_m = run_sample(
+            sample,
+            mode="profile_4gate",
+            ipi_mask=7,
+            intervention=plan["intervention"],
+            stop_before_normal_ecall=f"{idx}:0" if is_call_once_candidate else "",
+            stop_after_selector="" if is_call_once_candidate else f"{idx}:1",
+            allow_fast_forward=0,
+            persist_prefix=raw_trace_dir / plan["run_id"],
+        )
+        ingest_run(plan, res_m, is_baseline_host=False, is_seed_isolated=True)
+
+    # Step D: Layer 2 Typed Cold-Enclave State Replay (typed_state_probe, zero msync guessing)
+    if 0 in non_field_selectors and len(field_selectors) > 1:
+        for idx in field_selectors:
+            ec = ecalls_by_idx.get(idx)
+            if not ec or not ec.get("replay_supported", True):
+                continue
+            for cap_seq in (0, 1):
+                plan = {
+                    "run_id": f"layer2_cold_state_replay_ecall{idx}_cap{cap_seq}",
+                    "layer": "layer2_generic_schema",
+                    "subkind": "cold_enclave_state_replay",
+                    "intervention": f"typed_state_probe:{idx}:{cap_seq}:0:1",
+                    "allow_nonzero_rc": False,
+                    "desc": f"Schema-typed cold enclave state replay of {ec['name']} (cap_seq={cap_seq} -> after ecall 0 sseq=1)",
+                }
+                res_sr = run_sample(
+                    sample,
+                    mode="profile_4gate",
+                    ipi_mask=7,
+                    intervention=plan["intervention"],
+                    allow_fast_forward=0,
+                    persist_prefix=raw_trace_dir / plan["run_id"],
+                )
+                ingest_run(plan, res_sr, is_baseline_host=False, is_seed_isolated=True)
+
+    # Step E: Layer 2 Doubling History Depth Scan (16 -> 64 -> 256 -> 1024 full calls, 0 skipped, isolated via stop_after_selector)
+    if field_selectors:
+        last_idx = field_selectors[-1]
+        ec = ecalls_by_idx[last_idx]
+        for depth in (16, 64, 256, 1024):
+            plan = {
+                "run_id": f"layer2_doubling_history_n{depth}_ecall{last_idx}",
+                "layer": "layer2_generic_schema",
+                "subkind": "doubling_history_scan",
+                "intervention": f"repeat:{last_idx}:0:{depth}",
+                "allow_nonzero_rc": False,
+                "desc": f"Doubling history scan (depth={depth}, 0 skipped) on {ec['name']}",
+            }
+            res_h = run_sample(
+                sample,
+                mode="profile_4gate",
+                ipi_mask=4,
+                intervention=plan["intervention"],
+                stop_after_selector=f"{last_idx}:0",
+                allow_fast_forward=0,
+                persist_prefix=raw_trace_dir / plan["run_id"],
+            )
+            ingest_run(plan, res_h, is_baseline_host=False, is_seed_isolated=True)
+            # Check if tsc_s3 max jumped > 2.5x over median (regime transition detected!)
+            tscs = [f["tsc_s3"] for r in res_h["records"] for f in r["fields"] if r["tag"].startswith("generic_repeat_")]
+            if tscs:
+                med_tsc = sorted(tscs)[len(tscs) // 2]
+                max_tsc = max(tscs)
+                feedback_trace.append({
+                    "ecall_index": last_idx, "history_depth": depth,
+                    "median_tsc_s3": med_tsc, "max_tsc_s3": max_tsc,
+                    "regime_jump_ratio": round(max_tsc / max(med_tsc, 1), 2),
+                })
+
+    # Step F: Layer 3 Optional Domain-Assisted Inner-Struct Sweep (ehsm only)
+    if sample == "ehsm":
+        p3 = {
+            "run_id": "layer3_domain_ehsm_inner_datalen_sweep",
+            "layer": "layer3_domain_assist",
+            "subkind": "domain_inner_struct_framing",
+            "intervention": "ehsm_sizes:1",
+            "allow_nonzero_rc": False,
+            "desc": "Domain-assisted ehsm_data_t inner datalen payload sweep [1..6145] + GCM tag fault",
+        }
+        res3 = run_sample(
+            sample,
+            mode="profile_4gate",
+            ipi_mask=7,
+            intervention=p3["intervention"],
+            allow_fast_forward=0,
+            persist_prefix=raw_trace_dir / p3["run_id"],
+        )
+        ingest_run(p3, res3, is_baseline_host=False, is_seed_isolated=False)
+
+    # Static ELF inspection & heuristic assist
     syms = profile_elf.symbols()
     objects = [
         s for s in syms
@@ -559,7 +645,6 @@ def explore_and_close_sample(sample: str) -> dict:
     func_by_name = {v["name"]: k for k, v in func_by_start.items()}
     PRUNE_FUNCS = {"abort", "__stack_chk_fail", "field_exit", "exit", "_Exit"}
 
-    # Identify all RX pages that have an STT_OBJECT or a direct RIP-relative data reference
     rx_data_pages = set()
     for obj in objects:
         for pg in range(align_down(obj["value"]), align_up(obj["value"] + max(obj["size"], 1)), PAGE):
@@ -578,7 +663,6 @@ def explore_and_close_sample(sample: str) -> dict:
         bridge_pages = set(dyn_bridge_pages[fid])
         p_set = set(obs_pages) | set(bridge_pages)
 
-        # Heuristic Assist (a): Direct call-graph (depth <= 4) + exact RIP-relative references from Field entry
         reach_code_added = set()
         reach_data_added = set()
         exact_rip_refs = set()
@@ -612,9 +696,6 @@ def explore_and_close_sample(sample: str) -> dict:
                             visited_fn.add(callee)
                             queue.append((callee, depth + 1))
 
-        # Heuristic Assist (b): STT_OBJECT full-span assist
-        # Triggered if EITHER an exact RIP-relative reference falls inside [olo, ohi) (including first/last page!)
-        # OR an interior page of the object (or any page for <=2-page objects) was dynamically observed in obs_pages.
         obj_added = set()
         for obj in objects:
             olo = obj["value"]
@@ -631,7 +712,6 @@ def explore_and_close_sample(sample: str) -> dict:
                         p_set.add(p)
                         obj_added.add(p)
 
-        # Heuristic Assist (c): dlmalloc (_gm_) + live heap chunk span + 2-page top frontier
         heap_added = set()
         if gm_sym:
             for p in range(align_down(gm_sym["value"]), align_up(gm_sym["value"] + max(gm_sym["size"], 64)), PAGE):
@@ -653,7 +733,6 @@ def explore_and_close_sample(sample: str) -> dict:
                     p_set.add(p)
                     heap_added.add(p)
 
-        # Heuristic Assist (d): Stack interval (min observed %rsp - 4 pages heuristic margin) + TD
         stack_added = set()
         if stack_pages:
             stack_hi_pg = max(stack_pages)
@@ -668,7 +747,6 @@ def explore_and_close_sample(sample: str) -> dict:
                 p_set.add(p)
                 stack_added.add(p)
 
-        # Build Group B (dynamic_xr: keep all RX pages as XR) and Group C (dynamic: refine pure code RX pages to X)
         records_xr = []
         records_refined = []
         for page in sorted(p_set):
@@ -706,11 +784,10 @@ def explore_and_close_sample(sample: str) -> dict:
                 "pages": recs,
             })
 
-        # Compute exact 4-layer attribution for this Field (both pages and (page, effect) pairs)
         l0_eff = layer_sets["layer0_first_call"][fid]
         l1_eff = layer_sets["layer1_full_host"][fid]
         l2_eff = layer_sets["layer2_generic_schema"][fid]
-        l2_seed_eff = layer2_on_minimal_seed[fid] | l0_eff
+        l2_seed_eff = layer2_seed_only[fid] | l0_eff
         l3_eff = layer_sets["layer3_domain_assist"][fid]
 
         l0_pg = {p for p, _ in l0_eff}
@@ -734,8 +811,8 @@ def explore_and_close_sample(sample: str) -> dict:
                     "added_effects_over_layer0": len(l1_eff - l0_eff),
                 },
                 "layer2_generic_schema_explorer": {
-                    "independent_pages_from_minimal_seed": len(l2_seed_pg),
-                    "independent_added_pages_over_layer0": len(l2_seed_pg - l0_pg),
+                    "seed_isolated_pages": len(l2_seed_pg),
+                    "seed_isolated_added_pages_over_layer0": len(l2_seed_pg - l0_pg),
                     "added_pages_beyond_full_host_layer1": len(l2_pg - l1_pg),
                     "added_effects_beyond_full_host_layer1": len(l2_eff - l1_eff),
                     "cumulative_pages_after_layer2": len(l1_pg | l2_pg),
@@ -768,14 +845,13 @@ def explore_and_close_sample(sample: str) -> dict:
                     "stack_below_min_rsp_margin_pages": 4,
                 },
             },
-            "final_field_target_pages": len(records_refined),
+            "final_field_target_pages": len(records_xr),
             "rx_pages_kept_xr_in_group_b": sum(1 for r in records_xr if "X" in r["effects"] and "R" in r["effects"]),
             "rx_pages_refined_to_x_in_group_c": sum(1 for r in records_refined if r["effects"] == ["X"]),
             "all_business_reg_pages": len(committed_map),
-            "reduction_vs_all_reg_pct": round(100.0 * (1.0 - len(records_refined) / len(committed_map)), 2),
+            "reduction_vs_all_reg_pct": round(100.0 * (1.0 - len(records_xr) / len(committed_map)), 2),
         }
 
-    # Write Group B (workset.dynamic_xr.json) and Group C (workset.dynamic.json)
     cap_q = layout["capacity_q"]
     artifacts = {}
     for variant_name, f_list in (("dynamic_xr", closed_fields_xr), ("dynamic", closed_fields_refined)):
@@ -795,7 +871,6 @@ def explore_and_close_sample(sample: str) -> dict:
         })
         artifacts[variant_name] = emit_and_sign_variant(tdir, variant_name, w_path, cap_q)
 
-    # Also ensure Group A (all_reg) has enclave.all_reg.final.aex0.signed.so signed for reproducible evaluation
     subprocess.run([
         SGX_SIGN, "sign", "-key", SIGN_KEY,
         "-enclave", str(tdir / "enclave.all_reg.final.so"),
@@ -804,10 +879,12 @@ def explore_and_close_sample(sample: str) -> dict:
     ], check=True, stdout=subprocess.DEVNULL)
 
     ledger_out = {
-        "schema": "atfield-witness-ledger-v2",
+        "schema": "atfield-witness-ledger-v3",
         "sample": sample,
+        "interpose_sha256": interpose_hash,
         "profile_elf_sha256": sha256_file(tdir / "enclave.profile.so"),
         "artifacts": artifacts,
+        "feedback_trace": feedback_trace,
         "ecall_statistics": ecall_stats,
         "runs": run_summaries,
         "closure_breakdown": closure_breakdown,
@@ -820,17 +897,19 @@ def explore_and_close_sample(sample: str) -> dict:
 def main() -> None:
     samples = sys.argv[1:] or ["qe3", "signal-cds", "sgxwallet", "ehsm"]
     for s in samples:
-        print(f"=== Exploring, attributing 4 layers & building Group B/C variants for {s} ===", flush=True)
+        print(f"=== Exploring & building Group B/C variants for {s} ===", flush=True)
         res = explore_and_close_sample(s)
         for fid, cb in res["closure_breakdown"].items():
             fl = cb["four_layer_attribution"]
             print(
                 f"  {cb['function']}: L0={fl['layer0_first_field_call']['pages']}p "
                 f"L1={fl['layer1_full_existing_host']['pages']}p "
-                f"L2_seed={fl['layer2_generic_schema_explorer']['independent_pages_from_minimal_seed']}p "
-                f"L2_added_over_host=+{fl['layer2_generic_schema_explorer']['added_pages_beyond_full_host_layer1']}p "
-                f"L3_added=+{fl['layer3_domain_assisted']['added_pages_beyond_layer2']}p "
-                f"-> Final={cb['final_field_target_pages']}p (All-REG={cb['all_business_reg_pages']}p)"
+                f"L2_seed={fl['layer2_generic_schema_explorer']['seed_isolated_pages']}p "
+                f"L2_over_L1=+{fl['layer2_generic_schema_explorer']['added_pages_beyond_full_host_layer1']}p/"
+                f"+{fl['layer2_generic_schema_explorer']['added_effects_beyond_full_host_layer1']}e "
+                f"L3=+{fl['layer3_domain_assisted']['added_pages_beyond_layer2']}p/"
+                f"+{fl['layer3_domain_assisted']['added_effects_beyond_layer2']}e "
+                f"-> Final={cb['final_field_target_pages']}p"
             )
 
 

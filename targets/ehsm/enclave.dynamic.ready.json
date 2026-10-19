@@ -1,7 +1,7 @@
 {
   "entry_count": 5,
   "final_elf": "/home/meandssh/islands-sgx/dynamic/targets/ehsm/enclave.dynamic.final.so",
-  "final_elf_sha256": "f8d38605b5d8d320dbdae77525db73cee4ef53517fa04e481a3d2c33796bc02a",
+  "final_elf_sha256": "6cf3a7df6c2bccfa7dc5e58583aec28acb789f02a235e564de0ef75184af2da9",
   "format_version": 3,
   "schema": "atfield-ready-table-v3",
   "selectors": [
@@ -17,7 +17,7 @@
       "ecall_index": 1,
       "first_page": 0,
       "name": "enclave_create_key",
-      "page_count": 359,
+      "page_count": 360,
       "page_rvas": [
         0,
         352256,
@@ -313,6 +313,7 @@
         5509120,
         5513216,
         5517312,
+        5521408,
         9523200,
         9527296,
         9531392,
@@ -385,9 +386,9 @@
     },
     {
       "ecall_index": 2,
-      "first_page": 359,
+      "first_page": 360,
       "name": "enclave_encrypt",
-      "page_count": 362,
+      "page_count": 363,
       "page_rvas": [
         0,
         352256,
@@ -686,6 +687,7 @@
         5521408,
         5525504,
         5529600,
+        5533696,
         9523200,
         9527296,
         9531392,
@@ -758,9 +760,9 @@
     },
     {
       "ecall_index": 3,
-      "first_page": 721,
+      "first_page": 723,
       "name": "enclave_decrypt",
-      "page_count": 363,
+      "page_count": 364,
       "page_rvas": [
         0,
         352256,
@@ -1060,6 +1062,7 @@
         5521408,
         5525504,
         5529600,
+        5533696,
         9523200,
         9527296,
         9531392,
@@ -1132,7 +1135,7 @@
     },
     {
       "ecall_index": 4,
-      "first_page": 1084,
+      "first_page": 1087,
       "name": "enclave_generate_datakey",
       "page_count": 359,
       "page_rvas": [
@@ -1502,9 +1505,9 @@
     }
   ],
   "signed_final_elf": "/home/meandssh/islands-sgx/dynamic/targets/ehsm/enclave.dynamic.final.signed.so",
-  "signed_final_elf_sha256": "7b0864f27cb6f0b1a314e0611c7350eccfa3f4b5c272144727fa57ea45044b26",
-  "table_bytes": 11696,
+  "signed_final_elf_sha256": "f88076bbc71d4d7bbad0d1b5ebc29e760a04f5a7ddc3e70d873485cc3c7271cc",
+  "table_bytes": 11720,
   "table_path": "/home/meandssh/islands-sgx/dynamic/targets/ehsm/enclave.dynamic.ready.bin",
-  "table_sha256": "609ae76543447e4021c7d133b1ea401f827f724211c0fb9085c1dae37c0de721",
-  "total_page_count": 1443
+  "table_sha256": "40d2df45b5cf442c6f6872e9dfc57cc6b845b231d8b5652ab246a022cabcf3ff",
+  "total_page_count": 1446
 }

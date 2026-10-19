@@ -1,19 +1,5 @@
 #!/usr/bin/env python3
-"""Comprehensive P0-P4 Hardware Evaluation for ATField-SGX Dynamic Worksets.
-
-Implements:
-1. Cold vs Warm TLB hardware calibration & 4-gate vs uninstrumented output equivalence check.
-2. Single-page X / R / W retraction positive/negative fault calibration + same-fault-point AEX0 vs AEX1 comparison.
-3. Truly independent Hold-Out challenge suite (disjoint from training inputs/scales/histories),
-   evaluating BOTH:
-     - Strict ReadyTable v3 (ECALL window: EENTER..EEXIT)
-     - Strict FieldTargetPages (Field active window: Gate B..Gate D)
-   and checking whether ANY hold-out call discovers a new (page_rva, effect) outside the closed workset.
-4. Three-group ablation (Group A: all_reg XR, Group B: dynamic_xr XR, Group C: dynamic X-refined)
-   across 5 interleaved rounds, reporting min/median/mean/max distributions for both:
-     - 4-gate diagnostic S2/S3 TSC ticks and S3 A/D re-walk page counts, and
-     - Production AEX1 signed final enclave end-to-end ECALL wall-clock latency (ns).
-"""
+"""Strict Hardware Evaluation for ATField-SGX Dynamic Worksets (Steps 4 & 5)."""
 from __future__ import annotations
 
 import json
@@ -23,37 +9,63 @@ from pathlib import Path
 
 DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
 sys.path.insert(0, str(DYN_ROOT / "tools"))
-from run_native_sgx import run_sample, sha256_file  # noqa: E402
+
+from acceptance_validator import (  # noqa: E402
+    validate_provenance_consistency,
+    validate_run_result,
+)
+from run_native_sgx import run_sample  # noqa: E402
 
 SAMPLES = ["qe3", "signal-cds", "sgxwallet", "ehsm"]
 
-# Disjoint Independent Hold-Out Challenges (none of these parameters/scales/offsets were used in controller.py training):
-INDEPENDENT_HOLDOUT_SUITES = {
+# Hold-out suites:
+# - Uses schema-typed primitives (xor_param, set_scalar, scale_bound_v2, typed_state_probe).
+# - For sgxwallet, ecall 3 (trustedSetSEK) is a CALL_ONCE function; its negative bit-flip test is run in a
+#   dedicated auxiliary hold-out invocation with stop_before_normal_ecall="3:0" so the main 1005-request
+#   hold-out workflow completes all 1005 signatures + SEK reload cleanly with returncode=0 and stdout="PASS".
+HOLDOUT_SUITES = {
     "qe3": {
-        "intervention": "xor_buf:0:0:8:3:90;xor_buf:0:0:8:11:165;xor_buf:0:0:8:19:60;xor_buf:0:0:8:27:195",
+        "intervention": "xor_param:0:0:0:3:90;xor_param:0:0:0:11:165;xor_param:0:0:0:19:60;xor_param:0:0:0:27:195",
         "host_args": [],
+        "min_records": 7,
+        "aux_runs": [],
         "desc": "Disjoint key_id byte positions {3, 11, 19, 27} and masks {0x5a, 0xa5, 0x3c, 0xc3}",
     },
     "signal-cds": {
         "intervention": (
-            "scale_bound:0:0:48:16:8:384:8:8:0:32:8:96:24:8:40:1;"
-            "scale_bound:0:0:48:16:8:3072:8:8:1:32:8:384:24:8:40:1;"
-            "scale_bound:0:0:48:16:8:12288:8:8:2:32:8:512:24:8:40:1;"
-            "scale_bound:0:0:48:16:8:49152:8:8:0:32:8:512:24:8:40:1;"
-            "scale_bound:0:0:48:16:8:131072:8:8:1:32:8:512:24:8:40:1"
+            "scale_bound_v2:0:0:0:16:384:32:96;"
+            "scale_bound_v2:0:0:1:16:3072:32:384;"
+            "scale_bound_v2:0:0:2:16:12288:32:512;"
+            "scale_bound_v2:0:0:0:16:49152:32:512;"
+            "scale_bound_v2:0:0:1:16:131072:32:512"
         ),
         "host_args": [],
-        "desc": "Disjoint intermediate/large record scales {384, 3072, 12288, 49152, 131072} and query counts {96, 384, 512}",
+        "min_records": 11,
+        "aux_runs": [],
+        "desc": "Disjoint record scales {384, 3072, 12288, 49152, 131072} and query counts {96, 384, 512}",
     },
     "sgxwallet": {
-        "intervention": "xor_buf:6:500:32:4:1;xor_buf:6:999:32:6:1;set_u32:6:2:72:37;xor_buf:5:0:16:7:127;xor_buf:3:0:16:45:127",
+        "intervention": "xor_param:6:500:4:0:1;xor_param:6:999:4:0:1;set_scalar:6:2:8:37;xor_param:5:0:2:7:127",
         "host_args": ["--requests", "1005"],
-        "desc": "Full 1005-request host workflow (0 skipped) + disjoint hash mutations at seq 500/999 + disjoint base=37 + byte 7/45 flips",
+        "min_records": 1020,
+        "aux_runs": [
+            {
+                "name": "call_once_set_sek_bitflip",
+                "intervention": "xor_param:3:0:2:45:127",
+                "stop_before_normal_ecall": "3:0",
+                "host_args": ["--requests", "1"],
+                "min_records": 10,
+                "expected_stdout_substr": "",
+            }
+        ],
+        "desc": "Full 1005-request host workflow (0 skipped, rc=0, PASS) + disjoint hash/base=37/byte-7 mutations + isolated CALL_ONCE SetSEK byte-45 probe",
     },
     "ehsm": {
-        "intervention": "state_probe:2:1:0:1:72;state_probe:4:1:0:1:72;xor_buf:3:1:40:9:127",
+        "intervention": "typed_state_probe:2:1:0:1;typed_state_probe:4:1:0:1;xor_param:3:1:4:9:127",
         "host_args": ["--bytes", "1536", "--requests", "3"],
-        "desc": "Disjoint payload size (--bytes 1536 --requests 3) + cold-instance state probes on encrypt & generate_datakey + byte 9 bit-flip",
+        "min_records": 39,
+        "aux_runs": [],
+        "desc": "New input combination (--bytes 1536 --requests 3) + cold-enclave state replay on encrypt & generate_datakey + ciphertext byte-9 bit-flip",
     },
 }
 
@@ -85,9 +97,6 @@ def write_strict_file_from_ready(tdir: Path, variant: str, out_path: Path) -> di
 
 
 def write_strict_file_from_field_targets(tdir: Path, variant: str, out_path: Path) -> dict[int, list[int]]:
-    """Build a strict-ready map containing ONLY FieldTargetPages (+ pretouch code segment & gate helper page)
-    for Gate B..Gate D (ATFIELD_STRICT_MODE=field) verification.
-    """
     ws = json.loads((tdir / f"workset.{variant}.json").read_text())
     layout = ws["layout"]
     p_start = layout["pretouch_start"]
@@ -114,16 +123,22 @@ def write_strict_file_from_field_targets(tdir: Path, variant: str, out_path: Pat
 
 
 def run_xrw_and_aex_calibration(sample: str, tdir: Path, raw_dir: Path) -> dict:
-    """Select 1 known-accessed X page, 1 R page, and 1 W page in the first active Field selector;
-    retract one page at a time under AEX0, verify real fault address/kind is caught, verify restoring it passes with 0 faults,
-    and compare AEX0 vs AEX1 at the exact same single X-page fault point.
+    """Calibrate single-page X, R, W retraction on Group B (dynamic_xr) and verify:
+    1. pte_healed_observed == True on the retracted page,
+    2. confirmed_access_kind matches the expected 'X', 'R', 'W' (via RIP / instruction / post-ERESUME D bit),
+    3. Restoring the page yields 0 faults,
+    4. Same-fault-point AEX0 vs AEX1:
+       - AEX0 retracted X-page run ITSELF completes normally (returncode == 0 and 'PASS' in stdout),
+       - AEX1 retracted X-page run faults at the exact same page_rva with active_flag == 1, confirmed_access_kind == 'X',
+         and terminates on that exact record with sgx_status == 0x1006.
     """
-    ws = json.loads((tdir / "workset.dynamic.json").read_text())
-    rdy = json.loads((tdir / "enclave.dynamic.ready.json").read_text())
-    # Run one profile_4gate baseline to pick pages definitely accessed in S3 on call 0
-    r_base = run_sample(sample, mode="profile_4gate", ipi_mask=7, host_args=["--requests", "1"] if sample == "sgxwallet" else [])
+    ws = json.loads((tdir / "workset.dynamic_xr.json").read_text())
+    rdy = json.loads((tdir / "enclave.dynamic_xr.ready.json").read_text())
+    h_args = ["--requests", "1"] if sample == "sgxwallet" else []
+    r_base = run_sample(sample, mode="profile_4gate", ipi_mask=7, host_args=h_args)
     first_f_rec = next(rec for rec in r_base["records"] if rec["fields"])
     sel_idx = first_f_rec["ecall_index"]
+
     s3_ad_map = {}
     s3_full_ad_map = {}
     outside_field_rvas = set()
@@ -144,13 +159,11 @@ def run_xrw_and_aex_calibration(sample: str, tdir: Path, raw_dir: Path) -> dict:
         if rva not in outside_field_rvas:
             s3_ad_map[rva] = ad
 
-    # Map page permissions from workset
     page_perm_map = {}
     for f in ws["fields"]:
         for pg in f["pages"]:
             page_perm_map[pg["page_rva"]] = pg
 
-    # Exclude pretouch segment and excluded regions
     p_start = ws["layout"]["pretouch_start"]
     p_end = p_start + ws["layout"]["capacity_q"]
     x_cand = next(
@@ -186,9 +199,13 @@ def run_xrw_and_aex_calibration(sample: str, tdir: Path, raw_dir: Path) -> dict:
 
     full_sel_map = {s["ecall_index"]: set(s["page_rvas"]) for s in rdy["selectors"] if s["page_rvas"]}
     cal_results = {}
-    h_args = ["--requests", "1"] if sample == "sgxwallet" else []
+    drop_runs = {}
 
-    for label, drop_rva in (("X_code_page", x_cand), ("R_rodata_page", r_cand), ("W_data_page", w_cand)):
+    for label, exp_kind, drop_rva in (
+        ("X_code_page", "X", x_cand),
+        ("R_rodata_page", "R", r_cand),
+        ("W_data_page", "W", w_cand),
+    ):
         cal_file = tdir / f"strict_cal_drop_{label}.txt"
         lines = []
         for idx, rvas in sorted(full_sel_map.items()):
@@ -198,34 +215,41 @@ def run_xrw_and_aex_calibration(sample: str, tdir: Path, raw_dir: Path) -> dict:
 
         res_drop = run_sample(
             sample,
-            mode="dynamic_final_aex0",
+            mode="dynamic_xr_final_aex0",
             ipi_mask=0,
             strict_ready_file=str(cal_file),
             strict_mode="ecall",
             host_args=h_args,
             persist_prefix=raw_dir / f"cal_drop_{label}_aex0",
         )
+        drop_runs[label] = res_drop
         matched_events = [
             fe
             for rec in res_drop["records"]
             for fe in rec.get("fault_events", [])
             if int(fe["page_rva"], 16) == drop_rva
         ]
+        first_ev = matched_events[0] if matched_events else None
         cal_results[label] = {
             "retracted_page_rva": hex(drop_rva),
+            "expected_access_kind": exp_kind,
             "target_selector": sel_idx,
-            "fault_caught": len(matched_events) > 0,
+            "pte_healed_observed": bool(first_ev and first_ev.get("pte_healed_observed")),
+            "confirmed_access_kind": first_ev.get("confirmed_access_kind", "none") if first_ev else "none",
+            "access_kind_confirmed_match": bool(first_ev and first_ev.get("confirmed_access_kind") == exp_kind),
             "matched_fault_count": len(matched_events),
-            "first_matched_event": matched_events[0] if matched_events else None,
+            "first_matched_event": first_ev,
+            "aex0_run_completed_cleanly": bool(res_drop["returncode"] == 0 and "PASS" in res_drop["stdout"]),
             "measurement_invalid": res_drop["measurement_invalid"],
+            "interpose_sha256": res_drop["interpose_sha256"],
         }
 
-    # Positive control: restore all pages (full ReadyTable v3) and verify 0 faults
-    full_file = tdir / "strict_ready_dynamic.txt"
-    write_strict_file_from_ready(tdir, "dynamic", full_file)
+    # Positive control: restore all pages (full ReadyTable v3 of Group B dynamic_xr) and verify 0 faults
+    full_file = tdir / "strict_ready_dynamic_xr.txt"
+    write_strict_file_from_ready(tdir, "dynamic_xr", full_file)
     res_restored = run_sample(
         sample,
-        mode="dynamic_final_aex0",
+        mode="dynamic_xr_final_aex0",
         ipi_mask=0,
         strict_ready_file=str(full_file),
         strict_mode="ecall",
@@ -234,88 +258,95 @@ def run_xrw_and_aex_calibration(sample: str, tdir: Path, raw_dir: Path) -> dict:
     )
     restored_faults = sum(r["strict_non_ready_fault_count"] for r in res_restored["records"])
 
-    # Same-fault-point AEX0 vs AEX1 comparison on the retracted X_code_page (guaranteed active_flag == 1 inside Field!)
+    # Same-fault-point AEX0 vs AEX1 comparison on the retracted X_code_page
     x_cal_file = tdir / "strict_cal_drop_X_code_page.txt"
-    res_aex1 = run_sample(
+    res_aex0_x = drop_runs["X_code_page"]
+    res_aex1_x = run_sample(
         sample,
-        mode="dynamic_final",
+        mode="dynamic_xr_final",
         ipi_mask=0,
         strict_ready_file=str(x_cal_file),
         strict_mode="ecall",
         host_args=h_args,
         persist_prefix=raw_dir / "cal_drop_X_code_page_aex1",
     )
-    aex1_events = [
-        fe
-        for rec in res_aex1["records"]
-        for fe in rec.get("fault_events", [])
+    aex1_last_rec = res_aex1_x["records"][-1] if res_aex1_x["records"] else None
+    aex1_matched_on_last = [
+        fe for fe in (aex1_last_rec.get("fault_events", []) if aex1_last_rec else [])
         if int(fe["page_rva"], 16) == x_cand
     ]
-    aex1_crashed_records = [rec for rec in res_aex1["records"] if rec["sgx_status"] == 0x1006]
     same_fault_aex_notify_pass = bool(
-        cal_results["X_code_page"]["fault_caught"]
+        cal_results["X_code_page"]["pte_healed_observed"]
+        and cal_results["X_code_page"]["access_kind_confirmed_match"]
         and cal_results["X_code_page"]["first_matched_event"]["active_flag"] == 1
-        and len(aex1_events) > 0
-        and aex1_events[0]["active_flag"] == 1
-        and aex1_events[0]["page_rva"] == hex(x_cand)
-        and len(aex1_crashed_records) > 0
-        and res_aex1["returncode"] != 0
-        and not res_aex1["timed_out"]
-        and not res_aex1["measurement_invalid"]
+        and cal_results["X_code_page"]["aex0_run_completed_cleanly"]
+        and aex1_last_rec is not None
+        and aex1_last_rec["sgx_status"] == 0x1006
+        and len(aex1_matched_on_last) > 0
+        and aex1_matched_on_last[0]["active_flag"] == 1
+        and aex1_matched_on_last[0]["page_rva"] == hex(x_cand)
+        and res_aex1_x["returncode"] != 0
+        and not res_aex1_x["timed_out"]
+        and not res_aex1_x["measurement_invalid"]
     )
 
     all_cal_valid = bool(
-        cal_results["X_code_page"]["fault_caught"]
-        and cal_results["R_rodata_page"]["fault_caught"]
-        and cal_results["W_data_page"]["fault_caught"]
+        all(
+            cal_results[k]["pte_healed_observed"]
+            and cal_results[k]["access_kind_confirmed_match"]
+            and cal_results[k]["aex0_run_completed_cleanly"]
+            and not cal_results[k]["measurement_invalid"]
+            for k in ("X_code_page", "R_rodata_page", "W_data_page")
+        )
         and restored_faults == 0
+        and res_restored["returncode"] == 0
+        and "PASS" in res_restored["stdout"]
         and not res_restored["measurement_invalid"]
     )
     return {
         "calibration_valid": all_cal_valid,
         "single_page_retraction_controls": cal_results,
         "restored_positive_control_faults": restored_faults,
+        "restored_interpose_sha256": res_restored["interpose_sha256"],
         "same_fault_point_aex0_vs_aex1": {
             "fault_page_rva": hex(x_cand),
             "aex0_first_event": cal_results["X_code_page"]["first_matched_event"],
-            "aex0_completed_normally": res_restored["returncode"] == 0,
-            "aex1_first_event": aex1_events[0] if aex1_events else None,
-            "aex1_sgx_status_0x1006_observed": len(aex1_crashed_records) > 0,
-            "aex1_host_returncode": res_aex1["returncode"],
-            "verdict": "PASS" if same_fault_aex_notify_pass else "INVALID_OR_FAIL",
+            "aex0_retracted_run_returncode": res_aex0_x["returncode"],
+            "aex0_retracted_run_stdout": res_aex0_x["stdout"],
+            "aex0_retracted_run_completed_normally": cal_results["X_code_page"]["aex0_run_completed_cleanly"],
+            "aex1_terminating_record_seq": aex1_last_rec["call_seq"] if aex1_last_rec else -1,
+            "aex1_terminating_sgx_status": hex(aex1_last_rec["sgx_status"]) if aex1_last_rec else "none",
+            "aex1_fault_event_on_terminating_record": aex1_matched_on_last[0] if aex1_matched_on_last else None,
+            "aex1_host_returncode": res_aex1_x["returncode"],
+            "verdict": "PASS" if same_fault_aex_notify_pass else "FAIL",
         },
     }
 
 
 def run_tlb_and_fixture_checks(sample: str, raw_dir: Path) -> dict:
-    """1. Calibrate Cold TLB (ipi_mask=7) vs Unflushed Warm TLB (ipi_mask=0) on profile_4gate:
-          pages touched in S0/S1 that are re-accessed in S3 only set A/D in S3 if the Gate B/C IPI flushed the TLB!
-       2. Verify business output equivalence between uninstrumented profile_signed and 4-gate profile_4gate.
-    """
     h_args = ["--requests", "1"] if sample == "sgxwallet" else []
     r_cold = run_sample(sample, mode="profile_4gate", ipi_mask=7, host_args=h_args, persist_prefix=raw_dir / "tlb_cal_cold_ipi7")
     r_warm = run_sample(sample, mode="profile_4gate", ipi_mask=0, host_args=h_args, persist_prefix=raw_dir / "tlb_cal_warm_ipi0")
-    r_uninst = run_sample(sample, mode="dynamic_final_aex0", ipi_mask=0, host_args=h_args, persist_prefix=raw_dir / "fixture_uninst_aex0")
+    r_uninst = run_sample(sample, mode="dynamic_xr_final_aex0", ipi_mask=0, host_args=h_args, persist_prefix=raw_dir / "fixture_uninst_aex0")
 
     fc = next(rec["fields"][0] for rec in r_cold["records"] if rec["fields"])
     fw = next(rec["fields"][0] for rec in r_warm["records"] if rec["fields"])
     s01_pages = {x["rva"] for x in fc["s0"] + fc["s1"]}
     cold_s3_pages = {x["rva"] for x in fc["s3"]}
     warm_s3_pages = {x["rva"] for x in fw["s3"]}
-    s01_rewalked_when_cold = len(s01_pages & cold_s3_pages)
-    s01_rewalked_when_warm = len(s01_pages & warm_s3_pages)
 
-    uninst_rets = [(r["ecall_index"], r["sgx_status"], r["ms_retval_i32"]) for r in r_uninst["records"]]
-    gate_rets = [(r["ecall_index"], r["sgx_status"], r["ms_retval_i32"]) for r in r_cold["records"]]
+    uninst_rets = [(r["ecall_index"], r["sgx_status"], r["ms_retval"]) for r in r_uninst["records"]]
+    gate_rets = [(r["ecall_index"], r["sgx_status"], r["ms_retval"]) for r in r_cold["records"]]
 
     return {
         "cold_vs_warm_tlb_calibration": {
             "cold_ipi_verified_mask": fc["ipi_aex_verified_mask"],
             "cold_s3_pages_observed": len(cold_s3_pages),
             "warm_no_ipi_s3_pages_observed": len(warm_s3_pages),
-            "s0_s1_overlap_rewalked_in_s3_when_cold": s01_rewalked_when_cold,
-            "s0_s1_overlap_rewalked_in_s3_when_warm": s01_rewalked_when_warm,
+            "s0_s1_overlap_rewalked_in_s3_when_cold": len(s01_pages & cold_s3_pages),
+            "s0_s1_overlap_rewalked_in_s3_when_warm": len(s01_pages & warm_s3_pages),
             "cold_tlb_proven": bool(fc["ipi_aex_verified_mask"] == 7 and len(cold_s3_pages) > len(warm_s3_pages)),
+            "interpose_sha256": r_cold["interpose_sha256"],
         },
         "four_gate_fixture_equivalence": {
             "fixture_classification": "DIAGNOSTIC_TEST_DATA_ONLY_AEX0",
@@ -335,10 +366,11 @@ def evaluate_sample(sample: str) -> dict:
     raw_dir.mkdir(parents=True, exist_ok=True)
 
     ledger = json.loads((wdir / "witness_ledger.json").read_text())
-    ws_dyn = json.loads((tdir / "workset.dynamic.json").read_text())
+    # Default candidate is Group B (workset.dynamic_xr.json, keeping RX = XR conservatively!)
+    ws_xr = json.loads((tdir / "workset.dynamic_xr.json").read_text())
     closed_target_pages_by_fid = {}
     closed_target_effects_by_fid = {}
-    for f in ws_dyn["fields"]:
+    for f in ws_xr["fields"]:
         fid = f"0x{int(f['id'], 16):016x}" if isinstance(f["id"], str) else f"0x{f['id']:016x}"
         closed_target_pages_by_fid[fid] = {pg["page_rva"] for pg in f["pages"]}
         effs = set()
@@ -349,18 +381,12 @@ def evaluate_sample(sample: str) -> dict:
                 effs.add((rva, "D"))
         closed_target_effects_by_fid[fid] = effs
 
-    # 1. Cold TLB & 4-gate fixture equivalence checks
+    expected_fids = set(closed_target_pages_by_fid.keys())
     tlb_and_fixture = run_tlb_and_fixture_checks(sample, raw_dir)
-
-    # 2. Single-page X/R/W calibration & same-fault-point AEX0 vs AEX1 check
     calibration = run_xrw_and_aex_calibration(sample, tdir, raw_dir)
 
-    # 3. Independent Hold-Out Challenge Suite:
-    #    (a) Run under profile_4gate (ipi_mask=7) to check if ANY hold-out call touches a page or (page, effect)
-    #        outside the frozen closed workset, and collect per-Field hold-out statistics.
-    #    (b) Run under dynamic_4gate with ATFIELD_STRICT_MODE=field (Gate B..Gate D, FieldTargetPages only!).
-    #    (c) Run under dynamic_final_aex0 with ATFIELD_STRICT_MODE=ecall (EENTER..EEXIT, ReadyTable v3).
-    holdout_cfg = INDEPENDENT_HOLDOUT_SUITES[sample]
+    # Hold-out evaluation on default Group B (dynamic_xr)
+    holdout_cfg = HOLDOUT_SUITES[sample]
     res_ho_obs = run_sample(
         sample,
         mode="profile_4gate",
@@ -370,12 +396,45 @@ def evaluate_sample(sample: str) -> dict:
         allow_fast_forward=0,
         persist_prefix=raw_dir / "holdout_profile_4gate",
     )
+    val_ho_obs = validate_run_result(
+        res_ho_obs,
+        expected_returncode=0,
+        expected_stdout_substr="PASS",
+        expected_min_records=holdout_cfg["min_records"],
+        expected_field_ids=expected_fids,
+        require_ipi_mask=7,
+        closed_workset_effects=closed_target_effects_by_fid,
+    )
 
-    strict_field_file = tdir / "strict_field_targets_dynamic.txt"
-    write_strict_file_from_field_targets(tdir, "dynamic", strict_field_file)
+    aux_obs_records = []
+    aux_validations = []
+    for aux in holdout_cfg.get("aux_runs", []):
+        res_aux = run_sample(
+            sample,
+            mode="profile_4gate",
+            ipi_mask=7,
+            intervention=aux["intervention"],
+            stop_before_normal_ecall=aux.get("stop_before_normal_ecall", ""),
+            host_args=aux.get("host_args", []),
+            allow_fast_forward=0,
+            persist_prefix=raw_dir / f"holdout_aux_{aux['name']}",
+        )
+        v_aux = validate_run_result(
+            res_aux,
+            expected_returncode=0,
+            expected_stdout_substr=aux.get("expected_stdout_substr", ""),
+            expected_min_records=aux["min_records"],
+            require_ipi_mask=7,
+            closed_workset_effects=closed_target_effects_by_fid,
+        )
+        aux_validations.append({"name": aux["name"], "validation": v_aux, "interpose_sha256": res_aux["interpose_sha256"]})
+        aux_obs_records.extend(res_aux["records"])
+
+    strict_field_file = tdir / "strict_field_targets_dynamic_xr.txt"
+    write_strict_file_from_field_targets(tdir, "dynamic_xr", strict_field_file)
     res_ho_strict_field = run_sample(
         sample,
-        mode="dynamic_4gate",
+        mode="dynamic_xr_4gate",
         ipi_mask=3,
         intervention=holdout_cfg["intervention"],
         strict_ready_file=str(strict_field_file),
@@ -384,12 +443,20 @@ def evaluate_sample(sample: str) -> dict:
         allow_fast_forward=0,
         persist_prefix=raw_dir / "holdout_strict_field_window",
     )
+    val_ho_strict_field = validate_run_result(
+        res_ho_strict_field,
+        expected_returncode=0,
+        expected_stdout_substr="PASS",
+        expected_min_records=holdout_cfg["min_records"],
+        expected_field_ids=expected_fids,
+        require_zero_strict_faults=True,
+    )
 
-    strict_ecall_file = tdir / "strict_ready_dynamic.txt"
-    write_strict_file_from_ready(tdir, "dynamic", strict_ecall_file)
+    strict_ecall_file = tdir / "strict_ready_dynamic_xr.txt"
+    write_strict_file_from_ready(tdir, "dynamic_xr", strict_ecall_file)
     res_ho_strict_ecall = run_sample(
         sample,
-        mode="dynamic_final_aex0",
+        mode="dynamic_xr_final_aex0",
         ipi_mask=0,
         intervention=holdout_cfg["intervention"],
         strict_ready_file=str(strict_ecall_file),
@@ -398,21 +465,41 @@ def evaluate_sample(sample: str) -> dict:
         allow_fast_forward=0,
         persist_prefix=raw_dir / "holdout_strict_ecall_readytable",
     )
+    val_ho_strict_ecall = validate_run_result(
+        res_ho_strict_ecall,
+        expected_returncode=0,
+        expected_stdout_substr="PASS",
+        expected_min_records=holdout_cfg["min_records"],
+        require_zero_strict_faults=True,
+    )
 
-    per_field_holdout = {}
-    for fid in closed_target_pages_by_fid:
-        per_field_holdout[fid] = {
+    prov_check = validate_provenance_consistency(
+        ledger,
+        [
+            res_ho_obs,
+            res_ho_strict_field,
+            res_ho_strict_ecall,
+            {"interpose_sha256": calibration["restored_interpose_sha256"]},
+            {"interpose_sha256": tlb_and_fixture["cold_vs_warm_tlb_calibration"]["interpose_sha256"]},
+        ],
+    )
+
+    per_field_holdout = {
+        fid: {
             "field_entries": 0,
-            "succeeded_entries": 0,
-            "expected_failure_entries": 0,
+            "transport_ok_entries": 0,
+            "abi_zero_or_void_ok_entries": 0,
+            "abi_nonzero_or_out_err_entries": 0,
             "unexpected_transport_errors": 0,
             "missing_or_invalid_observations": 0,
-            "Observed_holdout_pages": set(),
+            "observed_holdout_pages": set(),
             "unseen_pages_outside_field_target_pages": set(),
             "unseen_effects_outside_field_target_pages": set(),
         }
+        for fid in closed_target_pages_by_fid
+    }
 
-    for rec in res_ho_obs["records"]:
+    for rec in res_ho_obs["records"] + aux_obs_records:
         for fobs in rec["fields"]:
             fid = fobs["field_id"]
             if fid not in per_field_holdout:
@@ -423,15 +510,22 @@ def evaluate_sample(sample: str) -> dict:
                 pf["missing_or_invalid_observations"] += 1
             if rec["sgx_status"] != 0:
                 pf["unexpected_transport_errors"] += 1
-            elif rec["ms_retval_i32"] == 0:
-                pf["succeeded_entries"] += 1
             else:
-                pf["expected_failure_entries"] += 1
+                pf["transport_ok_entries"] += 1
+                if rec.get("abi_return_type") == "void":
+                    if rec.get("has_out_status_i32") and rec.get("out_status_i32") != 0:
+                        pf["abi_nonzero_or_out_err_entries"] += 1
+                    else:
+                        pf["abi_zero_or_void_ok_entries"] += 1
+                elif rec.get("ms_retval") == 0:
+                    pf["abi_zero_or_void_ok_entries"] += 1
+                else:
+                    pf["abi_nonzero_or_out_err_entries"] += 1
 
             for item in fobs["s3"]:
                 rva = int(item["rva"], 16)
                 ad = item["ad"]
-                pf["Observed_holdout_pages"].add(rva)
+                pf["observed_holdout_pages"].add(rva)
                 if rva not in closed_target_pages_by_fid[fid]:
                     pf["unseen_pages_outside_field_target_pages"].add(hex(rva))
                 for eff in (("A", "D") if ad == "D" else ("A",)):
@@ -442,11 +536,12 @@ def evaluate_sample(sample: str) -> dict:
     for fid, pf in per_field_holdout.items():
         per_field_holdout_json[fid] = {
             "field_entries": pf["field_entries"],
-            "succeeded_entries": pf["succeeded_entries"],
-            "expected_failure_entries": pf["expected_failure_entries"],
+            "transport_ok_entries": pf["transport_ok_entries"],
+            "abi_zero_or_void_ok_entries": pf["abi_zero_or_void_ok_entries"],
+            "abi_nonzero_or_out_err_entries": pf["abi_nonzero_or_out_err_entries"],
             "unexpected_transport_errors": pf["unexpected_transport_errors"],
             "missing_or_invalid_observations": pf["missing_or_invalid_observations"],
-            "holdout_observed_pages_count": len(pf["Observed_holdout_pages"]),
+            "holdout_observed_pages_count": len(pf["observed_holdout_pages"]),
             "unseen_pages_outside_target_count": len(pf["unseen_pages_outside_field_target_pages"]),
             "unseen_pages_outside_target": sorted(pf["unseen_pages_outside_field_target_pages"]),
             "unseen_effects_outside_target_count": len(pf["unseen_effects_outside_field_target_pages"]),
@@ -456,14 +551,26 @@ def evaluate_sample(sample: str) -> dict:
     field_window_faults = sum(r["strict_non_ready_fault_count"] for r in res_ho_strict_field["records"])
     ecall_window_faults = sum(r["strict_non_ready_fault_count"] for r in res_ho_strict_ecall["records"])
 
-    # 4. P4: Three-Group Ablation across 5 Interleaved Rounds!
-    #    Group A: all_reg (Full REG XR)
-    #    Group B: dynamic_xr (Reduced page set, keeping RX = XR)
-    #    Group C: dynamic (Reduced page set + pure code RX refined to X-only)
+    # Step 5: Three-Group Ablation across 5 Interleaved Rounds with explicit clean vs interrupt-contaminated separation
     perf_rounds = 5
     perf_h_args = ["--requests", "5"] if sample == "sgxwallet" else []
-    gate_ablation = {g: {fid: {"tsc_s2": [], "tsc_s3": [], "s3_ad_rewalk_pages": [], "s3_in_s2_rewalk_pages": [], "s3_missing_from_s2_pages": []} for fid in closed_target_pages_by_fid} for g in ("groupA_all_reg_xr", "groupB_dynamic_xr", "groupC_dynamic_refined")}
-    prod_aex1_e2e_ns = {g: [] for g in ("groupA_all_reg_xr", "groupB_dynamic_xr", "groupC_dynamic_refined")}
+    groups = ("groupA_all_reg_xr", "groupB_dynamic_xr", "groupC_dynamic_refined")
+    gate_ablation = {
+        g: {
+            fid: {
+                "tsc_s2": [],
+                "tsc_s3": [],
+                "all_s3_rewalk": [],
+                "clean_s3_rewalk": [],
+                "contaminated_s3_rewalk": [],
+                "clean_nonzero_details": [],
+                "s3_missing_from_s2": [],
+            }
+            for fid in closed_target_pages_by_fid
+        }
+        for g in groups
+    }
+    prod_aex1_ecall_sum_ns = {g: [] for g in groups}
 
     group_modes_4gate = [
         ("groupA_all_reg_xr", "all_reg_4gate"),
@@ -493,12 +600,24 @@ def evaluate_sample(sample: str) -> dict:
                         continue
                     s2_set = {x["rva"] for x in fobs["s2"]}
                     s3_set = {x["rva"] for x in fobs["s3"]}
+                    s3_aex = fobs.get("s3_active_aex_count", 0)
                     d = gate_ablation[gname][fid]
                     d["tsc_s2"].append(fobs["tsc_s2"])
                     d["tsc_s3"].append(fobs["tsc_s3"])
-                    d["s3_ad_rewalk_pages"].append(len(s3_set))
-                    d["s3_in_s2_rewalk_pages"].append(len(s3_set & s2_set))
-                    d["s3_missing_from_s2_pages"].append(len(s3_set - s2_set))
+                    d["all_s3_rewalk"].append(len(s3_set))
+                    d["s3_missing_from_s2"].append(len(s3_set - s2_set))
+                    if s3_aex == 0:
+                        d["clean_s3_rewalk"].append(len(s3_set))
+                        if len(s3_set) > 0:
+                            d["clean_nonzero_details"].append({
+                                "round": rnd,
+                                "call_seq": rec["call_seq"],
+                                "s3_pages": sorted(s3_set),
+                                "in_s2": len(s3_set & s2_set),
+                                "missing_from_s2": len(s3_set - s2_set),
+                            })
+                    else:
+                        d["contaminated_s3_rewalk"].append(len(s3_set))
 
         for gname, pmode in group_modes_prod_aex1:
             rp = run_sample(
@@ -509,21 +628,33 @@ def evaluate_sample(sample: str) -> dict:
                 allow_fast_forward=0,
                 persist_prefix=raw_dir / f"ablation_prod_aex1_r{rnd}_{gname}",
             )
-            total_ecall_ns = sum(r["elapsed_ns"] for r in rp["records"])
-            prod_aex1_e2e_ns[gname].append(total_ecall_ns)
+            if rp["returncode"] != 0 or "PASS" not in rp["stdout"]:
+                raise RuntimeError(f"Production AEX1 run failed on {sample} {gname} r{rnd}: rc={rp['returncode']}")
+            prod_aex1_ecall_sum_ns[gname].append(sum(r["elapsed_ns"] for r in rp["records"]))
 
     ablation_summary_by_field = {}
     for fid in closed_target_pages_by_fid:
         ablation_summary_by_field[fid] = {}
-        for gname in ("groupA_all_reg_xr", "groupB_dynamic_xr", "groupC_dynamic_refined"):
+        for gname in groups:
             d = gate_ablation[gname][fid]
+            total_att = len(d["all_s3_rewalk"])
+            clean_cnt = len(d["clean_s3_rewalk"])
+            contam_cnt = len(d["contaminated_s3_rewalk"])
+            clean_zero_cnt = sum(1 for x in d["clean_s3_rewalk"] if x == 0)
+            all_zero_cnt = sum(1 for x in d["all_s3_rewalk"] if x == 0)
             ablation_summary_by_field[fid][gname] = {
-                "observations": len(d["tsc_s2"]),
+                "total_attempts": total_att,
+                "clean_no_aex_count": clean_cnt,
+                "interrupt_aex_contaminated_count": contam_cnt,
+                "clean_zero_rewalk_count": clean_zero_cnt,
+                "all_zero_rewalk_count": all_zero_cnt,
                 "tsc_s2_ticks": dist_summary(d["tsc_s2"]),
                 "tsc_s3_ticks": dist_summary(d["tsc_s3"]),
-                "s3_ad_rewalk_pages": dist_summary(d["s3_ad_rewalk_pages"]),
-                "s3_in_s2_rewalk_pages": dist_summary(d["s3_in_s2_rewalk_pages"]),
-                "s3_missing_from_s2_pages_max": max(d["s3_missing_from_s2_pages"]) if d["s3_missing_from_s2_pages"] else 0,
+                "all_s3_ad_rewalk_pages": dist_summary(d["all_s3_rewalk"]),
+                "clean_s3_ad_rewalk_pages": dist_summary(d["clean_s3_rewalk"]),
+                "contaminated_s3_ad_rewalk_pages": dist_summary(d["contaminated_s3_rewalk"]),
+                "clean_nonzero_rewalk_events": d["clean_nonzero_details"],
+                "s3_missing_from_s2_pages_max": max(d["s3_missing_from_s2"]) if d["s3_missing_from_s2"] else 0,
             }
 
     pretouch_A = json.loads((tdir / "pretouch.all_reg.finalized.json").read_text())
@@ -533,43 +664,54 @@ def evaluate_sample(sample: str) -> dict:
     ready_B = json.loads((tdir / "enclave.dynamic_xr.ready.json").read_text())
     ready_C = json.loads((tdir / "enclave.dynamic.ready.json").read_text())
 
-    strict_verdict = (
-        "PASS"
-        if (
-            calibration["calibration_valid"]
-            and field_window_faults == 0
-            and ecall_window_faults == 0
-            and not res_ho_strict_field["measurement_invalid"]
-            and not res_ho_strict_ecall["measurement_invalid"]
-            and all(v["unseen_pages_outside_target_count"] == 0 for v in per_field_holdout_json.values())
-        )
-        else "INVALID_OR_FAIL"
+    all_validators_pass = bool(
+        calibration["calibration_valid"]
+        and calibration["same_fault_point_aex0_vs_aex1"]["verdict"] == "PASS"
+        and val_ho_obs["status"] == "PASS"
+        and all(av["validation"]["status"] == "PASS" for av in aux_validations)
+        and val_ho_strict_field["status"] == "PASS"
+        and val_ho_strict_ecall["status"] == "PASS"
+        and prov_check["status"] == "PASS"
     )
+    overall_verdict = "PASS" if all_validators_pass else "FAIL_OR_INVALID"
 
     return {
         "sample": sample,
+        "default_candidate_group": "groupB_dynamic_xr (RX pages kept as XR conservatively)",
+        "provenance_consistency": prov_check,
         "tlb_and_fixture_validation": tlb_and_fixture,
         "fault_detector_calibration_and_aex_notify": calibration,
         "independent_holdout_evaluation": {
             "description": holdout_cfg["desc"],
             "intervention": holdout_cfg["intervention"],
             "host_args": holdout_cfg["host_args"],
-            "records_evaluated": len(res_ho_obs["records"]),
+            "main_holdout_returncode": res_ho_obs["returncode"],
+            "main_holdout_stdout": res_ho_obs["stdout"],
+            "records_evaluated": len(res_ho_obs["records"]) + len(aux_obs_records),
+            "validator_main_holdout": val_ho_obs,
+            "validator_aux_holdouts": aux_validations,
+            "validator_strict_field_window": val_ho_strict_field,
+            "validator_strict_ecall_window": val_ho_strict_ecall,
             "per_field_holdout": per_field_holdout_json,
             "strict_field_target_pages_window_gateB_to_gateD": {
-                "mode": "ATFIELD_STRICT_MODE=field (Gate B..Gate D)",
+                "mode": "ATFIELD_STRICT_MODE=field (Gate B..Gate D, Group B dynamic_xr)",
+                "returncode": res_ho_strict_field["returncode"],
+                "stdout": res_ho_strict_field["stdout"],
                 "fault_count": field_window_faults,
                 "measurement_invalid": res_ho_strict_field["measurement_invalid"],
             },
             "strict_readytable_v3_window_ecall": {
-                "mode": "ATFIELD_STRICT_MODE=ecall (EENTER..EEXIT)",
+                "mode": "ATFIELD_STRICT_MODE=ecall (EENTER..EEXIT, Group B dynamic_xr)",
+                "returncode": res_ho_strict_ecall["returncode"],
+                "stdout": res_ho_strict_ecall["stdout"],
                 "fault_count": ecall_window_faults,
                 "measurement_invalid": res_ho_strict_ecall["measurement_invalid"],
             },
-            "overall_holdout_and_strict_verdict": strict_verdict,
+            "overall_holdout_and_strict_verdict": overall_verdict,
         },
         "three_group_ablation": {
             "interleaved_rounds": perf_rounds,
+            "performance_host_args": perf_h_args,
             "code_and_readytable_sizes": {
                 "groupA_all_reg_xr": {
                     "pretouch_code_bytes": pretouch_A["code_bytes"],
@@ -584,9 +726,9 @@ def evaluate_sample(sample: str) -> dict:
                     "readytable_bytes": ready_C["table_bytes"],
                 },
             },
-            "production_aex1_end_to_end_ecall_ns": {
-                g: dist_summary(prod_aex1_e2e_ns[g])
-                for g in ("groupA_all_reg_xr", "groupB_dynamic_xr", "groupC_dynamic_refined")
+            "production_aex1_per_round_ecall_sum_ns": {
+                g: dist_summary(prod_aex1_ecall_sum_ns[g])
+                for g in groups
             },
             "per_field_4gate_diagnostic_ablation": ablation_summary_by_field,
         },
@@ -599,29 +741,19 @@ def main() -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     summary = {}
     for s in SAMPLES:
-        print(f"=== Running P0-P4 Hardware Evaluation for {s} ===", flush=True)
+        print(f"=== Running Strict Hardware Evaluation for {s} ===", flush=True)
         summary[s] = evaluate_sample(s)
         ho = summary[s]["independent_holdout_evaluation"]
         cal = summary[s]["fault_detector_calibration_and_aex_notify"]
+        prov = summary[s]["provenance_consistency"]
         print(
-            f"  [Cal & Hold-Out] cal_valid={cal['calibration_valid']} "
+            f"  [Verdicts] prov={prov['status']} cal_valid={cal['calibration_valid']} "
             f"aex_notify={cal['same_fault_point_aex0_vs_aex1']['verdict']} "
-            f"field_win_faults={ho['strict_field_target_pages_window_gateB_to_gateD']['fault_count']} "
-            f"ecall_win_faults={ho['strict_readytable_v3_window_ecall']['fault_count']} "
-            f"verdict={ho['overall_holdout_and_strict_verdict']}"
+            f"ho_obs={ho['validator_main_holdout']['status']} "
+            f"ho_field={ho['validator_strict_field_window']['status']} "
+            f"ho_ecall={ho['validator_strict_ecall_window']['status']} "
+            f"overall={ho['overall_holdout_and_strict_verdict']}"
         )
-        for fid, cb in summary[s]["closure_breakdown"].items():
-            ab = summary[s]["three_group_ablation"]["per_field_4gate_diagnostic_ablation"][fid]
-            print(
-                f"  [{cb['function']}] target={cb['final_field_target_pages']}/{cb['all_business_reg_pages']} "
-                f"S2_med(A/B/C)={ab['groupA_all_reg_xr']['tsc_s2_ticks']['median']}/"
-                f"{ab['groupB_dynamic_xr']['tsc_s2_ticks']['median']}/"
-                f"{ab['groupC_dynamic_refined']['tsc_s2_ticks']['median']} ticks | "
-                f"S3_rewalk_med(A/B/C)={ab['groupA_all_reg_xr']['s3_ad_rewalk_pages']['median']}/"
-                f"{ab['groupB_dynamic_xr']['s3_ad_rewalk_pages']['median']}/"
-                f"{ab['groupC_dynamic_refined']['s3_ad_rewalk_pages']['median']}"
-            )
-
     (out_dir / "evaluation_results.json").write_text(json.dumps(summary, indent=2) + "\n")
     print(f"Wrote {out_dir / 'evaluation_results.json'}")
 

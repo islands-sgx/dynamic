@@ -4030,6 +4030,20 @@
           "relro": false
         },
         {
+          "data_anchor_rva": 2916352,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2916352,
+          "relro": false
+        },
+        {
           "data_anchor_rva": 7397376,
           "data_width": 1,
           "effects": [
@@ -5673,6 +5687,20 @@
             "HEAP_INIT"
           ],
           "page_rva": 2912256,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2916352,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2916352,
           "relro": false
         },
         {
@@ -7459,6 +7487,20 @@
             "HEAP_INIT"
           ],
           "page_rva": 2912256,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2916352,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2916352,
           "relro": false
         },
         {

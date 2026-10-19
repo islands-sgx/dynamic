@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Parse EDL and edger8r *_u.c bridges to emit compiler-exact ms_*_t marshaling schemas."""
+"""Compiler-exact EDL parser & ms_*_t ABI/bound reflection generator."""
 from __future__ import annotations
 
 import json
@@ -59,36 +59,73 @@ SAMPLES = {
 }
 
 
-def parse_edl_ecalls(edl_text: str) -> list[dict]:
-    clean = re.sub(r"/\*.*?\*/", "", edl_text, flags=re.S)
-    clean = re.sub(r"//[^\n]*", "", clean)
+def strip_comments(text: str) -> str:
+    text = re.sub(r"/\*.*?\*/", "", text, flags=re.S)
+    text = re.sub(r"//.*", "", text)
+    return text
+
+
+def parse_edl_trusted(edl_path: Path) -> list[dict]:
+    raw = strip_comments(edl_path.read_text())
+    m = re.search(r"\btrusted\s*\{(.*?)\}", raw, flags=re.S)
+    if not m:
+        raise ValueError(f"no trusted block in {edl_path}")
+    body = m.group(1)
     ecalls = []
     idx = 0
-    for m in re.finditer(r"\bpublic\s+([^;(]+?)\s+(\w+)\s*\(([^)]*)\)\s*;", clean, re.S):
-        ret_type = " ".join(m.group(1).split())
-        name = m.group(2).strip()
-        raw_params = m.group(3).strip()
+    for stmt in body.split(";"):
+        stmt = " ".join(stmt.strip().split())
+        if not stmt.startswith("public "):
+            continue
+        rest = stmt[len("public "):].strip()
+        fm = re.match(r"^(.*?)(\w+)\s*\((.*)\)$", rest)
+        if not fm:
+            continue
+        ret_type = fm.group(1).strip()
+        fn_name = fm.group(2).strip()
+        args_str = fm.group(3).strip()
         params = []
-        if raw_params and raw_params != "void":
-            parts = re.split(r",(?![^\[]*\])", raw_params)
+        if args_str and args_str != "void":
+            parts = []
+            cur = []
+            depth = 0
+            for ch in args_str:
+                if ch == "[":
+                    depth += 1
+                elif ch == "]":
+                    depth -= 1
+                if ch == "," and depth == 0:
+                    parts.append("".join(cur).strip())
+                    cur = []
+                else:
+                    cur.append(ch)
+            if cur:
+                parts.append("".join(cur).strip())
             for p in parts:
-                p = " ".join(p.strip().split())
-                if not p:
+                attrs = []
+                am = re.match(r"^\[(.*?)\]\s*(.*)$", p)
+                if am:
+                    attrs = [a.strip() for a in am.group(1).split(",") if a.strip()]
+                    decl = am.group(2).strip()
+                else:
+                    decl = p
+                pm = re.match(r"^(.*?)(\w+)$", decl)
+                if not pm:
                     continue
-                attr_m = re.match(r"^\[([^\]]+)\]\s*(.+)$", p)
-                attrs = [a.strip() for a in attr_m.group(1).split(",")] if attr_m else []
-                decl = attr_m.group(2) if attr_m else p
-                nm_m = re.search(r"(\w+)\s*(?:\[\s*\d*\s*\])?$", decl)
-                pname = nm_m.group(1) if nm_m else f"arg{len(params)}"
+                ptype = pm.group(1).strip()
+                pname = pm.group(2).strip()
+                ptr_depth = ptype.count("*")
                 params.append({
                     "name": pname,
-                    "decl": decl,
+                    "type": ptype,
                     "attributes": attrs,
-                    "is_pointer": ("*" in decl) or ("[" in decl),
+                    "is_pointer": ptr_depth > 0,
+                    "ptr_depth": ptr_depth,
+                    "decl": decl,
                 })
         ecalls.append({
             "ecall_index": idx,
-            "name": name,
+            "name": fn_name,
             "return_type": ret_type,
             "params": params,
         })
@@ -98,136 +135,192 @@ def parse_edl_ecalls(edl_text: str) -> list[dict]:
 
 def introspect_u_c(sample: str, cfg: dict, ecalls: list[dict]) -> list[dict]:
     u_c_text = cfg["u_c"].read_text()
-    ms_structs: dict[str, list[str]] = {}
-    for m in re.finditer(r"typedef\s+struct\s+(ms_\w+_t)\s*\{([^}]*)\}\s*\1\s*;", u_c_text, re.S):
-        st_name = m.group(1)
-        body = m.group(2)
+    structs = {}
+    for sm in re.finditer(r"typedef\s+struct\s+ms_(\w+)_t\s*\{(.*?)\}\s*ms_\1_t\s*;", u_c_text, flags=re.S):
+        fn = sm.group(1)
+        sbody = sm.group(2)
         fields = []
-        for line in body.splitlines():
+        for line in sbody.splitlines():
             line = line.strip().rstrip(";")
             if not line:
                 continue
-            fm = re.search(r"(\w+)$", line)
-            if fm:
-                fields.append(fm.group(1))
-        ms_structs[st_name] = fields
+            lm = re.match(r"^(.*?)(\w+)$", line)
+            if lm:
+                fields.append((lm.group(1).strip(), lm.group(2).strip()))
+        structs[fn] = fields
 
     c_lines = [
         "#include <stdio.h>",
         "#include <stddef.h>",
         "#include <stdint.h>",
-        f'#include "{cfg["u_c"].name}"',
+        *[f"#ifndef {m.group(1)}\n#define {m.group(1)} {m.group(2)}\n#endif" for m in re.finditer(r"^\s*#\s*define\s+(\w+)\s+([0-9xXa-fA-F]+)", cfg["edl"].read_text(), flags=re.M)],
+        f'#include "{cfg["u_c"]}"',
+        "sgx_status_t sgx_ecall(const sgx_enclave_id_t eid, const int index, const void *ocall_table, void *ms) { (void)eid; (void)index; (void)ocall_table; (void)ms; return SGX_SUCCESS; }",
+        "sgx_status_t sgx_ocall(const unsigned int index, void *ms) { (void)index; (void)ms; return SGX_SUCCESS; }",
+        "void *sgx_ocalloc(size_t size) { (void)size; return 0; }",
+        "void sgx_ocfree(void) {}",
+        "void ocall_print_string(const char *str) { (void)str; }",
+        "uint64_t oc_realloc(void *optr, size_t osz, size_t nsz) { (void)optr; (void)osz; (void)nsz; return 0; }",
+        "void oc_free(void *optr, size_t sz) { (void)optr; (void)sz; }",
         "int main(void) {",
         '  printf("{\\n");',
     ]
-    items = []
-    for ec in ecalls:
-        st_name = f"ms_{ec['name']}_t"
-        if st_name in ms_structs:
-            items.append((ec["name"], st_name, ms_structs[st_name]))
-    for idx, (ec_name, st_name, flds) in enumerate(items):
-        comma = "," if idx + 1 < len(items) else ""
-        c_lines.append(f'  printf("  \\"{ec_name}\\": {{\\"struct\\": \\"{st_name}\\", \\"size\\": %zu, \\"fields\\": {{", sizeof({st_name}));')
-        for f_idx, f in enumerate(flds):
-            f_comma = "," if f_idx + 1 < len(flds) else ""
+    items = [e for e in ecalls if e["name"] in structs]
+    for i, e in enumerate(items):
+        fn = e["name"]
+        sname = f"ms_{fn}_t"
+        flds = structs[fn]
+        fld_names = {fname for _, fname in flds}
+        c_lines.append(f'  printf("  \\"{fn}\\": {{\\"size\\": %zu, \\"fields\\": {{\\n", sizeof({sname}));')
+        for j, (ftype, fname) in enumerate(flds):
+            comma = "," if j + 1 < len(flds) else ""
+            is_void_ptr = ("void" in ftype and "*" in ftype)
+            deref_expr = "1UL" if is_void_ptr else f"sizeof(*((({sname} *)0)->{fname}))" if "*" in ftype else f"sizeof((({sname} *)0)->{fname})"
             c_lines.append(
-                f'  printf("\\"{f}\\": {{\\"offset\\": %zu, \\"size\\": %zu}}{f_comma}", '
-                f"offsetof({st_name}, {f}), sizeof((({st_name} *)0)->{f}));"
+                f'  printf("    \\"{fname}\\": {{\\"offset\\": %zu, \\"size\\": %zu, \\"elem_size\\": %zu, \\"type\\": \\"{ftype}\\"}}{comma}\\n", '
+                f"offsetof({sname}, {fname}), sizeof((({sname} *)0)->{fname}), (size_t)({deref_expr}));"
             )
-        c_lines.append(f'  printf("}}}}{comma}\\n");')
+        c_lines.append('  printf("  }, \\"param_consts\\": {\\n");')
+        const_exprs = []
+        for pm in e["params"]:
+            for attr in pm.get("attributes", []):
+                mc = re.match(r"^(count|size)\s*=\s*(\w+)$", attr)
+                if mc and f"ms_{mc.group(2)}" not in fld_names:
+                    const_exprs.append((pm["name"], mc.group(1), mc.group(2)))
+        for j, (pname, bkind, expr) in enumerate(const_exprs):
+            comma = "," if j + 1 < len(const_exprs) else ""
+            c_lines.append(
+                f'  printf("    \\"{pname}\\": {{\\"kind\\": \\"{bkind}\\", \\"value\\": %zu}}{comma}\\n", (size_t)({expr}));'
+            )
+        c_lines.append('  printf("  }\\n");')
+        end_comma = "," if i + 1 < len(items) else ""
+        c_lines.append(f'  printf("  }}{end_comma}\\n");')
     c_lines.append('  printf("}\\n");')
     c_lines.append("  return 0;")
     c_lines.append("}")
 
     with tempfile.TemporaryDirectory() as td:
-        c_file = Path(td) / "introspect.c"
-        bin_file = Path(td) / "introspect"
-        c_file.write_text("\n".join(c_lines) + "\n")
-        # Define dummy sgx_ecall / sgx_ocall so we don't even need libsgx_urts.so at link time
-        wrapper = Path(td) / "stubs.c"
-        wrapper.write_text(
-            "int sgx_ecall(unsigned long e, int i, const void *o, void *m){(void)e;(void)i;(void)o;(void)m;return 0;}\n"
-            "int sgx_ecall_switchless(unsigned long e, int i, const void *o, void *m){(void)e;(void)i;(void)o;(void)m;return 0;}\n"
-            "int sgx_ocall(unsigned int i, void *m){(void)i;(void)m;return 0;}\n"
-        )
-        # Stub out any OCALL host implementations referenced in *_u.c ocall table
-        ocall_names = re.findall(r"\(void\*\)(\w+),\s*$", u_c_text, re.M)
-        for oc in set(ocall_names):
-            with wrapper.open("a") as wf:
-                wf.write(f"void {oc}(void){{}}\n")
-        subprocess.run(
-            ["gcc", "-O0", "-w", "-Wl,--unresolved-symbols=ignore-all", f"-I{cfg['u_dir']}", *cfg["inc"], str(c_file), str(wrapper), "-o", str(bin_file)],
-            check=True,
-        )
+        c_file = Path(td) / "probe.c"
+        bin_file = Path(td) / "probe"
+        c_file.write_text("\n".join(c_lines))
+        cmd = ["gcc", "-O0", "-ffunction-sections", "-fdata-sections", "-Wl,--gc-sections", f"-I{cfg['u_dir']}", *cfg["inc"], str(c_file), "-o", str(bin_file)]
+        subprocess.run(cmd, check=True)
         out = subprocess.check_output([str(bin_file)], text=True)
         layout_map = json.loads(out)
 
-    for ec in ecalls:
-        ec["ms_layout"] = layout_map.get(ec["name"])
-    return ecalls
-
-
-
-def enrich_schema_bindings(ecalls: list[dict]) -> list[dict]:
-    TYPE_SIZES = {
-        "uint64_t": 8, "int64_t": 8, "size_t": 8, "unsigned long": 8, "long": 8,
-        "uint32_t": 4, "int32_t": 4, "int": 4, "unsigned int": 4,
-        "uint16_t": 2, "int16_t": 2, "short": 2,
-        "uint8_t": 1, "int8_t": 1, "char": 1, "unsigned char": 1, "void": 1,
-    }
-    for ec in ecalls:
-        ms = ec.get("ms_layout")
+    for e in ecalls:
+        ms = layout_map.get(e["name"])
+        e["ms_layout"] = ms
         if not ms:
+            e["has_retval"] = False
+            e["retval_offset"] = None
+            e["retval_size"] = 0
+            e["replay_supported"] = True
             continue
         flds = ms["fields"]
-        for param in ec["params"]:
+        pconsts = ms.get("param_consts", {})
+        if "ms_retval" in flds and e["return_type"] != "void":
+            e["has_retval"] = True
+            e["retval_offset"] = flds["ms_retval"]["offset"]
+            e["retval_size"] = flds["ms_retval"]["size"]
+        else:
+            e["has_retval"] = False
+            e["retval_offset"] = None
+            e["retval_size"] = 0
+
+        replay_ok = True
+        for param in e["params"]:
             ms_name = f"ms_{param['name']}"
             if ms_name in flds:
                 param["ms_offset"] = flds[ms_name]["offset"]
                 param["ms_size"] = flds[ms_name]["size"]
+                param["elem_size"] = flds[ms_name]["elem_size"]
             attrs = param.get("attributes", [])
-            direction = "in" if any(a == "in" or a.startswith("in=") for a in attrs) else ("out" if any(a == "out" for a in attrs) else "val")
-            if any(a == "in" for a in attrs) and any(a == "out" for a in attrs):
-                direction = "inout"
-            param["direction"] = direction
+            has_in = any(a == "in" or a.startswith("in=") for a in attrs)
+            has_out = any(a == "out" or a.startswith("out=") for a in attrs)
+            param["direction"] = "inout" if (has_in and has_out) else ("in" if has_in else ("out" if has_out else "val"))
             param["is_string"] = any(a == "string" for a in attrs)
-            # Determine base element size for pointer
-            base_decl = re.sub(r"\bconst\b", "", param["decl"]).replace("*", "").strip()
-            base_type = " ".join(base_decl.split()[:-1])
-            param["elem_size"] = TYPE_SIZES.get(base_type, 1)
-            for a in attrs:
-                m_cnt = re.match(r"^(count|size)\s*=\s*(\w+)$", a)
-                if m_cnt:
-                    kind, ref_name = m_cnt.group(1), m_cnt.group(2)
-                    ref_ms = f"ms_{ref_name}"
-                    param["bound_kind"] = kind
-                    param["bound_param"] = ref_name
-                    if ref_ms in flds:
-                        param["bound_ms_offset"] = flds[ref_ms]["offset"]
-                        param["bound_ms_size"] = flds[ref_ms]["size"]
+            param["is_user_check"] = any(a == "user_check" for a in attrs)
+            param["bound_kind"] = None
+            param["bound_param"] = None
+            param["bound_ms_offset"] = None
+            param["bound_ms_size"] = None
+            param["static_count"] = None
+
+            if param["is_pointer"]:
+                for a in attrs:
+                    mc = re.match(r"^(count|size)\s*=\s*(\w+)$", a)
+                    if mc:
+                        kind, ref = mc.group(1), mc.group(2)
+                        ref_ms = f"ms_{ref}"
+                        param["bound_kind"] = kind
+                        param["bound_param"] = ref
+                        if ref_ms in flds:
+                            param["bound_ms_offset"] = flds[ref_ms]["offset"]
+                            param["bound_ms_size"] = flds[ref_ms]["size"]
+                        elif param["name"] in pconsts:
+                            param["static_count"] = pconsts[param["name"]]["value"]
+                if param["bound_kind"] is None and not param["is_string"] and not param["is_user_check"]:
+                    if param["ptr_depth"] == 1 and "void" not in param["type"]:
+                        param["bound_kind"] = "count"
+                        param["static_count"] = 1
+                if param["is_user_check"] or param["ptr_depth"] > 1:
+                    param["param_replay_supported"] = False
+                    replay_ok = False
+                elif not param["is_string"] and param["bound_ms_offset"] is None and param["static_count"] is None:
+                    param["param_replay_supported"] = False
+                    replay_ok = False
+                else:
+                    param["param_replay_supported"] = True
+            else:
+                param["param_replay_supported"] = True
+            # Compute static_byte_len when static_count is known
+            if param["is_pointer"] and param["static_count"] is not None:
+                if param["bound_kind"] == "size":
+                    param["static_byte_len"] = param["static_count"]
+                else:
+                    param["static_byte_len"] = param["static_count"] * param.get("elem_size", 1)
+            else:
+                param["static_byte_len"] = None
+        e["replay_supported"] = replay_ok
     return ecalls
 
 
 def main() -> None:
     summary = {}
     for sample, cfg in SAMPLES.items():
-        ecalls = parse_edl_ecalls(cfg["edl"].read_text())
-        ecalls = enrich_schema_bindings(introspect_u_c(sample, cfg, ecalls))
-        out_path = DYN_ROOT / "targets" / sample / "edl_schema.json"
+        ecalls = parse_edl_trusted(cfg["edl"])
+        ecalls = introspect_u_c(sample, cfg, ecalls)
+        out_dir = DYN_ROOT / "targets" / sample
+        out_dir.mkdir(parents=True, exist_ok=True)
+        schema_path = out_dir / "edl_schema.json"
         payload = {
-            "schema": "atfield-edl-schema-v1",
             "sample": sample,
             "edl_path": str(cfg["edl"]),
-            "untrusted_bridge_c": str(cfg["u_c"]),
+            "u_c_path": str(cfg["u_c"]),
             "ecalls": ecalls,
         }
-        out_path.write_text(json.dumps(payload, indent=2) + "\n")
+        schema_path.write_text(json.dumps(payload, indent=2) + "\n")
         summary[sample] = [
             {
                 "index": e["ecall_index"],
                 "name": e["name"],
+                "return_type": e["return_type"],
+                "has_retval": e["has_retval"],
+                "replay_supported": e["replay_supported"],
                 "ms_size": e["ms_layout"]["size"] if e["ms_layout"] else 0,
-                "fields": list(e["ms_layout"]["fields"].keys()) if e["ms_layout"] else [],
+                "params": [
+                    (
+                        p["name"],
+                        p["direction"],
+                        f"off={p.get('ms_offset')}",
+                        f"elem_sz={p.get('elem_size')}",
+                        f"static_b={p.get('static_byte_len')}",
+                        f"bound={p.get('bound_kind')}:{p.get('bound_ms_offset')}:{p.get('bound_ms_size')}",
+                        f"str={p.get('is_string')}",
+                    )
+                    for p in e["params"]
+                ],
             }
             for e in ecalls
         ]

@@ -1,8 +1,7 @@
 {
-  "schema": "atfield-edl-schema-v1",
   "sample": "qe3",
   "edl_path": "/home/meandssh/islands-sgx/sample/real/qe3/qe3_enclave.edl",
-  "untrusted_bridge_c": "/home/meandssh/islands-sgx/sample/build/real/qe3/anchor/real/qe3/qe3_enclave_edl_untrusted/qe3_enclave_u.c",
+  "u_c_path": "/home/meandssh/islands-sgx/sample/build/real/qe3/anchor/real/qe3/qe3_enclave_edl_untrusted/qe3_enclave_u.c",
   "ecalls": [
     {
       "ecall_index": 0,
@@ -11,55 +10,90 @@
       "params": [
         {
           "name": "key_id",
-          "decl": "const uint8_t *key_id",
+          "type": "const uint8_t *",
           "attributes": [
             "in",
             "size=32"
           ],
           "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "const uint8_t *key_id",
           "ms_offset": 8,
           "ms_size": 8,
+          "elem_size": 1,
           "direction": "in",
           "is_string": false,
-          "elem_size": 1,
+          "is_user_check": false,
           "bound_kind": "size",
-          "bound_param": "32"
+          "bound_param": "32",
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": 32,
+          "param_replay_supported": true,
+          "static_byte_len": 32
         },
         {
           "name": "public_key",
-          "decl": "uint8_t *public_key",
+          "type": "uint8_t *",
           "attributes": [
             "out",
             "size=64"
           ],
           "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "uint8_t *public_key",
           "ms_offset": 16,
           "ms_size": 8,
+          "elem_size": 1,
           "direction": "out",
           "is_string": false,
-          "elem_size": 1,
+          "is_user_check": false,
           "bound_kind": "size",
-          "bound_param": "64"
+          "bound_param": "64",
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": 64,
+          "param_replay_supported": true,
+          "static_byte_len": 64
         }
       ],
       "ms_layout": {
-        "struct": "ms_ecall_get_attestation_key_t",
         "size": 24,
         "fields": {
           "ms_retval": {
             "offset": 0,
-            "size": 4
+            "size": 4,
+            "elem_size": 4,
+            "type": "uint32_t"
           },
           "ms_key_id": {
             "offset": 8,
-            "size": 8
+            "size": 8,
+            "elem_size": 1,
+            "type": "const uint8_t*"
           },
           "ms_public_key": {
             "offset": 16,
-            "size": 8
+            "size": 8,
+            "elem_size": 1,
+            "type": "uint8_t*"
+          }
+        },
+        "param_consts": {
+          "key_id": {
+            "kind": "size",
+            "value": 32
+          },
+          "public_key": {
+            "kind": "size",
+            "value": 64
           }
         }
-      }
+      },
+      "has_retval": true,
+      "retval_offset": 0,
+      "retval_size": 4,
+      "replay_supported": true
     }
   ]
 }

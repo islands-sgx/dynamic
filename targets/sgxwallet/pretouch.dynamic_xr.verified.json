@@ -1314,9 +1314,9 @@
     },
     {
       "begin_rva": 2811246,
-      "end_rva": 2812275,
+      "end_rva": 2812283,
       "field_id": "0xa9d5e11946c68a33",
-      "size": 1029,
+      "size": 1037,
       "symbol": "__atfield_pretouch_12237935061127039539",
       "target_pages": [
         {
@@ -2202,7 +2202,7 @@
             "W"
           ],
           "end_rva": 2812219,
-          "page_rva": 7397376,
+          "page_rva": 2916352,
           "start_rva": 2812211
         },
         {
@@ -2211,7 +2211,7 @@
             "W"
           ],
           "end_rva": 2812227,
-          "page_rva": 7401472,
+          "page_rva": 7397376,
           "start_rva": 2812219
         },
         {
@@ -2220,7 +2220,7 @@
             "W"
           ],
           "end_rva": 2812235,
-          "page_rva": 7405568,
+          "page_rva": 7401472,
           "start_rva": 2812227
         },
         {
@@ -2229,7 +2229,7 @@
             "W"
           ],
           "end_rva": 2812243,
-          "page_rva": 7409664,
+          "page_rva": 7405568,
           "start_rva": 2812235
         },
         {
@@ -2238,7 +2238,7 @@
             "W"
           ],
           "end_rva": 2812251,
-          "page_rva": 7413760,
+          "page_rva": 7409664,
           "start_rva": 2812243
         },
         {
@@ -2247,7 +2247,7 @@
             "W"
           ],
           "end_rva": 2812259,
-          "page_rva": 7417856,
+          "page_rva": 7413760,
           "start_rva": 2812251
         },
         {
@@ -2256,696 +2256,696 @@
             "W"
           ],
           "end_rva": 2812267,
-          "page_rva": 7565312,
+          "page_rva": 7417856,
           "start_rva": 2812259
-        }
-      ]
-    },
-    {
-      "begin_rva": 2812275,
-      "end_rva": 2813241,
-      "field_id": "0x6be0530730e7f5f1",
-      "size": 966,
-      "symbol": "__atfield_pretouch_7773304247191860721",
-      "target_pages": [
-        {
-          "effects": [
-            "R"
-          ],
-          "end_rva": 2812281,
-          "page_rva": 4096,
-          "start_rva": 2812275
-        },
-        {
-          "effects": [
-            "R"
-          ],
-          "end_rva": 2812287,
-          "page_rva": 8192,
-          "start_rva": 2812281
-        },
-        {
-          "effects": [
-            "R"
-          ],
-          "end_rva": 2812293,
-          "page_rva": 12288,
-          "start_rva": 2812287
-        },
-        {
-          "effects": [
-            "R"
-          ],
-          "end_rva": 2812299,
-          "page_rva": 16384,
-          "start_rva": 2812293
-        },
-        {
-          "effects": [
-            "R"
-          ],
-          "end_rva": 2812305,
-          "page_rva": 20480,
-          "start_rva": 2812299
-        },
-        {
-          "effects": [
-            "R"
-          ],
-          "end_rva": 2812311,
-          "page_rva": 24576,
-          "start_rva": 2812305
-        },
-        {
-          "effects": [
-            "R"
-          ],
-          "end_rva": 2812317,
-          "page_rva": 28672,
-          "start_rva": 2812311
-        },
-        {
-          "effects": [
-            "R"
-          ],
-          "end_rva": 2812323,
-          "page_rva": 32768,
-          "start_rva": 2812317
-        },
-        {
-          "effects": [
-            "R"
-          ],
-          "end_rva": 2812329,
-          "page_rva": 36864,
-          "start_rva": 2812323
-        },
-        {
-          "effects": [
-            "R"
-          ],
-          "end_rva": 2812335,
-          "page_rva": 40960,
-          "start_rva": 2812329
-        },
-        {
-          "effects": [
-            "R"
-          ],
-          "end_rva": 2812341,
-          "page_rva": 45056,
-          "start_rva": 2812335
-        },
-        {
-          "effects": [
-            "R"
-          ],
-          "end_rva": 2812347,
-          "page_rva": 49152,
-          "start_rva": 2812341
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812358,
-          "page_rva": 77824,
-          "start_rva": 2812347
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812369,
-          "page_rva": 81920,
-          "start_rva": 2812358
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812380,
-          "page_rva": 86016,
-          "start_rva": 2812369
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812391,
-          "page_rva": 90112,
-          "start_rva": 2812380
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812402,
-          "page_rva": 135168,
-          "start_rva": 2812391
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812413,
-          "page_rva": 139264,
-          "start_rva": 2812402
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812424,
-          "page_rva": 143360,
-          "start_rva": 2812413
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812435,
-          "page_rva": 147456,
-          "start_rva": 2812424
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812446,
-          "page_rva": 163840,
-          "start_rva": 2812435
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812457,
-          "page_rva": 167936,
-          "start_rva": 2812446
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812468,
-          "page_rva": 172032,
-          "start_rva": 2812457
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812479,
-          "page_rva": 176128,
-          "start_rva": 2812468
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812490,
-          "page_rva": 180224,
-          "start_rva": 2812479
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812501,
-          "page_rva": 184320,
-          "start_rva": 2812490
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812512,
-          "page_rva": 188416,
-          "start_rva": 2812501
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812523,
-          "page_rva": 192512,
-          "start_rva": 2812512
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812534,
-          "page_rva": 196608,
-          "start_rva": 2812523
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812545,
-          "page_rva": 200704,
-          "start_rva": 2812534
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812556,
-          "page_rva": 204800,
-          "start_rva": 2812545
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812567,
-          "page_rva": 208896,
-          "start_rva": 2812556
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812578,
-          "page_rva": 212992,
-          "start_rva": 2812567
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812589,
-          "page_rva": 217088,
-          "start_rva": 2812578
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812600,
-          "page_rva": 253952,
-          "start_rva": 2812589
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812611,
-          "page_rva": 258048,
-          "start_rva": 2812600
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812622,
-          "page_rva": 262144,
-          "start_rva": 2812611
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812633,
-          "page_rva": 299008,
-          "start_rva": 2812622
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812644,
-          "page_rva": 319488,
-          "start_rva": 2812633
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812655,
-          "page_rva": 323584,
-          "start_rva": 2812644
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812666,
-          "page_rva": 528384,
-          "start_rva": 2812655
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812677,
-          "page_rva": 532480,
-          "start_rva": 2812666
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812688,
-          "page_rva": 536576,
-          "start_rva": 2812677
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812699,
-          "page_rva": 540672,
-          "start_rva": 2812688
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812710,
-          "page_rva": 544768,
-          "start_rva": 2812699
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812721,
-          "page_rva": 548864,
-          "start_rva": 2812710
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812732,
-          "page_rva": 552960,
-          "start_rva": 2812721
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812743,
-          "page_rva": 557056,
-          "start_rva": 2812732
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812754,
-          "page_rva": 561152,
-          "start_rva": 2812743
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812765,
-          "page_rva": 565248,
-          "start_rva": 2812754
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812776,
-          "page_rva": 569344,
-          "start_rva": 2812765
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812787,
-          "page_rva": 573440,
-          "start_rva": 2812776
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812798,
-          "page_rva": 577536,
-          "start_rva": 2812787
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812809,
-          "page_rva": 581632,
-          "start_rva": 2812798
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812820,
-          "page_rva": 606208,
-          "start_rva": 2812809
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812831,
-          "page_rva": 610304,
-          "start_rva": 2812820
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812842,
-          "page_rva": 614400,
-          "start_rva": 2812831
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812853,
-          "page_rva": 1654784,
-          "start_rva": 2812842
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812864,
-          "page_rva": 1658880,
-          "start_rva": 2812853
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812875,
-          "page_rva": 1765376,
-          "start_rva": 2812864
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812886,
-          "page_rva": 1855488,
-          "start_rva": 2812875
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812897,
-          "page_rva": 1859584,
-          "start_rva": 2812886
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812908,
-          "page_rva": 1871872,
-          "start_rva": 2812897
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812919,
-          "page_rva": 1880064,
-          "start_rva": 2812908
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812930,
-          "page_rva": 1888256,
-          "start_rva": 2812919
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812941,
-          "page_rva": 2543616,
-          "start_rva": 2812930
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812952,
-          "page_rva": 2547712,
-          "start_rva": 2812941
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812963,
-          "page_rva": 2555904,
-          "start_rva": 2812952
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812974,
-          "page_rva": 2560000,
-          "start_rva": 2812963
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812985,
-          "page_rva": 2576384,
-          "start_rva": 2812974
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2812996,
-          "page_rva": 2592768,
-          "start_rva": 2812985
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2813007,
-          "page_rva": 2605056,
-          "start_rva": 2812996
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2813018,
-          "page_rva": 2609152,
-          "start_rva": 2813007
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 2813029,
-          "page_rva": 2613248,
-          "start_rva": 2813018
-        },
-        {
-          "effects": [
-            "R"
-          ],
-          "end_rva": 2813035,
-          "page_rva": 2617344,
-          "start_rva": 2813029
-        },
-        {
-          "effects": [
-            "R"
-          ],
-          "end_rva": 2813041,
-          "page_rva": 2621440,
-          "start_rva": 2813035
         },
         {
           "effects": [
             "R",
             "W"
           ],
+          "end_rva": 2812275,
+          "page_rva": 7565312,
+          "start_rva": 2812267
+        }
+      ]
+    },
+    {
+      "begin_rva": 2812283,
+      "end_rva": 2813257,
+      "field_id": "0x6be0530730e7f5f1",
+      "size": 974,
+      "symbol": "__atfield_pretouch_7773304247191860721",
+      "target_pages": [
+        {
+          "effects": [
+            "R"
+          ],
+          "end_rva": 2812289,
+          "page_rva": 4096,
+          "start_rva": 2812283
+        },
+        {
+          "effects": [
+            "R"
+          ],
+          "end_rva": 2812295,
+          "page_rva": 8192,
+          "start_rva": 2812289
+        },
+        {
+          "effects": [
+            "R"
+          ],
+          "end_rva": 2812301,
+          "page_rva": 12288,
+          "start_rva": 2812295
+        },
+        {
+          "effects": [
+            "R"
+          ],
+          "end_rva": 2812307,
+          "page_rva": 16384,
+          "start_rva": 2812301
+        },
+        {
+          "effects": [
+            "R"
+          ],
+          "end_rva": 2812313,
+          "page_rva": 20480,
+          "start_rva": 2812307
+        },
+        {
+          "effects": [
+            "R"
+          ],
+          "end_rva": 2812319,
+          "page_rva": 24576,
+          "start_rva": 2812313
+        },
+        {
+          "effects": [
+            "R"
+          ],
+          "end_rva": 2812325,
+          "page_rva": 28672,
+          "start_rva": 2812319
+        },
+        {
+          "effects": [
+            "R"
+          ],
+          "end_rva": 2812331,
+          "page_rva": 32768,
+          "start_rva": 2812325
+        },
+        {
+          "effects": [
+            "R"
+          ],
+          "end_rva": 2812337,
+          "page_rva": 36864,
+          "start_rva": 2812331
+        },
+        {
+          "effects": [
+            "R"
+          ],
+          "end_rva": 2812343,
+          "page_rva": 40960,
+          "start_rva": 2812337
+        },
+        {
+          "effects": [
+            "R"
+          ],
+          "end_rva": 2812349,
+          "page_rva": 45056,
+          "start_rva": 2812343
+        },
+        {
+          "effects": [
+            "R"
+          ],
+          "end_rva": 2812355,
+          "page_rva": 49152,
+          "start_rva": 2812349
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812366,
+          "page_rva": 77824,
+          "start_rva": 2812355
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812377,
+          "page_rva": 81920,
+          "start_rva": 2812366
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812388,
+          "page_rva": 86016,
+          "start_rva": 2812377
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812399,
+          "page_rva": 90112,
+          "start_rva": 2812388
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812410,
+          "page_rva": 135168,
+          "start_rva": 2812399
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812421,
+          "page_rva": 139264,
+          "start_rva": 2812410
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812432,
+          "page_rva": 143360,
+          "start_rva": 2812421
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812443,
+          "page_rva": 147456,
+          "start_rva": 2812432
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812454,
+          "page_rva": 163840,
+          "start_rva": 2812443
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812465,
+          "page_rva": 167936,
+          "start_rva": 2812454
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812476,
+          "page_rva": 172032,
+          "start_rva": 2812465
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812487,
+          "page_rva": 176128,
+          "start_rva": 2812476
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812498,
+          "page_rva": 180224,
+          "start_rva": 2812487
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812509,
+          "page_rva": 184320,
+          "start_rva": 2812498
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812520,
+          "page_rva": 188416,
+          "start_rva": 2812509
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812531,
+          "page_rva": 192512,
+          "start_rva": 2812520
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812542,
+          "page_rva": 196608,
+          "start_rva": 2812531
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812553,
+          "page_rva": 200704,
+          "start_rva": 2812542
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812564,
+          "page_rva": 204800,
+          "start_rva": 2812553
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812575,
+          "page_rva": 208896,
+          "start_rva": 2812564
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812586,
+          "page_rva": 212992,
+          "start_rva": 2812575
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812597,
+          "page_rva": 217088,
+          "start_rva": 2812586
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812608,
+          "page_rva": 253952,
+          "start_rva": 2812597
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812619,
+          "page_rva": 258048,
+          "start_rva": 2812608
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812630,
+          "page_rva": 262144,
+          "start_rva": 2812619
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812641,
+          "page_rva": 299008,
+          "start_rva": 2812630
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812652,
+          "page_rva": 319488,
+          "start_rva": 2812641
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812663,
+          "page_rva": 323584,
+          "start_rva": 2812652
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812674,
+          "page_rva": 528384,
+          "start_rva": 2812663
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812685,
+          "page_rva": 532480,
+          "start_rva": 2812674
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812696,
+          "page_rva": 536576,
+          "start_rva": 2812685
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812707,
+          "page_rva": 540672,
+          "start_rva": 2812696
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812718,
+          "page_rva": 544768,
+          "start_rva": 2812707
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812729,
+          "page_rva": 548864,
+          "start_rva": 2812718
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812740,
+          "page_rva": 552960,
+          "start_rva": 2812729
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812751,
+          "page_rva": 557056,
+          "start_rva": 2812740
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812762,
+          "page_rva": 561152,
+          "start_rva": 2812751
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812773,
+          "page_rva": 565248,
+          "start_rva": 2812762
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812784,
+          "page_rva": 569344,
+          "start_rva": 2812773
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812795,
+          "page_rva": 573440,
+          "start_rva": 2812784
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812806,
+          "page_rva": 577536,
+          "start_rva": 2812795
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812817,
+          "page_rva": 581632,
+          "start_rva": 2812806
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812828,
+          "page_rva": 606208,
+          "start_rva": 2812817
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812839,
+          "page_rva": 610304,
+          "start_rva": 2812828
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812850,
+          "page_rva": 614400,
+          "start_rva": 2812839
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812861,
+          "page_rva": 1654784,
+          "start_rva": 2812850
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812872,
+          "page_rva": 1658880,
+          "start_rva": 2812861
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812883,
+          "page_rva": 1765376,
+          "start_rva": 2812872
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812894,
+          "page_rva": 1855488,
+          "start_rva": 2812883
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812905,
+          "page_rva": 1859584,
+          "start_rva": 2812894
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812916,
+          "page_rva": 1871872,
+          "start_rva": 2812905
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812927,
+          "page_rva": 1880064,
+          "start_rva": 2812916
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812938,
+          "page_rva": 1888256,
+          "start_rva": 2812927
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812949,
+          "page_rva": 2543616,
+          "start_rva": 2812938
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812960,
+          "page_rva": 2547712,
+          "start_rva": 2812949
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812971,
+          "page_rva": 2555904,
+          "start_rva": 2812960
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812982,
+          "page_rva": 2560000,
+          "start_rva": 2812971
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2812993,
+          "page_rva": 2576384,
+          "start_rva": 2812982
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2813004,
+          "page_rva": 2592768,
+          "start_rva": 2812993
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2813015,
+          "page_rva": 2605056,
+          "start_rva": 2813004
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2813026,
+          "page_rva": 2609152,
+          "start_rva": 2813015
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 2813037,
+          "page_rva": 2613248,
+          "start_rva": 2813026
+        },
+        {
+          "effects": [
+            "R"
+          ],
+          "end_rva": 2813043,
+          "page_rva": 2617344,
+          "start_rva": 2813037
+        },
+        {
+          "effects": [
+            "R"
+          ],
           "end_rva": 2813049,
-          "page_rva": 2629632,
-          "start_rva": 2813041
+          "page_rva": 2621440,
+          "start_rva": 2813043
         },
         {
           "effects": [
@@ -2953,7 +2953,7 @@
             "W"
           ],
           "end_rva": 2813057,
-          "page_rva": 2637824,
+          "page_rva": 2629632,
           "start_rva": 2813049
         },
         {
@@ -2962,7 +2962,7 @@
             "W"
           ],
           "end_rva": 2813065,
-          "page_rva": 2650112,
+          "page_rva": 2637824,
           "start_rva": 2813057
         },
         {
@@ -2971,7 +2971,7 @@
             "W"
           ],
           "end_rva": 2813073,
-          "page_rva": 2658304,
+          "page_rva": 2650112,
           "start_rva": 2813065
         },
         {
@@ -2980,7 +2980,7 @@
             "W"
           ],
           "end_rva": 2813081,
-          "page_rva": 2662400,
+          "page_rva": 2658304,
           "start_rva": 2813073
         },
         {
@@ -2989,7 +2989,7 @@
             "W"
           ],
           "end_rva": 2813089,
-          "page_rva": 2666496,
+          "page_rva": 2662400,
           "start_rva": 2813081
         },
         {
@@ -2998,7 +2998,7 @@
             "W"
           ],
           "end_rva": 2813097,
-          "page_rva": 2670592,
+          "page_rva": 2666496,
           "start_rva": 2813089
         },
         {
@@ -3007,7 +3007,7 @@
             "W"
           ],
           "end_rva": 2813105,
-          "page_rva": 2674688,
+          "page_rva": 2670592,
           "start_rva": 2813097
         },
         {
@@ -3016,7 +3016,7 @@
             "W"
           ],
           "end_rva": 2813113,
-          "page_rva": 2678784,
+          "page_rva": 2674688,
           "start_rva": 2813105
         },
         {
@@ -3025,7 +3025,7 @@
             "W"
           ],
           "end_rva": 2813121,
-          "page_rva": 2682880,
+          "page_rva": 2678784,
           "start_rva": 2813113
         },
         {
@@ -3034,7 +3034,7 @@
             "W"
           ],
           "end_rva": 2813129,
-          "page_rva": 2756608,
+          "page_rva": 2682880,
           "start_rva": 2813121
         },
         {
@@ -3043,7 +3043,7 @@
             "W"
           ],
           "end_rva": 2813137,
-          "page_rva": 2760704,
+          "page_rva": 2756608,
           "start_rva": 2813129
         },
         {
@@ -3052,7 +3052,7 @@
             "W"
           ],
           "end_rva": 2813145,
-          "page_rva": 2805760,
+          "page_rva": 2760704,
           "start_rva": 2813137
         },
         {
@@ -3061,7 +3061,7 @@
             "W"
           ],
           "end_rva": 2813153,
-          "page_rva": 2899968,
+          "page_rva": 2805760,
           "start_rva": 2813145
         },
         {
@@ -3070,7 +3070,7 @@
             "W"
           ],
           "end_rva": 2813161,
-          "page_rva": 2904064,
+          "page_rva": 2899968,
           "start_rva": 2813153
         },
         {
@@ -3079,7 +3079,7 @@
             "W"
           ],
           "end_rva": 2813169,
-          "page_rva": 2908160,
+          "page_rva": 2904064,
           "start_rva": 2813161
         },
         {
@@ -3088,7 +3088,7 @@
             "W"
           ],
           "end_rva": 2813177,
-          "page_rva": 2912256,
+          "page_rva": 2908160,
           "start_rva": 2813169
         },
         {
@@ -3097,7 +3097,7 @@
             "W"
           ],
           "end_rva": 2813185,
-          "page_rva": 7397376,
+          "page_rva": 2912256,
           "start_rva": 2813177
         },
         {
@@ -3106,7 +3106,7 @@
             "W"
           ],
           "end_rva": 2813193,
-          "page_rva": 7401472,
+          "page_rva": 2916352,
           "start_rva": 2813185
         },
         {
@@ -3115,7 +3115,7 @@
             "W"
           ],
           "end_rva": 2813201,
-          "page_rva": 7405568,
+          "page_rva": 7397376,
           "start_rva": 2813193
         },
         {
@@ -3124,7 +3124,7 @@
             "W"
           ],
           "end_rva": 2813209,
-          "page_rva": 7409664,
+          "page_rva": 7401472,
           "start_rva": 2813201
         },
         {
@@ -3133,7 +3133,7 @@
             "W"
           ],
           "end_rva": 2813217,
-          "page_rva": 7413760,
+          "page_rva": 7405568,
           "start_rva": 2813209
         },
         {
@@ -3142,7 +3142,7 @@
             "W"
           ],
           "end_rva": 2813225,
-          "page_rva": 7417856,
+          "page_rva": 7409664,
           "start_rva": 2813217
         },
         {
@@ -3151,768 +3151,768 @@
             "W"
           ],
           "end_rva": 2813233,
-          "page_rva": 7565312,
+          "page_rva": 7413760,
           "start_rva": 2813225
+        },
+        {
+          "effects": [
+            "R",
+            "W"
+          ],
+          "end_rva": 2813241,
+          "page_rva": 7417856,
+          "start_rva": 2813233
+        },
+        {
+          "effects": [
+            "R",
+            "W"
+          ],
+          "end_rva": 2813249,
+          "page_rva": 7565312,
+          "start_rva": 2813241
         }
       ]
     },
     {
-      "begin_rva": 2813241,
-      "end_rva": 2814292,
+      "begin_rva": 2813257,
+      "end_rva": 2814316,
       "field_id": "0x25c0fd3d7283b2b7",
-      "size": 1051,
+      "size": 1059,
       "symbol": "__atfield_pretouch_2720452615287845559",
       "target_pages": [
         {
           "effects": [
             "R"
           ],
-          "end_rva": 2813247,
+          "end_rva": 2813263,
           "page_rva": 4096,
-          "start_rva": 2813241
+          "start_rva": 2813257
         },
         {
           "effects": [
             "R"
           ],
-          "end_rva": 2813253,
+          "end_rva": 2813269,
           "page_rva": 8192,
-          "start_rva": 2813247
+          "start_rva": 2813263
         },
         {
           "effects": [
             "R"
           ],
-          "end_rva": 2813259,
+          "end_rva": 2813275,
           "page_rva": 12288,
-          "start_rva": 2813253
+          "start_rva": 2813269
         },
         {
           "effects": [
             "R"
           ],
-          "end_rva": 2813265,
+          "end_rva": 2813281,
           "page_rva": 16384,
-          "start_rva": 2813259
+          "start_rva": 2813275
         },
         {
           "effects": [
             "R"
           ],
-          "end_rva": 2813271,
+          "end_rva": 2813287,
           "page_rva": 20480,
-          "start_rva": 2813265
+          "start_rva": 2813281
         },
         {
           "effects": [
             "R"
           ],
-          "end_rva": 2813277,
+          "end_rva": 2813293,
           "page_rva": 24576,
-          "start_rva": 2813271
+          "start_rva": 2813287
         },
         {
           "effects": [
             "R"
           ],
-          "end_rva": 2813283,
+          "end_rva": 2813299,
           "page_rva": 28672,
-          "start_rva": 2813277
+          "start_rva": 2813293
         },
         {
           "effects": [
             "R"
           ],
-          "end_rva": 2813289,
+          "end_rva": 2813305,
           "page_rva": 32768,
-          "start_rva": 2813283
+          "start_rva": 2813299
         },
         {
           "effects": [
             "R"
           ],
-          "end_rva": 2813295,
+          "end_rva": 2813311,
           "page_rva": 36864,
-          "start_rva": 2813289
+          "start_rva": 2813305
         },
         {
           "effects": [
             "R"
           ],
-          "end_rva": 2813301,
+          "end_rva": 2813317,
           "page_rva": 40960,
-          "start_rva": 2813295
+          "start_rva": 2813311
         },
         {
           "effects": [
             "R"
           ],
-          "end_rva": 2813307,
+          "end_rva": 2813323,
           "page_rva": 45056,
-          "start_rva": 2813301
+          "start_rva": 2813317
         },
         {
           "effects": [
             "R"
           ],
-          "end_rva": 2813313,
+          "end_rva": 2813329,
           "page_rva": 49152,
-          "start_rva": 2813307
+          "start_rva": 2813323
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813324,
+          "end_rva": 2813340,
           "page_rva": 77824,
-          "start_rva": 2813313
+          "start_rva": 2813329
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813335,
+          "end_rva": 2813351,
           "page_rva": 81920,
-          "start_rva": 2813324
+          "start_rva": 2813340
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813346,
+          "end_rva": 2813362,
           "page_rva": 86016,
-          "start_rva": 2813335
+          "start_rva": 2813351
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813357,
+          "end_rva": 2813373,
           "page_rva": 90112,
-          "start_rva": 2813346
+          "start_rva": 2813362
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813368,
+          "end_rva": 2813384,
           "page_rva": 135168,
-          "start_rva": 2813357
+          "start_rva": 2813373
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813379,
+          "end_rva": 2813395,
           "page_rva": 139264,
-          "start_rva": 2813368
+          "start_rva": 2813384
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813390,
+          "end_rva": 2813406,
           "page_rva": 143360,
-          "start_rva": 2813379
+          "start_rva": 2813395
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813401,
+          "end_rva": 2813417,
           "page_rva": 147456,
-          "start_rva": 2813390
+          "start_rva": 2813406
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813412,
+          "end_rva": 2813428,
           "page_rva": 163840,
-          "start_rva": 2813401
+          "start_rva": 2813417
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813423,
+          "end_rva": 2813439,
           "page_rva": 167936,
-          "start_rva": 2813412
+          "start_rva": 2813428
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813434,
+          "end_rva": 2813450,
           "page_rva": 172032,
-          "start_rva": 2813423
+          "start_rva": 2813439
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813445,
+          "end_rva": 2813461,
           "page_rva": 176128,
-          "start_rva": 2813434
+          "start_rva": 2813450
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813456,
+          "end_rva": 2813472,
           "page_rva": 180224,
-          "start_rva": 2813445
+          "start_rva": 2813461
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813467,
+          "end_rva": 2813483,
           "page_rva": 184320,
-          "start_rva": 2813456
+          "start_rva": 2813472
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813478,
+          "end_rva": 2813494,
           "page_rva": 188416,
-          "start_rva": 2813467
+          "start_rva": 2813483
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813489,
+          "end_rva": 2813505,
           "page_rva": 192512,
-          "start_rva": 2813478
+          "start_rva": 2813494
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813500,
+          "end_rva": 2813516,
           "page_rva": 196608,
-          "start_rva": 2813489
+          "start_rva": 2813505
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813511,
+          "end_rva": 2813527,
           "page_rva": 200704,
-          "start_rva": 2813500
+          "start_rva": 2813516
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813522,
+          "end_rva": 2813538,
           "page_rva": 204800,
-          "start_rva": 2813511
+          "start_rva": 2813527
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813533,
+          "end_rva": 2813549,
           "page_rva": 208896,
-          "start_rva": 2813522
+          "start_rva": 2813538
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813544,
+          "end_rva": 2813560,
           "page_rva": 212992,
-          "start_rva": 2813533
+          "start_rva": 2813549
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813555,
+          "end_rva": 2813571,
           "page_rva": 217088,
-          "start_rva": 2813544
+          "start_rva": 2813560
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813566,
+          "end_rva": 2813582,
           "page_rva": 225280,
-          "start_rva": 2813555
+          "start_rva": 2813571
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813577,
+          "end_rva": 2813593,
           "page_rva": 229376,
-          "start_rva": 2813566
+          "start_rva": 2813582
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813588,
+          "end_rva": 2813604,
           "page_rva": 233472,
-          "start_rva": 2813577
+          "start_rva": 2813593
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813599,
+          "end_rva": 2813615,
           "page_rva": 237568,
-          "start_rva": 2813588
+          "start_rva": 2813604
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813610,
+          "end_rva": 2813626,
           "page_rva": 241664,
-          "start_rva": 2813599
+          "start_rva": 2813615
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813621,
+          "end_rva": 2813637,
           "page_rva": 245760,
-          "start_rva": 2813610
+          "start_rva": 2813626
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813632,
+          "end_rva": 2813648,
           "page_rva": 249856,
-          "start_rva": 2813621
+          "start_rva": 2813637
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813643,
+          "end_rva": 2813659,
           "page_rva": 253952,
-          "start_rva": 2813632
+          "start_rva": 2813648
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813654,
+          "end_rva": 2813670,
           "page_rva": 258048,
-          "start_rva": 2813643
+          "start_rva": 2813659
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813665,
+          "end_rva": 2813681,
           "page_rva": 262144,
-          "start_rva": 2813654
+          "start_rva": 2813670
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813676,
+          "end_rva": 2813692,
           "page_rva": 299008,
-          "start_rva": 2813665
+          "start_rva": 2813681
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813687,
+          "end_rva": 2813703,
           "page_rva": 319488,
-          "start_rva": 2813676
+          "start_rva": 2813692
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813698,
+          "end_rva": 2813714,
           "page_rva": 323584,
-          "start_rva": 2813687
+          "start_rva": 2813703
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813709,
+          "end_rva": 2813725,
           "page_rva": 528384,
-          "start_rva": 2813698
+          "start_rva": 2813714
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813720,
+          "end_rva": 2813736,
           "page_rva": 532480,
-          "start_rva": 2813709
+          "start_rva": 2813725
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813731,
+          "end_rva": 2813747,
           "page_rva": 536576,
-          "start_rva": 2813720
+          "start_rva": 2813736
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813742,
+          "end_rva": 2813758,
           "page_rva": 540672,
-          "start_rva": 2813731
+          "start_rva": 2813747
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813753,
+          "end_rva": 2813769,
           "page_rva": 544768,
-          "start_rva": 2813742
+          "start_rva": 2813758
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813764,
+          "end_rva": 2813780,
           "page_rva": 548864,
-          "start_rva": 2813753
+          "start_rva": 2813769
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813775,
+          "end_rva": 2813791,
           "page_rva": 552960,
-          "start_rva": 2813764
+          "start_rva": 2813780
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813786,
+          "end_rva": 2813802,
           "page_rva": 557056,
-          "start_rva": 2813775
+          "start_rva": 2813791
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813797,
+          "end_rva": 2813813,
           "page_rva": 561152,
-          "start_rva": 2813786
+          "start_rva": 2813802
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813808,
+          "end_rva": 2813824,
           "page_rva": 565248,
-          "start_rva": 2813797
+          "start_rva": 2813813
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813819,
+          "end_rva": 2813835,
           "page_rva": 569344,
-          "start_rva": 2813808
+          "start_rva": 2813824
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813830,
+          "end_rva": 2813846,
           "page_rva": 573440,
-          "start_rva": 2813819
+          "start_rva": 2813835
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813841,
+          "end_rva": 2813857,
           "page_rva": 577536,
-          "start_rva": 2813830
+          "start_rva": 2813846
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813852,
+          "end_rva": 2813868,
           "page_rva": 581632,
-          "start_rva": 2813841
+          "start_rva": 2813857
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813863,
+          "end_rva": 2813879,
           "page_rva": 606208,
-          "start_rva": 2813852
+          "start_rva": 2813868
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813874,
+          "end_rva": 2813890,
           "page_rva": 610304,
-          "start_rva": 2813863
+          "start_rva": 2813879
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813885,
+          "end_rva": 2813901,
           "page_rva": 614400,
-          "start_rva": 2813874
+          "start_rva": 2813890
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813896,
+          "end_rva": 2813912,
           "page_rva": 1654784,
-          "start_rva": 2813885
+          "start_rva": 2813901
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813907,
+          "end_rva": 2813923,
           "page_rva": 1658880,
-          "start_rva": 2813896
+          "start_rva": 2813912
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813918,
+          "end_rva": 2813934,
           "page_rva": 1765376,
-          "start_rva": 2813907
+          "start_rva": 2813923
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813929,
+          "end_rva": 2813945,
           "page_rva": 1855488,
-          "start_rva": 2813918
+          "start_rva": 2813934
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813940,
+          "end_rva": 2813956,
           "page_rva": 1859584,
-          "start_rva": 2813929
+          "start_rva": 2813945
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813951,
+          "end_rva": 2813967,
           "page_rva": 1871872,
-          "start_rva": 2813940
+          "start_rva": 2813956
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813962,
+          "end_rva": 2813978,
           "page_rva": 1880064,
-          "start_rva": 2813951
+          "start_rva": 2813967
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813973,
+          "end_rva": 2813989,
           "page_rva": 1888256,
-          "start_rva": 2813962
+          "start_rva": 2813978
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813984,
+          "end_rva": 2814000,
           "page_rva": 2543616,
-          "start_rva": 2813973
+          "start_rva": 2813989
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2813995,
+          "end_rva": 2814011,
           "page_rva": 2547712,
-          "start_rva": 2813984
+          "start_rva": 2814000
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2814006,
+          "end_rva": 2814022,
           "page_rva": 2555904,
-          "start_rva": 2813995
+          "start_rva": 2814011
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2814017,
+          "end_rva": 2814033,
           "page_rva": 2560000,
-          "start_rva": 2814006
+          "start_rva": 2814022
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2814028,
+          "end_rva": 2814044,
           "page_rva": 2576384,
-          "start_rva": 2814017
+          "start_rva": 2814033
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2814039,
+          "end_rva": 2814055,
           "page_rva": 2592768,
-          "start_rva": 2814028
+          "start_rva": 2814044
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2814050,
+          "end_rva": 2814066,
           "page_rva": 2605056,
-          "start_rva": 2814039
+          "start_rva": 2814055
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2814061,
+          "end_rva": 2814077,
           "page_rva": 2609152,
-          "start_rva": 2814050
+          "start_rva": 2814066
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 2814072,
+          "end_rva": 2814088,
           "page_rva": 2613248,
-          "start_rva": 2814061
+          "start_rva": 2814077
         },
         {
           "effects": [
             "R"
           ],
-          "end_rva": 2814078,
+          "end_rva": 2814094,
           "page_rva": 2617344,
-          "start_rva": 2814072
+          "start_rva": 2814088
         },
         {
           "effects": [
             "R"
-          ],
-          "end_rva": 2814084,
-          "page_rva": 2621440,
-          "start_rva": 2814078
-        },
-        {
-          "effects": [
-            "R",
-            "W"
-          ],
-          "end_rva": 2814092,
-          "page_rva": 2629632,
-          "start_rva": 2814084
-        },
-        {
-          "effects": [
-            "R",
-            "W"
           ],
           "end_rva": 2814100,
-          "page_rva": 2637824,
-          "start_rva": 2814092
+          "page_rva": 2621440,
+          "start_rva": 2814094
         },
         {
           "effects": [
@@ -3920,7 +3920,7 @@
             "W"
           ],
           "end_rva": 2814108,
-          "page_rva": 2650112,
+          "page_rva": 2629632,
           "start_rva": 2814100
         },
         {
@@ -3929,7 +3929,7 @@
             "W"
           ],
           "end_rva": 2814116,
-          "page_rva": 2658304,
+          "page_rva": 2637824,
           "start_rva": 2814108
         },
         {
@@ -3938,7 +3938,7 @@
             "W"
           ],
           "end_rva": 2814124,
-          "page_rva": 2662400,
+          "page_rva": 2650112,
           "start_rva": 2814116
         },
         {
@@ -3947,7 +3947,7 @@
             "W"
           ],
           "end_rva": 2814132,
-          "page_rva": 2666496,
+          "page_rva": 2658304,
           "start_rva": 2814124
         },
         {
@@ -3956,7 +3956,7 @@
             "W"
           ],
           "end_rva": 2814140,
-          "page_rva": 2670592,
+          "page_rva": 2662400,
           "start_rva": 2814132
         },
         {
@@ -3965,7 +3965,7 @@
             "W"
           ],
           "end_rva": 2814148,
-          "page_rva": 2674688,
+          "page_rva": 2666496,
           "start_rva": 2814140
         },
         {
@@ -3974,7 +3974,7 @@
             "W"
           ],
           "end_rva": 2814156,
-          "page_rva": 2678784,
+          "page_rva": 2670592,
           "start_rva": 2814148
         },
         {
@@ -3983,7 +3983,7 @@
             "W"
           ],
           "end_rva": 2814164,
-          "page_rva": 2682880,
+          "page_rva": 2674688,
           "start_rva": 2814156
         },
         {
@@ -3992,7 +3992,7 @@
             "W"
           ],
           "end_rva": 2814172,
-          "page_rva": 2748416,
+          "page_rva": 2678784,
           "start_rva": 2814164
         },
         {
@@ -4001,7 +4001,7 @@
             "W"
           ],
           "end_rva": 2814180,
-          "page_rva": 2756608,
+          "page_rva": 2682880,
           "start_rva": 2814172
         },
         {
@@ -4010,7 +4010,7 @@
             "W"
           ],
           "end_rva": 2814188,
-          "page_rva": 2760704,
+          "page_rva": 2748416,
           "start_rva": 2814180
         },
         {
@@ -4019,7 +4019,7 @@
             "W"
           ],
           "end_rva": 2814196,
-          "page_rva": 2805760,
+          "page_rva": 2756608,
           "start_rva": 2814188
         },
         {
@@ -4028,7 +4028,7 @@
             "W"
           ],
           "end_rva": 2814204,
-          "page_rva": 2899968,
+          "page_rva": 2760704,
           "start_rva": 2814196
         },
         {
@@ -4037,7 +4037,7 @@
             "W"
           ],
           "end_rva": 2814212,
-          "page_rva": 2904064,
+          "page_rva": 2805760,
           "start_rva": 2814204
         },
         {
@@ -4046,7 +4046,7 @@
             "W"
           ],
           "end_rva": 2814220,
-          "page_rva": 2908160,
+          "page_rva": 2899968,
           "start_rva": 2814212
         },
         {
@@ -4055,7 +4055,7 @@
             "W"
           ],
           "end_rva": 2814228,
-          "page_rva": 2912256,
+          "page_rva": 2904064,
           "start_rva": 2814220
         },
         {
@@ -4064,7 +4064,7 @@
             "W"
           ],
           "end_rva": 2814236,
-          "page_rva": 7397376,
+          "page_rva": 2908160,
           "start_rva": 2814228
         },
         {
@@ -4073,7 +4073,7 @@
             "W"
           ],
           "end_rva": 2814244,
-          "page_rva": 7401472,
+          "page_rva": 2912256,
           "start_rva": 2814236
         },
         {
@@ -4082,7 +4082,7 @@
             "W"
           ],
           "end_rva": 2814252,
-          "page_rva": 7405568,
+          "page_rva": 2916352,
           "start_rva": 2814244
         },
         {
@@ -4091,7 +4091,7 @@
             "W"
           ],
           "end_rva": 2814260,
-          "page_rva": 7409664,
+          "page_rva": 7397376,
           "start_rva": 2814252
         },
         {
@@ -4100,7 +4100,7 @@
             "W"
           ],
           "end_rva": 2814268,
-          "page_rva": 7413760,
+          "page_rva": 7401472,
           "start_rva": 2814260
         },
         {
@@ -4109,7 +4109,7 @@
             "W"
           ],
           "end_rva": 2814276,
-          "page_rva": 7417856,
+          "page_rva": 7405568,
           "start_rva": 2814268
         },
         {
@@ -4118,18 +4118,45 @@
             "W"
           ],
           "end_rva": 2814284,
-          "page_rva": 7565312,
+          "page_rva": 7409664,
           "start_rva": 2814276
+        },
+        {
+          "effects": [
+            "R",
+            "W"
+          ],
+          "end_rva": 2814292,
+          "page_rva": 7413760,
+          "start_rva": 2814284
+        },
+        {
+          "effects": [
+            "R",
+            "W"
+          ],
+          "end_rva": 2814300,
+          "page_rva": 7417856,
+          "start_rva": 2814292
+        },
+        {
+          "effects": [
+            "R",
+            "W"
+          ],
+          "end_rva": 2814308,
+          "page_rva": 7565312,
+          "start_rva": 2814300
         }
       ]
     }
   ],
   "capacity_q": 90112,
-  "code_bytes": 4436,
+  "code_bytes": 4460,
   "final_elf": "/home/meandssh/islands-sgx/dynamic/targets/sgxwallet/enclave.dynamic_xr.final.so",
-  "final_elf_sha256": "9fb50b89626f992824cd135fb8846a428f4aa3ded980e59283be9ac674fe07bd",
+  "final_elf_sha256": "d1041eeee5ebf59f04bcb03c34e58e51208a2af309e759338481d88139c27e07",
   "post_start": 2809856,
   "schema": "atfield-pretouch-final-v1",
   "signed_final_elf": "/home/meandssh/islands-sgx/dynamic/targets/sgxwallet/enclave.dynamic_xr.final.signed.so",
-  "signed_final_elf_sha256": "39687ee860e40c3ec554dda9ed5f1032784928b93530a1f4e2a6e2f903d24eb0"
+  "signed_final_elf_sha256": "778d0bd7bd89cb7cddf9d3adf36e05f259dbce256506a43b905927de5ba9a988"
 }

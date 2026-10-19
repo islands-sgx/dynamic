@@ -1,86 +1,101 @@
 # ATField-SGX Dynamic Workset Explorer & Hardware Verification (`dynamic`)
 
-All tables in this document are **automatically generated** from `experiments/evaluation_results.json` and `witnesses/<sample>/witness_ledger.json` by `tools/generate_report_tables.py`.
+All tables in this document are generated automatically from `experiments/evaluation_results.json` and `witnesses/<sample>/witness_ledger.json` via `python3 tools/generate_report_tables.py`.
 
-- Frozen initial prototype tag: `v0-hardware-prototype-frozen` (`7daae4f82ba5380f1ef96c5c0f2f273e01ab360a`)
+- **Frozen Initial Hardware Prototype Tag**: `v0-hardware-prototype-frozen` (`7daae4f82ba5380f1ef96c5c0f2f273e01ab360a`)
+- **Unified Collector (`build/libatfield_native_sgx.so`) SHA-256 across Discovery & Evaluation**: `789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c`
+- **Default Conservative Candidate**: **Group B (`workset.dynamic_xr.json`)**, which keeps all `RX` code pages as `XR` (`RX = XR`), avoiding unverified `X-only` read-permission stripping.
+- **Scope & Boundary Statement**: Dynamic exploration and hold-out evaluations provide empirical evidence on the executed inputs, histories, and hardware runs; heuristic assistance (depth-4 direct call graph, `+2` heap frontier pages, `-4` stack margin pages) is an empirical aid rather than a formal whole-program upper-bound proof.
 
-## 1. Four-Layer Discovery Attribution & Heuristic Assist Breakdown (11 Fields)
+## 1. Four-Layer Workset Attribution (11 Protected Business Fields)
 
-| Sample | Field | L0 First Call (`p / eff`) | L1 Full Host (`p / +p`) | L2 Generic Schema+`L*` on Seed (`p`) | L2 Added Beyond Full Host (`+p / +eff`) | L3 Domain Assist (`+p`) | Bridge + Heuristic Assist (`+p`) | Final `FieldTargetPages` | All-REG Baseline | Reduction |
+- **Layer 0 (`L0`)**: First invocation of the Field (`(page_rva, effect)` pairs, distinguishing `A` vs `D`).
+- **Layer 1 (`L1`)**: Complete unmodified sample `host` workflow (all calls measured, `allow_fast_forward=0`).
+- **Layer 2 (`L2`)**: Schema-typed exploration driven by `targets/<sample>/edl_schema.json` (`feedback_scale_expansion` via `scale_bound_v2`, bounded `xor_param`/`set_scalar`/`null_param`, `cold_enclave_state_replay` via `typed_state_probe`, and `doubling_history_scan` `16 -> 64 -> 256 -> 1024`).
+- **Layer 3 (`L3`)**: Optional domain-assisted inner-struct framing (`ehsm_sizes`).
+
+| Sample | Field | L0 First Call (`p / eff`) | L1 Full Host (`p / +p`) | L2 Isolated from Seed (`p / +p`) | L2 Added Beyond Full Host (`+p / +eff`) | L3 Domain Assist (`+p / +eff`) | Bridge + Heuristic Assist (`+p`) | Final `FieldTargetPages` (Group B `XR`) | All-REG Baseline | Reduction vs All-REG |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| `qe3` | `get_att_key_based_from_seal_key` | 69p / 77e | 69p (`+0`) | **69p** | **+0p / +0e** | +0p | +57p | **126p** | 850p | **85.18%** |
-| `signal-cds` | `sabd_lookup_hash` | 16p / 20e | 230p (`+214`) | **554p** | **+324p / +364e** | +0p | +12p | **566p** | 1127p | **49.78%** |
-| `sgxwallet` | `ecdsa_sign_field` | 70p / 78e | 76p (`+6`) | **76p** | **+0p / +0e** | +0p | +32p | **108p** | 1774p | **93.91%** |
-| `sgxwallet` | `get_public_ecdsa_key_field` | 68p / 74e | 68p (`+0`) | **72p** | **+4p / +4e** | +0p | +28p | **100p** | 1774p | **94.36%** |
-| `sgxwallet` | `set_sek_field` | 45p / 52e | 45p (`+0`) | **52p** | **+7p / +7e** | +0p | +22p | **74p** | 1774p | **95.83%** |
-| `sgxwallet` | `generate_ecdsa_key_field` | 76p / 82e | 76p (`+0`) | **76p** | **+0p / +0e** | +0p | +30p | **106p** | 1774p | **94.02%** |
-| `sgxwallet` | `generate_sek_field` | 48p / 56e | 48p (`+0`) | **48p** | **+0p / +0e** | +0p | +24p | **72p** | 1774p | **95.94%** |
-| `ehsm` | `ehsm_create_aes_key` | 263p / 332e | 263p (`+0`) | **263p** | **+0p / +0e** | +0p | +35p | **298p** | 2349p | **87.31%** |
-| `ehsm` | `ehsm_generate_datakey` | 90p / 98e | 90p (`+0`) | **264p** | **+174p / +236e** | +0p | +35p | **299p** | 2349p | **87.27%** |
-| `ehsm` | `ehsm_aes_gcm_encrypt` | 90p / 97e | 93p (`+3`) | **263p** | **+173p / +234e** | +0p | +35p | **301p** | 2349p | **87.19%** |
-| `ehsm` | `ehsm_aes_gcm_decrypt` | 90p / 98e | 266p (`+176`) | **263p** | **+0p / +0e** | +0p | +37p | **303p** | 2349p | **87.1%** |
+| `qe3` | `get_att_key_based_from_seal_key` | 69p / 77e | 69p (`+0p`) | **69p** (`+0p`) | **+0p / +0e** | +0p / +0e | +57p | **126p** | 850p | **85.18%** |
+| `signal-cds` | `sabd_lookup_hash` | 16p / 20e | 230p (`+214p`) | **554p** (`+538p`) | **+324p / +364e** | +0p / +0e | +12p | **566p** | 1127p | **49.78%** |
+| `sgxwallet` | `ecdsa_sign_field` | 70p / 78e | 76p (`+6p`) | **76p** (`+6p`) | **+0p / +0e** | +0p / +0e | +33p | **109p** | 1774p | **93.86%** |
+| `sgxwallet` | `get_public_ecdsa_key_field` | 68p / 74e | 68p (`+0p`) | **72p** (`+4p`) | **+4p / +4e** | +0p / +0e | +29p | **101p** | 1774p | **94.31%** |
+| `sgxwallet` | `set_sek_field` | 45p / 52e | 45p (`+0p`) | **52p** (`+7p`) | **+7p / +7e** | +0p / +0e | +22p | **74p** | 1774p | **95.83%** |
+| `sgxwallet` | `generate_ecdsa_key_field` | 76p / 82e | 76p (`+0p`) | **76p** (`+0p`) | **+0p / +0e** | +0p / +0e | +31p | **107p** | 1774p | **93.97%** |
+| `sgxwallet` | `generate_sek_field` | 48p / 56e | 48p (`+0p`) | **48p** (`+0p`) | **+0p / +0e** | +0p / +0e | +24p | **72p** | 1774p | **95.94%** |
+| `ehsm` | `ehsm_create_aes_key` | 263p / 332e | 263p (`+0p`) | **263p** (`+0p`) | **+0p / +0e** | +0p / +0e | +36p | **299p** | 2349p | **87.27%** |
+| `ehsm` | `ehsm_generate_datakey` | 90p / 98e | 90p (`+0p`) | **264p** (`+174p`) | **+174p / +236e** | +0p / +0e | +35p | **299p** | 2349p | **87.27%** |
+| `ehsm` | `ehsm_aes_gcm_encrypt` | 90p / 97e | 93p (`+3p`) | **266p** (`+176p`) | **+173p / +234e** | +0p / +1e | +36p | **302p** | 2349p | **87.14%** |
+| `ehsm` | `ehsm_aes_gcm_decrypt` | 90p / 98e | 266p (`+176p`) | **266p** (`+176p`) | **+0p / +0e** | +0p / +1e | +38p | **304p** | 2349p | **87.06%** |
 
-## 2. Fault Detector Calibration, Same-Fault `AEX0/AEX1`, & Independent Hold-Out Verification
+## 2. Provenance, Fault-Detector Calibration, Same-Fault AEX0/AEX1, and Hold-Out Validation
 
-| Sample | Cold TLB Cal (`ipi_mask=7` vs `0` S3 pages) | 4-Gate vs Uninstrumented Output Eq | Single-Page Retraction Caught (`X` / `R` / `W`) | Restored Pos-Ctrl Faults | Same-Fault `AEX0` vs `AEX1` (`active_flag=1`) | Hold-Out Unseen `(page, effect)` | Strict `FieldTargetPages` (`Gate B..D`) Faults | Strict `ReadyTable v3` (`ECALL`) Faults | Overall Verdict |
-|---|---|---|---|---:|---|---|---:|---:|---|
-| `qe3` | 69p vs 53p (`proven=True`) | `True` | `0xd5000`:`True`, `0x2000`:`True`, `0x1f4000`:`True` | 0 | `0xd5000` -> **PASS** | **0p / 0e** | **0** | **0** | **PASS** |
-| `signal-cds` | 16p vs 1p (`proven=True`) | `True` | `0xc000`:`True`, `0x0`:`True`, `0x3d000`:`True` | 0 | `0xc000` -> **PASS** | **0p / 0e** | **0** | **0** | **PASS** |
-| `sgxwallet` | 48p vs 29p (`proven=True`) | `True` | `0x16000`:`True`, `0x5000`:`True`, `0x28c000`:`True` | 0 | `0x16000` -> **PASS** | **0p / 0e** | **0** | **0** | **PASS** |
-| `ehsm` | 263p vs 246p (`proven=True`) | `True` | `0xdb000`:`True`, `0x57000`:`True`, `0x4c9000`:`True` | 0 | `0xdb000` -> **PASS** | **0p / 0e** | **0** | **0** | **PASS** |
+| Sample | Provenance Hash Match | Cold vs Warm TLB (`ipi=7` vs `0` S3 Pages) | 4-Gate vs Uninst `AEX0` Equivalence | Single-Page `X / R / W` Confirmed Kind (`healed:kind`) | Restored Positive Control Faults | Same-Fault `AEX0` (`rc=0`) vs `AEX1` (`0x1006` on same page) | Hold-Out Main `rc` & `stdout` | Hold-Out Unseen `(page / effect)` | Strict `FieldTargetPages` (`Gate B..D`) Faults | Strict `ReadyTable v3` (`ECALL`) Faults | Validator Verdict |
+|---|---|---|---|---|---:|---|---|---|---|---:|---:|---|
+| `qe3` | **PASS** | 69p vs 52p (`True`) | `True` | `0xd5000:True:X`, `0x2000:True:R`, `0x1f4000:True:W` | 0 | `0xd5000` -> **PASS** | `rc=0` (`PASS`) | **0p / 0e** | **0** | **0** | **PASS** |
+| `signal-cds` | **PASS** | 16p vs 1p (`True`) | `True` | `0xc000:True:X`, `0x0:True:R`, `0x3d000:True:W` | 0 | `0xc000` -> **PASS** | `rc=0` (`PASS`) | **0p / 0e** | **0** | **0** | **PASS** |
+| `sgxwallet` | **PASS** | 48p vs 29p (`True`) | `True` | `0x16000:True:X`, `0x5000:True:R`, `0x28c000:True:W` | 0 | `0x16000` -> **PASS** | `rc=0` (`PASS`) | **0p / 0e** | **0** | **0** | **PASS** |
+| `ehsm` | **PASS** | 263p vs 245p (`True`) | `True` | `0xdb000:True:X`, `0x57000:True:R`, `0x4c9000:True:W` | 0 | `0xdb000` -> **PASS** | `rc=0` (`PASS`) | **0p / 0e** | **0** | **0** | **PASS** |
 
-## 3. Three-Group Ablation Across 5 Interleaved Rounds (4-Gate Diagnostic `AEX0` TSC Ticks & `S3` A/D Re-Walk Pages)
+## 3. Three-Group 5-Round Interleaved Diagnostic Ablation (Per-Observation Accounting)
 
-- **Group A (`all_reg_xr`)**: All committed business REG pages, all RX pages kept as `XR` (`call C3` + `movb`).
-- **Group B (`dynamic_xr`)**: Reduced dynamic + heuristic-assist page set, keeping all RX pages conservatively as `XR`.
-- **Group C (`dynamic_refined`)**: Same page set as Group B, refining RX pages without `STT_OBJECT`/RIP-data references to `X`-only.
+- **Group A (`all_reg_xr`)**: All committed business REG pages pre-touched with full `XR/RW`.
+- **Group B (`dynamic_xr`, Default Candidate)**: Reduced dynamic page set while keeping all `RX` pages as `XR`.
+- **Group C (`dynamic_refined`, Experimental Ablation)**: Reduced dynamic page set + `X-only` on code pages without direct symbol/RIP-relative data references.
+- **Interrupt Separation**: Every Field observation records `s3_active_aex_count`. Observations with `s3_active_aex_count == 0` are reported under **Clean (`s3_aex=0`)**; observations interrupted by external host/timer AEX during `S3` (`s3_active_aex_count > 0`) are reported separately under **Interrupt-Contaminated (`s3_aex>0`)**.
 
-| Sample | Field | Obs (`5` rounds) | `.atfield_pretouch` Bytes (`A / B / C`) | `S2` Pretouch Median TSC Ticks (`Group A` / `Group B` / `Group C`) | `S3` Residual A/D Re-Walk Pages Median (`Group A` / `Group B` / `Group C`) | `S3` Missing-from-`S2` Pages Max (`B / C`) |
-|---|---|---:|---|---:|---:|---:|
-| `qe3` | `get_att_key_based_from_seal_key` | 15 | 7376 / 1303 / 859 | 1,416,228 / **155,934** / **134,670** | 3 (max 4) / **3** (max 3) / **3** (max 3) | 0 / 0 |
-| `signal-cds` | `sabd_lookup_hash` | 25 | 9060 / 4568 / 4520 | 1,029,044 / **546,064** / **545,038** | 0 (max 15) / **0** (max 1) / **0** (max 223) | 0 / 0 |
-| `sgxwallet` | `ecdsa_sign_field` | 50 | 80115 / 4436 / 3326 | 1,619,045 / **105,000** / **108,718** | 14.0 (max 25) / **0.0** (max 0) / **0.0** (max 0) | 0 / 0 |
-| `sgxwallet` | `get_public_ecdsa_key_field` | 5 | 80115 / 4436 / 3326 | 1,636,014 / **99,470** / **95,866** | 18 (max 19) / **0** (max 0) / **0** (max 0) | 0 / 0 |
-| `sgxwallet` | `set_sek_field` | 5 | 80115 / 4436 / 3326 | 5,140,132 / **193,794** / **184,998** | 11 (max 12) / **1** (max 1) / **1** (max 1) | 0 / 0 |
-| `sgxwallet` | `generate_ecdsa_key_field` | 5 | 80115 / 4436 / 3326 | 3,336,602 / **186,462** / **168,262** | 18 (max 22) / **0** (max 0) / **0** (max 0) | 0 / 0 |
-| `sgxwallet` | `generate_sek_field` | 5 | 80115 / 4436 / 3326 | 5,263,112 / **193,396** / **175,734** | 12 (max 14) / **1** (max 1) / **1** (max 1) | 0 / 0 |
-| `ehsm` | `ehsm_create_aes_key` | 5 | 84112 / 10206 / 8742 | 7,066,002 / **856,804** / **807,446** | 111 (max 127) / **0** (max 0) / **0** (max 0) | 0 / 0 |
-| `ehsm` | `ehsm_generate_datakey` | 5 | 84112 / 10206 / 8742 | 2,345,232 / **371,286** / **362,486** | 33 (max 38) / **0** (max 0) / **0** (max 0) | 0 / 0 |
-| `ehsm` | `ehsm_aes_gcm_encrypt` | 20 | 84112 / 10206 / 8742 | 2,369,271 / **377,573** / **352,173** | 33.5 (max 44) / **0.0** (max 0) / **0.0** (max 0) | 0 / 0 |
-| `ehsm` | `ehsm_aes_gcm_decrypt` | 40 | 84112 / 10206 / 8742 | 2,377,076 / **366,030** / **362,842** | 34.5 (max 137) / **0.0** (max 0) / **0.0** (max 0) | 0 / 0 |
+| Sample | Field | Total Attempts | Group A Clean `0`-Rewalk / Clean (`med / max`) | **Group B (`XR` Default) Clean `0`-Rewalk / Clean (`med / max`)** | Group B Interrupt-Contaminated Count (`max` pages) | Group C (`X-only`) Clean `0`-Rewalk / Clean (`med / max`) | Group C Interrupt-Contaminated Count (`max` pages) | Group A -> B -> C `S2` Median TSC Ticks |
+|---|---|---:|---|---|---|---:|---|---|
+| `qe3` | `get_att_key_based_from_seal_key` | 15 | 0/15 (`3 / 5`) | **0/15** (`3 / 3`) | 0 (`max=0p`) | 0/15 (`3 / 3`) | 0 (`max=0p`) | `1,460,164` -> **`141,288`** -> `129,902` |
+| `signal-cds` | `sabd_lookup_hash` | 25 | 19/24 (`0 / 10`) | **24/25** (`0 / 3`) | 0 (`max=0p`) | 25/25 (`0 / 0`) | 0 (`max=0p`) | `1,024,010` -> **`527,362`** -> `497,222` |
+| `sgxwallet` | `generate_sek_field` | 5 | 0/5 (`12 / 14`) | **0/5** (`1 / 1`) | 0 (`max=0p`) | 0/5 (`1 / 1`) | 0 (`max=0p`) | `5,263,358` -> **`205,272`** -> `189,190` |
+| `sgxwallet` | `set_sek_field` | 5 | 0/5 (`8 / 11`) | **0/5** (`1 / 1`) | 0 (`max=0p`) | 0/5 (`1 / 1`) | 0 (`max=0p`) | `5,144,038` -> **`190,526`** -> `179,222` |
+| `sgxwallet` | `generate_ecdsa_key_field` | 5 | 0/5 (`18 / 21`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `3,065,542` -> **`182,846`** -> `166,674` |
+| `sgxwallet` | `get_public_ecdsa_key_field` | 5 | 0/5 (`20 / 26`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `1,647,962` -> **`98,794`** -> `102,656` |
+| `sgxwallet` | `ecdsa_sign_field` | 50 | 0/50 (`14 / 21`) | **50/50** (`0 / 0`) | 0 (`max=0p`) | 50/50 (`0 / 0`) | 0 (`max=0p`) | `1,611,341` -> **`111,950`** -> `108,650` |
+| `ehsm` | `ehsm_generate_datakey` | 5 | 0/5 (`36 / 39`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `2,377,160` -> **`376,254`** -> `359,942` |
+| `ehsm` | `ehsm_aes_gcm_encrypt` | 20 | 0/20 (`34 / 39`) | **20/20** (`0 / 0`) | 0 (`max=0p`) | 20/20 (`0 / 0`) | 0 (`max=0p`) | `2,369,177` -> **`379,153`** -> `350,847` |
+| `ehsm` | `ehsm_aes_gcm_decrypt` | 40 | 0/40 (`36 / 132`) | **40/40** (`0 / 0`) | 0 (`max=0p`) | 40/40 (`0 / 0`) | 0 (`max=0p`) | `2,375,332` -> **`371,906`** -> `362,741` |
+| `ehsm` | `ehsm_create_aes_key` | 5 | 0/5 (`124 / 139`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `7,111,428` -> **`870,116`** -> `798,978` |
 
-- **Auto-summed non-`ENCLU` Field observations across 5 interleaved rounds**: **155** total observations (Group B `S3=[]` in **130/155**, Group C `S3=[]` in **130/155**).
+- **Exact Per-Observation Totals Across the 8 Non-`ENCLU` Fields (155 total Field entries across 5 rounds)**:
+  - **Group B (`dynamic_xr`, Default `XR`)**: **155 / 155** clean (`s3_aex=0`) observations, **0 / 155** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **154 / 155** achieved `0` residual page-table A/D re-walks.
+  - **Group C (`dynamic_refined`, `X-only`)**: **155 / 155** clean (`s3_aex=0`) observations, **0 / 155** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **155 / 155** achieved `0` residual page-table A/D re-walks.
 
-## 4. Production `AEX1` Signed Final Enclave End-to-End ECALL Wall-Clock Latency (5 Interleaved Rounds, No 4-Gate Fixture)
+## 4. Production `AEX1` Signed Final Enclave Latency (Sum of Per-ECALL Wall-Clock Durations per Workflow Round, 5 Interleaved Rounds)
 
-| Sample | Group A (`all_reg_xr`) Median / Min..Max (ms) | Group B (`dynamic_xr`) Median / Min..Max (ms) | Group C (`dynamic_refined`) Median / Min..Max (ms) | End-to-End Speedup (`Group B` vs `A` / `Group C` vs `A`) |
-|---|---:|---:|---:|---:|
-| `qe3` | 2.13 ms (2.05..2.20) | **0.84 ms** (0.83..0.86) | **0.84 ms** (0.83..0.85) | **2.52x** / **2.54x** |
-| `signal-cds` | 320.14 ms (320.07..321.88) | **318.72 ms** (318.54..318.84) | **318.73 ms** (318.64..319.21) | **1.0x** / **1.0x** |
-| `sgxwallet` | 36.41 ms (35.36..36.63) | **26.61 ms** (26.52..26.71) | **26.58 ms** (26.48..26.70) | **1.37x** / **1.37x** |
-| `ehsm` | 15.48 ms (13.95..15.91) | **3.90 ms** (3.68..3.92) | **3.74 ms** (3.64..3.85) | **3.97x** / **4.14x** |
+- **Metric Definition**: Sum of individual `sgx_ecall` wall-clock durations (`elapsed_ns`) within one workflow round (excluding enclave creation/destruction). For `sgxwallet`, the 5-round interleaved performance benchmark uses `--requests 5` (`60/60` production runs completed with `rc=0` and `PASS`); the 1005-request long-history run is evaluated in Table 2.
+
+| Sample | Performance `host_args` | Group A (`all_reg_xr`) Median (`min..max`) ms | **Group B (`dynamic_xr` Default)** Median (`min..max`) ms | Group C (`dynamic_refined`) Median (`min..max`) ms | Group B Speedup vs A | Group C Speedup vs A | `.atfield_pretouch` Bytes (`A -> B -> C`) |
+|---|---|---|---|---|---:|---:|---:|
+| `qe3` | `(default)` | 2.19 (`2.09..2.26`) | **0.86** (`0.85..0.87`) | 0.84 (`0.82..0.85`) | **2.56x** | **2.61x** | `7376 -> 1303 -> 859` |
+| `signal-cds` | `(default)` | 320.06 (`320.02..321.04`) | **318.74** (`318.67..319.17`) | 318.80 (`318.69..319.70`) | **1.00x** | **1.00x** | `9060 -> 4568 -> 4520` |
+| `sgxwallet` | `--requests 5` | 36.11 (`35.56..36.73`) | **26.60** (`26.44..26.68`) | 26.69 (`26.50..27.01`) | **1.36x** | **1.35x** | `80115 -> 4460 -> 3350` |
+| `ehsm` | `(default)` | 15.35 (`13.90..15.67`) | **3.88** (`3.76..3.94`) | 3.85 (`3.78..3.94`) | **3.96x** | **3.98x** | `84112 -> 10230 -> 8766` |
 
 ## 5. Clean-Checkout Reproducible Workflow
 
 ```bash
-# 1. Build ProfileELFs, All-REG baselines, and signed AEX0/AEX1 artifacts
-python3 tools/build_real_targets.py
+# 0. Run offline negative & schema/ABI unit tests first
+python3 -m unittest discover -s tests -p 'test_*.py' -v
 
-# 2. Extract compiler-exact EDL marshaling layouts and parameter bindings
+# 1. Build baseline Profile & All-REG enclaves + extract compiler-exact EDL schemas
+python3 tools/build_real_targets.py
 python3 tools/edl_harness.py
 
-# 3. Compile native SGX page-table/AEP interposition library
+# 2. Compile the SGX-Step + AEP native interposer
 gcc -shared -fPIC -O2 -Wno-unused-result -DLIBSGXSTEP_SILENT=1 \
-  -Ivendor/sgxstep src/native_sgx_interpose.c \
-  vendor/sgxstep/libsgxstep/pt.c vendor/sgxstep/libsgxstep/file.c vendor/sgxstep/libsgxstep/debug.c \
-  -ldl -lpthread -o build/libatfield_native_sgx.so
+  -Isrc -Ivendor/sgxstep src/native_sgx_interpose.c \
+  vendor/sgxstep/libsgxstep/pt.c vendor/sgxstep/libsgxstep/file.c \
+  vendor/sgxstep/libsgxstep/debug.c -ldl -lpthread \
+  -o build/libatfield_native_sgx.so
 
-# 4. Run 4-layer dynamic exploration, archive witness ledgers + raw JSONL traces, and build Group B/C enclaves
+# 3. Run 4-layer dynamic exploration & emit Group B (dynamic_xr) and Group C (dynamic) artifacts
 python3 controller.py qe3 signal-cds sgxwallet ehsm
 
-# 5. Run P0-P4 calibration, independent hold-out verification, and 5-round 3-group ablation
+# 4. Run calibration, independent hold-out verification, and 5-round 3-group evaluation
 python3 tools/evaluate_worksets.py
 
-# 6. Auto-generate summary tables from JSON evidence
+# 5. Generate summary tables from JSON evidence
 python3 tools/generate_report_tables.py
 ```

@@ -23,10 +23,12 @@
     "0xd9e7e566ea39a756": {
       "all_business_reg_pages": 1127,
       "call_statistics": {
-        "expected_rejection_entries": 0,
-        "field_entries": 1097,
-        "succeeded_entries": 1097,
-        "transport_error_entries": 0
+        "abi_nonzero_return_entries": 0,
+        "abi_void_return_entries": 0,
+        "abi_zero_return_entries": 1415,
+        "field_entries": 1415,
+        "transport_error_entries": 0,
+        "transport_ok_entries": 1415
       },
       "dynamic_explored_obs_effects": 797,
       "dynamic_explored_obs_pages": 554,
@@ -47,8 +49,8 @@
           "added_pages_beyond_full_host_layer1": 324,
           "cumulative_effects_after_layer2": 797,
           "cumulative_pages_after_layer2": 554,
-          "independent_added_pages_over_layer0": 538,
-          "independent_pages_from_minimal_seed": 554
+          "seed_isolated_added_pages_over_layer0": 538,
+          "seed_isolated_pages": 554
         },
         "layer3_domain_assisted": {
           "added_effects_beyond_layer2": 0,
@@ -87,76 +89,289 @@
   },
   "ecall_statistics": {
     "0": {
-      "ecall_invocations": 1110,
-      "field_entering_calls": 1097,
-      "nonzero_retval_calls": 7,
-      "outer_rejected_or_nofield_calls": 13,
-      "succeeded_calls": 1103,
+      "abi_nonzero_return_calls": 4,
+      "abi_return_type": "scalar",
+      "abi_void_calls": 0,
+      "abi_zero_return_calls": 1418,
+      "ecall_invocations": 1422,
+      "field_entering_calls": 1415,
+      "out_status_nonzero_calls": 0,
+      "out_status_zero_calls": 0,
+      "outer_non_field_calls": 7,
       "transport_error_calls": 0
     }
   },
+  "feedback_trace": [
+    {
+      "decision": "expand_4x",
+      "ecall_index": 0,
+      "heap_span": 1136,
+      "new_effects": 22,
+      "scale": 64,
+      "valid_return": true
+    },
+    {
+      "decision": "expand_4x",
+      "ecall_index": 0,
+      "heap_span": 4400,
+      "new_effects": 12,
+      "scale": 256,
+      "valid_return": true
+    },
+    {
+      "decision": "expand_4x",
+      "ecall_index": 0,
+      "heap_span": 17456,
+      "new_effects": 42,
+      "scale": 1024,
+      "valid_return": true
+    },
+    {
+      "decision": "expand_4x",
+      "ecall_index": 0,
+      "heap_span": 42032,
+      "new_effects": 12,
+      "scale": 4096,
+      "valid_return": true
+    },
+    {
+      "decision": "expand_4x",
+      "ecall_index": 0,
+      "heap_span": 140336,
+      "new_effects": 48,
+      "scale": 16384,
+      "valid_return": true
+    },
+    {
+      "decision": "expand_4x",
+      "ecall_index": 0,
+      "heap_span": 533552,
+      "new_effects": 121,
+      "scale": 65536,
+      "valid_return": true
+    },
+    {
+      "decision": "stop_converged",
+      "ecall_index": 0,
+      "heap_span": 2106416,
+      "new_effects": 409,
+      "scale": 262144,
+      "valid_return": true
+    },
+    {
+      "ecall_index": 0,
+      "history_depth": 16,
+      "max_tsc_s3": 32422,
+      "median_tsc_s3": 22014,
+      "regime_jump_ratio": 1.47
+    },
+    {
+      "ecall_index": 0,
+      "history_depth": 64,
+      "max_tsc_s3": 36014,
+      "median_tsc_s3": 20610,
+      "regime_jump_ratio": 1.75
+    },
+    {
+      "ecall_index": 0,
+      "history_depth": 256,
+      "max_tsc_s3": 35088,
+      "median_tsc_s3": 20152,
+      "regime_jump_ratio": 1.74
+    },
+    {
+      "ecall_index": 0,
+      "history_depth": 1024,
+      "max_tsc_s3": 34070,
+      "median_tsc_s3": 20272,
+      "regime_jump_ratio": 1.68
+    }
+  ],
+  "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
   "profile_elf_sha256": "d3673190dadcffaf4b3206ad33bdf769de0414d47a35b6a8f7886258308eaf42",
   "runs": [
     {
       "description": "Unmodified host binary full execution (first entry per Field = Layer 0; full run = Layer 1)",
+      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
       "layer": "layer1_full_host",
       "measurement_invalid": false,
       "new_page_effects_discovered": 433,
       "records_collected": 6,
+      "returncode": 0,
       "run_id": "layer0_and_layer1_unmodified_host",
       "subkind": "unmodified_host_full_trace",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer0_and_layer1_unmodified_host.jsonl"
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer0_and_layer1_unmodified_host.jsonl",
+      "trace_sha256": "c234adc82071c235fd096ab928b568885d44ead0c67c71f750f4985ec16b3061"
     },
     {
-      "description": "Generic edl_schema count=/size= doubling schedule on ecall_lookup_hash",
+      "description": "Closed-loop feedback scale step n=64 on ecall_lookup_hash (stop_after_selector=0:0)",
+      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
-      "new_page_effects_discovered": 364,
-      "records_collected": 16,
-      "run_id": "layer2_schema_scale_ecall0",
-      "subkind": "adaptive_bound_scale",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_schema_scale_ecall0.jsonl"
+      "new_page_effects_discovered": 1,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_feedback_scale_ecall0_n64",
+      "subkind": "feedback_scale_expansion",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n64.jsonl",
+      "trace_sha256": "d862f6797405ed3aca67f3608c389cd4c4a502644c93915614c9801a2aa8add8"
     },
     {
-      "description": "Generic edl_schema scalar boundaries & input buffer bit-flips on ecall_lookup_hash",
+      "description": "Closed-loop feedback scale step n=256 on ecall_lookup_hash (stop_after_selector=0:0)",
+      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 6,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_feedback_scale_ecall0_n256",
+      "subkind": "feedback_scale_expansion",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n256.jsonl",
+      "trace_sha256": "36e59794641119dc9f0ebf1178aec1451647120e3145a1a9364be23cfc75846d"
+    },
+    {
+      "description": "Closed-loop feedback scale step n=1024 on ecall_lookup_hash (stop_after_selector=0:0)",
+      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 8,
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_feedback_scale_ecall0_n1024",
+      "subkind": "feedback_scale_expansion",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n1024.jsonl",
+      "trace_sha256": "648bc16842f6aa164188ead36982a18d91b5e95a76c1734e683e8a62b3f675e8"
+    },
+    {
+      "description": "Closed-loop feedback scale step n=4096 on ecall_lookup_hash (stop_after_selector=0:0)",
+      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 0,
-      "records_collected": 50,
-      "run_id": "layer2_schema_val_xor_ecall0",
-      "subkind": "schema_scalar_and_bitflip",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_schema_val_xor_ecall0.jsonl"
+      "records_collected": 4,
+      "returncode": 0,
+      "run_id": "layer2_feedback_scale_ecall0_n4096",
+      "subkind": "feedback_scale_expansion",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n4096.jsonl",
+      "trace_sha256": "b3017deaf0300f7a4e9d6dd2bc051329b11a74cb5dd1129ed3a9bee2398ea155"
     },
     {
-      "description": "Generic edl_schema NULL pointer injection on ecall_lookup_hash",
+      "description": "Closed-loop feedback scale step n=16384 on ecall_lookup_hash (stop_after_selector=0:0)",
+      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 0,
-      "records_collected": 8,
-      "run_id": "layer2_schema_null_ecall0",
-      "subkind": "schema_null_pointer",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_schema_null_ecall0.jsonl"
+      "records_collected": 2,
+      "returncode": 0,
+      "run_id": "layer2_feedback_scale_ecall0_n16384",
+      "subkind": "feedback_scale_expansion",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n16384.jsonl",
+      "trace_sha256": "b0c123e99195de100ebff9bbba261b7103dff4209c4a3bffb48ee206c9865df4"
     },
     {
-      "description": "Generic 1024-step full-call history exploration on ecall_lookup_hash (0 calls skipped)",
+      "description": "Closed-loop feedback scale step n=65536 on ecall_lookup_hash (stop_after_selector=0:0)",
+      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 0,
-      "records_collected": 1030,
-      "run_id": "layer2_generic_history_1024_ecall0",
-      "subkind": "exponential_history_depth_1024",
-      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_generic_history_1024_ecall0.jsonl"
+      "records_collected": 2,
+      "returncode": 0,
+      "run_id": "layer2_feedback_scale_ecall0_n65536",
+      "subkind": "feedback_scale_expansion",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n65536.jsonl",
+      "trace_sha256": "120ee52bc524d350be18be0601891e194f814cfee2af2264cad4afdbebc6b9ff"
+    },
+    {
+      "description": "Closed-loop feedback scale step n=262144 on ecall_lookup_hash (stop_after_selector=0:0)",
+      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 349,
+      "records_collected": 2,
+      "returncode": 0,
+      "run_id": "layer2_feedback_scale_ecall0_n262144",
+      "subkind": "feedback_scale_expansion",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n262144.jsonl",
+      "trace_sha256": "c1e238a7ca4447688884d230ceba134077fad568a070f783c694f1a1a1cb3dc4"
+    },
+    {
+      "description": "Schema-typed bounded XOR and scalar boundary mutations on ecall_lookup_hash",
+      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 30,
+      "returncode": 0,
+      "run_id": "layer2_schema_bounded_mut_ecall0",
+      "subkind": "schema_bounded_xor_and_scalar",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_schema_bounded_mut_ecall0.jsonl",
+      "trace_sha256": "747bd46e8244e56004b45069577ac3772552e03b93533cc986f2c5090cdea8f0"
+    },
+    {
+      "description": "Doubling history scan (depth=16, 0 skipped) on ecall_lookup_hash",
+      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 17,
+      "returncode": 0,
+      "run_id": "layer2_doubling_history_n16_ecall0",
+      "subkind": "doubling_history_scan",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_doubling_history_n16_ecall0.jsonl",
+      "trace_sha256": "323a64bd5cf0e2aa8c61c5bb4837aecc606fc99e7bc73389f506cd56b0507646"
+    },
+    {
+      "description": "Doubling history scan (depth=64, 0 skipped) on ecall_lookup_hash",
+      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 65,
+      "returncode": 0,
+      "run_id": "layer2_doubling_history_n64_ecall0",
+      "subkind": "doubling_history_scan",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_doubling_history_n64_ecall0.jsonl",
+      "trace_sha256": "fdfe308e882460d80e969c4d7b680db6be99732ac941a533f0260ca2bba4dbdf"
+    },
+    {
+      "description": "Doubling history scan (depth=256, 0 skipped) on ecall_lookup_hash",
+      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 257,
+      "returncode": 0,
+      "run_id": "layer2_doubling_history_n256_ecall0",
+      "subkind": "doubling_history_scan",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_doubling_history_n256_ecall0.jsonl",
+      "trace_sha256": "bae67adbcaaddd8972be428d9d2b5d3e4421b9ff7f686e9708d1b7e7035589d9"
+    },
+    {
+      "description": "Doubling history scan (depth=1024, 0 skipped) on ecall_lookup_hash",
+      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1025,
+      "returncode": 0,
+      "run_id": "layer2_doubling_history_n1024_ecall0",
+      "subkind": "doubling_history_scan",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_doubling_history_n1024_ecall0.jsonl",
+      "trace_sha256": "a911cd953aab3d89a20c0652ff7ddcb5b30a9f80d06a51965bc2b2c3e026975f"
     }
   ],
   "sample": "signal-cds",
-  "schema": "atfield-witness-ledger-v2",
+  "schema": "atfield-witness-ledger-v3",
   "witnesses": [
     {
       "call_seq": 0,
       "ecall_index": 0,
+      "enclave_sha256": "9ddf5c160f43ee78e8666d6e610302a0a6d57b8c73cc62f663fef4f8996f78d6",
       "field_id": "0xd9e7e566ea39a756",
+      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
       "intervention": "",
       "layer": "layer0_first_call",
+      "measurement_invalid": 0,
       "new_effects": [
         {
           "effect": "A",
@@ -259,6 +474,7 @@
           "upgrade_from_A_to_D": false
         }
       ],
+      "returncode": 0,
       "run_id": "layer0_and_layer1_unmodified_host",
       "selector_seq": 0,
       "subkind": "unmodified_host_full_trace",
@@ -266,15 +482,19 @@
       "total_field_obs_effects": 20,
       "total_field_obs_pages": 16,
       "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer0_and_layer1_unmodified_host.jsonl",
-      "tsc_s3": 35486,
+      "trace_sha256": "c234adc82071c235fd096ab928b568885d44ead0c67c71f750f4985ec16b3061",
+      "tsc_s3": 33048,
       "witness_id": "signal-cds_layer0_and_layer1_unmodified_host_seq0_39a756"
     },
     {
       "call_seq": 5,
       "ecall_index": 0,
+      "enclave_sha256": "9ddf5c160f43ee78e8666d6e610302a0a6d57b8c73cc62f663fef4f8996f78d6",
       "field_id": "0xd9e7e566ea39a756",
+      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
       "intervention": "",
       "layer": "layer1_full_host",
+      "measurement_invalid": 0,
       "new_effects": [
         {
           "effect": "A",
@@ -2342,6 +2562,7 @@
           "upgrade_from_A_to_D": true
         }
       ],
+      "returncode": 0,
       "run_id": "layer0_and_layer1_unmodified_host",
       "selector_seq": 5,
       "subkind": "unmodified_host_full_trace",
@@ -2349,15 +2570,19 @@
       "total_field_obs_effects": 433,
       "total_field_obs_pages": 230,
       "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer0_and_layer1_unmodified_host.jsonl",
-      "tsc_s3": 953541658,
+      "trace_sha256": "c234adc82071c235fd096ab928b568885d44ead0c67c71f750f4985ec16b3061",
+      "tsc_s3": 953725628,
       "witness_id": "signal-cds_layer0_and_layer1_unmodified_host_seq5_39a756"
     },
     {
       "call_seq": 0,
       "ecall_index": 0,
+      "enclave_sha256": "9ddf5c160f43ee78e8666d6e610302a0a6d57b8c73cc62f663fef4f8996f78d6",
       "field_id": "0xd9e7e566ea39a756",
-      "intervention": "scale_bound:0:0:48:16:8:64:8:8:0:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:64:8:8:1:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:64:8:8:2:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:0:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:1:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:2:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:1:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:2:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:1:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:2:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:16384:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:65536:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:262144:8:8:0:32:4:1024:24:8:40:1",
+      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "intervention": "scale_bound_v2:0:0:0:16:64:32:64;scale_bound_v2:0:0:1:16:64:32:64;scale_bound_v2:0:0:2:16:64:32:64",
       "layer": "layer2_generic_schema",
+      "measurement_invalid": 0,
       "new_effects": [
         {
           "effect": "D",
@@ -2365,22 +2590,27 @@
           "upgrade_from_A_to_D": true
         }
       ],
-      "run_id": "layer2_schema_scale_ecall0",
+      "returncode": 0,
+      "run_id": "layer2_feedback_scale_ecall0_n64",
       "selector_seq": 0,
-      "subkind": "adaptive_bound_scale",
+      "subkind": "feedback_scale_expansion",
       "tag": "schema_scale_cnt_64_q_64_m_0",
       "total_field_obs_effects": 434,
       "total_field_obs_pages": 230,
-      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_schema_scale_ecall0.jsonl",
-      "tsc_s3": 94592,
-      "witness_id": "signal-cds_layer2_schema_scale_ecall0_seq0_39a756"
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n64.jsonl",
+      "trace_sha256": "d862f6797405ed3aca67f3608c389cd4c4a502644c93915614c9801a2aa8add8",
+      "tsc_s3": 97794,
+      "witness_id": "signal-cds_layer2_feedback_scale_ecall0_n64_seq0_39a756"
     },
     {
       "call_seq": 0,
       "ecall_index": 0,
+      "enclave_sha256": "9ddf5c160f43ee78e8666d6e610302a0a6d57b8c73cc62f663fef4f8996f78d6",
       "field_id": "0xd9e7e566ea39a756",
-      "intervention": "scale_bound:0:0:48:16:8:64:8:8:0:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:64:8:8:1:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:64:8:8:2:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:0:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:1:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:2:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:1:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:2:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:1:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:2:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:16384:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:65536:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:262144:8:8:0:32:4:1024:24:8:40:1",
+      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "intervention": "scale_bound_v2:0:0:0:16:256:32:256;scale_bound_v2:0:0:1:16:256:32:256;scale_bound_v2:0:0:2:16:256:32:256",
       "layer": "layer2_generic_schema",
+      "measurement_invalid": 0,
       "new_effects": [
         {
           "effect": "D",
@@ -2413,22 +2643,27 @@
           "upgrade_from_A_to_D": true
         }
       ],
-      "run_id": "layer2_schema_scale_ecall0",
+      "returncode": 0,
+      "run_id": "layer2_feedback_scale_ecall0_n256",
       "selector_seq": 0,
-      "subkind": "adaptive_bound_scale",
+      "subkind": "feedback_scale_expansion",
       "tag": "schema_scale_cnt_256_q_256_m_0",
       "total_field_obs_effects": 440,
       "total_field_obs_pages": 230,
-      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_schema_scale_ecall0.jsonl",
-      "tsc_s3": 965036,
-      "witness_id": "signal-cds_layer2_schema_scale_ecall0_seq0_39a756"
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n256.jsonl",
+      "trace_sha256": "36e59794641119dc9f0ebf1178aec1451647120e3145a1a9364be23cfc75846d",
+      "tsc_s3": 975592,
+      "witness_id": "signal-cds_layer2_feedback_scale_ecall0_n256_seq0_39a756"
     },
     {
       "call_seq": 0,
       "ecall_index": 0,
+      "enclave_sha256": "9ddf5c160f43ee78e8666d6e610302a0a6d57b8c73cc62f663fef4f8996f78d6",
       "field_id": "0xd9e7e566ea39a756",
-      "intervention": "scale_bound:0:0:48:16:8:64:8:8:0:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:64:8:8:1:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:64:8:8:2:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:0:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:1:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:2:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:1:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:2:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:1:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:2:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:16384:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:65536:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:262144:8:8:0:32:4:1024:24:8:40:1",
+      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "intervention": "scale_bound_v2:0:0:0:16:1024:32:1024;scale_bound_v2:0:0:1:16:1024:32:1024;scale_bound_v2:0:0:2:16:1024:32:1024",
       "layer": "layer2_generic_schema",
+      "measurement_invalid": 0,
       "new_effects": [
         {
           "effect": "D",
@@ -2471,22 +2706,27 @@
           "upgrade_from_A_to_D": true
         }
       ],
-      "run_id": "layer2_schema_scale_ecall0",
+      "returncode": 0,
+      "run_id": "layer2_feedback_scale_ecall0_n1024",
       "selector_seq": 0,
-      "subkind": "adaptive_bound_scale",
+      "subkind": "feedback_scale_expansion",
       "tag": "schema_scale_cnt_1024_q_1024_m_0",
       "total_field_obs_effects": 448,
       "total_field_obs_pages": 230,
-      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_schema_scale_ecall0.jsonl",
-      "tsc_s3": 15571968,
-      "witness_id": "signal-cds_layer2_schema_scale_ecall0_seq0_39a756"
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n1024.jsonl",
+      "trace_sha256": "648bc16842f6aa164188ead36982a18d91b5e95a76c1734e683e8a62b3f675e8",
+      "tsc_s3": 15102528,
+      "witness_id": "signal-cds_layer2_feedback_scale_ecall0_n1024_seq0_39a756"
     },
     {
       "call_seq": 0,
       "ecall_index": 0,
+      "enclave_sha256": "9ddf5c160f43ee78e8666d6e610302a0a6d57b8c73cc62f663fef4f8996f78d6",
       "field_id": "0xd9e7e566ea39a756",
-      "intervention": "scale_bound:0:0:48:16:8:64:8:8:0:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:64:8:8:1:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:64:8:8:2:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:0:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:1:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:2:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:1:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:2:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:1:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:2:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:16384:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:65536:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:262144:8:8:0:32:4:1024:24:8:40:1",
+      "interpose_sha256": "789b0edc73e0d6dca066eb205c2bc92f51b05db80d1dc5a60ffc941038bd482c",
+      "intervention": "scale_bound_v2:0:0:0:16:262144:32:1024",
       "layer": "layer2_generic_schema",
+      "measurement_invalid": 0,
       "new_effects": [
         {
           "effect": "A",
@@ -4234,15 +4474,17 @@
           "upgrade_from_A_to_D": true
         }
       ],
-      "run_id": "layer2_schema_scale_ecall0",
+      "returncode": 0,
+      "run_id": "layer2_feedback_scale_ecall0_n262144",
       "selector_seq": 0,
-      "subkind": "adaptive_bound_scale",
+      "subkind": "feedback_scale_expansion",
       "tag": "schema_scale_cnt_262144_q_1024_m_0",
       "total_field_obs_effects": 797,
       "total_field_obs_pages": 554,
-      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_schema_scale_ecall0.jsonl",
-      "tsc_s3": 23982860,
-      "witness_id": "signal-cds_layer2_schema_scale_ecall0_seq0_39a756"
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_feedback_scale_ecall0_n262144.jsonl",
+      "trace_sha256": "c1e238a7ca4447688884d230ceba134077fad568a070f783c694f1a1a1cb3dc4",
+      "tsc_s3": 23755160,
+      "witness_id": "signal-cds_layer2_feedback_scale_ecall0_n262144_seq0_39a756"
     }
   ]
 }

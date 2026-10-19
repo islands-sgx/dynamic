@@ -36,7 +36,7 @@
       "gate_c_rva": 2897596,
       "gate_d_rva": 2897787,
       "marker_rva": 84245,
-      "pretouch_jmp_rva": 2811700,
+      "pretouch_jmp_rva": 2811708,
       "pretouch_rva": 2810958
     },
     {
@@ -49,8 +49,8 @@
       "gate_c_rva": 2898291,
       "gate_d_rva": 2898482,
       "marker_rva": 85326,
-      "pretouch_jmp_rva": 2812414,
-      "pretouch_rva": 2811705
+      "pretouch_jmp_rva": 2812430,
+      "pretouch_rva": 2811713
     },
     {
       "enter_call_rva": 86185,
@@ -62,15 +62,15 @@
       "gate_c_rva": 2898986,
       "gate_d_rva": 2899177,
       "marker_rva": 86190,
-      "pretouch_jmp_rva": 2813177,
-      "pretouch_rva": 2812419
+      "pretouch_jmp_rva": 2813201,
+      "pretouch_rva": 2812435
     }
   ],
   "gate_bytes_used": 3475,
   "gate_helper_page_rva": 2895872,
   "input_elf": "/home/meandssh/islands-sgx/dynamic/targets/sgxwallet/enclave.dynamic.final.so",
-  "input_elf_sha256": "82290bf2e824133fc229bc4c3a7c1025e4eea77f504eefb89df6774b66da7d83",
+  "input_elf_sha256": "9e40fbc2c1adf71e698d7b0ef026c2609658aa3650a559a866d72170951c910e",
   "output_elf": "/home/meandssh/islands-sgx/dynamic/targets/sgxwallet/enclave.dynamic.4gate.so",
-  "output_elf_sha256": "8b90a77096f000de8f1c639e043b565290b05127ee5bb84c136ec73b0980b4a1",
+  "output_elf_sha256": "e41a8ce463940c354d5d70d326dfa2a88ecd0254203b0b2beb35dd3524cb2981",
   "schema": "atfield-4gate-patch-v1"
 }
