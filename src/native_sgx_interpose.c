@@ -1,5 +1,6 @@
 #define _GNU_SOURCE
 #include <dlfcn.h>
+#include <stdarg.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <inttypes.h>
@@ -984,16 +985,6 @@ sgx_status_t sgx_create_enclave(
     }
 
     if (pure_prod_mode) {
-        static int leased_cpu = -1;
-        if (leased_cpu < 0) {
-            int cur_c = sched_getcpu();
-            leased_cpu = (cur_c >= 44 && cur_c <= 47) ? cur_c : encl_cpu;
-        }
-        cpu_set_t set0, set_encl;
-        CPU_ZERO(&set0);
-        CPU_SET(0, &set0);
-        sched_setaffinity(0, sizeof(set0), &set0);
-
         if (!g_shared) {
             void *sh = mmap((void *)GATE_SHARED_VA, 4096, PROT_READ | PROT_WRITE,
                             MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED_NOREPLACE, -1, 0);
@@ -1003,6 +994,77 @@ sgx_status_t sgx_create_enclave(
         }
         sgx_status_t st_prod = real_sgx_create_enclave(actual_encl, debug, launch_token, launch_token_updated, enclave_id, misc_attr);
         if (st_prod != 0) return st_prod;
+
+        /* Unconditional symmetric initial VMA pre-fault at enclave creation time (outside ECALL timing):
+         * Faults all non-excluded REG pages so Raw, No-PreTouch, and Group A/B/C start from identical present leaf PTEs. */
+        if (fd_self_mem < 0) fd_self_mem = open("/proc/self/mem", O_RDWR);
+        FILE *fp = fopen("/proc/self/maps", "r");
+        if (fp) {
+            char line[512];
+            uint64_t first = 0;
+            typedef struct { uint64_t s, e; char p[8]; } lvma_t;
+            lvma_t lvmas[128];
+            int nlv = 0;
+            uint64_t ltcs = 0;
+            while (fgets(line, sizeof(line), fp)) {
+                if (!strstr(line, "/dev/sgx_enclave") && !strstr(line, "/dev/sgx/enclave")) continue;
+                uint64_t s, e;
+                char p[8];
+                if (sscanf(line, "%lx-%lx %7s", &s, &e, p) == 3 && nlv < 128) {
+                    if (!first) first = s;
+                    if ((e - s) == 0x3000 && strcmp(p, "rw-s") == 0) {
+                        ltcs = s - first;
+                    }
+                    lvmas[nlv].s = s; lvmas[nlv].e = e; strncpy(lvmas[nlv].p, p, 7); nlv++;
+                }
+            }
+            fclose(fp);
+            uint64_t ex[64][2]; int nex = 0;
+            const char *sp = getenv("ATFIELD_LAYOUT_SPEC");
+            if (sp) {
+                const char *q;
+                if (!ltcs && (q = strstr(sp, "tcs="))) ltcs = strtoull(q + 4, NULL, 16);
+                if ((q = strstr(sp, "excl="))) {
+                    q += 5;
+                    while (*q && *q != ';' && nex < 64) {
+                        char *m1 = NULL, *m2 = NULL;
+                        ex[nex][0] = strtoull(q, &m1, 16);
+                        if (!m1 || *m1 != ':') break;
+                        ex[nex][1] = strtoull(m1 + 1, &m2, 16);
+                        nex++;
+                        if (!m2 || *m2 != ',') break;
+                        q = m2 + 1;
+                    }
+                }
+            }
+            if (ltcs && fd_self_mem >= 0 && first) {
+                uint64_t flg = 0;
+                if (pread(fd_self_mem, &flg, 8, first + ltcs + 8) == 8) {
+                    flg |= 1ULL;
+                    pwrite(fd_self_mem, &flg, 8, first + ltcs + 8);
+                }
+            }
+            for (int i = 0; i < nlv; i++) {
+                if (lvmas[i].p[0] != 'r') continue;
+                int is_w = (strchr(lvmas[i].p, 'w') != NULL);
+                for (uint64_t va = lvmas[i].s; va < lvmas[i].e; va += 0x1000) {
+                    uint64_t rva = va - first;
+                    int skip = (rva == ltcs);
+                    for (int k = 0; k < nex; k++) {
+                        if (rva >= ex[k][0] && rva < ex[k][1]) { skip = 1; break; }
+                    }
+                    if (!skip) {
+                        if (is_w) {
+                            __atomic_fetch_or((volatile uint8_t *)(uintptr_t)va, 0, __ATOMIC_RELAXED);
+                        } else {
+                            volatile uint8_t b = *(volatile uint8_t *)(uintptr_t)va;
+                            (void)b;
+                        }
+                    }
+                }
+            }
+        }
+
         const char *ready_path = getenv("ATFIELD_READY_TABLE");
         if (ready_path && *ready_path) {
             set_ready_table_fn_t fn_tbl = (set_ready_table_fn_t)dlsym(RTLD_DEFAULT, "sgx_set_ecall_page_readiness_table");
@@ -1030,74 +1092,7 @@ sgx_status_t sgx_create_enclave(
                 free(rbuf);
                 fclose(rf);
             }
-        } else {
-            /* Unprotected baseline (Raw / No-PreTouch): fault in non-excluded REG pages on CPU 0 without /dev/sgx-step */
-            if (fd_self_mem < 0) fd_self_mem = open("/proc/self/mem", O_RDWR);
-            FILE *fp = fopen("/proc/self/maps", "r");
-            if (fp) {
-                char line[512];
-                uint64_t first = 0;
-                typedef struct { uint64_t s, e; char p[8]; } lvma_t;
-                lvma_t lvmas[128];
-                int nlv = 0;
-                while (fgets(line, sizeof(line), fp)) {
-                    if (!strstr(line, "/dev/sgx_enclave") && !strstr(line, "/dev/sgx/enclave")) continue;
-                    uint64_t s, e;
-                    char p[8];
-                    if (sscanf(line, "%lx-%lx %7s", &s, &e, p) == 3 && nlv < 128) {
-                        if (!first) first = s;
-                        lvmas[nlv].s = s; lvmas[nlv].e = e; strncpy(lvmas[nlv].p, p, 7); nlv++;
-                    }
-                }
-                fclose(fp);
-                uint64_t ex[64][2]; int nex = 0; uint64_t ltcs = 0;
-                const char *sp = getenv("ATFIELD_LAYOUT_SPEC");
-                if (sp) {
-                    const char *q;
-                    if ((q = strstr(sp, "tcs="))) ltcs = strtoull(q + 4, NULL, 16);
-                    if ((q = strstr(sp, "excl="))) {
-                        q += 5;
-                        while (*q && *q != ';' && nex < 64) {
-                            char *m1 = NULL, *m2 = NULL;
-                            ex[nex][0] = strtoull(q, &m1, 16);
-                            if (!m1 || *m1 != ':') break;
-                            ex[nex][1] = strtoull(m1 + 1, &m2, 16);
-                            nex++;
-                            if (!m2 || *m2 != ',') break;
-                            q = m2 + 1;
-                        }
-                    }
-                }
-                if (ltcs && fd_self_mem >= 0 && first) {
-                    uint64_t flg = 0;
-                    if (pread(fd_self_mem, &flg, 8, first + ltcs + 8) == 8) {
-                        flg |= 1ULL;
-                        pwrite(fd_self_mem, &flg, 8, first + ltcs + 8);
-                    }
-                }
-                for (int i = 0; i < nlv; i++) {
-                    if (lvmas[i].p[0] != 'r') continue;
-                    for (uint64_t va = lvmas[i].s; va < lvmas[i].e; va += 0x1000) {
-                        uint64_t rva = va - first;
-                        int skip = 0;
-                        for (int k = 0; k < nex; k++) {
-                            if (rva >= ex[k][0] && rva < ex[k][1]) { skip = 1; break; }
-                        }
-                        if (!skip) {
-                            if (strchr(lvmas[i].p, 'w')) {
-                                __atomic_fetch_or((volatile uint8_t *)(uintptr_t)va, 0, __ATOMIC_RELAXED);
-                            } else {
-                                volatile uint8_t b = *(volatile uint8_t *)(uintptr_t)va;
-                                (void)b;
-                            }
-                        }
-                    }
-                }
-            }
         }
-        CPU_ZERO(&set_encl);
-        CPU_SET(leased_cpu, &set_encl);
-        sched_setaffinity(0, sizeof(set_encl), &set_encl);
         return st_prod;
     }
 
@@ -1198,6 +1193,47 @@ sgx_status_t sgx_create_enclave(
     return st;
 }
 
+typedef struct {
+    uint64_t selector;
+    uint64_t table_ptr;
+    uint64_t table_bytes;
+} sgx_enclave_pages_acquire_t;
+
+#ifndef SGX_MAGIC
+#define SGX_MAGIC 0xA4
+#endif
+#define SGX_IOC_ENCLAVE_PAGES_ACQUIRE _IOW(SGX_MAGIC, 0x0A, sgx_enclave_pages_acquire_t)
+#define SGX_IOC_ENCLAVE_PAGES_RELEASE _IO(SGX_MAGIC, 0x0B)
+
+typedef int (*real_ioctl_fn_t)(int, unsigned long, void *);
+static real_ioctl_fn_t real_ioctl_fn = NULL;
+static uint64_t cur_ecall_acquire_ns = 0;
+static uint64_t cur_ecall_release_ns = 0;
+
+int ioctl(int fd, unsigned long request, ...) {
+    if (!real_ioctl_fn)
+        real_ioctl_fn = (real_ioctl_fn_t)dlsym(RTLD_NEXT, "ioctl");
+    va_list ap;
+    va_start(ap, request);
+    void *arg = va_arg(ap, void *);
+    va_end(ap);
+    if (__atomic_load_n(&in_measured_ecall, __ATOMIC_RELAXED)) {
+        if (request == (unsigned long)SGX_IOC_ENCLAVE_PAGES_ACQUIRE) {
+            uint64_t ti0 = monotonic_ns();
+            int rc = real_ioctl_fn(fd, request, arg);
+            cur_ecall_acquire_ns += monotonic_ns() - ti0;
+            return rc;
+        }
+        if (request == (unsigned long)SGX_IOC_ENCLAVE_PAGES_RELEASE) {
+            uint64_t ti0 = monotonic_ns();
+            int rc = real_ioctl_fn(fd, request, arg);
+            cur_ecall_release_ns += monotonic_ns() - ti0;
+            return rc;
+        }
+    }
+    return real_ioctl_fn(fd, request, arg);
+}
+
 static sgx_status_t execute_one_measured_ecall(
     sgx_enclave_id_t eid,
     int index,
@@ -1244,11 +1280,16 @@ static sgx_status_t execute_one_measured_ecall(
         clear_ad_only();
     }
 
+    cur_ecall_acquire_ns = 0;
+    cur_ecall_release_ns = 0;
     __atomic_store_n(&in_measured_ecall, 1, __ATOMIC_SEQ_CST);
     uint64_t t0 = monotonic_ns();
     sgx_status_t st = real_sgx_ecall(eid, index, ocall_table, ms);
     uint64_t elapsed_ns = monotonic_ns() - t0;
     __atomic_store_n(&in_measured_ecall, 0, __ATOMIC_SEQ_CST);
+    uint64_t acq_ns = cur_ecall_acquire_ns;
+    uint64_t rel_ns = cur_ecall_release_ns;
+    uint64_t body_ns = (elapsed_ns > acq_ns + rel_ns) ? (elapsed_ns - acq_ns - rel_ns) : 0;
 
     if (use_4gate || strict_mode != 0) {
         snapshot_ad(ecall_post_ad);
@@ -1381,11 +1422,6 @@ static sgx_status_t execute_one_measured_ecall(
     }
     return st;
 }
-
-typedef struct {
-    uint32_t datalen;
-    uint8_t data[];
-} ehsm_data_wire_t;
 
 static void run_interventions_if_matching(
     sgx_enclave_id_t eid,
@@ -1565,51 +1601,6 @@ static void run_interventions_if_matching(
                     for (int pi = 0; pi < MAX_SCHEMA_PARAMS; pi++) free(allocs[pi]);
                 }
             }
-        } else if (sscanf(tok, "ehsm_sizes:%d", &t_seq) == 1 && index == 2 && sseq == t_seq) {
-            const uint32_t sizes[] = {1, 15, 16, 17, 64, 256, 1024, 4096, 6144, 6145};
-            for (size_t si = 0; si < sizeof(sizes) / sizeof(sizes[0]); si++) {
-                uint32_t plen = sizes[si];
-                uint32_t pt_wire_sz = sizeof(uint32_t) + plen;
-                uint32_t ct_wire_sz = sizeof(uint32_t) + plen + 28;
-                ehsm_data_wire_t *pt = (ehsm_data_wire_t *)calloc(1, pt_wire_sz + 64);
-                ehsm_data_wire_t *ct = (ehsm_data_wire_t *)calloc(1, ct_wire_sz + 64);
-                ehsm_data_wire_t *dt = (ehsm_data_wire_t *)calloc(1, pt_wire_sz + 64);
-                pt->datalen = plen;
-                for (uint32_t b = 0; b < plen; b++) pt->data[b] = (uint8_t)(b * 131 + 17);
-                ct->datalen = plen + 28;
-                dt->datalen = plen;
-
-                uint8_t ms_enc[72];
-                memcpy(ms_enc, ms, 72);
-                *(void **)(ms_enc + 40) = pt;
-                *(uint64_t *)(ms_enc + 48) = pt_wire_sz;
-                *(void **)(ms_enc + 56) = ct;
-                *(uint64_t *)(ms_enc + 64) = ct_wire_sz;
-
-                char tag[64];
-                snprintf(tag, sizeof(tag), "domain_ehsm_encrypt_len_%u", plen);
-                execute_one_measured_ecall(eid, 2, ocall_table, ms_enc, tag, 1);
-
-                if (*(int *)ms_enc == 0 && plen <= 6144) {
-                    uint8_t ms_dec[72];
-                    memcpy(ms_dec, ms_enc, 72);
-                    *(void **)(ms_dec + 40) = ct;
-                    *(uint64_t *)(ms_dec + 48) = ct_wire_sz;
-                    *(void **)(ms_dec + 56) = dt;
-                    *(uint64_t *)(ms_dec + 64) = pt_wire_sz;
-                    snprintf(tag, sizeof(tag), "domain_ehsm_decrypt_valid_len_%u", plen);
-                    execute_one_measured_ecall(eid, 3, ocall_table, ms_dec, tag, 1);
-
-                    if (plen == 1024) {
-                        ct->data[plen + 20] ^= 0xFF;
-                        snprintf(tag, sizeof(tag), "domain_ehsm_decrypt_bad_tag_len_%u", plen);
-                        execute_one_measured_ecall(eid, 3, ocall_table, ms_dec, tag, 1);
-                    }
-                }
-                free(pt);
-                free(ct);
-                free(dt);
-            }
         }
     }
     free(copy);
@@ -1638,14 +1629,7 @@ sgx_status_t sgx_ecall(
         }
     }
 
-    sgx_status_t st;
-    if (allow_fast_forward && sseq >= 32 && sseq < 995) {
-        g_shared->gate_enable = 0;
-        fast_forwarded_calls++;
-        st = real_sgx_ecall(eid, index, ocall_table, ms);
-    } else {
-        st = execute_one_measured_ecall(eid, index, ocall_table, ms, "host_normal", 1);
-    }
+    sgx_status_t st = execute_one_measured_ecall(eid, index, ocall_table, ms, "host_normal", 1);
 
     /* Post-call typed state replay trigger */
     const char *spec_post = getenv("ATFIELD_INTERVENTION");
@@ -1732,10 +1716,12 @@ static void dump_enclave_vmas_if_requested(void) {
 }
 
 static void cleanup_interpose(void) {
-    cpu_set_t sys_set;
-    CPU_ZERO(&sys_set);
-    CPU_SET(0, &sys_set);
-    sched_setaffinity(0, sizeof(sys_set), &sys_set);
+    if (!pure_prod_mode) {
+        cpu_set_t sys_set;
+        CPU_ZERO(&sys_set);
+        CPU_SET(0, &sys_set);
+        sched_setaffinity(0, sizeof(sys_set), &sys_set);
+    }
     if (watcher_started) {
         __atomic_store_n(&watcher_stop, 1, __ATOMIC_RELEASE);
         pthread_join(watcher_thread, NULL);

@@ -3,30 +3,29 @@
 All tables in this document are generated automatically from `experiments/evaluation_results.json` and `witnesses/<sample>/witness_ledger.json` via `python3 tools/generate_report_tables.py`.
 
 - **Frozen Initial Hardware Prototype Tag**: `v0-hardware-prototype-frozen` (`7daae4f82ba5380f1ef96c5c0f2f273e01ab360a`)
-- **Unified Collector (`build/libatfield_native_sgx.so`) SHA-256 across Discovery & Evaluation**: `a22ca968544f1e1523d991ae47d5771a90604c365ac5e45bdfcf22ba85ff41cf`
+- **Unified Collector (`build/libatfield_native_sgx.so`) SHA-256 across Discovery & Evaluation**: `6653598aa0f78be1efcd35b0b4908a4c87c9e030e6c585cd91199c1f4c2a8375`
 - **Default Conservative Candidate**: **Group B (`workset.dynamic_xr.json`)**, which keeps all `RX` code pages as `XR` (`RX = XR`), avoiding unverified `X-only` read-permission stripping.
 - **Scope & Boundary Statement**: Dynamic exploration and hold-out evaluations provide empirical evidence on the executed inputs, histories, and hardware runs; heuristic assistance (depth-4 direct call graph, `+2` heap frontier pages, `-4` stack margin pages) is an empirical aid rather than a formal whole-program upper-bound proof.
 
-## 1. Four-Layer Workset Attribution (11 Protected Business Fields)
+## 1. Three-Layer Workset Attribution (11 Protected Business Fields)
 
 - **Layer 0 (`L0`)**: First invocation of the Field (`(page_rva, effect)` pairs, distinguishing `A` vs `D`).
-- **Layer 1 (`L1`)**: Complete unmodified sample `host` workflow (all calls measured, `allow_fast_forward=0`).
-- **Layer 2 (`L2`)**: Schema-typed exploration driven by `targets/<sample>/edl_schema.json` (`feedback_scale_expansion` via `scale_bound_v2`, bounded `xor_param`/`set_scalar`/`null_param`, `cold_enclave_state_replay` via `typed_state_probe`, and `doubling_history_scan` `16 -> 64 -> 256 -> 1024`).
-- **Layer 3 (`L3`)**: Optional domain-assisted inner-struct framing (`ehsm_sizes`).
+- **Layer 1 (`L1`)**: Complete unmodified sample `host` workflow (all calls measured).
+- **Layer 2 (`L2`)**: Schema-typed exploration driven by `targets/<sample>/edl_schema.json` (`feedback_scale_expansion` via `scale_bound_v2`, isolated single-mutation replay `xor_param`/`set_scalar`/`null_param`, `cold_enclave_state_replay` via `typed_state_probe`, and `doubling_history_scan` `16 -> 64 -> 256 -> 1024`).
 
-| Sample | Field | L0 First Call (`p / eff`) | L1 Full Host (`p / +p`) | L2 Isolated from Seed (`p / +p`) | L2 Added Beyond Full Host (`+p / +eff`) | L3 Domain Assist (`+p / +eff`) | Bridge + Heuristic Assist (`+p`) | Final `FieldTargetPages` (Group B `XR`) | All-REG Baseline | Reduction vs All-REG |
-|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| `qe3` | `get_att_key_based_from_seal_key` | 69p / 77e | 69p (`+0p`) | **69p** (`+0p`) | **+0p / +0e** | +0p / +0e | +57p | **126p** | 850p | **85.18%** |
-| `signal-cds` | `sabd_lookup_hash` | 16p / 20e | 230p (`+214p`) | **554p** (`+538p`) | **+324p / +364e** | +0p / +0e | +12p | **566p** | 1127p | **49.78%** |
-| `sgxwallet` | `ecdsa_sign_field` | 70p / 78e | 76p (`+6p`) | **76p** (`+6p`) | **+0p / +0e** | +0p / +0e | +33p | **109p** | 1774p | **93.86%** |
-| `sgxwallet` | `get_public_ecdsa_key_field` | 68p / 74e | 68p (`+0p`) | **72p** (`+4p`) | **+4p / +4e** | +0p / +0e | +29p | **101p** | 1774p | **94.31%** |
-| `sgxwallet` | `set_sek_field` | 45p / 52e | 45p (`+0p`) | **52p** (`+7p`) | **+7p / +7e** | +0p / +0e | +22p | **74p** | 1774p | **95.83%** |
-| `sgxwallet` | `generate_ecdsa_key_field` | 76p / 82e | 76p (`+0p`) | **76p** (`+0p`) | **+0p / +0e** | +0p / +0e | +31p | **107p** | 1774p | **93.97%** |
-| `sgxwallet` | `generate_sek_field` | 48p / 56e | 48p (`+0p`) | **48p** (`+0p`) | **+0p / +0e** | +0p / +0e | +24p | **72p** | 1774p | **95.94%** |
-| `ehsm` | `ehsm_create_aes_key` | 263p / 332e | 263p (`+0p`) | **263p** (`+0p`) | **+0p / +0e** | +0p / +0e | +36p | **299p** | 2349p | **87.27%** |
-| `ehsm` | `ehsm_generate_datakey` | 90p / 98e | 90p (`+0p`) | **264p** (`+174p`) | **+174p / +236e** | +0p / +0e | +35p | **299p** | 2349p | **87.27%** |
-| `ehsm` | `ehsm_aes_gcm_encrypt` | 90p / 97e | 93p (`+3p`) | **266p** (`+176p`) | **+173p / +234e** | +0p / +1e | +36p | **302p** | 2349p | **87.14%** |
-| `ehsm` | `ehsm_aes_gcm_decrypt` | 90p / 98e | 266p (`+176p`) | **266p** (`+176p`) | **+0p / +0e** | +0p / +1e | +38p | **304p** | 2349p | **87.06%** |
+| Sample | Field | L0 First Call (`p / eff`) | L1 Full Host (`p / +p`) | L2 Isolated from Seed (`p / +p`) | L2 Added Beyond Full Host (`+p / +eff`) | Bridge + Heuristic Assist (`+p`) | Final `FieldTargetPages` (Group B `XR`) | All-REG Baseline | Reduction vs All-REG |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| `qe3` | `get_att_key_based_from_seal_key` | 69p / 77e | 69p (`+0p`) | **69p** (`+0p`) | **+0p / +0e** | +57p | **126p** | 850p | **85.18%** |
+| `signal-cds` | `sabd_lookup_hash` | 16p / 20e | 230p (`+214p`) | **554p** (`+538p`) | **+324p / +364e** | +12p | **566p** | 1127p | **49.78%** |
+| `sgxwallet` | `ecdsa_sign_field` | 70p / 78e | 76p (`+6p`) | **76p** (`+6p`) | **+0p / +0e** | +33p | **109p** | 1774p | **93.86%** |
+| `sgxwallet` | `get_public_ecdsa_key_field` | 68p / 74e | 68p (`+0p`) | **72p** (`+4p`) | **+4p / +4e** | +29p | **101p** | 1774p | **94.31%** |
+| `sgxwallet` | `set_sek_field` | 45p / 52e | 45p (`+0p`) | **52p** (`+7p`) | **+7p / +7e** | +22p | **74p** | 1774p | **95.83%** |
+| `sgxwallet` | `generate_ecdsa_key_field` | 76p / 82e | 76p (`+0p`) | **76p** (`+0p`) | **+0p / +0e** | +31p | **107p** | 1774p | **93.97%** |
+| `sgxwallet` | `generate_sek_field` | 48p / 56e | 48p (`+0p`) | **48p** (`+0p`) | **+0p / +0e** | +24p | **72p** | 1774p | **95.94%** |
+| `ehsm` | `ehsm_create_aes_key` | 263p / 332e | 263p (`+0p`) | **263p** (`+0p`) | **+0p / +0e** | +36p | **299p** | 2349p | **87.27%** |
+| `ehsm` | `ehsm_generate_datakey` | 90p / 98e | 90p (`+0p`) | **264p** (`+174p`) | **+174p / +236e** | +35p | **299p** | 2349p | **87.27%** |
+| `ehsm` | `ehsm_aes_gcm_encrypt` | 90p / 97e | 93p (`+3p`) | **266p** (`+176p`) | **+173p / +234e** | +36p | **302p** | 2349p | **87.14%** |
+| `ehsm` | `ehsm_aes_gcm_decrypt` | 90p / 98e | 266p (`+176p`) | **266p** (`+176p`) | **+0p / +0e** | +38p | **304p** | 2349p | **87.06%** |
 
 ## 2. Provenance, Fault-Detector Calibration, Same-Fault AEX0/AEX1, and Hold-Out Validation
 
@@ -44,35 +43,46 @@ All tables in this document are generated automatically from `experiments/evalua
 - **Group C (`dynamic_refined`, Experimental Ablation)**: Reduced dynamic page set + `X-only` on code pages without direct symbol/RIP-relative data references.
 - **Interrupt Separation**: Every Field observation records `s3_active_aex_count`. Observations with `s3_active_aex_count == 0` are reported under **Clean (`s3_aex=0`)**; observations interrupted by external host/timer AEX during `S3` (`s3_active_aex_count > 0`) are reported separately under **Interrupt-Contaminated (`s3_aex>0`)**.
 
-| Sample | Field | Total Attempts | Group A Clean `0`-Rewalk / Clean (`med / max`) | **Group B (`XR` Default) Clean `0`-Rewalk / Clean (`med / max`)** | Group B Interrupt-Contaminated Count (`max` pages) | Group C (`X-only`) Clean `0`-Rewalk / Clean (`med / max`) | Group C Interrupt-Contaminated Count (`max` pages) | Group A -> B -> C `S2` Median TSC Ticks |
+| Sample | Field | Total Attempts | Group A Clean `0`-Rewalk / Clean (`med / max`) | **Group B (`XR` Default) Clean `0`-Rewalk / Clean (`med / max`)** | Group B Interrupt-Contaminated Count (`max` pages) | Group C (`X-only`) Clean `0`-Rewalk / Clean (`med / max`) | Group C Interrupt-Contaminated Count (`max` pages) | Group A -> B -> C Cold-TLB `S2` Median TSC Ticks |
 |---|---|---:|---|---|---|---:|---|---|
-| `qe3` | `get_att_key_based_from_seal_key` | 15 | 0/15 (`3 / 5`) | **0/15** (`3 / 3`) | 0 (`max=0p`) | 0/15 (`3 / 3`) | 0 (`max=0p`) | `1,567,484` -> **`165,618`** -> `152,658` |
-| `signal-cds` | `sabd_lookup_hash` | 25 | 14/25 (`0 / 9`) | **25/25** (`0 / 0`) | 0 (`max=0p`) | 25/25 (`0 / 0`) | 0 (`max=0p`) | `1,274,048` -> **`650,556`** -> `649,238` |
-| `sgxwallet` | `generate_sek_field` | 5 | 0/5 (`14 / 15`) | **0/5** (`1 / 1`) | 0 (`max=0p`) | 0/5 (`1 / 1`) | 0 (`max=0p`) | `5,820,458` -> **`223,632`** -> `213,294` |
-| `sgxwallet` | `set_sek_field` | 5 | 0/5 (`12 / 15`) | **0/5** (`1 / 1`) | 0 (`max=0p`) | 0/5 (`1 / 1`) | 0 (`max=0p`) | `5,535,378` -> **`218,304`** -> `205,468` |
-| `sgxwallet` | `generate_ecdsa_key_field` | 5 | 0/5 (`17 / 30`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `3,235,052` -> **`209,456`** -> `193,996` |
-| `sgxwallet` | `get_public_ecdsa_key_field` | 5 | 0/5 (`15 / 19`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `2,020,116` -> **`128,302`** -> `127,160` |
-| `sgxwallet` | `ecdsa_sign_field` | 50 | 0/50 (`16 / 26`) | **50/50** (`0 / 0`) | 0 (`max=0p`) | 50/50 (`0 / 0`) | 0 (`max=0p`) | `2,009,121` -> **`143,659`** -> `142,130` |
-| `ehsm` | `ehsm_generate_datakey` | 5 | 0/5 (`39 / 42`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `2,864,526` -> **`434,384`** -> `429,964` |
-| `ehsm` | `ehsm_aes_gcm_encrypt` | 20 | 0/20 (`34 / 46`) | **20/20** (`0 / 0`) | 0 (`max=0p`) | 20/20 (`0 / 0`) | 0 (`max=0p`) | `2,849,223` -> **`441,185`** -> `438,437` |
-| `ehsm` | `ehsm_aes_gcm_decrypt` | 40 | 0/40 (`38 / 132`) | **40/40** (`0 / 0`) | 0 (`max=0p`) | 40/40 (`0 / 0`) | 0 (`max=0p`) | `2,860,848` -> **`439,985`** -> `438,837` |
-| `ehsm` | `ehsm_create_aes_key` | 5 | 0/5 (`123 / 136`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `7,748,782` -> **`918,408`** -> `881,736` |
+| `qe3` | `get_att_key_based_from_seal_key` | 15 | 0/15 (`3 / 4`) | **0/15** (`3 / 3`) | 0 (`max=0p`) | 0/15 (`3 / 3`) | 0 (`max=0p`) | `1,396,546` -> **`173,924`** -> `155,582` |
+| `signal-cds` | `sabd_lookup_hash` | 25 | 13/25 (`0 / 11`) | **25/25** (`0 / 0`) | 0 (`max=0p`) | 25/25 (`0 / 0`) | 0 (`max=0p`) | `1,257,524` -> **`643,882`** -> `648,952` |
+| `sgxwallet` | `generate_sek_field` | 5 | 0/5 (`12 / 17`) | **0/5** (`1 / 1`) | 0 (`max=0p`) | 0/5 (`1 / 1`) | 0 (`max=0p`) | `5,868,858` -> **`221,192`** -> `209,908` |
+| `sgxwallet` | `set_sek_field` | 5 | 0/5 (`11 / 15`) | **0/5** (`1 / 1`) | 0 (`max=0p`) | 0/5 (`1 / 1`) | 0 (`max=0p`) | `5,701,306` -> **`223,884`** -> `211,798` |
+| `sgxwallet` | `generate_ecdsa_key_field` | 5 | 0/5 (`17 / 22`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `2,996,388` -> **`206,570`** -> `188,054` |
+| `sgxwallet` | `get_public_ecdsa_key_field` | 5 | 0/5 (`13 / 19`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `2,030,746` -> **`130,670`** -> `127,236` |
+| `sgxwallet` | `ecdsa_sign_field` | 50 | 0/50 (`15 / 26`) | **50/50** (`0 / 0`) | 0 (`max=0p`) | 50/50 (`0 / 0`) | 0 (`max=0p`) | `2,012,964` -> **`145,314`** -> `143,757` |
+| `ehsm` | `ehsm_generate_datakey` | 5 | 0/5 (`34 / 36`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `2,889,388` -> **`442,748`** -> `428,306` |
+| `ehsm` | `ehsm_aes_gcm_encrypt` | 20 | 0/20 (`33 / 44`) | **20/20** (`0 / 0`) | 0 (`max=0p`) | 20/20 (`0 / 0`) | 0 (`max=0p`) | `2,907,340` -> **`443,993`** -> `427,118` |
+| `ehsm` | `ehsm_aes_gcm_decrypt` | 40 | 0/40 (`36 / 133`) | **40/40** (`0 / 0`) | 0 (`max=0p`) | 40/40 (`0 / 0`) | 0 (`max=0p`) | `2,878,951` -> **`442,702`** -> `435,360` |
+| `ehsm` | `ehsm_create_aes_key` | 5 | 0/5 (`129 / 140`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `7,746,966` -> **`927,190`** -> `894,444` |
 
 - **Exact Per-Observation Totals Across the 8 Non-`ENCLU` Fields (155 total Field entries across 5 rounds)**:
   - **Group B (`dynamic_xr`, Default `XR`)**: **155 / 155** clean (`s3_aex=0`) observations, **0 / 155** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **155 / 155** achieved `0` residual page-table A/D re-walks.
   - **Group C (`dynamic_refined`, `X-only`)**: **155 / 155** clean (`s3_aex=0`) observations, **0 / 155** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **155 / 155** achieved `0` residual page-table A/D re-walks.
 
-## 4. Production `AEX1` Latency & Memory/Code Size Overhead vs Unprotected Baselines (5 Interleaved Rounds)
+## 4. Production `AEX1` Latency Breakdown & Footprint (5 Interleaved Rounds, `no_turbo=1, governor=performance`)
 
-- **Metric Definition**: Sum of individual `sgx_ecall` wall-clock durations (`elapsed_ns`) within one workflow round (`--requests 5` for `sgxwallet` in the 5-round benchmark; `--requests 1005` evaluated in Table 2).
-- **Two Unprotected Baselines**: `Raw (GCC)` is `sample/build/real/<sample>/raw/enclave.signed.so`; `No-PreTouch (Clang-Anchor)` is `enclave.profile.signed.so` (same compiler & layout as Group A/B/C, with a 1-instruction `jmp` stub in `.atfield_pretouch`).
+- **Symmetric Initial PTE Baseline**: All modes (`Raw`, `No-PreTouch`, `Group A/B/C`) fault in their enclave VMAs at `sgx_create_enclave` time (outside the timed `sgx_ecall` window) and run 1 warmup round before the 5 measured rounds.
+- **Direct Hardware Segmented Timing**: `libatfield_native_sgx.so` directly times `ioctl(SGX_IOC_ENCLAVE_PAGES_ACQUIRE)` (`acquire_ns`), the enclave `EENTER` body (`encl_body_ns = elapsed_ns - acquire_ns - release_ns`), and `ioctl(SGX_IOC_ENCLAVE_PAGES_RELEASE)` (`release_ns`) on every `sgx_ecall`.
 
-| Sample | `Raw` Unprotected (ms) | `No-PreTouch` Baseline (ms) | Group A (`all_reg_xr`) (ms) | **Group B (`dynamic_xr` Default)** (ms) | Group C (`dynamic_refined`) (ms) | **Group B Overhead vs `No-PreTouch`** | Group B Speedup vs Group A | Loaded `PT_LOAD` MemSiz (`Raw -> Group B`) | `.atfield_pretouch` + `ReadyTable` Bytes (Group B) |
+### 4A. Protected Field-Entering ECALLs (`cat=3`) — Per-Call Segmented Breakdown
+
+| Sample | Protected Calls / Round | Group B Clean / Attempts | `No-PreTouch` Body (µs/call) | Group B `ACQUIRE + RELEASE` (µs/call) | Group B Warm `S2` Pre-Touch (`ΔBody`, µs/call) | **Group B Total (µs/call)** | **Group B Per-Call Overhead vs `No-PreTouch`** | Group A Total (µs/call) | **Group B Protection Overhead Reduction vs Group A** |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| `qe3` | 0.87 | 0.87 | 2.46 | **1.30** | 1.29 | **+49.02%** (`+0.43 ms`) | **1.90x** | `2104.7 -> 2116.7 KiB` (**+0.57%**) | `1303 B + 1544 B` |
-| `signal-cds` | 439.74 | 437.48 | 438.60 | **438.09** | 438.24 | **+0.14%** (`+0.61 ms`) | **1.00x** | `140.3 -> 155.8 KiB` (**+11.06%**) | `4568 B + 5072 B` |
-| `sgxwallet` | 41.80 | 36.40 | 43.92 | **38.38** | 38.23 | **+5.44%** (`+1.98 ms`) | **1.14x** | `2722.2 -> 2818.2 KiB` (**+3.52%**) | `4460 B + 6288 B` |
-| `ehsm` | 3.03 | 3.10 | 15.03 | **5.33** | 5.35 | **+72.25%** (`+2.24 ms`) | **2.82x** | `5023.2 -> 5123.3 KiB` (**+1.99%**) | `10230 B + 11720 B` |
+| `qe3` | 3 | **5/5** | 251.6 | **0.0** | **+19.6** | **271.2** | **+7.79%** (`+19.6 µs`) | 361.0 (`+109.4 µs`) | **5.58x** |
+| `signal-cds` | 5 | **5/5** | 87442.0 | **0.0** | **+157.3** | **87599.3** | **+0.18%** (`+157.3 µs`) | 87648.9 (`+206.9 µs`) | **1.32x** |
+| `sgxwallet` | 14 | **5/5** | 1357.2 | **0.0** | **+19.5** | **1376.7** | **+1.44%** (`+19.5 µs`) | 1568.7 (`+211.6 µs`) | **10.84x** |
+| `ehsm` | 14 | **5/5** | 141.4 | **0.0** | **+29.1** | **170.4** | **+20.55%** (`+29.1 µs`) | 398.2 (`+256.8 µs`) | **8.84x** |
+
+### 4B. Whole-Workflow End-to-End ECALL Sum (`cat=1` Init + `cat=2` Early-Return + `cat=3` Field Calls) & Binary Footprint
+
+| Sample | Call Mix (`Field / Early-Ret / Init`) | Group B Clean / Attempts | `Raw` (ms) | `No-PreTouch` (ms) | Group A (`all_reg_xr`) (ms) | **Group B (`dynamic_xr` Default)** (ms) | Group C (`dynamic_refined`) (ms) | **Group B Workflow Overhead vs `No-PreTouch`** | Group B Speedup vs Group A | Loaded `PT_LOAD` MemSiz (`Raw -> Group B`) | `.atfield_pretouch` + `ReadyTable` Bytes |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| `qe3` | `3 / 0 / 0` | **5/5** | 0.74 | 0.75 | 1.08 | **0.81** | 0.82 | **+7.79%** (`+0.06 ms`) | **1.33x** | `2104.7 -> 2116.7 KiB` (**+0.57%**) | `1303 B + 1544 B` |
+| `signal-cds` | `5 / 1 / 0` | **5/5** | 438.81 | 437.22 | 438.33 | **438.04** | 437.61 | **+0.19%** (`+0.83 ms`) | **1.00x** | `140.3 -> 155.8 KiB` (**+11.06%**) | `4568 B + 5072 B` |
+| `sgxwallet` | `14 / 0 / 4` | **5/5** | 42.46 | 36.07 | 39.11 | **36.34** | 36.32 | **+0.74%** (`+0.27 ms`) | **1.08x** | `2722.2 -> 2818.2 KiB` (**+3.52%**) | `4460 B + 6288 B` |
+| `ehsm` | `14 / 16 / 2` | **5/5** | 2.22 | 2.24 | 8.44 | **3.03** | 3.03 | **+35.45%** (`+0.79 ms`) | **2.78x** | `5023.2 -> 5123.3 KiB` (**+1.99%**) | `10230 B + 11720 B` |
 
 ## 5. Clean-Checkout Reproducible Workflow
 
@@ -91,7 +101,7 @@ gcc -shared -fPIC -O2 -Wno-unused-result -DLIBSGXSTEP_SILENT=1 \
   vendor/sgxstep/libsgxstep/debug.c -ldl -lpthread \
   -o build/libatfield_native_sgx.so
 
-# 3. Run 4-layer dynamic exploration & emit Group B (dynamic_xr) and Group C (dynamic) artifacts
+# 3. Run 3-layer dynamic exploration & emit Group B (dynamic_xr) and Group C (dynamic) artifacts
 python3 controller.py qe3 signal-cds sgxwallet ehsm
 
 # 4. Run calibration, independent hold-out verification, and 5-round 3-group evaluation

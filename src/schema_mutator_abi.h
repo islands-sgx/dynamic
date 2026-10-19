@@ -316,39 +316,6 @@ static inline int mutate_xor_in_snapshot(
     return 0;
 }
 
-/* Standalone bounded XOR helper (kept for backwards-compatible direct unit test calls) */
-static inline int mutate_xor_bounded(
-    uint8_t *ms_work,
-    const uint8_t *ms_orig,
-    size_t ms_size,
-    const param_schema_t *ps,
-    size_t byte_idx,
-    uint8_t mask,
-    void **out_temp_alloc
-) {
-    if (!ms_work || !ms_orig || !ps || !out_temp_alloc || ms_size > MAX_MS_FRAME_BYTES) return -EINVAL;
-    *out_temp_alloc = NULL;
-    if (!ps->is_pointer || (ps->direction != DIR_IN && ps->direction != DIR_INOUT)) {
-        return -EINVAL;
-    }
-    size_t alloc_len = 0, usable_len = 0;
-    int rc = compute_param_byte_len(ms_orig, ms_size, ps, &alloc_len, &usable_len);
-    if (rc != 0) return rc;
-    if (usable_len == 0 || byte_idx >= usable_len) {
-        return -ERANGE;
-    }
-    void *orig_ptr = *(void *const *)(ms_orig + ps->ms_offset);
-    if (!orig_ptr) return -ERANGE;
-    uint8_t *clone = (uint8_t *)malloc(alloc_len);
-    if (!clone) return -ENOMEM;
-    memcpy(clone, orig_ptr, alloc_len);
-    clone[byte_idx] ^= mask;
-    memcpy(ms_work, ms_orig, ms_size);
-    *(void **)(ms_work + ps->ms_offset) = clone;
-    *out_temp_alloc = clone;
-    return 0;
-}
-
 /* Coordinated scalar mutation: updates scalar parameter AND reallocates all dependent [in]/[out]/[inout] buffers! */
 static inline int mutate_scalar_and_rebind_buffers(
     typed_ms_snapshot_t *snap,

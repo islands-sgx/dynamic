@@ -46,18 +46,25 @@ int main(void) {
 
     uint8_t ms_orig[32] = {0}, ms_work[32] = {0};
     *(void **)(ms_orig + 16) = four_byte_obj;
-    void *tmp_alloc = NULL;
+    ecall_schema_t es1 = {0};
+    es1.ms_size = 32;
+    es1.replay_supported = 1;
+    es1.num_params = 1;
+    es1.params[0] = p4;
+    typed_ms_snapshot_t snap1 = {0};
+    assert(typed_snapshot_ms(ms_orig, 32, &es1, &snap1) == 0);
 
-    assert(mutate_xor_bounded(ms_work, ms_orig, 32, &p4, 4, 0xff, &tmp_alloc) == -ERANGE);
-    assert(mutate_xor_bounded(ms_work, ms_orig, 32, &p4, 15, 0xff, &tmp_alloc) == -ERANGE);
-    assert(mutate_xor_bounded(ms_work, ms_orig, 32, &p4, 31, 0xff, &tmp_alloc) == -ERANGE);
-    assert(mutate_xor_bounded(ms_work, ms_orig, 32, &p4, 60, 0xff, &tmp_alloc) == -ERANGE);
+    assert(mutate_xor_in_snapshot(&snap1, &es1, ms_work, 0, 4, 0xff) == -ERANGE);
+    assert(mutate_xor_in_snapshot(&snap1, &es1, ms_work, 0, 15, 0xff) == -ERANGE);
+    assert(mutate_xor_in_snapshot(&snap1, &es1, ms_work, 0, 31, 0xff) == -ERANGE);
+    assert(mutate_xor_in_snapshot(&snap1, &es1, ms_work, 0, 60, 0xff) == -ERANGE);
     assert(*four_byte_obj == 0x11223344);
 
-    assert(mutate_xor_bounded(ms_work, ms_orig, 32, &p4, 0, 0xff, &tmp_alloc) == 0);
-    assert(tmp_alloc != NULL && tmp_alloc != four_byte_obj);
+    assert(mutate_xor_in_snapshot(&snap1, &es1, ms_work, 0, 0, 0xff) == 0);
+    assert(*(void **)(ms_work + 16) != NULL && *(void **)(ms_work + 16) != four_byte_obj);
+    assert((*(uint8_t **)(ms_work + 16))[0] == (0x44 ^ 0xff));
     assert(*four_byte_obj == 0x11223344);
-    free(tmp_alloc);
+    free_typed_snapshot(&snap1);
     munmap(pages, 8192);
 
     /* 2. Multiplication overflow check */

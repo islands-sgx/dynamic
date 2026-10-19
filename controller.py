@@ -612,25 +612,6 @@ def explore_and_close_sample(sample: str) -> dict:
                     "regime_jump_ratio": round(max_tsc / max(med_tsc, 1), 2),
                 })
 
-    # Step F: Layer 3 Optional Domain-Assisted Inner-Struct Sweep (ehsm only)
-    if sample == "ehsm":
-        p3 = {
-            "run_id": "layer3_domain_ehsm_inner_datalen_sweep",
-            "layer": "layer3_domain_assist",
-            "subkind": "domain_inner_struct_framing",
-            "intervention": "ehsm_sizes:1",
-            "allow_nonzero_rc": False,
-            "desc": "Domain-assisted ehsm_data_t inner datalen payload sweep [1..6145] + GCM tag fault",
-        }
-        res3 = run_sample(
-            sample,
-            mode="profile_4gate",
-            ipi_mask=7,
-            intervention=p3["intervention"],
-            allow_fast_forward=0,
-            persist_prefix=raw_trace_dir / p3["run_id"],
-        )
-        ingest_run(p3, res3, is_baseline_host=False, is_seed_isolated=False)
 
     # Static ELF inspection & heuristic assist
     syms = profile_elf.symbols()

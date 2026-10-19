@@ -589,7 +589,22 @@ def evaluate_sample(sample: str) -> dict:
     }
     prod_keys = ("raw_unprotected", "profile_no_pretouch") + groups
     prod_aex1_ecall_sum_ns = {g: [] for g in prod_keys}
+    prod_aex1_seg = {
+        g: {
+            "cat3_total_ns": [],
+            "cat3_acquire_ns": [],
+            "cat3_body_ns": [],
+            "cat3_release_ns": [],
+            "cat2_early_ret_ns": [],
+            "cat1_init_ns": [],
+        }
+        for g in prod_keys
+    }
     prod_aex1_attempt_stats = {}
+    ready_B_early = json.loads((tdir / "enclave.dynamic_xr.ready.json").read_text())
+    full_sel_map = {s["ecall_index"]: set(s["page_rvas"]) for s in ready_B_early["selectors"] if s["page_rvas"]}
+    field_entering_call_seqs: set[int] = set()
+    first_4gate_records: list[dict] = []
 
     group_modes_4gate = [
         ("groupA_all_reg_xr", "all_reg_4gate"),
@@ -615,6 +630,10 @@ def evaluate_sample(sample: str) -> dict:
                 persist_prefix=raw_dir / f"ablation_4gate_r{rnd}_{gname}",
             )
             for rec in r4["records"]:
+                if gname == "groupB_dynamic_xr" and rnd == 0:
+                    first_4gate_records.append(rec)
+                    if rec["fields"]:
+                        field_entering_call_seqs.add(rec["call_seq"])
                 for fobs in rec["fields"]:
                     fid = fobs["field_id"]
                     if fid not in gate_ablation[gname]:
@@ -661,6 +680,26 @@ def evaluate_sample(sample: str) -> dict:
                 if rp["returncode"] == 0 and "PASS" in rp["stdout"]:
                     prod_aex1_attempt_stats[gname]["clean_completed"] += 1
                     prod_aex1_ecall_sum_ns[gname].append(sum(r["elapsed_ns"] for r in rp["records"]))
+                    c3_tot = c3_acq = c3_bod = c3_rel = c2_tot = c1_tot = 0
+                    for r in rp["records"]:
+                        cseq = r["call_seq"]
+                        eidx = r["ecall_index"]
+                        has_rdy = eidx in full_sel_map
+                        if cseq in field_entering_call_seqs:
+                            c3_tot += r.get("elapsed_ns", 0)
+                            c3_acq += r.get("acquire_ns", 0)
+                            c3_bod += r.get("encl_body_ns", r.get("elapsed_ns", 0))
+                            c3_rel += r.get("release_ns", 0)
+                        elif has_rdy:
+                            c2_tot += r.get("elapsed_ns", 0)
+                        else:
+                            c1_tot += r.get("elapsed_ns", 0)
+                    prod_aex1_seg[gname]["cat3_total_ns"].append(c3_tot)
+                    prod_aex1_seg[gname]["cat3_acquire_ns"].append(c3_acq)
+                    prod_aex1_seg[gname]["cat3_body_ns"].append(c3_bod)
+                    prod_aex1_seg[gname]["cat3_release_ns"].append(c3_rel)
+                    prod_aex1_seg[gname]["cat2_early_ret_ns"].append(c2_tot)
+                    prod_aex1_seg[gname]["cat1_init_ns"].append(c1_tot)
                     break
                 elif any(r.get("sgx_status") == 0x1006 for r in rp["records"]):
                     prod_aex1_attempt_stats[gname]["interrupt_aborted_0x1006"] += 1
@@ -763,6 +802,15 @@ def evaluate_sample(sample: str) -> dict:
                 },
             },
             "production_aex1_attempt_accounting": prod_aex1_attempt_stats,
+            "workflow_call_category_counts": {
+                "cat3_field_entering_calls": len(field_entering_call_seqs),
+                "cat2_early_return_ready_calls": sum(1 for r in first_4gate_records if r["call_seq"] not in field_entering_call_seqs and r["ecall_index"] in full_sel_map),
+                "cat1_init_no_ready_calls": sum(1 for r in first_4gate_records if r["call_seq"] not in field_entering_call_seqs and r["ecall_index"] not in full_sel_map),
+            },
+            "production_aex1_segmented_breakdown_ns": {
+                g: {k: dist_summary(v) for k, v in prod_aex1_seg[g].items()}
+                for g in prod_keys
+            },
             "production_aex1_per_round_ecall_sum_ns": {
                 g: dist_summary(prod_aex1_ecall_sum_ns[g])
                 for g in prod_keys

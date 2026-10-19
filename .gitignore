@@ -1,10 +1,12 @@
 targets/*/obj/
 targets/*/*.so
 witnesses/*/dumps/
+experiments/raw_traces/
 *.o
 __pycache__/
 .codegraph/
 .zvec-grep/
 /build/
-vendor/implement/build/field/.build-host/
+vendor/implement/build/field/.build*/
+vendor/implement/host/driver/.work/
 vendor/sgxstep/kernel/*.ko
