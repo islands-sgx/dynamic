@@ -1,76 +1,78 @@
 {
   "fields": [
     {
-      "enter_call_rva": 83032,
-      "exit_call_rva": 83159,
+      "enter_call_rva": 83097,
+      "exit_call_rva": 83255,
       "field_id": "0xd9243791a2c13244",
       "function": "generate_sek_field",
       "gate_a_rva": 2895872,
       "gate_b_rva": 2896027,
       "gate_c_rva": 2896206,
       "gate_d_rva": 2896397,
-      "marker_rva": 83037,
-      "pretouch_jmp_rva": 2825874,
+      "marker_rva": 83102,
+      "pretouch_jmp_rva": 2825868,
       "pretouch_rva": 2809856
     },
     {
-      "enter_call_rva": 83367,
-      "exit_call_rva": 83556,
+      "enter_call_rva": 83491,
+      "exit_call_rva": 83801,
       "field_id": "0x9304e1c7e45cef0a",
       "function": "set_sek_field",
       "gate_a_rva": 2896567,
       "gate_b_rva": 2896722,
       "gate_c_rva": 2896901,
       "gate_d_rva": 2897092,
-      "marker_rva": 83372,
-      "pretouch_jmp_rva": 2841897,
-      "pretouch_rva": 2825879
+      "marker_rva": 83496,
+      "pretouch_jmp_rva": 2841885,
+      "pretouch_rva": 2825873
     },
     {
-      "enter_call_rva": 84233,
-      "exit_call_rva": 85092,
+      "enter_call_rva": 84496,
+      "exit_call_rva": 85617,
       "field_id": "0xa9d5e11946c68a33",
       "function": "generate_ecdsa_key_field",
       "gate_a_rva": 2897262,
       "gate_b_rva": 2897417,
       "gate_c_rva": 2897596,
       "gate_d_rva": 2897787,
-      "marker_rva": 84245,
-      "pretouch_jmp_rva": 2857920,
-      "pretouch_rva": 2841902
+      "marker_rva": 84501,
+      "pretouch_jmp_rva": 2857902,
+      "pretouch_rva": 2841890
     },
     {
-      "enter_call_rva": 85321,
-      "exit_call_rva": 85955,
+      "enter_call_rva": 85839,
+      "exit_call_rva": 86612,
       "field_id": "0x6be0530730e7f5f1",
       "function": "get_public_ecdsa_key_field",
       "gate_a_rva": 2897957,
       "gate_b_rva": 2898112,
       "gate_c_rva": 2898291,
       "gate_d_rva": 2898482,
-      "marker_rva": 85326,
-      "pretouch_jmp_rva": 2873943,
-      "pretouch_rva": 2857925
+      "marker_rva": 85844,
+      "pretouch_jmp_rva": 2873919,
+      "pretouch_rva": 2857907
     },
     {
-      "enter_call_rva": 86185,
-      "exit_call_rva": 87060,
+      "enter_call_rva": 86885,
+      "exit_call_rva": 87364,
       "field_id": "0x25c0fd3d7283b2b7",
       "function": "ecdsa_sign_field",
       "gate_a_rva": 2898652,
       "gate_b_rva": 2898807,
       "gate_c_rva": 2898986,
       "gate_d_rva": 2899177,
-      "marker_rva": 86190,
-      "pretouch_jmp_rva": 2889966,
-      "pretouch_rva": 2873948
+      "marker_rva": 86890,
+      "pretouch_jmp_rva": 2889936,
+      "pretouch_rva": 2873924
     }
   ],
   "gate_bytes_used": 3475,
   "gate_helper_page_rva": 2895872,
-  "input_elf": "/home/meandssh/islands-sgx/dynamic/targets/sgxwallet/enclave.all_reg.final.so",
-  "input_elf_sha256": "cc49897732def4c492512a00525b8f37a3e023670c090f2e2a54e2aebdee9701",
-  "output_elf": "/home/meandssh/islands-sgx/dynamic/targets/sgxwallet/enclave.all_reg.4gate.so",
-  "output_elf_sha256": "62dc18084aa2523605f2104043e4d8304ac8b28d7f03ef46d58514a58c0ee750",
-  "schema": "atfield-4gate-patch-v1"
+  "input_elf": "/home/meandssh/.local/state/codex-worktrees/dynamic-implement-sync-20261019/targets/sgxwallet/enclave.all_reg.final.so",
+  "input_elf_sha256": "9cd78d53962a4a08acd2aa0a65c2a70ecd579f7d084a8d8a1a61a17bd0072480",
+  "output_elf": "/home/meandssh/.local/state/codex-worktrees/dynamic-implement-sync-20261019/targets/sgxwallet/enclave.all_reg.4gate.so",
+  "output_elf_sha256": "f4ef56bcc94f13c972ce97c87c35a5931246a58aa2248329fe3f00ec7d1a2c24",
+  "schema": "atfield-4gate-patch-v1",
+  "signed_output_elf": "/home/meandssh/.local/state/codex-worktrees/dynamic-implement-sync-20261019/targets/sgxwallet/enclave.all_reg.4gate.aex0.signed.so",
+  "signed_output_elf_sha256": "1ef0372d77a1d90f44ce83d8a3086afe21d635ff5ec6bb5e97f88d298a8f25c1"
 }

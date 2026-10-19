@@ -1,24 +1,26 @@
 {
   "fields": [
     {
-      "enter_call_rva": 9576,
-      "exit_call_rva": 11516,
+      "enter_call_rva": 9640,
+      "exit_call_rva": 11580,
       "field_id": "0xd9e7e566ea39a756",
       "function": "sabd_lookup_hash",
       "gate_a_rva": 167936,
       "gate_b_rva": 168091,
       "gate_c_rva": 168270,
       "gate_d_rva": 168461,
-      "marker_rva": 9581,
-      "pretouch_jmp_rva": 164703,
+      "marker_rva": 9645,
+      "pretouch_jmp_rva": 164701,
       "pretouch_rva": 155648
     }
   ],
   "gate_bytes_used": 695,
   "gate_helper_page_rva": 167936,
-  "input_elf": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/enclave.all_reg.final.so",
-  "input_elf_sha256": "bee0720aa281d0ceded93cc769e7622dcc3c9342300168b2149374a4b23c3342",
-  "output_elf": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/enclave.all_reg.4gate.so",
-  "output_elf_sha256": "84cff42f256bdb3a4214dc67bc3f092070e79223a1c8ebfa50a65b178635d0b1",
-  "schema": "atfield-4gate-patch-v1"
+  "input_elf": "/home/meandssh/.local/state/codex-worktrees/dynamic-implement-sync-20261019/targets/signal-cds/enclave.all_reg.final.so",
+  "input_elf_sha256": "07b5f17967904d5e9cf60a84f17799064531c95f804f1cca02262dc25deb0e7e",
+  "output_elf": "/home/meandssh/.local/state/codex-worktrees/dynamic-implement-sync-20261019/targets/signal-cds/enclave.all_reg.4gate.so",
+  "output_elf_sha256": "a9c7c0999e20276ec1a71aeb044b6af6a8fe07b95f8b364b61f463cc3920dd82",
+  "schema": "atfield-4gate-patch-v1",
+  "signed_output_elf": "/home/meandssh/.local/state/codex-worktrees/dynamic-implement-sync-20261019/targets/signal-cds/enclave.all_reg.4gate.aex0.signed.so",
+  "signed_output_elf_sha256": "41765bd20d839b3b08ccea0df03e40776a172abaecf9fec0b39c635d278a687a"
 }

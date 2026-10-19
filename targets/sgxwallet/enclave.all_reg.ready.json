@@ -1,7 +1,8 @@
 {
   "entry_count": 7,
-  "final_elf": "/home/meandssh/islands-sgx/dynamic/targets/sgxwallet/enclave.all_reg.final.so",
-  "final_elf_sha256": "cc49897732def4c492512a00525b8f37a3e023670c090f2e2a54e2aebdee9701",
+  "fields_sha256": "b53f72dfeb61885d832f8498bc745add906915e81c72fc53a26071f9fa0fbf35",
+  "final_elf": "/home/meandssh/.local/state/codex-worktrees/dynamic-implement-sync-20261019/targets/sgxwallet/enclave.all_reg.final.so",
+  "final_elf_sha256": "9cd78d53962a4a08acd2aa0a65c2a70ecd579f7d084a8d8a1a61a17bd0072480",
   "format_version": 3,
   "schema": "atfield-ready-table-v3",
   "selectors": [
@@ -25,7 +26,7 @@
       "ecall_index": 2,
       "first_page": 0,
       "name": "trustedGenerateSEK",
-      "page_count": 1778,
+      "page_count": 1777,
       "page_rvas": [
         0,
         4096,
@@ -666,7 +667,6 @@
         2605056,
         2609152,
         2613248,
-        2617344,
         2621440,
         2629632,
         2633728,
@@ -1812,9 +1812,9 @@
     },
     {
       "ecall_index": 3,
-      "first_page": 1778,
+      "first_page": 1777,
       "name": "trustedSetSEK",
-      "page_count": 1779,
+      "page_count": 1778,
       "page_rvas": [
         0,
         4096,
@@ -2455,7 +2455,6 @@
         2605056,
         2609152,
         2613248,
-        2617344,
         2621440,
         2629632,
         2633728,
@@ -3602,9 +3601,9 @@
     },
     {
       "ecall_index": 4,
-      "first_page": 3557,
+      "first_page": 3555,
       "name": "trustedGenerateEcdsaKey",
-      "page_count": 1779,
+      "page_count": 1778,
       "page_rvas": [
         0,
         4096,
@@ -4245,7 +4244,6 @@
         2605056,
         2609152,
         2613248,
-        2617344,
         2621440,
         2629632,
         2633728,
@@ -5392,9 +5390,9 @@
     },
     {
       "ecall_index": 5,
-      "first_page": 5336,
+      "first_page": 5333,
       "name": "trustedGetPublicEcdsaKey",
-      "page_count": 1779,
+      "page_count": 1778,
       "page_rvas": [
         0,
         4096,
@@ -6035,7 +6033,6 @@
         2605056,
         2609152,
         2613248,
-        2617344,
         2621440,
         2629632,
         2633728,
@@ -7182,9 +7179,9 @@
     },
     {
       "ecall_index": 6,
-      "first_page": 7115,
+      "first_page": 7111,
       "name": "trustedEcdsaSign",
-      "page_count": 1779,
+      "page_count": 1778,
       "page_rvas": [
         0,
         4096,
@@ -7825,7 +7822,6 @@
         2605056,
         2609152,
         2613248,
-        2617344,
         2621440,
         2629632,
         2633728,
@@ -8971,10 +8967,12 @@
       ]
     }
   ],
-  "signed_final_elf": "/home/meandssh/islands-sgx/dynamic/targets/sgxwallet/enclave.all_reg.final.signed.so",
-  "signed_final_elf_sha256": "09fd50c25901ca608b3386a088bf8faaaf24c64eea41d08a073a3641c3b1cce2",
-  "table_bytes": 71352,
-  "table_path": "/home/meandssh/islands-sgx/dynamic/targets/sgxwallet/enclave.all_reg.ready.bin",
-  "table_sha256": "15b5afb4f0246b25984649ecf096fe47931e5a0e5fe23b15515832d429d0ac47",
-  "total_page_count": 8894
+  "signed_final_elf": "/home/meandssh/.local/state/codex-worktrees/dynamic-implement-sync-20261019/targets/sgxwallet/enclave.all_reg.final.signed.so",
+  "signed_final_elf_sha256": "332d460c502f1d99c15a6c7d886fce0b836fde647ebc6f0f87cab0ee80217948",
+  "table_bytes": 71312,
+  "table_path": "/home/meandssh/.local/state/codex-worktrees/dynamic-implement-sync-20261019/targets/sgxwallet/enclave.all_reg.ready.bin",
+  "table_sha256": "d0bc925a762076fff31e751d986fbb11c468ea8cbd9edc83ca49af49690cda58",
+  "total_page_count": 8889,
+  "workset": "/home/meandssh/.local/state/codex-worktrees/dynamic-implement-sync-20261019/targets/sgxwallet/workset.all_reg.json",
+  "workset_sha256": "4ffe37095e91201ad7d7d2ce7665f3b3b6a7552f111bed19f123ca63dc13b7c1"
 }

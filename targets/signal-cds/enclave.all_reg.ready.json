@@ -1,7 +1,8 @@
 {
   "entry_count": 1,
-  "final_elf": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/enclave.all_reg.final.so",
-  "final_elf_sha256": "bee0720aa281d0ceded93cc769e7622dcc3c9342300168b2149374a4b23c3342",
+  "fields_sha256": "804aecd814d5cb89fa5114e1e16f3cf05b2719036f9d85a261586b4d64e2f17a",
+  "final_elf": "/home/meandssh/.local/state/codex-worktrees/dynamic-implement-sync-20261019/targets/signal-cds/enclave.all_reg.final.so",
+  "final_elf_sha256": "07b5f17967904d5e9cf60a84f17799064531c95f804f1cca02262dc25deb0e7e",
   "format_version": 3,
   "schema": "atfield-ready-table-v3",
   "selectors": [
@@ -1147,10 +1148,12 @@
       ]
     }
   ],
-  "signed_final_elf": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/enclave.all_reg.final.signed.so",
-  "signed_final_elf_sha256": "8399743361761829b7a4a41d7dc95d32384c3c302f81ca66f0fd3a7818f199e8",
+  "signed_final_elf": "/home/meandssh/.local/state/codex-worktrees/dynamic-implement-sync-20261019/targets/signal-cds/enclave.all_reg.final.signed.so",
+  "signed_final_elf_sha256": "786077d913de61544ae5e781d780555d2b4ddb9bf5a44f4fff086ec19c574aa3",
   "table_bytes": 9096,
-  "table_path": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/enclave.all_reg.ready.bin",
+  "table_path": "/home/meandssh/.local/state/codex-worktrees/dynamic-implement-sync-20261019/targets/signal-cds/enclave.all_reg.ready.bin",
   "table_sha256": "4c3a95e78f23af87fc05842368e6b8b5a835244d5ee6642e9ecdb36ede7fda06",
-  "total_page_count": 1130
+  "total_page_count": 1130,
+  "workset": "/home/meandssh/.local/state/codex-worktrees/dynamic-implement-sync-20261019/targets/signal-cds/workset.all_reg.json",
+  "workset_sha256": "081e0bc96ceac634e13d9bbb9ed1e88d18836340fe74993d668021d7dc14a65b"
 }

@@ -69,8 +69,8 @@
   "page_size": 4096,
   "pretouch_segment": true,
   "pretouch_start": 5169152,
-  "profile_elf": "/home/meandssh/islands-sgx/dynamic/targets/ehsm/enclave.profile.so",
-  "profile_elf_sha256": "ede6eb635d897e5733691263e6bb82e4b6ea7740cb983d4a95d6c96843a8b96d",
+  "profile_elf": "/home/meandssh/.local/state/codex-worktrees/dynamic-implement-sync-20261019/targets/ehsm/enclave.profile.so",
+  "profile_elf_sha256": "03ef272bfdc9ea7c74aa939e85ddfa84c4ed2144233183be42babc98e9f22b27",
   "regions": [
     {
       "end_rva": 884736,
@@ -232,7 +232,7 @@
     }
   ],
   "schema": "atfield-signer-layout-v1",
-  "signed_elf": "/home/meandssh/islands-sgx/dynamic/targets/ehsm/enclave.profile.signed.so",
-  "signed_elf_sha256": "8f81388ef032789aecda5602ae4c488e7873d34e5c620d6da7d8d840b93ba165",
+  "signed_elf": "/home/meandssh/.local/state/codex-worktrees/dynamic-implement-sync-20261019/targets/ehsm/enclave.profile.signed.so",
+  "signed_elf_sha256": "75306b32733ec4db7fc5e41f5c1ca2278465ef90865827be38554b0d942eebaa",
   "ssa_frame_pages": 1
 }

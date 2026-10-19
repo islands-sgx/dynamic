@@ -7478,10 +7478,12 @@
   ],
   "capacity_q": 12288,
   "code_bytes": 7376,
-  "final_elf": "/home/meandssh/islands-sgx/dynamic/targets/qe3/enclave.all_reg.final.so",
-  "final_elf_sha256": "ad842e31a6510126be1fb63c66d672da1769818c23ef868d3c9a21357a900267",
+  "fields_sha256": "748095038f69f343aaf712dd9c5cba063ea0d01286b21684fc3a78156f67fe8d",
+  "final_elf": "/home/meandssh/.local/state/codex-worktrees/dynamic-implement-sync-20261019/targets/qe3/enclave.all_reg.final.so",
+  "final_elf_sha256": "53440d4b2751146dee756fa5cc289d83714c26f97b6e19e2d5a84788f39e8702",
   "post_start": 2170880,
-  "profile_elf": "/home/meandssh/islands-sgx/dynamic/targets/qe3/enclave.profile.so",
-  "profile_elf_sha256": "5c0f4038289badf9866c3e39bb90b375c2be78bc1e8960ee1852ef7315a3b9b5",
-  "schema": "atfield-pretouch-finalized-v1"
+  "profile_elf": "/home/meandssh/.local/state/codex-worktrees/dynamic-implement-sync-20261019/targets/qe3/enclave.profile.so",
+  "profile_elf_sha256": "00fbfe913614b77cc635b5e28207ce69bcada8abb190089cb868ca1f86bc6a8e",
+  "schema": "atfield-pretouch-finalized-v1",
+  "workset_sha256": "b28846466004626265c2bb9e1c83bd0cb40965def6d3e3f4e1b4b60b533405ad"
 }

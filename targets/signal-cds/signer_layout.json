@@ -69,8 +69,8 @@
   "page_size": 4096,
   "pretouch_segment": true,
   "pretouch_start": 155648,
-  "profile_elf": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/enclave.profile.so",
-  "profile_elf_sha256": "d3673190dadcffaf4b3206ad33bdf769de0414d47a35b6a8f7886258308eaf42",
+  "profile_elf": "/home/meandssh/.local/state/codex-worktrees/dynamic-implement-sync-20261019/targets/signal-cds/enclave.profile.so",
+  "profile_elf_sha256": "98c372fd7c10597edb264748734b7ed67d839d501a65ec47d774b5699efe49f7",
   "regions": [
     {
       "end_rva": 8192,
@@ -89,9 +89,9 @@
       "start_rva": 8192
     },
     {
-      "end_rva": 69632,
+      "end_rva": 73728,
       "kind": "PT_LOAD",
-      "pages": 1,
+      "pages": 2,
       "permissions": 3,
       "segment_index": 4,
       "start_rva": 65536
@@ -99,10 +99,10 @@
     {
       "end_rva": 155648,
       "kind": "PT_LOAD",
-      "pages": 21,
+      "pages": 20,
       "permissions": 3,
       "segment_index": 5,
-      "start_rva": 69632
+      "start_rva": 73728
     },
     {
       "attributes": 1,
@@ -150,19 +150,20 @@
     }
   ],
   "relro_pages": [
-    65536
+    65536,
+    69632
   ],
   "relro_ranges": [
     {
-      "end_rva": 69632,
-      "protected_end_rva": 69632,
+      "end_rva": 73728,
+      "protected_end_rva": 73728,
       "protected_start_rva": 65536,
       "segment_index": 8,
       "start_rva": 69120
     }
   ],
   "schema": "atfield-signer-layout-v1",
-  "signed_elf": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/enclave.profile.signed.so",
-  "signed_elf_sha256": "20b5b43e783fbd1c564debc25cbcf2e50edeba779f1e405e73ad05d444826002",
+  "signed_elf": "/home/meandssh/.local/state/codex-worktrees/dynamic-implement-sync-20261019/targets/signal-cds/enclave.profile.signed.so",
+  "signed_elf_sha256": "11ce61e3650fc0cee951c38b375a388c68fa591b02930506b3d394d62d95678e",
   "ssa_frame_pages": 1
 }
