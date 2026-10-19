@@ -145,8 +145,9 @@ class ElfFile:
             elif p_type == PT_GNU_RELRO:
                 if p_memsz == 0:
                     raise WorksetError(f"empty PT_GNU_RELRO {index} in {self.path}")
-                self.relro.append({"index": index, "vaddr": p_vaddr,
-                                   "memsz": p_memsz, "end": p_vaddr + p_memsz})
+                self.relro.append({"index": index, "offset": p_offset, "vaddr": p_vaddr,
+                                   "filesz": p_filesz, "memsz": p_memsz, "flags": p_flags,
+                                   "align": p_align, "end": p_vaddr + p_memsz})
         if not self.loads:
             raise WorksetError(f"ELF has no PT_LOAD segments: {self.path}")
         if shstrndx >= shnum:
@@ -171,6 +172,9 @@ class ElfFile:
         for section in self.sections:
             if section["name"]:
                 self.by_name.setdefault(section["name"], []).append(section)
+        self._symbols_cache: list[dict] | None = None
+        self._symbols_by_name: dict[str, list[dict]] | None = None
+        self._unique_symbols: dict[str, dict] = {}
 
     def section_data(self, section: dict) -> bytes:
         return self.data[section["offset"]:section["offset"] + section["size"]]
@@ -217,6 +221,8 @@ class ElfFile:
         raise WorksetError(f"SGX metadata note not found in {self.path}")
 
     def symbols(self) -> list[dict]:
+        if self._symbols_cache is not None:
+            return self._symbols_cache
         result = []
         for section in self.sections:
             if section["type"] not in (SHT_SYMTAB, SHT_DYNSYM):
@@ -237,6 +243,30 @@ class ElfFile:
                                    "info": info, "other": other, "shndx": shndx,
                                    "file_offset": section["offset"] + offset,
                                    "table_name": section["name"]})
+        by_name: dict[str, list[dict]] = {}
+        for symbol in result:
+            by_name.setdefault(symbol["name"], []).append(symbol)
+        self._symbols_cache = result
+        self._symbols_by_name = by_name
+        return result
+
+    def symbols_named(self, name: str) -> list[dict]:
+        if self._symbols_by_name is None:
+            self.symbols()
+        assert self._symbols_by_name is not None
+        return self._symbols_by_name.get(name, [])
+
+    def unique_symbol(self, name: str) -> dict:
+        cached = self._unique_symbols.get(name)
+        if cached is not None:
+            return cached
+        definitions = [symbol for symbol in self.symbols_named(name) if symbol["shndx"] != 0]
+        unique = {(symbol["value"], symbol["size"], symbol["shndx"]): symbol
+                  for symbol in definitions}
+        if len(unique) != 1:
+            raise WorksetError(f"symbol {name} has {len(unique)} definitions in {self.path}")
+        result = next(iter(unique.values()))
+        self._unique_symbols[name] = result
         return result
 
 
@@ -281,11 +311,60 @@ def parse_signed_metadata(elf: ElfFile) -> dict:
             "layout_entries": entries}
 
 
+def signer_patch_payloads(signed: ElfFile) -> list[tuple[int, bytes]]:
+    desc = signed.note_descriptor()
+    metadata_size = struct.unpack_from("<I", desc, 16)[0]
+    if metadata_size < 0x750 or metadata_size > len(desc):
+        raise WorksetError(f"invalid signer metadata_size {metadata_size} in {signed.path}")
+    dirs_offset = 8 + 8 + 24 + 8 + 16 + 1808
+    patch_offset, patch_size = struct.unpack_from("<II", desc, dirs_offset)
+    if patch_size == 0 or patch_size % 32 or patch_offset + patch_size > metadata_size:
+        raise WorksetError(f"invalid DIR_PATCH offset={patch_offset} size={patch_size} in {signed.path}")
+    patches = []
+    spans = []
+    for offset in range(patch_offset, patch_offset + patch_size, 32):
+        destination, source, size = struct.unpack_from("<QII", desc, offset)
+        if size == 0 or source + size > metadata_size:
+            raise WorksetError(f"invalid DIR_PATCH entry dst={destination:#x} src={source} size={size}")
+        if any(max(destination, begin) < min(destination + size, end) for begin, end in spans):
+            raise WorksetError("overlapping DIR_PATCH destinations are unsupported")
+        spans.append((destination, destination + size))
+        patches.append((destination, desc[source:source + size]))
+    return patches
+
+
+def patched_load_memory(elf: ElfFile, patches: list[tuple[int, bytes]]) -> list[bytearray]:
+    memories = []
+    for segment in elf.loads:
+        raw = elf.data[segment["offset"]:segment["offset"] + segment["filesz"]]
+        memories.append(bytearray(raw + b"\0" * (segment["memsz"] - segment["filesz"])))
+    for destination, payload in patches:
+        matches = []
+        for index, segment in enumerate(elf.loads):
+            if segment["vaddr"] <= destination and destination + len(payload) <= segment["vaddr"] + segment["memsz"]:
+                matches.append((index, destination - segment["vaddr"]))
+        if len(matches) != 1:
+            raise WorksetError(f"DIR_PATCH destination {destination:#x}+{len(payload):#x} maps to {len(matches)} PT_LOAD ranges")
+        index, offset = matches[0]
+        memories[index][offset:offset + len(payload)] = payload
+    return memories
+
+
 def elf_load_equivalence(profile: ElfFile, signed: ElfFile) -> None:
     def identity(elf: ElfFile):
         return [(s["vaddr"], s["filesz"], s["memsz"], s["flags"], s["align"]) for s in elf.loads]
     if identity(profile) != identity(signed):
         raise WorksetError("Profile ELF and signed ELF PT_LOAD layout differs; use the matching signer output")
+    relro_identity = lambda elf: [(s["offset"], s["vaddr"], s["filesz"], s["memsz"], s["flags"], s["align"]) for s in elf.relro]
+    if relro_identity(profile) != relro_identity(signed):
+        raise WorksetError("Profile ELF and signed ELF PT_GNU_RELRO layout differs; use the matching signer output")
+    patches = signer_patch_payloads(signed)
+    profile_memory = patched_load_memory(profile, patches)
+    signed_memory = patched_load_memory(signed, patches)
+    for segment, left, right in zip(profile.loads, profile_memory, signed_memory):
+        if left != right:
+            offset = next(i for i, (x, y) in enumerate(zip(left, right)) if x != y)
+            raise WorksetError(f"Profile and signed ELF loaded bytes differ after DIR_PATCH at RVA {segment['vaddr'] + offset:#x}")
 
 
 def locate_pretouch_segment(elf: ElfFile, capacity_q: int) -> tuple[dict | None, dict | None]:
@@ -367,9 +446,12 @@ def make_layout(profile: ElfFile, signed: ElfFile, capacity_q: int) -> dict:
     metadata = parse_signed_metadata(signed)
     pretouch_section, pretouch_segment = locate_pretouch_segment(profile, capacity_q)
     if pretouch_section:
-        signed_section, signed_segment = locate_pretouch_segment(signed, capacity_q)
-        if not signed_section or signed_segment["vaddr"] != pretouch_segment["vaddr"]:
-            raise WorksetError("signed and Profile .atfield_pretouch layout differs")
+        signed_posts = [segment for segment in signed.loads
+                        if (segment["vaddr"], segment["filesz"], segment["memsz"], segment["flags"], segment["align"])
+                        == (pretouch_segment["vaddr"], pretouch_segment["filesz"], pretouch_segment["memsz"],
+                            pretouch_segment["flags"], pretouch_segment["align"])]
+        if len(signed_posts) != 1:
+            raise WorksetError("signed ELF does not preserve the Profile post RX PT_LOAD geometry")
     post_index = pretouch_segment["index"] if pretouch_segment else None
     ordinary = [s for s in profile.loads if s["index"] != post_index]
     if not ordinary:
@@ -431,7 +513,8 @@ def make_layout(profile: ElfFile, signed: ElfFile, capacity_q: int) -> dict:
             "capacity_q": capacity_q, "pretouch_segment": bool(pretouch_segment),
             "regions": regions, "excluded_regions": excluded,
             "relro_ranges": relro_ranges, "relro_pages": sorted(relro_pages),
-            "all_committed_reg_pages": len({page for region in regions for page in range(region["start_rva"], region["end_rva"], PAGE)})}
+            "all_committed_reg_pages": len({page for region in regions for page in range(region["start_rva"], region["end_rva"], PAGE)
+                                             if not pretouch_segment or not pretouch_segment["vaddr"] <= page < pretouch_segment["vaddr"] + pretouch_segment["memsz"]})}
 
 
 def parse_anchor_symbols(profile: ElfFile) -> dict[int, list[dict]]:
@@ -507,6 +590,16 @@ def edl_public_ecalls(edl_file: str | Path) -> list[str]:
     body = source[opening + 1:closing]
     if re.search(r"\bfrom\b|\bimport\b", body):
         raise WorksetError(f"EDL {edl_file} has an import inside trusted; imported ECALL order is unsupported")
+    outside = source[:opening] + source[closing + 1:]
+    import_pattern = re.compile(r"\bfrom\s+\"([^\"]+)\"\s+import\s+([^;]+);", re.S)
+    imports = list(import_pattern.finditer(outside))
+    residual = import_pattern.sub("", outside)
+    if re.search(r"\bfrom\b|\bimport\b", residual):
+        raise WorksetError(f"EDL {edl_file} uses an unsupported import form; pass a simple EDL or generated _u.c mapping")
+    for imported in imports:
+        source_edl = Path(imported.group(1)).name
+        if source_edl not in {"sgx_tsgxssl.edl", "sgx_tstdc.edl"}:
+            raise WorksetError(f"EDL {edl_file} imports {source_edl}, whose ECALL-selector effect is not verified")
     names = []
     for match in re.finditer(r"\bpublic\b", body):
         end = body.find(";", match.end())
@@ -600,8 +693,12 @@ def produce_workset(profile: ElfFile, layout: dict, fields_file: str | Path,
     anchors = parse_anchor_symbols(profile)
     page_permissions: dict[int, int] = {}
     page_origins: dict[int, list[str]] = {}
+    post_start = layout.get("pretouch_start")
+    post_end = post_start + layout.get("capacity_q", 0) if layout.get("pretouch_segment") else None
     for region in layout["regions"]:
         for page in range(region["start_rva"], region["end_rva"], PAGE):
+            if post_end is not None and post_start <= page < post_end:
+                continue
             page_permissions[page] = page_permissions.get(page, 0) | region["permissions"]
             page_origins.setdefault(page, []).append(region["name"] if region["kind"] == "signer" else f"PT_LOAD[{region['segment_index']}]")
     if not page_permissions:
@@ -616,7 +713,8 @@ def produce_workset(profile: ElfFile, layout: dict, fields_file: str | Path,
                 raise WorksetError(f"RELRO page {page:#x} lacks max R|W non-X permissions")
             permissions &= ~SI_FLAG_W
         effects = effects_for_permissions(permissions, f"page {page:#x}")
-        record = {"page_rva": page, "effects": effects, "max_permissions": max_permissions,
+        record = {"page_rva": page, "effects": effects,
+                  "active_permissions": permissions, "max_permissions": max_permissions,
                   "relro": page in relro_pages, "origins": sorted(set(page_origins[page]))}
         if "X" in effects:
             choices = anchors.get(page, [])
@@ -633,8 +731,11 @@ def produce_workset(profile: ElfFile, layout: dict, fields_file: str | Path,
     selectors = resolve_selectors(selectors_file, fields, edl_file)
     return {"schema": "atfield-workset-v1", "page_size": PAGE,
             "layout": layout, "field_manifest": str(fields_file),
+            "field_manifest_sha256": hashlib.sha256(Path(fields_file).read_bytes()).hexdigest(),
             "selector_manifest": str(selectors_file) if selectors_file else None,
+            "selector_manifest_sha256": hashlib.sha256(Path(selectors_file).read_bytes()).hexdigest() if selectors_file else None,
             "edl_manifest": str(edl_file) if edl_file else None,
+            "edl_manifest_sha256": hashlib.sha256(Path(edl_file).read_bytes()).hexdigest() if edl_file else None,
             "selectors": selectors,
             "fields": [{"id": field["id"], "name": field.get("name", field.get("function", field["id"])),
                         "function": field.get("function"), "order": field["order"],

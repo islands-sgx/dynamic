@@ -11,10 +11,9 @@ import sys
 import tempfile
 from pathlib import Path
 
-sys.path.insert(0, "/home/meandssh/islands-sgx/dynamic/vendor/implement/build/workset")
+DYN_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(DYN_ROOT / "vendor" / "implement" / "build" / "workset"))
 from workset import ElfFile  # noqa: E402
-
-DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
 SAMPLE_ROOT = Path("/home/meandssh/islands-sgx/sample")
 INTERPOSE_SO = DYN_ROOT / "build" / "libatfield_native_sgx.so"
 LD_LIB_PATH = (

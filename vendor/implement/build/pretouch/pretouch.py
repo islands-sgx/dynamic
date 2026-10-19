@@ -24,11 +24,7 @@ def fail(message: str) -> None:
 
 
 def unique_symbol(elf: ElfFile, name: str) -> dict:
-    definitions = [s for s in elf.symbols() if s["name"] == name and s["shndx"] != 0]
-    unique = {(s["value"], s["size"], s["shndx"]): s for s in definitions}
-    if len(unique) != 1:
-        fail(f"symbol {name} has {len(unique)} definitions in {elf.path}")
-    return next(iter(unique.values()))
+    return elf.unique_symbol(name)
 
 
 def fields_by_id(fields_path: str) -> list[dict]:
@@ -76,40 +72,6 @@ def field_pages(field: dict) -> list[dict]:
                 fail(f"Field {field.get('id')} page {rva:#x} lacks a same-page data anchor")
         prior = rva
     return ordered
-
-
-def expected_body(field: dict, facts: dict, current_rva: int) -> tuple[bytes, list[dict]]:
-    output = bytearray()
-    records = []
-    for page in field_pages(facts):
-        start = current_rva + len(output)
-        effects = page["effects"]
-        if "X" in effects:
-            anchor = page["code_anchor"]
-            target = anchor["rva"]
-            if target // PAGE != page["page_rva"] // PAGE:
-                fail(f"Field {field['id']} code anchor crosses page")
-            output.append(0xE8)
-            output.extend(struct.pack("<i", target - (current_rva + len(output) + 4)))
-        if "W" in effects:
-            target = page["data_anchor_rva"]
-            instr = current_rva + len(output)
-            output.extend(b"\xf0\x80\x0d")
-            output.extend(struct.pack("<i", target - (instr + 8)))
-            output.append(0)
-        elif "R" in effects:
-            target = page["data_anchor_rva"]
-            instr = current_rva + len(output)
-            output.extend(b"\x8a\x05")
-            output.extend(struct.pack("<i", target - (instr + 6)))
-        records.append({"page_rva": page["page_rva"], "effects": effects,
-                        "start_rva": start, "end_rva": current_rva + len(output)})
-    output.extend(b"\x0f\xae\xe8")  # lfence
-    continuation = field.get("continuation_symbol")
-    if not isinstance(continuation, str):
-        fail(f"Field {field['id']} lacks continuation_symbol")
-    # The linker resolves this final direct jmp. Caller supplies its RVA.
-    return bytes(output), records
 
 
 def rel32(opcode: int, source_rva: int, target_rva: int) -> bytes:
@@ -170,6 +132,8 @@ def emit_assembly(workset_path: str | None, fields_path: str, mode: str,
     facts_by_id = workset_by_id(workset) if workset else {}
     if workset and {f"0x{field['_id_value']:016x}" for field in fields} != set(facts_by_id):
         fail("fields.json and workset Field ID sets differ")
+    if workset and workset.get("field_manifest_sha256") != hashlib.sha256(Path(fields_path).read_bytes()).hexdigest():
+        fail("fields.json bytes differ from the frozen workset manifest")
     capacity = workset["layout"]["capacity_q"] if workset else capacity_q
     if capacity != capacity_q:
         fail("--capacity-q differs from frozen workset")
@@ -261,11 +225,10 @@ def verify_load_bytes(profile: ElfFile, final: ElfFile, fields: list[dict], prof
             actual = marker_rva + 5 + struct.unpack_from("<i", elf.data, fileoff + 1)[0]
             if actual != expected_target:
                 fail(f"{label} marker for {field['id']} targets {actual:#x}, expected {expected_target:#x}")
-            if field["id"] == field["id"]:
-                # Exactly the four-byte rel32 immediate is allowed to differ.
-                segment = next(s for s in elf.loads if s["vaddr"] <= marker_rva < s["vaddr"] + s["memsz"])
-                rel = marker_rva - segment["vaddr"]
-                permitted.setdefault(segment["index"], set()).update(range(rel + 1, rel + 5))
+            # Exactly the four-byte rel32 immediate is allowed to differ.
+            segment = next(s for s in elf.loads if s["vaddr"] <= marker_rva < s["vaddr"] + s["memsz"])
+            rel = marker_rva - segment["vaddr"]
+            permitted.setdefault(segment["index"], set()).update(range(rel + 1, rel + 5))
     for left, right in zip(profile_loads, final_loads):
         a = profile.data[left["offset"]:left["offset"] + left["filesz"]]
         b = final.data[right["offset"]:right["offset"] + right["filesz"]]
@@ -288,6 +251,13 @@ def verify_final(profile_path: str, signed_profile_path: str, final_path: str, s
     fields = fields_by_id(fields_path)
     if {f"0x{f['_id_value']:016x}" for f in fields} != set(facts_by_id):
         fail("fields.json and workset Field ID sets differ")
+    fields_sha256 = hashlib.sha256(Path(fields_path).read_bytes()).hexdigest()
+    if workset.get("field_manifest_sha256") != fields_sha256:
+        fail("fields.json bytes differ from the frozen workset manifest")
+    if workset["layout"].get("profile_elf_sha256") != hashlib.sha256(profile.data).hexdigest():
+        fail("Profile ELF bytes differ from the workset input")
+    if workset["layout"].get("signed_elf_sha256") != hashlib.sha256(signed_profile.data).hexdigest():
+        fail("signed Profile ELF bytes differ from the workset input")
     for elf, label in ((profile, "Profile"), (final, "Final")):
         note = parse_signed_metadata(signed_profile if label == "Profile" else signed_final)
         if note["enclave_size"] != workset["layout"]["enclave_size"]:
@@ -309,6 +279,16 @@ def verify_final(profile_path: str, signed_profile_path: str, final_path: str, s
     final_metadata = parse_signed_metadata(signed_final)
     if (profile_metadata["version"], profile_metadata["layout_entries"]) != (final_metadata["version"], final_metadata["layout_entries"]):
         fail("signer layout changed between Profile and Final")
+    profile_layout = make_layout(profile, signed_profile, capacity_q)
+    final_layout = make_layout(final, signed_final, capacity_q)
+    frozen_keys = ("metadata_version", "ssa_frame_pages", "page_size", "enclave_size",
+                   "ordinary_load_end", "pretouch_start", "capacity_q", "pretouch_segment", "regions",
+                   "excluded_regions", "relro_ranges", "relro_pages")
+    for key in frozen_keys:
+        if profile_layout.get(key) != workset["layout"].get(key):
+            fail(f"Profile layout differs from frozen workset at {key}")
+        if final_layout.get(key) != workset["layout"].get(key):
+            fail(f"Final layout differs from frozen workset at {key}")
     verify_load_bytes(profile, final, fields, profile_post, final_post)
     section_bytes = final.section_data(final_section)
     expected_offset = 0
@@ -330,11 +310,19 @@ def verify_final(profile_path: str, signed_profile_path: str, final_path: str, s
         if section_bytes[expected_offset:expected_end] != expected:
             fail(f"Final pretouch bytes differ from fixed X/R/W template for Field {identity}")
         continuation_after = unique_symbol(final, field["continuation_symbol"])["value"]
-        body = unique_symbol(final, field["body_symbol"])["value"]
+        body_symbol = unique_symbol(final, field["body_symbol"])
+        body = body_symbol["value"]
         if continuation_after != unique_symbol(profile, field["continuation_symbol"])["value"]:
             fail(f"continuation moved for Field {identity}")
-        if body == 0:
-            fail(f"body symbol is invalid for Field {identity}")
+        if body == 0 or not any(seg["flags"] & PF_X and seg["vaddr"] <= body < seg["vaddr"] + seg["memsz"] for seg in load_ranges(final, final_post)):
+            fail(f"body symbol is outside ordinary executable PT_LOADs for Field {identity}")
+        marker_name = field.get("marker_symbol")
+        if not isinstance(marker_name, str) or not marker_name:
+            fail(f"Field {identity} lacks its manifest marker_symbol identifier")
+        marker_rva = continuation - 5
+        marker_off = final.loaded_offset(marker_rva, 5)
+        if final.data[marker_off] != 0xE9:
+            fail(f"marker identified by {marker_name} is not a five-byte E9 site for Field {identity}")
         marker_rva = continuation - 5
         marker_off = final.loaded_offset(marker_rva, 5)
         marker_target = marker_rva + 5 + struct.unpack_from("<i", final.data, marker_off + 1)[0]
@@ -350,6 +338,8 @@ def verify_final(profile_path: str, signed_profile_path: str, final_path: str, s
     if any(byte != 0x90 for byte in section_bytes[expected_offset:]):
         fail("Final post PT_LOAD padding is not fixed 0x90 fill")
     result = {"schema": "atfield-pretouch-final-v1", "final_elf": str(final_path),
+              "workset_sha256": hashlib.sha256(Path(workset_path).read_bytes()).hexdigest(),
+              "fields_sha256": fields_sha256,
               "final_elf_sha256": hashlib.sha256(final.data).hexdigest(),
               "signed_final_elf": str(signed_final_path), "signed_final_elf_sha256": hashlib.sha256(signed_final.data).hexdigest(),
               "post_start": final_section["addr"], "capacity_q": capacity_q,
@@ -391,6 +381,8 @@ def finalize_profile(profile_path: str, signed_profile_path: str, workset_path: 
     fields = fields_by_id(fields_path)
     if {f"0x{field['_id_value']:016x}" for field in fields} != set(facts_by_id):
         fail("fields.json and workset Field ID sets differ")
+    if workset.get("field_manifest_sha256") != hashlib.sha256(Path(fields_path).read_bytes()).hexdigest():
+        fail("fields.json bytes differ from the frozen workset manifest")
     expected_layout = workset["layout"]
     if expected_layout.get("profile_elf_sha256") != hashlib.sha256(profile.data).hexdigest():
         fail("Profile ELF bytes differ from the frozen workset input")
@@ -399,8 +391,9 @@ def finalize_profile(profile_path: str, signed_profile_path: str, workset_path: 
     if expected_layout.get("capacity_q") != capacity_q:
         fail("--capacity-q differs from the frozen workset")
     actual_layout = make_layout(profile, signed_profile, capacity_q)
-    for key in ("page_size", "enclave_size", "ordinary_load_end", "pretouch_start",
-                "capacity_q", "regions", "excluded_regions"):
+    for key in ("metadata_version", "ssa_frame_pages", "page_size", "enclave_size",
+                "ordinary_load_end", "pretouch_start", "capacity_q", "pretouch_segment", "regions",
+                "excluded_regions", "relro_ranges", "relro_pages"):
         if expected_layout.get(key) != actual_layout.get(key):
             fail(f"Profile signer layout differs from frozen workset at {key}")
     from workset import locate_pretouch_segment
@@ -484,6 +477,8 @@ def finalize_profile(profile_path: str, signed_profile_path: str, workset_path: 
         if (symbol["value"], symbol["size"]) != (block["begin_rva"], block["size"]):
             fail(f"Final symbol mismatch for Field {block['field_id']}")
     result = {"schema": "atfield-pretouch-finalized-v1", "profile_elf": str(profile_path),
+              "workset_sha256": hashlib.sha256(Path(workset_path).read_bytes()).hexdigest(),
+              "fields_sha256": hashlib.sha256(Path(fields_path).read_bytes()).hexdigest(),
               "profile_elf_sha256": hashlib.sha256(profile.data).hexdigest(),
               "final_elf": str(output_path), "final_elf_sha256": hashlib.sha256(final.data).hexdigest(),
               "post_start": final_section["addr"], "capacity_q": capacity_q,

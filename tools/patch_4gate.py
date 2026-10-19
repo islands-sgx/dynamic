@@ -15,7 +15,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-sys.path.insert(0, "/home/meandssh/islands-sgx/dynamic/vendor/implement/build/workset")
+DYN_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(DYN_ROOT / "vendor" / "implement" / "build" / "workset"))
 from workset import PAGE, ElfFile, locate_pretouch_segment, normalized_fields, write_json  # noqa: E402
 
 GATE_SHARED_VA = 0x700000000000
@@ -345,6 +346,10 @@ def main() -> None:
         check=True,
         stdout=subprocess.DEVNULL,
     )
+    summary = json.loads(args.out_json.read_text())
+    summary["signed_output_elf"] = str(args.out_signed_elf)
+    summary["signed_output_elf_sha256"] = hashlib.sha256(args.out_signed_elf.read_bytes()).hexdigest()
+    write_json(args.out_json, summary)
     print(
         f"patched 4gate: {args.out_signed_elf.name} fields={len(summary["fields"])} "
         f"gate_helper_page={summary["gate_helper_page_rva"]:#x} bytes={summary["gate_bytes_used"]}"

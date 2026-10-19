@@ -28,8 +28,9 @@ def fail(message: str) -> None:
 
 
 def check_layout(expected: dict, actual: dict) -> None:
-    keys = ("schema", "page_size", "enclave_size", "ordinary_load_end", "pretouch_start",
-            "capacity_q", "regions", "excluded_regions")
+    keys = ("schema", "metadata_version", "ssa_frame_pages", "page_size", "enclave_size",
+            "ordinary_load_end", "pretouch_start", "capacity_q", "pretouch_segment", "regions", "excluded_regions",
+            "relro_ranges", "relro_pages")
     for key in keys:
         if expected.get(key) != actual.get(key):
             fail(f"final signer layout differs from frozen workset at {key}")
@@ -93,6 +94,8 @@ def build_ready(workset_path: str, fields_path: str,
     if workset.get("schema") != "atfield-workset-v1":
         fail("expected atfield-workset-v1")
     fields = normalized_fields(fields_path)
+    if workset.get("field_manifest_sha256") != hashlib.sha256(Path(fields_path).read_bytes()).hexdigest():
+        fail("fields.json bytes differ from the frozen workset manifest")
     workset_fields = {field["id"]: field for field in workset.get("fields", [])}
     field_order = [f"0x{field['_id_value']:016x}" for field in fields]
     if set(workset_fields) != set(field_order):
@@ -103,6 +106,8 @@ def build_ready(workset_path: str, fields_path: str,
     pretouch = read_json(pretouch_path)
     if pretouch.get("schema") != "atfield-pretouch-final-v1":
         fail("expected the JSON emitted by pretouch.py verify")
+    if pretouch.get("workset_sha256") != hashlib.sha256(Path(workset_path).read_bytes()).hexdigest():
+        fail("workset bytes differ from the pretouch verification input")
     final = ElfFile(final_path)
     signed_final = ElfFile(signed_final_path)
     q = workset["layout"]["capacity_q"]
@@ -182,6 +187,8 @@ def build_ready(workset_path: str, fields_path: str,
         fail("internal ReadyTable v3 byte-count mismatch")
     write_bytes(output_path, bytes(table))
     summary = {"schema": "atfield-ready-table-v3", "format_version": VERSION,
+               "workset": str(workset_path), "workset_sha256": hashlib.sha256(Path(workset_path).read_bytes()).hexdigest(),
+               "fields_sha256": hashlib.sha256(Path(fields_path).read_bytes()).hexdigest(),
                "final_elf": str(final_path), "final_elf_sha256": hashlib.sha256(final.data).hexdigest(),
                "signed_final_elf": str(signed_final_path), "signed_final_elf_sha256": hashlib.sha256(signed_final.data).hexdigest(),
                "table_path": str(output_path), "table_sha256": hashlib.sha256(table).hexdigest(),

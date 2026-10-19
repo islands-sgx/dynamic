@@ -1,4 +1,5 @@
 # ATField-SGX Dynamic Workset Explorer & Hardware Verification (`dynamic`)
+Historical snapshot: the figures and PASS verdicts below come from stored evidence captured before the vendor source was synchronized to implement commit a3cf16bce12267c4323cabe2b571fdae9a203b01. That evidence does not record its implement source revision. The current evaluator preflight rejects the stale dynamic and dynamic_xr artifacts; rebuild their fields, profiles, signed closures, readiness tables and 4-gate binaries, then rerun the hardware suite before treating these results as current.
 
 All tables in this document are **automatically generated** from `experiments/evaluation_results.json` and `witnesses/<sample>/witness_ledger.json` by `tools/generate_report_tables.py`.
 
@@ -63,6 +64,8 @@ All tables in this document are **automatically generated** from `experiments/ev
 ## 5. Clean-Checkout Reproducible Workflow
 
 ```bash
+# 0. Verify that vendored implementation files match the pinned upstream commit
+python3 tools/check_vendor_sync.py /path/to/implement
 # 1. Build ProfileELFs, All-REG baselines, and signed AEX0/AEX1 artifacts
 python3 tools/build_real_targets.py
 

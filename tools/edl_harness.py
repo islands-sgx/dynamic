@@ -8,7 +8,7 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
+DYN_ROOT = Path(__file__).resolve().parents[1]
 SAMPLE_ROOT = Path("/home/meandssh/islands-sgx/sample")
 SGX_SDK_INC = "/nix/store/2acwmnfcsz668csnyxn77brmllp7kx6s-sgx-sdk-2.29.100.1/include"
 

@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
+DYN_ROOT = Path(__file__).resolve().parents[1]
 SAMPLES = ["qe3", "signal-cds", "sgxwallet", "ehsm"]
 
 
@@ -30,10 +30,24 @@ def short_fn(fn: str) -> str:
 
 def main() -> None:
     ev = json.loads((DYN_ROOT / "experiments" / "evaluation_results.json").read_text())
+    manifest = json.loads((DYN_ROOT / "vendor" / "IMPLEMENT_UPSTREAM.json").read_text())
+    provenance = ev.get("_provenance")
+    if not isinstance(provenance, dict):
+        raise SystemExit("Refusing to regenerate tables: evaluation_results.json has no source/artifact provenance.")
+    if provenance.get("implementation_source_commit") != manifest["commit"]:
+        raise SystemExit("Refusing to regenerate tables: evaluation results use a different implementation source commit.")
+    saved_preflight = provenance.get("artifact_preflight")
+    preflight_path = DYN_ROOT / "experiments" / "evaluation_preflight.json"
+    if not isinstance(saved_preflight, dict) or not preflight_path.exists():
+        raise SystemExit("Refusing to regenerate tables: current artifact preflight is missing.")
+    current_preflight = json.loads(preflight_path.read_text())
+    if current_preflight != saved_preflight or not all(v.get("valid") for v in current_preflight.values()):
+        raise SystemExit("Refusing to regenerate tables: current artifacts do not match the successful evaluation preflight.")
 
     lines = []
     lines.append("# ATField-SGX Dynamic Workset Explorer & Hardware Verification (`dynamic`)\n\n")
     lines.append("All tables in this document are **automatically generated** from `experiments/evaluation_results.json` and `witnesses/<sample>/witness_ledger.json` by `tools/generate_report_tables.py`.\n\n")
+    lines.append("- Evaluation implementation source commit: " + provenance["implementation_source_commit"] + "; artifacts matched the recorded preflight.\n\n")
     lines.append("- Frozen initial prototype tag: `v0-hardware-prototype-frozen` (`7daae4f82ba5380f1ef96c5c0f2f273e01ab360a`)\n\n")
 
     # Table 1: 4-Layer Discovery Attribution + Heuristic Assist Breakdown
@@ -151,6 +165,9 @@ def main() -> None:
 ## 5. Clean-Checkout Reproducible Workflow
 
 ```bash
+# 0. Verify that vendored implementation files match the pinned upstream commit
+python3 tools/check_vendor_sync.py /path/to/implement
+
 # 1. Build ProfileELFs, All-REG baselines, and signed AEX0/AEX1 artifacts
 python3 tools/build_real_targets.py
 

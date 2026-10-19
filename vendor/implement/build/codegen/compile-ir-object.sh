@@ -8,6 +8,26 @@ fi
 compiler=$1
 shift
 
+fieldBoundary=$(printenv ATFIELD_FIELD_BOUNDARY || printf 0)
+case $fieldBoundary in
+  0|1) ;;
+  *)
+    echo "ATFIELD_FIELD_BOUNDARY must be 0 or 1" >&2
+    exit 64
+    ;;
+esac
+fieldTool=$(printenv ATFIELD_FIELD_TOOL || true)
+if [[ -z $fieldTool && $fieldBoundary == 1 ]]; then
+  implementRoot=$(printenv ATFIELD_IMPLEMENT_ROOT || true)
+  if [[ -n $implementRoot ]]; then
+    fieldTool=$implementRoot/.build/field/atfield-field
+  fi
+  [[ -x $fieldTool ]] || {
+    echo "ATFIELD_FIELD_TOOL must point to executable atfield-field in Field boundary mode" >&2
+    exit 64
+  }
+fi
+
 if [[ ${1:-} == --cmake-launcher ]]; then
   (($# >= 2)) || {
     echo "missing compiler argument after --cmake-launcher" >&2
@@ -94,12 +114,10 @@ compute_payload_ordinal() {
   fi
   local payloadName="$namespace/$logicalSource"
   local payloadHash
-  payloadHash=$(printf "%s" "$payloadName" | sha256sum)
+  payloadHash=$(printf '%s' "$payloadName" | sha256sum)
   payloadHash=${payloadHash:0:16}
-  printf -v payloadOrdinal "%u" "0x$payloadHash"
+  printf -v payloadOrdinal '%u' "0x$payloadHash"
 }
-
-scriptDir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 
 if ((isAssembly)); then
   "$compiler" "${compilerArgs[@]}"
@@ -107,7 +125,15 @@ if ((isAssembly)); then
     0) ;;
     1)
       compute_payload_ordinal
+      scriptDir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
       injector=${ATFIELD_NATIVE_ANCHORS:-$scriptDir/../anchor/inject-native-anchors.py}
+      if [[ ! -f $injector && -n ${ATFIELD_IMPLEMENT_ROOT:-} ]]; then
+        injector=$ATFIELD_IMPLEMENT_ROOT/build/anchor/inject-native-anchors.py
+      fi
+      [[ -f $injector ]] || {
+        echo "native anchor injector not found; set ATFIELD_NATIVE_ANCHORS for split Nix outputs" >&2
+        exit 64
+      }
       "${ATFIELD_PYTHON:-python3}" "$injector" "$outputFile" "$payloadOrdinal"
       ;;
     *)
@@ -115,8 +141,8 @@ if ((isAssembly)); then
       exit 64
       ;;
   esac
-  if [[ ${ATFIELD_FIELD_BOUNDARY:-0} == 1 ]]; then
-    printf "{\n  \"schema\": \"atfield-fields-v1\",\n  \"fields\": [],\n  \"selectors\": []\n}\n" > "$outputFile.field.json"
+  if [[ $fieldBoundary == 1 ]]; then
+    "$fieldTool" empty --manifest "$outputFile.field.json"
   fi
   exit 0
 fi
@@ -135,10 +161,10 @@ esac
 outputDir=$(dirname "$outputFile")
 mkdir -p "$outputDir"
 sourceBitcode=$(mktemp "$outputDir/.llvm-bc.XXXXXX.bc")
-boundaryBitcode=$(mktemp "$outputDir/.llvm-boundary.XXXXXX.bc")
-boundaryAsm=$(mktemp "$outputDir/.llvm-boundary.XXXXXX.s")
+boundaryBitcode=$(mktemp "$outputDir/.field-bc.XXXXXX.bc")
+temporaryAssembly=$(mktemp "$outputDir/.llvm-asm.XXXXXX.s")
 temporaryObject=$(mktemp "$outputDir/.llvm-object.XXXXXX.o")
-trap 'rm -f -- "$sourceBitcode" "$boundaryBitcode" "$boundaryAsm" "$temporaryObject"' EXIT
+trap 'rm -f -- "$sourceBitcode" "$boundaryBitcode" "$temporaryAssembly" "$temporaryObject"' EXIT
 
 irGenerationArgs=()
 skipNext=0
@@ -182,26 +208,33 @@ case ${ATFIELD_ANCHOR_PREPARATION:-0} in
     ;;
 esac
 
-if [[ ${ATFIELD_FIELD_BOUNDARY:-0} == 1 ]]; then
+backendBitcode=$sourceBitcode
+hasFields=0
+fieldManifest=$outputFile.field.json
+if [[ $fieldBoundary == 1 ]]; then
   compute_payload_ordinal
-  fieldTool=${ATFIELD_FIELD_TOOL:-$scriptDir/../field/.build-host/atfield-field}
-  "$fieldTool" ir \
-    --payload-ordinal "$payloadOrdinal" \
-    --input "$sourceBitcode" \
-    --output "$boundaryBitcode" \
-    --manifest "$outputFile.field.json"
+  "$fieldTool" ir --payload-ordinal "$payloadOrdinal" \
+    --input "$sourceBitcode" --output "$boundaryBitcode" \
+    --manifest "$fieldManifest"
+  backendBitcode=$boundaryBitcode
+  if "${ATFIELD_PYTHON:-python3}" -c \
+    'import json,sys; raise SystemExit(0 if json.load(open(sys.argv[1], encoding="utf-8"))["fields"] else 1)' \
+    "$fieldManifest"; then
+    hasFields=1
+  fi
+fi
+
+if [[ $fieldBoundary == 1 && $hasFields == 1 ]]; then
   "$llc" -filetype=asm -mtriple=x86_64-unknown-linux-gnu \
     -relocation-model=pic "-O=$backendOptimization" \
     -function-sections -data-sections "${anchorArgs[@]}" \
-    "$boundaryBitcode" -o "$boundaryAsm"
-  "$fieldTool" asm \
-    --manifest "$outputFile.field.json" \
-    --input "$boundaryAsm" \
-    --output "$temporaryObject"
+    "$backendBitcode" -o "$temporaryAssembly"
+  "$fieldTool" asm --manifest "$fieldManifest" \
+    --input "$temporaryAssembly" --output "$temporaryObject"
 else
   "$llc" -filetype=obj -mtriple=x86_64-unknown-linux-gnu \
     -relocation-model=pic "-O=$backendOptimization" \
     -function-sections -data-sections "${anchorArgs[@]}" \
-    "$sourceBitcode" -o "$temporaryObject"
+    "$backendBitcode" -o "$temporaryObject"
 fi
 mv -f -- "$temporaryObject" "$outputFile"

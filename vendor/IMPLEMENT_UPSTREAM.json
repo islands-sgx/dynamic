@@ -1,0 +1,29 @@
+{
+  "upstream": "implement",
+  "commit": "a3cf16bce12267c4323cabe2b571fdae9a203b01",
+  "tracked_file_count": 19,
+  "comparison": "all tracked files under vendor/implement match the upstream commit byte-for-byte",
+  "historical_prototype_tag": "7daae4f82ba5380f1ef96c5c0f2f273e01ab360a",
+  "historical_artifact_note": "Historical hardware traces and stale dynamic/dynamic_xr artifacts predate this source sync; their implement source revision is not recorded.",
+  "files_sha256": {
+    "build/anchor/anchor_facts.py": "cdb10abde3396f517dc7ee86093753ab73578e34efd7d5571aefb2e75a1d1b7c",
+    "build/anchor/inject-native-anchors.py": "569b252e80cb1226715dca052939cca3ea3579a67e7a86ba3d1f10ddfdf57f7f",
+    "build/codegen/compile-ir-object.sh": "371dcf35b098da64794de7fa4d1738b3c15e4323dd42344c7ccd0bcb44634806",
+    "build/field/CMakeLists.txt": "bcbb0d7ef5a614b48fc1e06c2c041760b675791e7d79e80121bf26a36336f118",
+    "build/field/README.md": "6dbda0835621f0170abae54af7f786f3091ecbeb508f4676dea30e540399dcfb",
+    "build/field/annotation_adapter.cpp": "169f2161b49dd3f129367e21c38e2f8dfe592409d30aa8c74680524e912b13f0",
+    "build/field/boundary_assembly_transform.cpp": "82a16c3472666ef9800bbe0d0ee1a95729366ecd4c1f624c8c8ec483b887615e",
+    "build/field/boundary_transform.cpp": "3cd296a497923db58eab8096f0b036b6e394dbf1100f1a7e247317db12135b8e",
+    "build/field/field_main.cpp": "9b0bf82410be02207a92a6c96101d2e5e55b9d4ae237ab421da2da4db5f858e0",
+    "build/field/include/atfield/analyze/annotation_adapter.h": "7105ab7dca03d27de194b4ffe3239bec32125d83338a146ee44bd41ee3d1232b",
+    "build/field/include/atfield/boundary_assembly_transform.h": "9a9b3e86990167b0958e323cea7b24e69e23ce076c0c8af0e509b14ef08f13c6",
+    "build/field/include/atfield/boundary_transform.h": "e45d2769d379e422ae36222cb4d0a3071de878515d7f5eecbc4edbd44845195e",
+    "build/pretouch/post-rx-segment.ld": "9d4ac98a44c738991263b37ffb4607b08e8fb30143713b2ca7d762fdeedf91d9",
+    "build/pretouch/pretouch.py": "1bc790e5ce12f07c8a9e5909a366ea538ee2361bd9aeb82891ca6864fad91536",
+    "build/readiness/readiness.py": "24486b3b3d272b0a1828cff264974abba8cd008c9a737916f875f3421c65eaee",
+    "build/workset/workset.py": "9e89e4fe59b8813aa954c8f4de73106bfcd690e71eaaf4eb5d96041c7d53c13c",
+    "cli/enclave-clang": "33309818fde215e93f57c70a2907c77ced93ff4f086a32c57a815be49a06968e",
+    "cli/profile-link.py": "815538cdb8a355d0423cdeae7c0444926fb84a20198f4b758f6ed5cffec6bf7e",
+    "cli/protect-config.py": "1249a95e58c220844ec6a4e40b54aa65b669e984d1a72c63ad39d692c55ae14c"
+  }
+}

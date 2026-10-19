@@ -10,11 +10,12 @@ import subprocess
 import sys
 from pathlib import Path
 
-DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
+DYN_ROOT = Path(__file__).resolve().parents[1]
 SAMPLE_ROOT = Path("/home/meandssh/islands-sgx/sample")
 VENDOR_IMPL = DYN_ROOT / "vendor" / "implement"
+IMPLEMENT_SOURCE_COMMIT = json.loads((DYN_ROOT / "vendor" / "IMPLEMENT_UPSTREAM.json").read_text())["commit"]
 COMPILE_WRAPPER = VENDOR_IMPL / "build" / "codegen" / "compile-ir-object.sh"
-FIELD_TOOL = VENDOR_IMPL / "build" / "field" / ".build-host" / "atfield-field"
+FIELD_TOOL = Path(os.environ.get("ATFIELD_FIELD_TOOL", VENDOR_IMPL / "build" / "field" / ".build-host" / "atfield-field"))
 PRETOUCH_TOOL = VENDOR_IMPL / "build" / "pretouch" / "pretouch.py"
 POST_LD = VENDOR_IMPL / "build" / "pretouch" / "post-rx-segment.ld"
 PROFILE_LINK = VENDOR_IMPL / "cli" / "profile-link.py"
@@ -238,6 +239,9 @@ def build_target(name: str) -> dict:
         "--layout-out", str(layout_json),
         "--out", str(workset_all_reg),
     ], check=True)
+    workset_data = json.loads(workset_all_reg.read_text())
+    workset_data["implementation_source_commit"] = IMPLEMENT_SOURCE_COMMIT
+    workset_all_reg.write_text(json.dumps(workset_data, indent=2) + "\n")
 
     final_all_reg_elf = out_dir / "enclave.all_reg.final.so"
     final_all_reg_json = out_dir / "pretouch.all_reg.finalized.json"

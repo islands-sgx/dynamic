@@ -25,8 +25,9 @@ import subprocess
 import sys
 from pathlib import Path
 
-DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
+DYN_ROOT = Path(__file__).resolve().parents[1]
 VENDOR_IMPL = DYN_ROOT / "vendor" / "implement"
+IMPLEMENT_SOURCE_COMMIT = json.loads((DYN_ROOT / "vendor" / "IMPLEMENT_UPSTREAM.json").read_text())["commit"]
 sys.path.insert(0, str(VENDOR_IMPL / "build" / "workset"))
 sys.path.insert(0, str(DYN_ROOT / "tools"))
 
@@ -138,6 +139,7 @@ def build_committed_page_map(layout: dict) -> dict[int, dict]:
         out[page] = {
             "page_rva": page,
             "effects": effects,
+            "active_permissions": perm,
             "max_permissions": max_perm,
             "relro": page in relro_pages,
             "origins": sorted(set(page_origins[page])),
@@ -682,6 +684,7 @@ def explore_and_close_sample(sample: str) -> dict:
                 rec = {
                     "page_rva": page,
                     "effects": effs,
+                    "active_permissions": base_rec["active_permissions"],
                     "max_permissions": base_rec["max_permissions"],
                     "relro": base_rec["relro"],
                     "origins": base_rec["origins"],
@@ -782,6 +785,7 @@ def explore_and_close_sample(sample: str) -> dict:
         w_path = tdir / f"workset.{variant_name}.json"
         write_json(w_path, {
             "schema": "atfield-workset-v1",
+            "implementation_source_commit": IMPLEMENT_SOURCE_COMMIT,
             "page_size": PAGE,
             "layout": layout,
             "field_manifest": str(tdir / "fields.json"),

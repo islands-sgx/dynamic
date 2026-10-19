@@ -54,8 +54,11 @@ def main() -> None:
 
     ET.indent(root, space="  ")
     args.output.parent.mkdir(parents=True, exist_ok=True)
+    content = ET.tostring(root, encoding="unicode") + "\n"
+    if args.output.exists() and args.output.read_text() == content:
+        return
     temporary = args.output.with_name(args.output.name + ".tmp")
-    temporary.write_text(ET.tostring(root, encoding="unicode") + "\n")
+    temporary.write_text(content)
     temporary.replace(args.output)
 
 
