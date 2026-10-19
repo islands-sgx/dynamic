@@ -729,10 +729,14 @@ def explore_and_close_sample(sample: str) -> dict:
 
 def main() -> None:
     samples = sys.argv[1:] or ["qe3", "signal-cds", "sgxwallet", "ehsm", "ehsm-opt-1", "ehsm-opt-2"]
-    hw_challenge_res = run_real_hardware_challenge_ablation(max_enclave_budget=48)
+    if not (DYN_ROOT / "experiments" / "strategy_comparison.json").is_file() or not sys.argv[1:]:
+        hw_challenge_res = run_real_hardware_challenge_ablation(max_enclave_budget=68, seeds=(101, 102, 103, 104, 105))
+    else:
+        hw_challenge_res = json.loads((DYN_ROOT / "experiments" / "strategy_comparison.json").read_text())["real_hardware_challenge_enclaves"]
     challenge_payload = {
         "audit_of_legacy_heuristics": AUDIT_OF_LEGACY_HEURISTICS,
-        "equal_enclave_budget": 48,
+        "equal_enclave_budget": 68,
+        "seeds": [101, 102, 103, 104, 105],
         "real_hardware_challenge_enclaves": hw_challenge_res,
     }
     write_json(DYN_ROOT / "experiments" / "strategy_comparison.json", challenge_payload)

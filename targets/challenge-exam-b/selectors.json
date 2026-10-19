@@ -1,0 +1,39 @@
+{
+  "schema": "atfield-selectors-v1",
+  "selectors": [
+    {
+      "ecall_index": 0,
+      "name": "examB_tick_clock",
+      "reachable_functions": []
+    },
+    {
+      "ecall_index": 1,
+      "name": "examB_issue_ticket",
+      "reachable_functions": []
+    },
+    {
+      "ecall_index": 2,
+      "name": "examB_configure_gate",
+      "reachable_functions": []
+    },
+    {
+      "ecall_index": 3,
+      "name": "examB_verify_ticket",
+      "reachable_functions": [
+        "examB_field_verify"
+      ]
+    },
+    {
+      "ecall_index": 4,
+      "name": "examB_reset_context",
+      "reachable_functions": []
+    },
+    {
+      "ecall_index": 5,
+      "name": "examB_transform_packet",
+      "reachable_functions": [
+        "examB_field_packet"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "schema": "atfield-fields-v1",
+  "fields": [
+    {
+      "id": "0xa752fc26fedd8e07",
+      "name": "examB_field_verify",
+      "function": "examB_field_verify",
+      "linkage_name": "examB_field_verify",
+      "demangled_name": "examB_field_verify",
+      "order": [
+        "0x21a31ff2afb74f9e",
+        "4"
+      ],
+      "marker_symbol": "__atfield_marker_12056976396839128583",
+      "continuation_symbol": "__atfield_after_marker_12056976396839128583",
+      "body_symbol": "__atfield_body_12056976396839128583",
+      "pretouch_symbol": "__atfield_pretouch_12056976396839128583",
+      "field_enter_symbol": "__atfield_field_enter_12056976396839128583",
+      "normal_close_symbol": "__atfield_normal_close_12056976396839128583",
+      "field_exit_symbol": "__atfield_field_exit_12056976396839128583",
+      "stack_bytes": null
+    },
+    {
+      "id": "0x695d6e14e8fef9c5",
+      "name": "examB_field_packet",
+      "function": "examB_field_packet",
+      "linkage_name": "examB_field_packet",
+      "demangled_name": "examB_field_packet",
+      "order": [
+        "0x21a31ff2afb74f9e",
+        "6"
+      ],
+      "marker_symbol": "__atfield_marker_7592345582903949765",
+      "continuation_symbol": "__atfield_after_marker_7592345582903949765",
+      "body_symbol": "__atfield_body_7592345582903949765",
+      "pretouch_symbol": "__atfield_pretouch_7592345582903949765",
+      "field_enter_symbol": "__atfield_field_enter_7592345582903949765",
+      "normal_close_symbol": "__atfield_normal_close_7592345582903949765",
+      "field_exit_symbol": "__atfield_field_exit_7592345582903949765",
+      "stack_bytes": null
+    }
+  ],
+  "selectors": []
+}

@@ -90,6 +90,18 @@ SAMPLES = {
         "u_dir": DYN_ROOT / "targets/challenge-bench-perm/edl_gen",
         "inc": [f"-I{SGX_SDK_INC}"],
     },
+    "challenge-exam-a": {
+        "edl": DYN_ROOT / "challenges/challenge-exam-a/exam_a.edl",
+        "u_c": DYN_ROOT / "targets/challenge-exam-a/edl_gen/exam_a_u.c",
+        "u_dir": DYN_ROOT / "targets/challenge-exam-a/edl_gen",
+        "inc": [f"-I{SGX_SDK_INC}"],
+    },
+    "challenge-exam-b": {
+        "edl": DYN_ROOT / "challenges/challenge-exam-b/exam_b.edl",
+        "u_c": DYN_ROOT / "targets/challenge-exam-b/edl_gen/exam_b_u.c",
+        "u_dir": DYN_ROOT / "targets/challenge-exam-b/edl_gen",
+        "inc": [f"-I{SGX_SDK_INC}"],
+    },
 }
 
 

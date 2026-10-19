@@ -1,0 +1,28 @@
+{
+  "assembly": "/home/meandssh/islands-sgx/dynamic/targets/challenge-exam-b/pretouch-profile.S",
+  "blocks": [
+    {
+      "begin_offset": 0,
+      "continuation_symbol": "__atfield_after_marker_12056976396839128583",
+      "end_offset": 5,
+      "field_id": "0xa752fc26fedd8e07",
+      "size": 5,
+      "symbol": "__atfield_pretouch_12056976396839128583"
+    },
+    {
+      "begin_offset": 5,
+      "continuation_symbol": "__atfield_after_marker_7592345582903949765",
+      "end_offset": 10,
+      "field_id": "0x695d6e14e8fef9c5",
+      "size": 5,
+      "symbol": "__atfield_pretouch_7592345582903949765"
+    }
+  ],
+  "capacity_q": 16384,
+  "code_bytes": 10,
+  "fields_sha256": "6f32790ddda6b88ea76c91709bb872dc320eff1ee368154804261548dc395577",
+  "mode": "profile",
+  "pretouch_start": null,
+  "schema": "atfield-pretouch-output-v1",
+  "workset_sha256": null
+}

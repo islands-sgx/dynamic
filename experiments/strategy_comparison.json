@@ -57,2129 +57,2052 @@
       "underlying_assumption": "Small allocator alignment or stack frame variations stay within +2 heap / -4 stack pages."
     }
   ],
-  "equal_enclave_budget": 48,
+  "equal_enclave_budget": 68,
   "real_hardware_challenge_enclaves": {
     "challenge-bench": {
       "ground_truth_challenge_pages": {
-        "C1": "0x13000",
-        "C2": "0x14000",
-        "C3": "0x15000",
-        "C4": "0x16000",
-        "C5": "0x17000",
-        "C6": "0x18000"
+        "C1": "0x14000",
+        "C2": "0x15000",
+        "C3": "0x16000",
+        "C4": "0x17000",
+        "C5": "0x18000",
+        "C6": "0x19000",
+        "C7": "0x1a000",
+        "C8": "0x1b000"
+      },
+      "holdout_total_s3_pages": 13,
+      "modes": {
+        "S0": {
+          "enclave_creations": 1,
+          "holdout_missed_pages": 5,
+          "mode": "S0_seed_only",
+          "solved_count": 0,
+          "solved_list": [],
+          "total_ecalls_executed": 9,
+          "wall_clock_sec": 0.058
+        },
+        "feedback_guided": {
+          "challenges_total": 8,
+          "curve_mean_solved": {
+            "at_20_enclaves": 3,
+            "at_40_enclaves": 4.8,
+            "at_68_enclaves": 8
+          },
+          "enclave_budget": 68,
+          "mean_holdout_missed_pages": 0,
+          "mean_total_ecalls": 640.2,
+          "mean_wall_clock_sec": 4.26,
+          "mode": "feedback_guided",
+          "num_seeds": 5,
+          "seed_runs": [
+            {
+              "checkpoints": {
+                "at_20_enclaves": 3,
+                "at_40_enclaves": 4,
+                "at_68_enclaves": 8
+              },
+              "confirmed_s3_effects": 38,
+              "confirmed_s3_pages": 21,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 11,
+              "holdout_missed_pages": 0,
+              "missed_list": [],
+              "non_field_setup_ecalls": 248,
+              "seed": 101,
+              "solved_count": 8,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 623,
+              "valid_field_entering_ecalls": 364,
+              "wall_clock_sec": 4.642,
+              "witnesses": [
+                {
+                  "challenge": "C6",
+                  "page_rva": "0x19000",
+                  "replayed_confirmed": true,
+                  "spec": "aliased_pair:3:0:1:3:4",
+                  "step": 8,
+                  "tag": "slice_rel_e3_s0_p1_p3_off4",
+                  "trace_sha256": "5712c956e251c4ca311ffa7d2b8be6878ecccb4baf8e135c926ef05c26ee185f"
+                },
+                {
+                  "challenge": "C8",
+                  "page_rva": "0x1b000",
+                  "replayed_confirmed": true,
+                  "spec": "replace_scalar:5:0:0:3",
+                  "step": 10,
+                  "tag": "scalar_e5_s0_p0_v3",
+                  "trace_sha256": "deff6ed44ec27850636ade0d4999bdb666c42b6452753bd5acbf3d376d6afbe5"
+                },
+                {
+                  "challenge": "C1",
+                  "page_rva": "0x14000",
+                  "replayed_confirmed": true,
+                  "spec": "repeat:3:0:24",
+                  "step": 12,
+                  "tag": "history_e3_s0_n24",
+                  "trace_sha256": "1c04df29edca106065aa84e8bd953f8f532abe1f83a63c7bb313e0164b19466f"
+                },
+                {
+                  "challenge": "C2",
+                  "page_rva": "0x15000",
+                  "replayed_confirmed": true,
+                  "spec": "replace_scalar:1:0:0:2",
+                  "step": 39,
+                  "tag": "replace_prefix_e1_s0_p0_v2",
+                  "trace_sha256": "6a78042b644786678aa0018203c617f600840f528f0cf4d2af188739086a4dc4"
+                },
+                {
+                  "challenge": "C3",
+                  "page_rva": "0x16000",
+                  "replayed_confirmed": true,
+                  "spec": "scale_bound_v2:3:0:0:16:1024:32:1024;scale_bound_v2:3:0:2:16:1024:32:1024",
+                  "step": 44,
+                  "tag": "scale_e3_s0_n1024",
+                  "trace_sha256": "dd06ad320bb0c9b593ecc5b73f6b2752b655295cad763040911c41aa011d67c7"
+                },
+                {
+                  "challenge": "C7",
+                  "page_rva": "0x1a000",
+                  "replayed_confirmed": true,
+                  "spec": "replace_scalar:4:0:0:2",
+                  "step": 53,
+                  "tag": "replace_prefix_e4_s0_p0_v2",
+                  "trace_sha256": "8192ebf1784fb21b99d3191b10e78dfac08648583e7f89e59b298bd6bbcd95ab"
+                },
+                {
+                  "challenge": "C5",
+                  "page_rva": "0x18000",
+                  "replayed_confirmed": true,
+                  "spec": "replace_scalar:3:2:0:16",
+                  "step": 57,
+                  "tag": "scalar_e3_s2_p0_v16",
+                  "trace_sha256": "3daadea8643cae905e3f587029032eafd77832d436e8a008bf9759f94ad19488"
+                },
+                {
+                  "challenge": "C4",
+                  "page_rva": "0x17000",
+                  "replayed_confirmed": true,
+                  "spec": "joint_scalar_xor:3:0:0:2:1:0:255",
+                  "step": 66,
+                  "tag": "joint_e3_s0_s0_2_x1_0",
+                  "trace_sha256": "2862e186b5473ea02ff64d6ed38d5e5e51af38de799596b6f06dc906ca322af6"
+                }
+              ]
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 3,
+                "at_40_enclaves": 4,
+                "at_68_enclaves": 8
+              },
+              "confirmed_s3_effects": 38,
+              "confirmed_s3_pages": 21,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 11,
+              "holdout_missed_pages": 0,
+              "missed_list": [],
+              "non_field_setup_ecalls": 265,
+              "seed": 102,
+              "solved_count": 8,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 657,
+              "valid_field_entering_ecalls": 381,
+              "wall_clock_sec": 4.171,
+              "witnesses": []
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 4,
+                "at_40_enclaves": 7,
+                "at_68_enclaves": 8
+              },
+              "confirmed_s3_effects": 38,
+              "confirmed_s3_pages": 21,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 12,
+              "holdout_missed_pages": 0,
+              "missed_list": [],
+              "non_field_setup_ecalls": 252,
+              "seed": 103,
+              "solved_count": 8,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 631,
+              "valid_field_entering_ecalls": 367,
+              "wall_clock_sec": 4.164,
+              "witnesses": []
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 2,
+                "at_40_enclaves": 4,
+                "at_68_enclaves": 8
+              },
+              "confirmed_s3_effects": 38,
+              "confirmed_s3_pages": 21,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 12,
+              "holdout_missed_pages": 0,
+              "missed_list": [],
+              "non_field_setup_ecalls": 259,
+              "seed": 104,
+              "solved_count": 8,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 645,
+              "valid_field_entering_ecalls": 374,
+              "wall_clock_sec": 4.167,
+              "witnesses": []
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 3,
+                "at_40_enclaves": 5,
+                "at_68_enclaves": 8
+              },
+              "confirmed_s3_effects": 38,
+              "confirmed_s3_pages": 21,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 12,
+              "holdout_missed_pages": 0,
+              "missed_list": [],
+              "non_field_setup_ecalls": 259,
+              "seed": 105,
+              "solved_count": 8,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 645,
+              "valid_field_entering_ecalls": 374,
+              "wall_clock_sec": 4.174,
+              "witnesses": []
+            }
+          ],
+          "solved_by_seed": {
+            "101": 8,
+            "102": 8,
+            "103": 8,
+            "104": 8,
+            "105": 8
+          },
+          "solved_max": 8,
+          "solved_mean": 8,
+          "solved_median": 8,
+          "solved_min": 8
+        },
+        "fixed_round_robin": {
+          "challenges_total": 8,
+          "curve_mean_solved": {
+            "at_20_enclaves": 3.6,
+            "at_40_enclaves": 5.4,
+            "at_68_enclaves": 6
+          },
+          "enclave_budget": 68,
+          "mean_holdout_missed_pages": 0.4,
+          "mean_total_ecalls": 1852.4,
+          "mean_wall_clock_sec": 5.84,
+          "mode": "fixed_round_robin",
+          "num_seeds": 5,
+          "seed_runs": [
+            {
+              "checkpoints": {
+                "at_20_enclaves": 3,
+                "at_40_enclaves": 4,
+                "at_68_enclaves": 5
+              },
+              "confirmed_s3_effects": 27,
+              "confirmed_s3_pages": 15,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 21,
+              "holdout_missed_pages": 1,
+              "missed_list": [
+                "C2",
+                "C5",
+                "C7"
+              ],
+              "non_field_setup_ecalls": 210,
+              "seed": 101,
+              "solved_count": 5,
+              "solved_list": [
+                "C1",
+                "C3",
+                "C4",
+                "C6",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 1518,
+              "valid_field_entering_ecalls": 1287,
+              "wall_clock_sec": 11.513,
+              "witnesses": [
+                {
+                  "challenge": "C6",
+                  "page_rva": "0x19000",
+                  "replayed_confirmed": true,
+                  "spec": "aliased_pair:3:0:1:3:4",
+                  "step": 5,
+                  "tag": "slice_rel_e3_s0_p1_p3_off4",
+                  "trace_sha256": "4918335fd45f494450935410723daca4d0955dca2386ec607ce2cc566b50a14a"
+                },
+                {
+                  "challenge": "C1",
+                  "page_rva": "0x14000",
+                  "replayed_confirmed": false,
+                  "spec": "repeat:3:0:24",
+                  "step": 7,
+                  "tag": "history_e3_s0_n24",
+                  "trace_sha256": "b4ab2af62f4d3e39f9d09f7ab72fe91f9485a7546ed7f00ec3423c71b3f15061"
+                },
+                {
+                  "challenge": "C8",
+                  "page_rva": "0x1b000",
+                  "replayed_confirmed": false,
+                  "spec": "repeat:5:0:24",
+                  "step": 14,
+                  "tag": "history_e5_s0_n24",
+                  "trace_sha256": "3489c1806f018ebd1661d11143f45f06d7709d0e56ed543ffa3cf8fe708fc46b"
+                },
+                {
+                  "challenge": "C3",
+                  "page_rva": "0x16000",
+                  "replayed_confirmed": true,
+                  "spec": "scale_bound_v2:3:0:0:16:4096:32:1024;scale_bound_v2:3:0:2:16:4096:32:1024",
+                  "step": 33,
+                  "tag": "scale_e3_s0_n4096",
+                  "trace_sha256": "8f232c6750356a320514ae599de56f10a8fd56fbae2e12f1572993efc3da20c2"
+                },
+                {
+                  "challenge": "C4",
+                  "page_rva": "0x17000",
+                  "replayed_confirmed": true,
+                  "spec": "joint_scalar_xor:3:0:0:2:1:0:255",
+                  "step": 59,
+                  "tag": "joint_e3_s0_s0_2_x1_0",
+                  "trace_sha256": "7515e0e6ad1214feebb8c29c8cb8a1ac671de7b1810c438afebdfa6035792d9f"
+                }
+              ]
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 4,
+                "at_40_enclaves": 5,
+                "at_68_enclaves": 5
+              },
+              "confirmed_s3_effects": 27,
+              "confirmed_s3_pages": 15,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 25,
+              "holdout_missed_pages": 1,
+              "missed_list": [
+                "C2",
+                "C5",
+                "C7"
+              ],
+              "non_field_setup_ecalls": 262,
+              "seed": 102,
+              "solved_count": 5,
+              "solved_list": [
+                "C1",
+                "C3",
+                "C4",
+                "C6",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 1936,
+              "valid_field_entering_ecalls": 1649,
+              "wall_clock_sec": 4.183,
+              "witnesses": []
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 5,
+                "at_40_enclaves": 7,
+                "at_68_enclaves": 7
+              },
+              "confirmed_s3_effects": 30,
+              "confirmed_s3_pages": 17,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 26,
+              "holdout_missed_pages": 0,
+              "missed_list": [
+                "C7"
+              ],
+              "non_field_setup_ecalls": 262,
+              "seed": 103,
+              "solved_count": 7,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 1936,
+              "valid_field_entering_ecalls": 1648,
+              "wall_clock_sec": 4.519,
+              "witnesses": []
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 3,
+                "at_40_enclaves": 5,
+                "at_68_enclaves": 6
+              },
+              "confirmed_s3_effects": 29,
+              "confirmed_s3_pages": 16,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 26,
+              "holdout_missed_pages": 0,
+              "missed_list": [
+                "C2",
+                "C7"
+              ],
+              "non_field_setup_ecalls": 262,
+              "seed": 104,
+              "solved_count": 6,
+              "solved_list": [
+                "C1",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 1936,
+              "valid_field_entering_ecalls": 1648,
+              "wall_clock_sec": 4.501,
+              "witnesses": []
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 3,
+                "at_40_enclaves": 6,
+                "at_68_enclaves": 7
+              },
+              "confirmed_s3_effects": 31,
+              "confirmed_s3_pages": 17,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 24,
+              "holdout_missed_pages": 0,
+              "missed_list": [
+                "C2"
+              ],
+              "non_field_setup_ecalls": 262,
+              "seed": 105,
+              "solved_count": 7,
+              "solved_list": [
+                "C1",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 1936,
+              "valid_field_entering_ecalls": 1650,
+              "wall_clock_sec": 4.509,
+              "witnesses": []
+            }
+          ],
+          "solved_by_seed": {
+            "101": 5,
+            "102": 5,
+            "103": 7,
+            "104": 6,
+            "105": 7
+          },
+          "solved_max": 7,
+          "solved_mean": 6,
+          "solved_median": 6,
+          "solved_min": 5
+        }
       },
       "sample": "challenge-bench",
-      "strategies": {
-        "S0": {
-          "challenges_solved_count": 0,
-          "challenges_solved_list": [],
-          "challenges_total": 6,
-          "confirmed_pages_per_sec": 90.91,
-          "confirmed_s3_effects": 9,
-          "confirmed_s3_pages": 5,
-          "discovery_curve": [
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 1,
-              "total_ecalls": 5,
-              "wall_clock_sec": 0.055
-            }
-          ],
-          "enclave_creations": 1,
-          "expected_s0_rejections": 0,
-          "holdout_missed_pages": 6,
-          "measurement_invalid_runs": 0,
-          "new_effects_per_100_ecalls": 180.0,
-          "non_field_setup_ecalls": 3,
-          "strategy": "S0",
-          "total_ecalls_executed": 5,
-          "valid_field_entering_ecalls": 2,
-          "wall_clock_sec": 0.055,
-          "witnesses": []
-        },
-        "S1": {
-          "challenges_solved_count": 1,
-          "challenges_solved_list": [
-            "C1"
-          ],
-          "challenges_total": 6,
-          "confirmed_pages_per_sec": 2.14,
-          "confirmed_s3_effects": 11,
-          "confirmed_s3_pages": 6,
-          "discovery_curve": [
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 1,
-              "total_ecalls": 5,
-              "wall_clock_sec": 0.057
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 2,
-              "total_ecalls": 9,
-              "wall_clock_sec": 0.117
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 3,
-              "total_ecalls": 12,
-              "wall_clock_sec": 0.174
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 4,
-              "total_ecalls": 15,
-              "wall_clock_sec": 0.232
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 5,
-              "total_ecalls": 18,
-              "wall_clock_sec": 0.29
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 6,
-              "total_ecalls": 21,
-              "wall_clock_sec": 0.347
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 7,
-              "total_ecalls": 24,
-              "wall_clock_sec": 0.405
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 8,
-              "total_ecalls": 27,
-              "wall_clock_sec": 0.464
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 9,
-              "total_ecalls": 30,
-              "wall_clock_sec": 0.521
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 10,
-              "total_ecalls": 33,
-              "wall_clock_sec": 0.578
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 11,
-              "total_ecalls": 36,
-              "wall_clock_sec": 0.636
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 12,
-              "total_ecalls": 39,
-              "wall_clock_sec": 0.694
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 13,
-              "total_ecalls": 42,
-              "wall_clock_sec": 0.749
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 14,
-              "total_ecalls": 45,
-              "wall_clock_sec": 0.807
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 15,
-              "total_ecalls": 48,
-              "wall_clock_sec": 0.866
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 16,
-              "total_ecalls": 51,
-              "wall_clock_sec": 0.924
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 17,
-              "total_ecalls": 54,
-              "wall_clock_sec": 0.981
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 18,
-              "total_ecalls": 57,
-              "wall_clock_sec": 1.04
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 20,
-              "total_ecalls": 95,
-              "wall_clock_sec": 1.179
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 21,
-              "total_ecalls": 122,
-              "wall_clock_sec": 1.251
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 22,
-              "total_ecalls": 125,
-              "wall_clock_sec": 1.311
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 23,
-              "total_ecalls": 128,
-              "wall_clock_sec": 1.368
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 24,
-              "total_ecalls": 131,
-              "wall_clock_sec": 1.427
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 25,
-              "total_ecalls": 134,
-              "wall_clock_sec": 1.484
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 26,
-              "total_ecalls": 137,
-              "wall_clock_sec": 1.543
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 27,
-              "total_ecalls": 140,
-              "wall_clock_sec": 1.599
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 28,
-              "total_ecalls": 143,
-              "wall_clock_sec": 1.658
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 29,
-              "total_ecalls": 146,
-              "wall_clock_sec": 1.713
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 30,
-              "total_ecalls": 149,
-              "wall_clock_sec": 1.769
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 31,
-              "total_ecalls": 152,
-              "wall_clock_sec": 1.829
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 32,
-              "total_ecalls": 155,
-              "wall_clock_sec": 1.886
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 33,
-              "total_ecalls": 158,
-              "wall_clock_sec": 1.942
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 34,
-              "total_ecalls": 161,
-              "wall_clock_sec": 1.999
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 35,
-              "total_ecalls": 164,
-              "wall_clock_sec": 2.056
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 36,
-              "total_ecalls": 167,
-              "wall_clock_sec": 2.111
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 37,
-              "total_ecalls": 170,
-              "wall_clock_sec": 2.169
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 38,
-              "total_ecalls": 173,
-              "wall_clock_sec": 2.226
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 39,
-              "total_ecalls": 176,
-              "wall_clock_sec": 2.285
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 40,
-              "total_ecalls": 179,
-              "wall_clock_sec": 2.342
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 41,
-              "total_ecalls": 182,
-              "wall_clock_sec": 2.398
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 42,
-              "total_ecalls": 185,
-              "wall_clock_sec": 2.458
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 43,
-              "total_ecalls": 188,
-              "wall_clock_sec": 2.515
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 44,
-              "total_ecalls": 191,
-              "wall_clock_sec": 2.576
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 45,
-              "total_ecalls": 194,
-              "wall_clock_sec": 2.633
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 46,
-              "total_ecalls": 197,
-              "wall_clock_sec": 2.69
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 47,
-              "total_ecalls": 200,
-              "wall_clock_sec": 2.746
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 48,
-              "total_ecalls": 203,
-              "wall_clock_sec": 2.805
-            }
-          ],
-          "enclave_creations": 48,
-          "expected_s0_rejections": 6,
-          "holdout_missed_pages": 5,
-          "measurement_invalid_runs": 0,
-          "new_effects_per_100_ecalls": 5.42,
-          "non_field_setup_ecalls": 95,
-          "strategy": "S1",
-          "total_ecalls_executed": 203,
-          "valid_field_entering_ecalls": 83,
-          "wall_clock_sec": 2.805,
-          "witnesses": [
-            {
-              "challenge": "C1",
-              "ecalls_at_discovery": 95,
-              "effect": "D",
-              "enclave_creations_at_discovery": 20,
-              "enclave_sha256": "a41fbf171c169bbad23ad587578ec32eb7daf9bd0c7cadd47ffe9f673cec3b6e",
-              "intervention": "repeat:3:0:16",
-              "label": "repeat_16",
-              "page_rva": "0x13000",
-              "replayed_confirmed": true,
-              "trace_sha256": "2cbd96596a650fba40d1d05a67c7e4ff40212763668294ddd16a5693a39f4a84",
-              "wall_clock_sec": 1.179
-            }
-          ]
-        },
-        "S2": {
-          "challenges_solved_count": 4,
-          "challenges_solved_list": [
-            "C1",
-            "C3",
-            "C4",
-            "C6"
-          ],
-          "challenges_total": 6,
-          "confirmed_pages_per_sec": 3.93,
-          "confirmed_s3_effects": 19,
-          "confirmed_s3_pages": 11,
-          "discovery_curve": [
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 1,
-              "total_ecalls": 5,
-              "wall_clock_sec": 0.054
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 2,
-              "total_ecalls": 9,
-              "wall_clock_sec": 0.113
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 3,
-              "total_ecalls": 12,
-              "wall_clock_sec": 0.171
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 5,
-              "total_ecalls": 18,
-              "wall_clock_sec": 0.284
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 6,
-              "total_ecalls": 21,
-              "wall_clock_sec": 0.342
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 8,
-              "total_ecalls": 59,
-              "wall_clock_sec": 0.481
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 9,
-              "total_ecalls": 62,
-              "wall_clock_sec": 0.539
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 10,
-              "total_ecalls": 66,
-              "wall_clock_sec": 0.597
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 12,
-              "total_ecalls": 72,
-              "wall_clock_sec": 0.712
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 13,
-              "total_ecalls": 75,
-              "wall_clock_sec": 0.769
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 14,
-              "total_ecalls": 102,
-              "wall_clock_sec": 0.841
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 15,
-              "total_ecalls": 105,
-              "wall_clock_sec": 0.9
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 16,
-              "total_ecalls": 109,
-              "wall_clock_sec": 0.956
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 17,
-              "total_ecalls": 112,
-              "wall_clock_sec": 1.014
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 18,
-              "total_ecalls": 115,
-              "wall_clock_sec": 1.072
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 19,
-              "total_ecalls": 118,
-              "wall_clock_sec": 1.131
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 20,
-              "total_ecalls": 122,
-              "wall_clock_sec": 1.188
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 21,
-              "total_ecalls": 125,
-              "wall_clock_sec": 1.243
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 22,
-              "total_ecalls": 128,
-              "wall_clock_sec": 1.298
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 23,
-              "total_ecalls": 131,
-              "wall_clock_sec": 1.355
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 25,
-              "total_ecalls": 139,
-              "wall_clock_sec": 1.472
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 26,
-              "total_ecalls": 142,
-              "wall_clock_sec": 1.529
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 27,
-              "total_ecalls": 145,
-              "wall_clock_sec": 1.586
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 28,
-              "total_ecalls": 148,
-              "wall_clock_sec": 1.644
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 29,
-              "total_ecalls": 152,
-              "wall_clock_sec": 1.703
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 30,
-              "total_ecalls": 155,
-              "wall_clock_sec": 1.763
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 31,
-              "total_ecalls": 158,
-              "wall_clock_sec": 1.819
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 32,
-              "total_ecalls": 161,
-              "wall_clock_sec": 1.877
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 33,
-              "total_ecalls": 164,
-              "wall_clock_sec": 1.935
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 34,
-              "total_ecalls": 167,
-              "wall_clock_sec": 1.994
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 35,
-              "total_ecalls": 170,
-              "wall_clock_sec": 2.051
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 36,
-              "total_ecalls": 173,
-              "wall_clock_sec": 2.109
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 37,
-              "total_ecalls": 176,
-              "wall_clock_sec": 2.166
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 38,
-              "total_ecalls": 179,
-              "wall_clock_sec": 2.225
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 39,
-              "total_ecalls": 182,
-              "wall_clock_sec": 2.284
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 40,
-              "total_ecalls": 185,
-              "wall_clock_sec": 2.341
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 41,
-              "total_ecalls": 188,
-              "wall_clock_sec": 2.398
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 42,
-              "total_ecalls": 191,
-              "wall_clock_sec": 2.455
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 43,
-              "total_ecalls": 194,
-              "wall_clock_sec": 2.513
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 44,
-              "total_ecalls": 197,
-              "wall_clock_sec": 2.569
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 45,
-              "total_ecalls": 200,
-              "wall_clock_sec": 2.627
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 46,
-              "total_ecalls": 203,
-              "wall_clock_sec": 2.683
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 47,
-              "total_ecalls": 206,
-              "wall_clock_sec": 2.743
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 48,
-              "total_ecalls": 209,
-              "wall_clock_sec": 2.802
-            }
-          ],
-          "enclave_creations": 48,
-          "expected_s0_rejections": 6,
-          "holdout_missed_pages": 2,
-          "measurement_invalid_runs": 0,
-          "new_effects_per_100_ecalls": 9.09,
-          "non_field_setup_ecalls": 89,
-          "strategy": "S2",
-          "total_ecalls_executed": 209,
-          "valid_field_entering_ecalls": 85,
-          "wall_clock_sec": 2.802,
-          "witnesses": [
-            {
-              "challenge": "C6",
-              "ecalls_at_discovery": 18,
-              "effect": "D",
-              "enclave_creations_at_discovery": 5,
-              "enclave_sha256": "a41fbf171c169bbad23ad587578ec32eb7daf9bd0c7cadd47ffe9f673cec3b6e",
-              "intervention": "aliased_pair:3:0:1:3:4",
-              "label": "s0_schema_alias_p1_p3_off_4",
-              "page_rva": "0x18000",
-              "replayed_confirmed": true,
-              "trace_sha256": "1b946d13fd72ce515214c109979f2141113f0d9939e838c104233a8fa39b371f",
-              "wall_clock_sec": 0.284
-            },
-            {
-              "challenge": "C1",
-              "ecalls_at_discovery": 59,
-              "effect": "D",
-              "enclave_creations_at_discovery": 8,
-              "enclave_sha256": "a41fbf171c169bbad23ad587578ec32eb7daf9bd0c7cadd47ffe9f673cec3b6e",
-              "intervention": "repeat:3:0:16",
-              "label": "repeat_16",
-              "page_rva": "0x13000",
-              "replayed_confirmed": true,
-              "trace_sha256": "96784663ffd09cc575958ae52d5659c329ee549fa60da8ccb1ac5fad935da165",
-              "wall_clock_sec": 0.481
-            },
-            {
-              "challenge": "C4",
-              "ecalls_at_discovery": 72,
-              "effect": "A",
-              "enclave_creations_at_discovery": 12,
-              "enclave_sha256": "a41fbf171c169bbad23ad587578ec32eb7daf9bd0c7cadd47ffe9f673cec3b6e",
-              "intervention": "joint_scalar_xor:3:0:0:2:1:0:255",
-              "label": "s0_schema_joint_s0_2_x1_0",
-              "page_rva": "0x16000",
-              "replayed_confirmed": true,
-              "trace_sha256": "028513883f7fae678b3602ddc7cc35b58dd12cf722508f219013d9d0d17fa9a5",
-              "wall_clock_sec": 0.712
-            },
-            {
-              "challenge": "C3",
-              "ecalls_at_discovery": 139,
-              "effect": "D",
-              "enclave_creations_at_discovery": 25,
-              "enclave_sha256": "a41fbf171c169bbad23ad587578ec32eb7daf9bd0c7cadd47ffe9f673cec3b6e",
-              "intervention": "scale_bound_v2:3:0:0:16:1024:32:1024",
-              "label": "scale_1024",
-              "page_rva": "0x15000",
-              "replayed_confirmed": true,
-              "trace_sha256": "c583f5846eea8b745f3cba66839a6fbbc8c117d43bdcafb62f5b9164ede3bab8",
-              "wall_clock_sec": 1.472
-            }
-          ]
-        },
-        "S3": {
-          "challenges_solved_count": 6,
-          "challenges_solved_list": [
-            "C1",
-            "C2",
-            "C3",
-            "C4",
-            "C5",
-            "C6"
-          ],
-          "challenges_total": 6,
-          "confirmed_pages_per_sec": 4.59,
-          "confirmed_s3_effects": 22,
-          "confirmed_s3_pages": 13,
-          "discovery_curve": [
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 1,
-              "total_ecalls": 5,
-              "wall_clock_sec": 0.056
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 2,
-              "total_ecalls": 9,
-              "wall_clock_sec": 0.114
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 3,
-              "total_ecalls": 12,
-              "wall_clock_sec": 0.174
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 5,
-              "total_ecalls": 18,
-              "wall_clock_sec": 0.288
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 6,
-              "total_ecalls": 21,
-              "wall_clock_sec": 0.346
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 7,
-              "total_ecalls": 27,
-              "wall_clock_sec": 0.404
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 9,
-              "total_ecalls": 65,
-              "wall_clock_sec": 0.541
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 10,
-              "total_ecalls": 68,
-              "wall_clock_sec": 0.601
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 11,
-              "total_ecalls": 73,
-              "wall_clock_sec": 0.663
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 12,
-              "total_ecalls": 100,
-              "wall_clock_sec": 0.734
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 13,
-              "total_ecalls": 104,
-              "wall_clock_sec": 0.795
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 14,
-              "total_ecalls": 109,
-              "wall_clock_sec": 0.855
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 15,
-              "total_ecalls": 114,
-              "wall_clock_sec": 0.914
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 16,
-              "total_ecalls": 120,
-              "wall_clock_sec": 0.972
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 17,
-              "total_ecalls": 125,
-              "wall_clock_sec": 1.03
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 18,
-              "total_ecalls": 129,
-              "wall_clock_sec": 1.088
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 20,
-              "total_ecalls": 135,
-              "wall_clock_sec": 1.203
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 21,
-              "total_ecalls": 138,
-              "wall_clock_sec": 1.259
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 22,
-              "total_ecalls": 144,
-              "wall_clock_sec": 1.316
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 23,
-              "total_ecalls": 147,
-              "wall_clock_sec": 1.376
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 24,
-              "total_ecalls": 152,
-              "wall_clock_sec": 1.433
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 25,
-              "total_ecalls": 156,
-              "wall_clock_sec": 1.492
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 26,
-              "total_ecalls": 161,
-              "wall_clock_sec": 1.551
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 28,
-              "total_ecalls": 173,
-              "wall_clock_sec": 1.666
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 29,
-              "total_ecalls": 178,
-              "wall_clock_sec": 1.723
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 30,
-              "total_ecalls": 184,
-              "wall_clock_sec": 1.779
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 31,
-              "total_ecalls": 187,
-              "wall_clock_sec": 1.837
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 33,
-              "total_ecalls": 195,
-              "wall_clock_sec": 1.954
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 34,
-              "total_ecalls": 198,
-              "wall_clock_sec": 2.013
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 35,
-              "total_ecalls": 201,
-              "wall_clock_sec": 2.072
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 36,
-              "total_ecalls": 205,
-              "wall_clock_sec": 2.131
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 37,
-              "total_ecalls": 211,
-              "wall_clock_sec": 2.189
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 38,
-              "total_ecalls": 216,
-              "wall_clock_sec": 2.247
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 39,
-              "total_ecalls": 221,
-              "wall_clock_sec": 2.309
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 40,
-              "total_ecalls": 226,
-              "wall_clock_sec": 2.367
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 41,
-              "total_ecalls": 232,
-              "wall_clock_sec": 2.424
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 42,
-              "total_ecalls": 235,
-              "wall_clock_sec": 2.481
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 43,
-              "total_ecalls": 238,
-              "wall_clock_sec": 2.538
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 44,
-              "total_ecalls": 241,
-              "wall_clock_sec": 2.595
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 45,
-              "total_ecalls": 247,
-              "wall_clock_sec": 2.652
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 46,
-              "total_ecalls": 252,
-              "wall_clock_sec": 2.71
-            },
-            {
-              "challenges_solved": 6,
-              "enclave_creations": 48,
-              "total_ecalls": 262,
-              "wall_clock_sec": 2.832
-            }
-          ],
-          "enclave_creations": 48,
-          "expected_s0_rejections": 2,
-          "holdout_missed_pages": 0,
-          "measurement_invalid_runs": 0,
-          "new_effects_per_100_ecalls": 8.4,
-          "non_field_setup_ecalls": 113,
-          "strategy": "S3",
-          "total_ecalls_executed": 262,
-          "valid_field_entering_ecalls": 107,
-          "wall_clock_sec": 2.832,
-          "witnesses": [
-            {
-              "challenge": "C6",
-              "ecalls_at_discovery": 18,
-              "effect": "D",
-              "enclave_creations_at_discovery": 5,
-              "enclave_sha256": "a41fbf171c169bbad23ad587578ec32eb7daf9bd0c7cadd47ffe9f673cec3b6e",
-              "intervention": "aliased_pair:3:0:1:3:4",
-              "label": "s0_schema_alias_p1_p3_off_4",
-              "page_rva": "0x18000",
-              "replayed_confirmed": true,
-              "trace_sha256": "85fc8485400fa64903ee4d1f7c3b2e455e0cd8f8b99f381b0bbef99b7e1ddb37",
-              "wall_clock_sec": 0.288
-            },
-            {
-              "challenge": "C1",
-              "ecalls_at_discovery": 65,
-              "effect": "D",
-              "enclave_creations_at_discovery": 9,
-              "enclave_sha256": "a41fbf171c169bbad23ad587578ec32eb7daf9bd0c7cadd47ffe9f673cec3b6e",
-              "intervention": "repeat:3:0:16",
-              "label": "repeat_16",
-              "page_rva": "0x13000",
-              "replayed_confirmed": true,
-              "trace_sha256": "f2308ef5de6eb13f28fd79aed781087b8a92b055bc32f45b3c29904b34af6553",
-              "wall_clock_sec": 0.541
-            },
-            {
-              "challenge": "C4",
-              "ecalls_at_discovery": 135,
-              "effect": "A",
-              "enclave_creations_at_discovery": 20,
-              "enclave_sha256": "a41fbf171c169bbad23ad587578ec32eb7daf9bd0c7cadd47ffe9f673cec3b6e",
-              "intervention": "joint_scalar_xor:3:0:0:2:1:0:255",
-              "label": "s0_schema_joint_s0_2_x1_0",
-              "page_rva": "0x16000",
-              "replayed_confirmed": true,
-              "trace_sha256": "857b0bb7714a37ba925b806c42f8aee593213ee9a8f7e1a92d0af5213752068c",
-              "wall_clock_sec": 1.203
-            },
-            {
-              "challenge": "C2",
-              "ecalls_at_discovery": 173,
-              "effect": "A",
-              "enclave_creations_at_discovery": 28,
-              "enclave_sha256": "a41fbf171c169bbad23ad587578ec32eb7daf9bd0c7cadd47ffe9f673cec3b6e",
-              "intervention": "set_scalar:1:0:0:2",
-              "label": "prefix_setup_ecall1_p0_v2",
-              "page_rva": "0x14000",
-              "replayed_confirmed": true,
-              "trace_sha256": "e75ec51925ee1a9806256cb3e8c33eaaafc9943ef9d1fe41cd88817bf2d46f85",
-              "wall_clock_sec": 1.666
-            },
-            {
-              "challenge": "C3",
-              "ecalls_at_discovery": 195,
-              "effect": "D",
-              "enclave_creations_at_discovery": 33,
-              "enclave_sha256": "a41fbf171c169bbad23ad587578ec32eb7daf9bd0c7cadd47ffe9f673cec3b6e",
-              "intervention": "scale_bound_v2:3:0:0:16:1024:32:1024",
-              "label": "scale_1024",
-              "page_rva": "0x15000",
-              "replayed_confirmed": true,
-              "trace_sha256": "e0c44dd937fe7a94025254cd179e1fcd129da5424efeec9b81b6d0c07134bf1f",
-              "wall_clock_sec": 1.954
-            },
-            {
-              "challenge": "C5",
-              "ecalls_at_discovery": 262,
-              "effect": "D",
-              "enclave_creations_at_discovery": 48,
-              "enclave_sha256": "a41fbf171c169bbad23ad587578ec32eb7daf9bd0c7cadd47ffe9f673cec3b6e",
-              "intervention": "set_scalar:3:1:0:16",
-              "label": "s1_schema_scalar_p0_val_16",
-              "page_rva": "0x17000",
-              "replayed_confirmed": true,
-              "trace_sha256": "46b08dccc13020ea70a9197881019cfc43e039624d3b95a654261f7ba96e8644",
-              "wall_clock_sec": 2.832
-            }
-          ]
-        }
-      }
+      "split": "dev"
     },
     "challenge-bench-perm": {
       "ground_truth_challenge_pages": {
-        "C1": "0x13000",
-        "C2": "0x14000",
-        "C3": "0x15000",
-        "C4": "0x16000",
-        "C5": "0x17000",
-        "C6": "0x18000"
+        "C1": "0x14000",
+        "C2": "0x15000",
+        "C3": "0x16000",
+        "C4": "0x17000",
+        "C5": "0x18000",
+        "C6": "0x19000",
+        "C7": "0x1a000",
+        "C8": "0x1b000"
+      },
+      "holdout_total_s3_pages": 18,
+      "modes": {
+        "S0": {
+          "enclave_creations": 1,
+          "holdout_missed_pages": 10,
+          "mode": "S0_seed_only",
+          "solved_count": 0,
+          "solved_list": [],
+          "total_ecalls_executed": 9,
+          "wall_clock_sec": 0.059
+        },
+        "feedback_guided": {
+          "challenges_total": 8,
+          "curve_mean_solved": {
+            "at_20_enclaves": 3.2,
+            "at_40_enclaves": 5.4,
+            "at_68_enclaves": 8
+          },
+          "enclave_budget": 68,
+          "mean_holdout_missed_pages": 0,
+          "mean_total_ecalls": 635,
+          "mean_wall_clock_sec": 4.3,
+          "mode": "feedback_guided",
+          "num_seeds": 5,
+          "seed_runs": [
+            {
+              "checkpoints": {
+                "at_20_enclaves": 4,
+                "at_40_enclaves": 7,
+                "at_68_enclaves": 8
+              },
+              "confirmed_s3_effects": 38,
+              "confirmed_s3_pages": 21,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 11,
+              "holdout_missed_pages": 0,
+              "missed_list": [],
+              "non_field_setup_ecalls": 251,
+              "seed": 101,
+              "solved_count": 8,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 629,
+              "valid_field_entering_ecalls": 367,
+              "wall_clock_sec": 4.697,
+              "witnesses": [
+                {
+                  "challenge": "C7",
+                  "page_rva": "0x1a000",
+                  "replayed_confirmed": true,
+                  "spec": "replace_scalar:4:0:0:4",
+                  "step": 2,
+                  "tag": "replace_prefix_e4_s0_p0_v4",
+                  "trace_sha256": "7f1a71c5a8fc028a0f31099225c43f006ffd042f26df6efe9b9b4764a37d2c3b"
+                },
+                {
+                  "challenge": "C6",
+                  "page_rva": "0x19000",
+                  "replayed_confirmed": true,
+                  "spec": "aliased_pair:1:0:1:3:4",
+                  "step": 8,
+                  "tag": "slice_rel_e1_s0_p1_p3_off4",
+                  "trace_sha256": "e282cb23ffd127c46805dd7d14a14ae0c46ef38b21835dff98d753597783bfc6"
+                },
+                {
+                  "challenge": "C1",
+                  "page_rva": "0x14000",
+                  "replayed_confirmed": true,
+                  "spec": "repeat:1:0:24",
+                  "step": 12,
+                  "tag": "history_e1_s0_n24",
+                  "trace_sha256": "b8fac9c3c6d425b79127aaeaf62767d39f1a7051a119205f82a092e0f51928c2"
+                },
+                {
+                  "challenge": "C2",
+                  "page_rva": "0x15000",
+                  "replayed_confirmed": true,
+                  "spec": "replace_scalar:0:0:0:4",
+                  "step": 14,
+                  "tag": "replace_prefix_e0_s0_p0_v4",
+                  "trace_sha256": "f16dc179ed7f5d6d4a0add83f1dc066d3e7f70ac8e9c81e85db261579a96528b"
+                },
+                {
+                  "challenge": "C5",
+                  "page_rva": "0x18000",
+                  "replayed_confirmed": true,
+                  "spec": "replace_scalar:1:2:0:8",
+                  "step": 21,
+                  "tag": "scalar_e1_s2_p0_v8",
+                  "trace_sha256": "4398e3a9a99e8490aea9a356318a55965112eacb3e57f8041229e77174296aaf"
+                },
+                {
+                  "challenge": "C8",
+                  "page_rva": "0x1b000",
+                  "replayed_confirmed": true,
+                  "spec": "repeat:5:0:24",
+                  "step": 24,
+                  "tag": "history_e5_s0_n24",
+                  "trace_sha256": "ce7fc3ef093414b39d6fa407597d145ae8ddeaa749bdc08edfc3c495a9dfa826"
+                },
+                {
+                  "challenge": "C4",
+                  "page_rva": "0x17000",
+                  "replayed_confirmed": true,
+                  "spec": "joint_scalar_xor:1:0:0:3:1:0:255",
+                  "step": 29,
+                  "tag": "joint_e1_s0_s0_3_x1_0",
+                  "trace_sha256": "6fd54fd2e0e4e6ba230254c47c1893c4140286db0d0a30a286c7e9dd4dfc8a30"
+                },
+                {
+                  "challenge": "C3",
+                  "page_rva": "0x16000",
+                  "replayed_confirmed": true,
+                  "spec": "scale_bound_v2:1:0:0:16:4096:32:1024;scale_bound_v2:1:0:2:16:4096:32:1024",
+                  "step": 41,
+                  "tag": "scale_e1_s0_n4096",
+                  "trace_sha256": "3954d797cbe1d4b03d758fc6deaa3232caadd14a2a3bb57fc493f1767b407f7a"
+                }
+              ]
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 3,
+                "at_40_enclaves": 5,
+                "at_68_enclaves": 8
+              },
+              "confirmed_s3_effects": 38,
+              "confirmed_s3_pages": 21,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 10,
+              "holdout_missed_pages": 0,
+              "missed_list": [],
+              "non_field_setup_ecalls": 260,
+              "seed": 102,
+              "solved_count": 8,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 647,
+              "valid_field_entering_ecalls": 377,
+              "wall_clock_sec": 4.219,
+              "witnesses": []
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 2,
+                "at_40_enclaves": 3,
+                "at_68_enclaves": 8
+              },
+              "confirmed_s3_effects": 38,
+              "confirmed_s3_pages": 21,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 10,
+              "holdout_missed_pages": 0,
+              "missed_list": [],
+              "non_field_setup_ecalls": 254,
+              "seed": 103,
+              "solved_count": 8,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 635,
+              "valid_field_entering_ecalls": 371,
+              "wall_clock_sec": 4.174,
+              "witnesses": []
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 4,
+                "at_40_enclaves": 7,
+                "at_68_enclaves": 8
+              },
+              "confirmed_s3_effects": 38,
+              "confirmed_s3_pages": 21,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 11,
+              "holdout_missed_pages": 0,
+              "missed_list": [],
+              "non_field_setup_ecalls": 258,
+              "seed": 104,
+              "solved_count": 8,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 643,
+              "valid_field_entering_ecalls": 374,
+              "wall_clock_sec": 4.218,
+              "witnesses": []
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 3,
+                "at_40_enclaves": 5,
+                "at_68_enclaves": 8
+              },
+              "confirmed_s3_effects": 38,
+              "confirmed_s3_pages": 21,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 10,
+              "holdout_missed_pages": 0,
+              "missed_list": [],
+              "non_field_setup_ecalls": 247,
+              "seed": 105,
+              "solved_count": 8,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 621,
+              "valid_field_entering_ecalls": 364,
+              "wall_clock_sec": 4.199,
+              "witnesses": []
+            }
+          ],
+          "solved_by_seed": {
+            "101": 8,
+            "102": 8,
+            "103": 8,
+            "104": 8,
+            "105": 8
+          },
+          "solved_max": 8,
+          "solved_mean": 8,
+          "solved_median": 8,
+          "solved_min": 8
+        },
+        "fixed_round_robin": {
+          "challenges_total": 8,
+          "curve_mean_solved": {
+            "at_20_enclaves": 4.4,
+            "at_40_enclaves": 5.6,
+            "at_68_enclaves": 6.8
+          },
+          "enclave_budget": 68,
+          "mean_holdout_missed_pages": 1.2,
+          "mean_total_ecalls": 1936,
+          "mean_wall_clock_sec": 4.64,
+          "mode": "fixed_round_robin",
+          "num_seeds": 5,
+          "seed_runs": [
+            {
+              "checkpoints": {
+                "at_20_enclaves": 6,
+                "at_40_enclaves": 7,
+                "at_68_enclaves": 8
+              },
+              "confirmed_s3_effects": 32,
+              "confirmed_s3_pages": 18,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 23,
+              "holdout_missed_pages": 0,
+              "missed_list": [],
+              "non_field_setup_ecalls": 262,
+              "seed": 101,
+              "solved_count": 8,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 1936,
+              "valid_field_entering_ecalls": 1651,
+              "wall_clock_sec": 5.036,
+              "witnesses": [
+                {
+                  "challenge": "C7",
+                  "page_rva": "0x1a000",
+                  "replayed_confirmed": true,
+                  "spec": "replace_scalar:4:0:0:4",
+                  "step": 2,
+                  "tag": "replace_prefix_e4_s0_p0_v4",
+                  "trace_sha256": "5276ac5a4c57595fba9acf3ade9123e980337797efd52fa60e44c768028572f8"
+                },
+                {
+                  "challenge": "C6",
+                  "page_rva": "0x19000",
+                  "replayed_confirmed": true,
+                  "spec": "aliased_pair:1:0:1:3:4",
+                  "step": 5,
+                  "tag": "slice_rel_e1_s0_p1_p3_off4",
+                  "trace_sha256": "983b3ca5c5e332b4738c46902cd8a938b8a188b04463416baa51f4dfa8601c71"
+                },
+                {
+                  "challenge": "C1",
+                  "page_rva": "0x14000",
+                  "replayed_confirmed": true,
+                  "spec": "repeat:1:0:24",
+                  "step": 7,
+                  "tag": "history_e1_s0_n24",
+                  "trace_sha256": "78f0f1b54b32312f3839d12accfcd4e69682b17e8750ae875afcbc147b486a18"
+                },
+                {
+                  "challenge": "C2",
+                  "page_rva": "0x15000",
+                  "replayed_confirmed": true,
+                  "spec": "replace_scalar:0:0:0:4",
+                  "step": 9,
+                  "tag": "replace_prefix_e0_s0_p0_v4",
+                  "trace_sha256": "68ac16074c6062f3d5bd90ed605e2070808cfa5ac291990f5247d3157eb67240"
+                },
+                {
+                  "challenge": "C8",
+                  "page_rva": "0x1b000",
+                  "replayed_confirmed": true,
+                  "spec": "repeat:5:0:24",
+                  "step": 14,
+                  "tag": "history_e5_s0_n24",
+                  "trace_sha256": "6505d2aa19fccbf3170a2937588068f1d3cd712b24b81988b4657ca0adba24d2"
+                },
+                {
+                  "challenge": "C4",
+                  "page_rva": "0x17000",
+                  "replayed_confirmed": true,
+                  "spec": "joint_scalar_xor:1:0:0:3:1:0:255",
+                  "step": 18,
+                  "tag": "joint_e1_s0_s0_3_x1_0",
+                  "trace_sha256": "f41eb8f834510b290607704df4a99d134a25f515fe7c77398964efd1e608c9e5"
+                },
+                {
+                  "challenge": "C3",
+                  "page_rva": "0x16000",
+                  "replayed_confirmed": true,
+                  "spec": "scale_bound_v2:1:0:0:16:4096:32:1024;scale_bound_v2:1:0:2:16:4096:32:1024",
+                  "step": 33,
+                  "tag": "scale_e1_s0_n4096",
+                  "trace_sha256": "c933ac7c8ad9924de01d205bab5071d63f342d2541480d3d0e6343e86aa820cf"
+                },
+                {
+                  "challenge": "C5",
+                  "page_rva": "0x18000",
+                  "replayed_confirmed": true,
+                  "spec": "replace_scalar:1:2:0:8",
+                  "step": 64,
+                  "tag": "scalar_e1_s2_p0_v8",
+                  "trace_sha256": "fe377c7b33a4fc0101e684c6e75ef6288b93667e53d93aed98ec5b29b42207af"
+                }
+              ]
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 4,
+                "at_40_enclaves": 6,
+                "at_68_enclaves": 6
+              },
+              "confirmed_s3_effects": 29,
+              "confirmed_s3_pages": 16,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 23,
+              "holdout_missed_pages": 2,
+              "missed_list": [
+                "C2",
+                "C5"
+              ],
+              "non_field_setup_ecalls": 262,
+              "seed": 102,
+              "solved_count": 6,
+              "solved_list": [
+                "C1",
+                "C3",
+                "C4",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 1936,
+              "valid_field_entering_ecalls": 1651,
+              "wall_clock_sec": 4.526,
+              "witnesses": []
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 3,
+                "at_40_enclaves": 4,
+                "at_68_enclaves": 5
+              },
+              "confirmed_s3_effects": 27,
+              "confirmed_s3_pages": 15,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 24,
+              "holdout_missed_pages": 3,
+              "missed_list": [
+                "C2",
+                "C5",
+                "C7"
+              ],
+              "non_field_setup_ecalls": 262,
+              "seed": 103,
+              "solved_count": 5,
+              "solved_list": [
+                "C1",
+                "C3",
+                "C4",
+                "C6",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 1936,
+              "valid_field_entering_ecalls": 1650,
+              "wall_clock_sec": 4.533,
+              "witnesses": []
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 5,
+                "at_40_enclaves": 6,
+                "at_68_enclaves": 8
+              },
+              "confirmed_s3_effects": 32,
+              "confirmed_s3_pages": 18,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 24,
+              "holdout_missed_pages": 0,
+              "missed_list": [],
+              "non_field_setup_ecalls": 262,
+              "seed": 104,
+              "solved_count": 8,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 1936,
+              "valid_field_entering_ecalls": 1650,
+              "wall_clock_sec": 4.535,
+              "witnesses": []
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 4,
+                "at_40_enclaves": 5,
+                "at_68_enclaves": 7
+              },
+              "confirmed_s3_effects": 30,
+              "confirmed_s3_pages": 17,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 22,
+              "holdout_missed_pages": 1,
+              "missed_list": [
+                "C5"
+              ],
+              "non_field_setup_ecalls": 262,
+              "seed": 105,
+              "solved_count": 7,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 1936,
+              "valid_field_entering_ecalls": 1652,
+              "wall_clock_sec": 4.546,
+              "witnesses": []
+            }
+          ],
+          "solved_by_seed": {
+            "101": 8,
+            "102": 6,
+            "103": 5,
+            "104": 8,
+            "105": 7
+          },
+          "solved_max": 8,
+          "solved_mean": 6.8,
+          "solved_median": 7,
+          "solved_min": 5
+        }
       },
       "sample": "challenge-bench-perm",
-      "strategies": {
+      "split": "dev"
+    },
+    "challenge-exam-a": {
+      "ground_truth_challenge_pages": {
+        "C1": "0x19000",
+        "C2": "0x18000",
+        "C3": "0x17000",
+        "C4": "0x16000",
+        "C5": "0x15000",
+        "C6": "0x14000",
+        "C7": "0x13000",
+        "C8": "0x12000"
+      },
+      "holdout_total_s3_pages": 18,
+      "modes": {
         "S0": {
-          "challenges_solved_count": 0,
-          "challenges_solved_list": [],
-          "challenges_total": 6,
-          "confirmed_pages_per_sec": 87.72,
-          "confirmed_s3_effects": 9,
-          "confirmed_s3_pages": 5,
-          "discovery_curve": [
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 1,
-              "total_ecalls": 5,
-              "wall_clock_sec": 0.057
-            }
-          ],
           "enclave_creations": 1,
-          "expected_s0_rejections": 0,
-          "holdout_missed_pages": 7,
-          "measurement_invalid_runs": 0,
-          "new_effects_per_100_ecalls": 180.0,
-          "non_field_setup_ecalls": 3,
-          "strategy": "S0",
-          "total_ecalls_executed": 5,
-          "valid_field_entering_ecalls": 2,
-          "wall_clock_sec": 0.057,
-          "witnesses": []
+          "holdout_missed_pages": 10,
+          "mode": "S0_seed_only",
+          "solved_count": 0,
+          "solved_list": [],
+          "total_ecalls_executed": 9,
+          "wall_clock_sec": 0.06
         },
-        "S1": {
-          "challenges_solved_count": 1,
-          "challenges_solved_list": [
-            "C1"
-          ],
-          "challenges_total": 6,
-          "confirmed_pages_per_sec": 2.14,
-          "confirmed_s3_effects": 11,
-          "confirmed_s3_pages": 6,
-          "discovery_curve": [
+        "feedback_guided": {
+          "challenges_total": 8,
+          "curve_mean_solved": {
+            "at_20_enclaves": 2.8,
+            "at_40_enclaves": 4,
+            "at_68_enclaves": 7.6
+          },
+          "enclave_budget": 68,
+          "mean_holdout_missed_pages": 0.6,
+          "mean_total_ecalls": 634.6,
+          "mean_wall_clock_sec": 4.27,
+          "mode": "feedback_guided",
+          "num_seeds": 5,
+          "seed_runs": [
             {
-              "challenges_solved": 0,
-              "enclave_creations": 1,
-              "total_ecalls": 5,
-              "wall_clock_sec": 0.056
+              "checkpoints": {
+                "at_20_enclaves": 2,
+                "at_40_enclaves": 2,
+                "at_68_enclaves": 6
+              },
+              "confirmed_s3_effects": 32,
+              "confirmed_s3_pages": 18,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 14,
+              "holdout_missed_pages": 3,
+              "missed_list": [
+                "C5",
+                "C8"
+              ],
+              "non_field_setup_ecalls": 263,
+              "seed": 101,
+              "solved_count": 6,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C6",
+                "C7"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 639,
+              "valid_field_entering_ecalls": 362,
+              "wall_clock_sec": 4.603,
+              "witnesses": [
+                {
+                  "challenge": "C1",
+                  "page_rva": "0x19000",
+                  "replayed_confirmed": true,
+                  "spec": "repeat:1:0:24",
+                  "step": 12,
+                  "tag": "history_e1_s0_n24",
+                  "trace_sha256": "b999fc5806cab73badec26a9c81469290a5e45bfe737fc45a882a94422a3b1ea"
+                },
+                {
+                  "challenge": "C6",
+                  "page_rva": "0x14000",
+                  "replayed_confirmed": true,
+                  "spec": "aliased_pair:4:0:1:3:4",
+                  "step": 20,
+                  "tag": "slice_rel_e4_s0_p1_p3_off4",
+                  "trace_sha256": "a9b6953736a9bb506eeb6e9cf65890a824c57da469f2e053ed584f3e36560290"
+                },
+                {
+                  "challenge": "C4",
+                  "page_rva": "0x16000",
+                  "replayed_confirmed": true,
+                  "spec": "joint_scalar_xor:4:0:0:16:1:0:255",
+                  "step": 54,
+                  "tag": "joint_e4_s0_s0_16_x1_0",
+                  "trace_sha256": "df550122387ac24bad22e2d291f4e6ab48092d64bbaff4244809b4199bb5eac0"
+                },
+                {
+                  "challenge": "C2",
+                  "page_rva": "0x18000",
+                  "replayed_confirmed": true,
+                  "spec": "replace_scalar:2:0:0:8",
+                  "step": 56,
+                  "tag": "replace_prefix_e2_s0_p0_v8",
+                  "trace_sha256": "4ed5eac87714d6edecf8439b892d57c9978e8c9bf1fdb80db2ebd91d1da78b2c"
+                },
+                {
+                  "challenge": "C3",
+                  "page_rva": "0x17000",
+                  "replayed_confirmed": true,
+                  "spec": "scale_bound_v2:4:0:0:16:4096:32:1024;scale_bound_v2:4:0:2:16:4096:32:1024",
+                  "step": 64,
+                  "tag": "scale_e4_s0_n4096",
+                  "trace_sha256": "892ede8b2d06d55e208697473cdbbba3a29a4b5d039c75700c95b148f77b32a1"
+                },
+                {
+                  "challenge": "C7",
+                  "page_rva": "0x13000",
+                  "replayed_confirmed": true,
+                  "spec": "replace_scalar:0:0:0:8",
+                  "step": 68,
+                  "tag": "replace_prefix_e0_s0_p0_v8",
+                  "trace_sha256": "c3486ef7e4348d228cfd61f2cb51d6a4f4a69ca1d8328a0f7045f02511aabb02"
+                }
+              ]
             },
             {
-              "challenges_solved": 0,
-              "enclave_creations": 2,
-              "total_ecalls": 9,
-              "wall_clock_sec": 0.113
+              "checkpoints": {
+                "at_20_enclaves": 2,
+                "at_40_enclaves": 5,
+                "at_68_enclaves": 8
+              },
+              "confirmed_s3_effects": 38,
+              "confirmed_s3_pages": 21,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 14,
+              "holdout_missed_pages": 0,
+              "missed_list": [],
+              "non_field_setup_ecalls": 262,
+              "seed": 102,
+              "solved_count": 8,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 639,
+              "valid_field_entering_ecalls": 363,
+              "wall_clock_sec": 4.192,
+              "witnesses": []
             },
             {
-              "challenges_solved": 0,
-              "enclave_creations": 3,
-              "total_ecalls": 13,
-              "wall_clock_sec": 0.173
+              "checkpoints": {
+                "at_20_enclaves": 4,
+                "at_40_enclaves": 5,
+                "at_68_enclaves": 8
+              },
+              "confirmed_s3_effects": 38,
+              "confirmed_s3_pages": 21,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 14,
+              "holdout_missed_pages": 0,
+              "missed_list": [],
+              "non_field_setup_ecalls": 262,
+              "seed": 103,
+              "solved_count": 8,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 641,
+              "valid_field_entering_ecalls": 365,
+              "wall_clock_sec": 4.191,
+              "witnesses": []
             },
             {
-              "challenges_solved": 0,
-              "enclave_creations": 4,
-              "total_ecalls": 16,
-              "wall_clock_sec": 0.233
+              "checkpoints": {
+                "at_20_enclaves": 4,
+                "at_40_enclaves": 5,
+                "at_68_enclaves": 8
+              },
+              "confirmed_s3_effects": 38,
+              "confirmed_s3_pages": 21,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 15,
+              "holdout_missed_pages": 0,
+              "missed_list": [],
+              "non_field_setup_ecalls": 254,
+              "seed": 104,
+              "solved_count": 8,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 619,
+              "valid_field_entering_ecalls": 350,
+              "wall_clock_sec": 4.167,
+              "witnesses": []
             },
             {
-              "challenges_solved": 0,
-              "enclave_creations": 5,
-              "total_ecalls": 19,
-              "wall_clock_sec": 0.291
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 6,
-              "total_ecalls": 22,
-              "wall_clock_sec": 0.348
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 7,
-              "total_ecalls": 25,
-              "wall_clock_sec": 0.405
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 8,
-              "total_ecalls": 28,
-              "wall_clock_sec": 0.461
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 9,
-              "total_ecalls": 31,
-              "wall_clock_sec": 0.518
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 10,
-              "total_ecalls": 34,
-              "wall_clock_sec": 0.578
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 11,
-              "total_ecalls": 37,
-              "wall_clock_sec": 0.636
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 12,
-              "total_ecalls": 40,
-              "wall_clock_sec": 0.694
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 13,
-              "total_ecalls": 43,
-              "wall_clock_sec": 0.753
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 14,
-              "total_ecalls": 46,
-              "wall_clock_sec": 0.809
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 15,
-              "total_ecalls": 49,
-              "wall_clock_sec": 0.865
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 16,
-              "total_ecalls": 52,
-              "wall_clock_sec": 0.922
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 17,
-              "total_ecalls": 55,
-              "wall_clock_sec": 0.979
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 18,
-              "total_ecalls": 58,
-              "wall_clock_sec": 1.037
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 19,
-              "total_ecalls": 61,
-              "wall_clock_sec": 1.097
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 20,
-              "total_ecalls": 80,
-              "wall_clock_sec": 1.165
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 22,
-              "total_ecalls": 134,
-              "wall_clock_sec": 1.312
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 23,
-              "total_ecalls": 137,
-              "wall_clock_sec": 1.372
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 24,
-              "total_ecalls": 140,
-              "wall_clock_sec": 1.431
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 25,
-              "total_ecalls": 143,
-              "wall_clock_sec": 1.486
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 26,
-              "total_ecalls": 146,
-              "wall_clock_sec": 1.542
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 27,
-              "total_ecalls": 149,
-              "wall_clock_sec": 1.6
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 28,
-              "total_ecalls": 152,
-              "wall_clock_sec": 1.658
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 29,
-              "total_ecalls": 155,
-              "wall_clock_sec": 1.716
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 30,
-              "total_ecalls": 158,
-              "wall_clock_sec": 1.776
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 31,
-              "total_ecalls": 161,
-              "wall_clock_sec": 1.831
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 32,
-              "total_ecalls": 164,
-              "wall_clock_sec": 1.889
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 33,
-              "total_ecalls": 167,
-              "wall_clock_sec": 1.944
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 34,
-              "total_ecalls": 170,
-              "wall_clock_sec": 2.003
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 35,
-              "total_ecalls": 173,
-              "wall_clock_sec": 2.062
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 36,
-              "total_ecalls": 176,
-              "wall_clock_sec": 2.12
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 37,
-              "total_ecalls": 179,
-              "wall_clock_sec": 2.18
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 38,
-              "total_ecalls": 182,
-              "wall_clock_sec": 2.237
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 39,
-              "total_ecalls": 185,
-              "wall_clock_sec": 2.296
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 40,
-              "total_ecalls": 188,
-              "wall_clock_sec": 2.354
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 41,
-              "total_ecalls": 191,
-              "wall_clock_sec": 2.412
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 42,
-              "total_ecalls": 194,
-              "wall_clock_sec": 2.469
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 43,
-              "total_ecalls": 197,
-              "wall_clock_sec": 2.527
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 44,
-              "total_ecalls": 200,
-              "wall_clock_sec": 2.581
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 45,
-              "total_ecalls": 203,
-              "wall_clock_sec": 2.637
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 46,
-              "total_ecalls": 206,
-              "wall_clock_sec": 2.695
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 47,
-              "total_ecalls": 209,
-              "wall_clock_sec": 2.752
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 48,
-              "total_ecalls": 212,
-              "wall_clock_sec": 2.808
+              "checkpoints": {
+                "at_20_enclaves": 2,
+                "at_40_enclaves": 3,
+                "at_68_enclaves": 8
+              },
+              "confirmed_s3_effects": 38,
+              "confirmed_s3_pages": 21,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 12,
+              "holdout_missed_pages": 0,
+              "missed_list": [],
+              "non_field_setup_ecalls": 261,
+              "seed": 105,
+              "solved_count": 8,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 635,
+              "valid_field_entering_ecalls": 362,
+              "wall_clock_sec": 4.202,
+              "witnesses": []
             }
           ],
-          "enclave_creations": 48,
-          "expected_s0_rejections": 5,
-          "holdout_missed_pages": 6,
-          "measurement_invalid_runs": 0,
-          "new_effects_per_100_ecalls": 5.19,
-          "non_field_setup_ecalls": 95,
-          "strategy": "S1",
-          "total_ecalls_executed": 212,
-          "valid_field_entering_ecalls": 85,
-          "wall_clock_sec": 2.808,
-          "witnesses": [
-            {
-              "challenge": "C1",
-              "ecalls_at_discovery": 134,
-              "effect": "D",
-              "enclave_creations_at_discovery": 22,
-              "enclave_sha256": "66970b00b3eb79cdc0b81847466e4ce8576d006b9b7280efbfbf0a8dc53b61a0",
-              "intervention": "repeat:1:0:24",
-              "label": "repeat_24",
-              "page_rva": "0x13000",
-              "replayed_confirmed": true,
-              "trace_sha256": "62a830207aa1f28ee79612646528692c96bba3a81d798dfb6c843d544005fca0",
-              "wall_clock_sec": 1.312
-            }
-          ]
+          "solved_by_seed": {
+            "101": 6,
+            "102": 8,
+            "103": 8,
+            "104": 8,
+            "105": 8
+          },
+          "solved_max": 8,
+          "solved_mean": 7.6,
+          "solved_median": 8,
+          "solved_min": 6
         },
-        "S2": {
-          "challenges_solved_count": 4,
-          "challenges_solved_list": [
-            "C1",
-            "C3",
-            "C4",
-            "C6"
-          ],
-          "challenges_total": 6,
-          "confirmed_pages_per_sec": 3.9,
-          "confirmed_s3_effects": 19,
-          "confirmed_s3_pages": 11,
-          "discovery_curve": [
+        "fixed_round_robin": {
+          "challenges_total": 8,
+          "curve_mean_solved": {
+            "at_20_enclaves": 2.6,
+            "at_40_enclaves": 2.6,
+            "at_68_enclaves": 5.2
+          },
+          "enclave_budget": 68,
+          "mean_holdout_missed_pages": 3.6,
+          "mean_total_ecalls": 1885,
+          "mean_wall_clock_sec": 4.56,
+          "mode": "fixed_round_robin",
+          "num_seeds": 5,
+          "seed_runs": [
             {
-              "challenges_solved": 0,
-              "enclave_creations": 1,
-              "total_ecalls": 5,
-              "wall_clock_sec": 0.055
+              "checkpoints": {
+                "at_20_enclaves": 2,
+                "at_40_enclaves": 2,
+                "at_68_enclaves": 4
+              },
+              "confirmed_s3_effects": 23,
+              "confirmed_s3_pages": 13,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 27,
+              "holdout_missed_pages": 5,
+              "missed_list": [
+                "C2",
+                "C5",
+                "C7",
+                "C8"
+              ],
+              "non_field_setup_ecalls": 247,
+              "seed": 101,
+              "solved_count": 4,
+              "solved_list": [
+                "C1",
+                "C3",
+                "C4",
+                "C6"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 1885,
+              "valid_field_entering_ecalls": 1611,
+              "wall_clock_sec": 4.772,
+              "witnesses": [
+                {
+                  "challenge": "C1",
+                  "page_rva": "0x19000",
+                  "replayed_confirmed": true,
+                  "spec": "repeat:1:0:24",
+                  "step": 7,
+                  "tag": "history_e1_s0_n24",
+                  "trace_sha256": "2da3e074c842fd0683b5a2032a2bfc803a487c64714932d98a2b85c019afe09f"
+                },
+                {
+                  "challenge": "C6",
+                  "page_rva": "0x14000",
+                  "replayed_confirmed": true,
+                  "spec": "aliased_pair:4:0:1:3:4",
+                  "step": 12,
+                  "tag": "slice_rel_e4_s0_p1_p3_off4",
+                  "trace_sha256": "7546411796e3a06f36305a2ffe5cf30a5030dfdf26f6b579c2c55a65baee2f7c"
+                },
+                {
+                  "challenge": "C4",
+                  "page_rva": "0x16000",
+                  "replayed_confirmed": true,
+                  "spec": "joint_scalar_xor:4:0:0:16:1:0:255",
+                  "step": 44,
+                  "tag": "joint_e4_s0_s0_16_x1_0",
+                  "trace_sha256": "2f5a8384cc1fa351d8c950faf014604bdea966a9d8ac53688574c7bacb4c9906"
+                },
+                {
+                  "challenge": "C3",
+                  "page_rva": "0x17000",
+                  "replayed_confirmed": true,
+                  "spec": "scale_bound_v2:4:0:0:16:4096:32:1024;scale_bound_v2:4:0:2:16:4096:32:1024",
+                  "step": 63,
+                  "tag": "scale_e4_s0_n4096",
+                  "trace_sha256": "f2852a2aa3db95f36e69cc6f4bc566339c01204ba2913d74bfcc410e6d1f8424"
+                }
+              ]
             },
             {
-              "challenges_solved": 0,
-              "enclave_creations": 2,
-              "total_ecalls": 9,
-              "wall_clock_sec": 0.113
+              "checkpoints": {
+                "at_20_enclaves": 2,
+                "at_40_enclaves": 2,
+                "at_68_enclaves": 5
+              },
+              "confirmed_s3_effects": 24,
+              "confirmed_s3_pages": 14,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 28,
+              "holdout_missed_pages": 4,
+              "missed_list": [
+                "C5",
+                "C7",
+                "C8"
+              ],
+              "non_field_setup_ecalls": 247,
+              "seed": 102,
+              "solved_count": 5,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C6"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 1885,
+              "valid_field_entering_ecalls": 1610,
+              "wall_clock_sec": 4.511,
+              "witnesses": []
             },
             {
-              "challenges_solved": 1,
-              "enclave_creations": 4,
-              "total_ecalls": 15,
-              "wall_clock_sec": 0.229
+              "checkpoints": {
+                "at_20_enclaves": 4,
+                "at_40_enclaves": 4,
+                "at_68_enclaves": 6
+              },
+              "confirmed_s3_effects": 29,
+              "confirmed_s3_pages": 16,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 27,
+              "holdout_missed_pages": 2,
+              "missed_list": [
+                "C2",
+                "C5"
+              ],
+              "non_field_setup_ecalls": 247,
+              "seed": 103,
+              "solved_count": 6,
+              "solved_list": [
+                "C1",
+                "C3",
+                "C4",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 1885,
+              "valid_field_entering_ecalls": 1611,
+              "wall_clock_sec": 4.503,
+              "witnesses": []
             },
             {
-              "challenges_solved": 2,
-              "enclave_creations": 6,
-              "total_ecalls": 21,
-              "wall_clock_sec": 0.345
+              "checkpoints": {
+                "at_20_enclaves": 3,
+                "at_40_enclaves": 3,
+                "at_68_enclaves": 6
+              },
+              "confirmed_s3_effects": 26,
+              "confirmed_s3_pages": 15,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 27,
+              "holdout_missed_pages": 3,
+              "missed_list": [
+                "C7",
+                "C8"
+              ],
+              "non_field_setup_ecalls": 247,
+              "seed": 104,
+              "solved_count": 6,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 1885,
+              "valid_field_entering_ecalls": 1611,
+              "wall_clock_sec": 4.5,
+              "witnesses": []
             },
             {
-              "challenges_solved": 2,
-              "enclave_creations": 7,
-              "total_ecalls": 24,
-              "wall_clock_sec": 0.403
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 8,
-              "total_ecalls": 43,
-              "wall_clock_sec": 0.473
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 9,
-              "total_ecalls": 46,
-              "wall_clock_sec": 0.531
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 10,
-              "total_ecalls": 50,
-              "wall_clock_sec": 0.59
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 11,
-              "total_ecalls": 53,
-              "wall_clock_sec": 0.649
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 12,
-              "total_ecalls": 56,
-              "wall_clock_sec": 0.704
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 14,
-              "total_ecalls": 110,
-              "wall_clock_sec": 0.85
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 15,
-              "total_ecalls": 113,
-              "wall_clock_sec": 0.911
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 16,
-              "total_ecalls": 117,
-              "wall_clock_sec": 0.968
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 17,
-              "total_ecalls": 120,
-              "wall_clock_sec": 1.026
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 18,
-              "total_ecalls": 123,
-              "wall_clock_sec": 1.084
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 19,
-              "total_ecalls": 126,
-              "wall_clock_sec": 1.141
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 20,
-              "total_ecalls": 130,
-              "wall_clock_sec": 1.199
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 21,
-              "total_ecalls": 133,
-              "wall_clock_sec": 1.258
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 22,
-              "total_ecalls": 136,
-              "wall_clock_sec": 1.316
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 23,
-              "total_ecalls": 139,
-              "wall_clock_sec": 1.372
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 24,
-              "total_ecalls": 143,
-              "wall_clock_sec": 1.431
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 25,
-              "total_ecalls": 146,
-              "wall_clock_sec": 1.49
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 26,
-              "total_ecalls": 149,
-              "wall_clock_sec": 1.548
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 27,
-              "total_ecalls": 152,
-              "wall_clock_sec": 1.605
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 29,
-              "total_ecalls": 160,
-              "wall_clock_sec": 1.724
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 30,
-              "total_ecalls": 163,
-              "wall_clock_sec": 1.782
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 31,
-              "total_ecalls": 166,
-              "wall_clock_sec": 1.84
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 32,
-              "total_ecalls": 169,
-              "wall_clock_sec": 1.897
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 33,
-              "total_ecalls": 172,
-              "wall_clock_sec": 1.953
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 34,
-              "total_ecalls": 175,
-              "wall_clock_sec": 2.008
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 35,
-              "total_ecalls": 178,
-              "wall_clock_sec": 2.066
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 36,
-              "total_ecalls": 181,
-              "wall_clock_sec": 2.125
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 37,
-              "total_ecalls": 184,
-              "wall_clock_sec": 2.183
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 38,
-              "total_ecalls": 187,
-              "wall_clock_sec": 2.241
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 39,
-              "total_ecalls": 190,
-              "wall_clock_sec": 2.3
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 40,
-              "total_ecalls": 193,
-              "wall_clock_sec": 2.358
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 41,
-              "total_ecalls": 196,
-              "wall_clock_sec": 2.415
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 42,
-              "total_ecalls": 199,
-              "wall_clock_sec": 2.474
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 43,
-              "total_ecalls": 202,
-              "wall_clock_sec": 2.532
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 44,
-              "total_ecalls": 205,
-              "wall_clock_sec": 2.591
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 45,
-              "total_ecalls": 208,
-              "wall_clock_sec": 2.648
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 46,
-              "total_ecalls": 211,
-              "wall_clock_sec": 2.705
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 47,
-              "total_ecalls": 214,
-              "wall_clock_sec": 2.763
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 48,
-              "total_ecalls": 217,
-              "wall_clock_sec": 2.82
+              "checkpoints": {
+                "at_20_enclaves": 2,
+                "at_40_enclaves": 2,
+                "at_68_enclaves": 5
+              },
+              "confirmed_s3_effects": 25,
+              "confirmed_s3_pages": 14,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 26,
+              "holdout_missed_pages": 4,
+              "missed_list": [
+                "C2",
+                "C7",
+                "C8"
+              ],
+              "non_field_setup_ecalls": 247,
+              "seed": 105,
+              "solved_count": 5,
+              "solved_list": [
+                "C1",
+                "C3",
+                "C4",
+                "C5",
+                "C6"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 1885,
+              "valid_field_entering_ecalls": 1612,
+              "wall_clock_sec": 4.514,
+              "witnesses": []
             }
           ],
-          "enclave_creations": 48,
-          "expected_s0_rejections": 5,
-          "holdout_missed_pages": 2,
-          "measurement_invalid_runs": 0,
-          "new_effects_per_100_ecalls": 8.76,
-          "non_field_setup_ecalls": 89,
-          "strategy": "S2",
-          "total_ecalls_executed": 217,
-          "valid_field_entering_ecalls": 86,
-          "wall_clock_sec": 2.82,
-          "witnesses": [
-            {
-              "challenge": "C4",
-              "ecalls_at_discovery": 15,
-              "effect": "A",
-              "enclave_creations_at_discovery": 4,
-              "enclave_sha256": "66970b00b3eb79cdc0b81847466e4ce8576d006b9b7280efbfbf0a8dc53b61a0",
-              "intervention": "joint_scalar_xor:1:0:0:1:1:0:255",
-              "label": "s0_schema_joint_s0_1_x1_0",
-              "page_rva": "0x16000",
-              "replayed_confirmed": true,
-              "trace_sha256": "5d191a39e09b3e8b28febc8895a6716cf9d565a5b3efbc02e0786d21c3cb0bf1",
-              "wall_clock_sec": 0.229
-            },
-            {
-              "challenge": "C6",
-              "ecalls_at_discovery": 21,
-              "effect": "D",
-              "enclave_creations_at_discovery": 6,
-              "enclave_sha256": "66970b00b3eb79cdc0b81847466e4ce8576d006b9b7280efbfbf0a8dc53b61a0",
-              "intervention": "aliased_pair:1:0:1:3:4",
-              "label": "s0_schema_alias_p1_p3_off_4",
-              "page_rva": "0x18000",
-              "replayed_confirmed": true,
-              "trace_sha256": "fa9f78ad12f03f85194bc8063181a93497fd2a7d14984eedb43dde786a6dadba",
-              "wall_clock_sec": 0.345
-            },
-            {
-              "challenge": "C1",
-              "ecalls_at_discovery": 110,
-              "effect": "D",
-              "enclave_creations_at_discovery": 14,
-              "enclave_sha256": "66970b00b3eb79cdc0b81847466e4ce8576d006b9b7280efbfbf0a8dc53b61a0",
-              "intervention": "repeat:1:0:24",
-              "label": "repeat_24",
-              "page_rva": "0x13000",
-              "replayed_confirmed": true,
-              "trace_sha256": "87f8672a9a8522fe4ee2e0fb4aaeac2d13aa56397f7e502bd432552043b9422e",
-              "wall_clock_sec": 0.85
-            },
-            {
-              "challenge": "C3",
-              "ecalls_at_discovery": 160,
-              "effect": "D",
-              "enclave_creations_at_discovery": 29,
-              "enclave_sha256": "66970b00b3eb79cdc0b81847466e4ce8576d006b9b7280efbfbf0a8dc53b61a0",
-              "intervention": "scale_bound_v2:1:0:0:16:4096:32:4096",
-              "label": "scale_4096",
-              "page_rva": "0x15000",
-              "replayed_confirmed": true,
-              "trace_sha256": "7747b58dfdc51c52793ee3c985c26a38bee32f23836add892ba1142021b586ab",
-              "wall_clock_sec": 1.724
-            }
-          ]
-        },
-        "S3": {
-          "challenges_solved_count": 6,
-          "challenges_solved_list": [
-            "C1",
-            "C2",
-            "C3",
-            "C4",
-            "C5",
-            "C6"
-          ],
-          "challenges_total": 6,
-          "confirmed_pages_per_sec": 4.56,
-          "confirmed_s3_effects": 22,
-          "confirmed_s3_pages": 13,
-          "discovery_curve": [
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 1,
-              "total_ecalls": 5,
-              "wall_clock_sec": 0.057
-            },
-            {
-              "challenges_solved": 0,
-              "enclave_creations": 2,
-              "total_ecalls": 9,
-              "wall_clock_sec": 0.114
-            },
-            {
-              "challenges_solved": 1,
-              "enclave_creations": 4,
-              "total_ecalls": 15,
-              "wall_clock_sec": 0.231
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 6,
-              "total_ecalls": 21,
-              "wall_clock_sec": 0.348
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 7,
-              "total_ecalls": 24,
-              "wall_clock_sec": 0.407
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 8,
-              "total_ecalls": 30,
-              "wall_clock_sec": 0.464
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 9,
-              "total_ecalls": 49,
-              "wall_clock_sec": 0.532
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 10,
-              "total_ecalls": 52,
-              "wall_clock_sec": 0.591
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 11,
-              "total_ecalls": 57,
-              "wall_clock_sec": 0.653
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 12,
-              "total_ecalls": 62,
-              "wall_clock_sec": 0.712
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 13,
-              "total_ecalls": 66,
-              "wall_clock_sec": 0.771
-            },
-            {
-              "challenges_solved": 2,
-              "enclave_creations": 14,
-              "total_ecalls": 71,
-              "wall_clock_sec": 0.832
-            },
-            {
-              "challenges_solved": 3,
-              "enclave_creations": 16,
-              "total_ecalls": 83,
-              "wall_clock_sec": 0.947
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 18,
-              "total_ecalls": 137,
-              "wall_clock_sec": 1.09
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 19,
-              "total_ecalls": 142,
-              "wall_clock_sec": 1.15
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 20,
-              "total_ecalls": 148,
-              "wall_clock_sec": 1.207
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 21,
-              "total_ecalls": 151,
-              "wall_clock_sec": 1.265
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 22,
-              "total_ecalls": 155,
-              "wall_clock_sec": 1.324
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 23,
-              "total_ecalls": 158,
-              "wall_clock_sec": 1.38
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 24,
-              "total_ecalls": 161,
-              "wall_clock_sec": 1.439
-            },
-            {
-              "challenges_solved": 4,
-              "enclave_creations": 25,
-              "total_ecalls": 167,
-              "wall_clock_sec": 1.496
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 27,
-              "total_ecalls": 177,
-              "wall_clock_sec": 1.614
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 28,
-              "total_ecalls": 181,
-              "wall_clock_sec": 1.674
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 29,
-              "total_ecalls": 186,
-              "wall_clock_sec": 1.736
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 30,
-              "total_ecalls": 191,
-              "wall_clock_sec": 1.796
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 31,
-              "total_ecalls": 194,
-              "wall_clock_sec": 1.855
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 32,
-              "total_ecalls": 200,
-              "wall_clock_sec": 1.911
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 33,
-              "total_ecalls": 204,
-              "wall_clock_sec": 1.968
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 34,
-              "total_ecalls": 207,
-              "wall_clock_sec": 2.028
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 35,
-              "total_ecalls": 210,
-              "wall_clock_sec": 2.086
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 36,
-              "total_ecalls": 215,
-              "wall_clock_sec": 2.149
-            },
-            {
-              "challenges_solved": 5,
-              "enclave_creations": 37,
-              "total_ecalls": 221,
-              "wall_clock_sec": 2.207
-            },
-            {
-              "challenges_solved": 6,
-              "enclave_creations": 39,
-              "total_ecalls": 229,
-              "wall_clock_sec": 2.325
-            },
-            {
-              "challenges_solved": 6,
-              "enclave_creations": 40,
-              "total_ecalls": 234,
-              "wall_clock_sec": 2.384
-            },
-            {
-              "challenges_solved": 6,
-              "enclave_creations": 41,
-              "total_ecalls": 239,
-              "wall_clock_sec": 2.445
-            },
-            {
-              "challenges_solved": 6,
-              "enclave_creations": 42,
-              "total_ecalls": 242,
-              "wall_clock_sec": 2.504
-            },
-            {
-              "challenges_solved": 6,
-              "enclave_creations": 43,
-              "total_ecalls": 248,
-              "wall_clock_sec": 2.559
-            },
-            {
-              "challenges_solved": 6,
-              "enclave_creations": 44,
-              "total_ecalls": 251,
-              "wall_clock_sec": 2.618
-            },
-            {
-              "challenges_solved": 6,
-              "enclave_creations": 45,
-              "total_ecalls": 254,
-              "wall_clock_sec": 2.673
-            },
-            {
-              "challenges_solved": 6,
-              "enclave_creations": 46,
-              "total_ecalls": 259,
-              "wall_clock_sec": 2.732
-            },
-            {
-              "challenges_solved": 6,
-              "enclave_creations": 47,
-              "total_ecalls": 265,
-              "wall_clock_sec": 2.788
-            },
-            {
-              "challenges_solved": 6,
-              "enclave_creations": 48,
-              "total_ecalls": 270,
-              "wall_clock_sec": 2.848
-            }
-          ],
-          "enclave_creations": 48,
-          "expected_s0_rejections": 1,
-          "holdout_missed_pages": 0,
-          "measurement_invalid_runs": 0,
-          "new_effects_per_100_ecalls": 8.15,
-          "non_field_setup_ecalls": 113,
-          "strategy": "S3",
-          "total_ecalls_executed": 270,
-          "valid_field_entering_ecalls": 108,
-          "wall_clock_sec": 2.848,
-          "witnesses": [
-            {
-              "challenge": "C4",
-              "ecalls_at_discovery": 15,
-              "effect": "A",
-              "enclave_creations_at_discovery": 4,
-              "enclave_sha256": "66970b00b3eb79cdc0b81847466e4ce8576d006b9b7280efbfbf0a8dc53b61a0",
-              "intervention": "joint_scalar_xor:1:0:0:1:1:0:255",
-              "label": "s0_schema_joint_s0_1_x1_0",
-              "page_rva": "0x16000",
-              "replayed_confirmed": true,
-              "trace_sha256": "555a6ea20b3f1d4644fbcb70eb211ee1d579b13005bc3f0e76d47bad9730066b",
-              "wall_clock_sec": 0.231
-            },
-            {
-              "challenge": "C6",
-              "ecalls_at_discovery": 21,
-              "effect": "D",
-              "enclave_creations_at_discovery": 6,
-              "enclave_sha256": "66970b00b3eb79cdc0b81847466e4ce8576d006b9b7280efbfbf0a8dc53b61a0",
-              "intervention": "aliased_pair:1:0:1:3:4",
-              "label": "s0_schema_alias_p1_p3_off_4",
-              "page_rva": "0x18000",
-              "replayed_confirmed": true,
-              "trace_sha256": "6d66c6bb154cc5286cd503dc537a41146074214ea63c23938f9faed83ae74477",
-              "wall_clock_sec": 0.348
-            },
-            {
-              "challenge": "C2",
-              "ecalls_at_discovery": 83,
-              "effect": "A",
-              "enclave_creations_at_discovery": 16,
-              "enclave_sha256": "66970b00b3eb79cdc0b81847466e4ce8576d006b9b7280efbfbf0a8dc53b61a0",
-              "intervention": "set_scalar:0:0:0:16",
-              "label": "prefix_setup_ecall0_p0_v16",
-              "page_rva": "0x14000",
-              "replayed_confirmed": true,
-              "trace_sha256": "c9ce613091231f2f3258c007c38516f08ef4a14a9885309338e2fdeaaa0091ec",
-              "wall_clock_sec": 0.947
-            },
-            {
-              "challenge": "C1",
-              "ecalls_at_discovery": 137,
-              "effect": "D",
-              "enclave_creations_at_discovery": 18,
-              "enclave_sha256": "66970b00b3eb79cdc0b81847466e4ce8576d006b9b7280efbfbf0a8dc53b61a0",
-              "intervention": "repeat:1:0:24",
-              "label": "repeat_24",
-              "page_rva": "0x13000",
-              "replayed_confirmed": true,
-              "trace_sha256": "33708f73ed446b8becde2657c12215582bec99ba77af70fd047c46662c122092",
-              "wall_clock_sec": 1.09
-            },
-            {
-              "challenge": "C5",
-              "ecalls_at_discovery": 177,
-              "effect": "D",
-              "enclave_creations_at_discovery": 27,
-              "enclave_sha256": "66970b00b3eb79cdc0b81847466e4ce8576d006b9b7280efbfbf0a8dc53b61a0",
-              "intervention": "joint_scalar_xor:1:1:0:2:1:0:255",
-              "label": "s1_schema_joint_s0_2_x1_0",
-              "page_rva": "0x17000",
-              "replayed_confirmed": true,
-              "trace_sha256": "1889052ac726d566f10a37bbd26ec3419dc9c1276bf3fcf1b4b8d946c2bb39f5",
-              "wall_clock_sec": 1.614
-            },
-            {
-              "challenge": "C3",
-              "ecalls_at_discovery": 229,
-              "effect": "D",
-              "enclave_creations_at_discovery": 39,
-              "enclave_sha256": "66970b00b3eb79cdc0b81847466e4ce8576d006b9b7280efbfbf0a8dc53b61a0",
-              "intervention": "scale_bound_v2:1:0:0:16:4096:32:4096",
-              "label": "scale_4096",
-              "page_rva": "0x15000",
-              "replayed_confirmed": true,
-              "trace_sha256": "53b7e604c308d102221e6d10c961605521e9694c60ad55ccb6c5451b1eeb0560",
-              "wall_clock_sec": 2.325
-            }
-          ]
+          "solved_by_seed": {
+            "101": 4,
+            "102": 5,
+            "103": 6,
+            "104": 6,
+            "105": 5
+          },
+          "solved_max": 6,
+          "solved_mean": 5.2,
+          "solved_median": 5,
+          "solved_min": 4
         }
-      }
+      },
+      "sample": "challenge-exam-a",
+      "split": "blind_exam"
+    },
+    "challenge-exam-b": {
+      "ground_truth_challenge_pages": {
+        "C1": "0x16000",
+        "C2": "0x13000",
+        "C3": "0x18000",
+        "C4": "0x12000",
+        "C5": "0x19000",
+        "C6": "0x15000",
+        "C7": "0x17000",
+        "C8": "0x14000"
+      },
+      "holdout_total_s3_pages": 17,
+      "modes": {
+        "S0": {
+          "enclave_creations": 1,
+          "holdout_missed_pages": 9,
+          "mode": "S0_seed_only",
+          "solved_count": 0,
+          "solved_list": [],
+          "total_ecalls_executed": 11,
+          "wall_clock_sec": 0.06
+        },
+        "feedback_guided": {
+          "challenges_total": 8,
+          "curve_mean_solved": {
+            "at_20_enclaves": 2.2,
+            "at_40_enclaves": 3,
+            "at_68_enclaves": 7.6
+          },
+          "enclave_budget": 68,
+          "mean_holdout_missed_pages": 0.4,
+          "mean_total_ecalls": 695.2,
+          "mean_wall_clock_sec": 4.34,
+          "mode": "feedback_guided",
+          "num_seeds": 5,
+          "seed_runs": [
+            {
+              "checkpoints": {
+                "at_20_enclaves": 1,
+                "at_40_enclaves": 2,
+                "at_68_enclaves": 6
+              },
+              "confirmed_s3_effects": 27,
+              "confirmed_s3_pages": 15,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 12,
+              "holdout_missed_pages": 2,
+              "missed_list": [
+                "C4",
+                "C5"
+              ],
+              "non_field_setup_ecalls": 288,
+              "seed": 101,
+              "solved_count": 6,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 684,
+              "valid_field_entering_ecalls": 384,
+              "wall_clock_sec": 4.626,
+              "witnesses": [
+                {
+                  "challenge": "C1",
+                  "page_rva": "0x16000",
+                  "replayed_confirmed": true,
+                  "spec": "repeat:3:0:24",
+                  "step": 12,
+                  "tag": "history_e3_s0_n24",
+                  "trace_sha256": "8305ebbd4c682c9302b2d610e7dc839686c8a65f8cce427f04cea430f689cc0f"
+                },
+                {
+                  "challenge": "C2",
+                  "page_rva": "0x13000",
+                  "replayed_confirmed": true,
+                  "spec": "replace_scalar:2:0:0:16",
+                  "step": 33,
+                  "tag": "replace_prefix_e2_s0_p0_v16",
+                  "trace_sha256": "ac8fe1f79110255a23fa376b8c190099f164ea7d9f470fa384cc150c65d35655"
+                },
+                {
+                  "challenge": "C6",
+                  "page_rva": "0x15000",
+                  "replayed_confirmed": true,
+                  "spec": "aliased_pair:5:0:1:3:8",
+                  "step": 44,
+                  "tag": "slice_rel_e5_s0_p1_p3_off8",
+                  "trace_sha256": "3c1395ae27d3fa836a5b32d8ab479123702cd7ea7f12c9ce06d93a6e309cb943"
+                },
+                {
+                  "challenge": "C7",
+                  "page_rva": "0x17000",
+                  "replayed_confirmed": true,
+                  "spec": "replace_scalar:1:0:0:3",
+                  "step": 55,
+                  "tag": "replace_prefix_e1_s0_p0_v3",
+                  "trace_sha256": "005770cd6a816da738e5876328309b61495745f8e2df0897d0ac6518c75228bd"
+                },
+                {
+                  "challenge": "C8",
+                  "page_rva": "0x14000",
+                  "replayed_confirmed": true,
+                  "spec": "replace_scalar:3:0:0:8",
+                  "step": 59,
+                  "tag": "scalar_e3_s0_p0_v8",
+                  "trace_sha256": "baa3a9d581421662b7363edfa35a8687347428ea06acae2c4d187753f156cfad"
+                },
+                {
+                  "challenge": "C3",
+                  "page_rva": "0x18000",
+                  "replayed_confirmed": true,
+                  "spec": "scale_bound_v2:5:0:0:16:1024:32:1024;scale_bound_v2:5:0:2:16:1024:32:1024",
+                  "step": 68,
+                  "tag": "scale_e5_s0_n1024",
+                  "trace_sha256": "1320682b83657f17bce2cf806d5b9192d786a3617e3a6c85546118f1050e8c74"
+                }
+              ]
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 2,
+                "at_40_enclaves": 2,
+                "at_68_enclaves": 8
+              },
+              "confirmed_s3_effects": 38,
+              "confirmed_s3_pages": 21,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 12,
+              "holdout_missed_pages": 0,
+              "missed_list": [],
+              "non_field_setup_ecalls": 291,
+              "seed": 102,
+              "solved_count": 8,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 696,
+              "valid_field_entering_ecalls": 393,
+              "wall_clock_sec": 4.267,
+              "witnesses": []
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 3,
+                "at_40_enclaves": 4,
+                "at_68_enclaves": 8
+              },
+              "confirmed_s3_effects": 38,
+              "confirmed_s3_pages": 21,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 11,
+              "holdout_missed_pages": 0,
+              "missed_list": [],
+              "non_field_setup_ecalls": 300,
+              "seed": 103,
+              "solved_count": 8,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 717,
+              "valid_field_entering_ecalls": 406,
+              "wall_clock_sec": 4.258,
+              "witnesses": []
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 1,
+                "at_40_enclaves": 3,
+                "at_68_enclaves": 8
+              },
+              "confirmed_s3_effects": 38,
+              "confirmed_s3_pages": 21,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 11,
+              "holdout_missed_pages": 0,
+              "missed_list": [],
+              "non_field_setup_ecalls": 285,
+              "seed": 104,
+              "solved_count": 8,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 684,
+              "valid_field_entering_ecalls": 388,
+              "wall_clock_sec": 4.263,
+              "witnesses": []
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 4,
+                "at_40_enclaves": 4,
+                "at_68_enclaves": 8
+              },
+              "confirmed_s3_effects": 38,
+              "confirmed_s3_pages": 21,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 12,
+              "holdout_missed_pages": 0,
+              "missed_list": [],
+              "non_field_setup_ecalls": 288,
+              "seed": 105,
+              "solved_count": 8,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 695,
+              "valid_field_entering_ecalls": 395,
+              "wall_clock_sec": 4.271,
+              "witnesses": []
+            }
+          ],
+          "solved_by_seed": {
+            "101": 6,
+            "102": 8,
+            "103": 8,
+            "104": 8,
+            "105": 8
+          },
+          "solved_max": 8,
+          "solved_mean": 7.6,
+          "solved_median": 8,
+          "solved_min": 6
+        },
+        "fixed_round_robin": {
+          "challenges_total": 8,
+          "curve_mean_solved": {
+            "at_20_enclaves": 1.6,
+            "at_40_enclaves": 3.6,
+            "at_68_enclaves": 5.8
+          },
+          "enclave_budget": 68,
+          "mean_holdout_missed_pages": 2.8,
+          "mean_total_ecalls": 1929,
+          "mean_wall_clock_sec": 4.6,
+          "mode": "fixed_round_robin",
+          "num_seeds": 5,
+          "seed_runs": [
+            {
+              "checkpoints": {
+                "at_20_enclaves": 1,
+                "at_40_enclaves": 2,
+                "at_68_enclaves": 5
+              },
+              "confirmed_s3_effects": 24,
+              "confirmed_s3_pages": 14,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 25,
+              "holdout_missed_pages": 4,
+              "missed_list": [
+                "C5",
+                "C7",
+                "C8"
+              ],
+              "non_field_setup_ecalls": 268,
+              "seed": 101,
+              "solved_count": 5,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C6"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 1929,
+              "valid_field_entering_ecalls": 1636,
+              "wall_clock_sec": 4.846,
+              "witnesses": [
+                {
+                  "challenge": "C1",
+                  "page_rva": "0x16000",
+                  "replayed_confirmed": true,
+                  "spec": "repeat:3:0:24",
+                  "step": 7,
+                  "tag": "history_e3_s0_n24",
+                  "trace_sha256": "39570b82a34a4649de4175b84fcd9a84781af27cce95d1339086c1721224d980"
+                },
+                {
+                  "challenge": "C6",
+                  "page_rva": "0x15000",
+                  "replayed_confirmed": true,
+                  "spec": "aliased_pair:5:0:1:3:8",
+                  "step": 26,
+                  "tag": "slice_rel_e5_s0_p1_p3_off8",
+                  "trace_sha256": "ac85c86e8a2606920928dce56dfc974b14bb32757dd0bc7a5e92ac1bad5aa5e6"
+                },
+                {
+                  "challenge": "C2",
+                  "page_rva": "0x13000",
+                  "replayed_confirmed": true,
+                  "spec": "replace_scalar:2:0:0:16",
+                  "step": 47,
+                  "tag": "replace_prefix_e2_s0_p0_v16",
+                  "trace_sha256": "03ae21687dfc90fd3c04be7aca0d898b537ccead0067a2b71a80fd1a03567c5d"
+                },
+                {
+                  "challenge": "C3",
+                  "page_rva": "0x18000",
+                  "replayed_confirmed": true,
+                  "spec": "scale_bound_v2:5:0:0:16:1024:32:1024;scale_bound_v2:5:0:2:16:1024:32:1024",
+                  "step": 58,
+                  "tag": "scale_e5_s0_n1024",
+                  "trace_sha256": "49cac59284c6def278714aea9ca1a03b07dc3a0e132429dca8602b56f633aea1"
+                },
+                {
+                  "challenge": "C4",
+                  "page_rva": "0x12000",
+                  "replayed_confirmed": true,
+                  "spec": "joint_scalar_xor:5:0:0:4:1:0:255",
+                  "step": 67,
+                  "tag": "joint_e5_s0_s0_4_x1_0",
+                  "trace_sha256": "0c45f0bb4c35171819fb6e81a3a726292a851040ccfc4cbdd4c8c39e779c20c1"
+                }
+              ]
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 1,
+                "at_40_enclaves": 3,
+                "at_68_enclaves": 5
+              },
+              "confirmed_s3_effects": 25,
+              "confirmed_s3_pages": 14,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 25,
+              "holdout_missed_pages": 4,
+              "missed_list": [
+                "C2",
+                "C7",
+                "C8"
+              ],
+              "non_field_setup_ecalls": 268,
+              "seed": 102,
+              "solved_count": 5,
+              "solved_list": [
+                "C1",
+                "C3",
+                "C4",
+                "C5",
+                "C6"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 1929,
+              "valid_field_entering_ecalls": 1636,
+              "wall_clock_sec": 4.538,
+              "witnesses": []
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 2,
+                "at_40_enclaves": 3,
+                "at_68_enclaves": 6
+              },
+              "confirmed_s3_effects": 29,
+              "confirmed_s3_pages": 16,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 25,
+              "holdout_missed_pages": 2,
+              "missed_list": [
+                "C2",
+                "C5"
+              ],
+              "non_field_setup_ecalls": 268,
+              "seed": 103,
+              "solved_count": 6,
+              "solved_list": [
+                "C1",
+                "C3",
+                "C4",
+                "C6",
+                "C7",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 1929,
+              "valid_field_entering_ecalls": 1636,
+              "wall_clock_sec": 4.522,
+              "witnesses": []
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 1,
+                "at_40_enclaves": 4,
+                "at_68_enclaves": 6
+              },
+              "confirmed_s3_effects": 26,
+              "confirmed_s3_pages": 15,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 25,
+              "holdout_missed_pages": 3,
+              "missed_list": [
+                "C5",
+                "C8"
+              ],
+              "non_field_setup_ecalls": 268,
+              "seed": 104,
+              "solved_count": 6,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C6",
+                "C7"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 1929,
+              "valid_field_entering_ecalls": 1636,
+              "wall_clock_sec": 4.545,
+              "witnesses": []
+            },
+            {
+              "checkpoints": {
+                "at_20_enclaves": 3,
+                "at_40_enclaves": 6,
+                "at_68_enclaves": 7
+              },
+              "confirmed_s3_effects": 30,
+              "confirmed_s3_pages": 17,
+              "enclave_creations": 68,
+              "expected_s0_rejections": 24,
+              "holdout_missed_pages": 1,
+              "missed_list": [
+                "C7"
+              ],
+              "non_field_setup_ecalls": 268,
+              "seed": 105,
+              "solved_count": 7,
+              "solved_list": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5",
+                "C6",
+                "C8"
+              ],
+              "stop_reason": "stop_budget_cap_reached:enclaves=68",
+              "total_ecalls_executed": 1929,
+              "valid_field_entering_ecalls": 1637,
+              "wall_clock_sec": 4.539,
+              "witnesses": []
+            }
+          ],
+          "solved_by_seed": {
+            "101": 5,
+            "102": 5,
+            "103": 6,
+            "104": 6,
+            "105": 7
+          },
+          "solved_max": 7,
+          "solved_mean": 5.8,
+          "solved_median": 6,
+          "solved_min": 5
+        }
+      },
+      "sample": "challenge-exam-b",
+      "split": "blind_exam"
     }
-  }
+  },
+  "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105
+  ]
 }

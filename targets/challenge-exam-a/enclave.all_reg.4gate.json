@@ -1,0 +1,37 @@
+{
+  "fields": [
+    {
+      "enter_call_rva": 11847,
+      "exit_call_rva": 12005,
+      "field_id": "0x71734bba50201103",
+      "function": "examA_field_vault",
+      "gate_a_rva": 208896,
+      "gate_b_rva": 209051,
+      "gate_c_rva": 209230,
+      "gate_d_rva": 209421,
+      "marker_rva": 11852,
+      "pretouch_jmp_rva": 199591,
+      "pretouch_rva": 196608
+    },
+    {
+      "enter_call_rva": 12542,
+      "exit_call_rva": 12772,
+      "field_id": "0x337dbda83a417cc1",
+      "function": "examA_field_compute",
+      "gate_a_rva": 209591,
+      "gate_b_rva": 209746,
+      "gate_c_rva": 209925,
+      "gate_d_rva": 210116,
+      "marker_rva": 12547,
+      "pretouch_jmp_rva": 202579,
+      "pretouch_rva": 199596
+    }
+  ],
+  "gate_bytes_used": 1390,
+  "gate_helper_page_rva": 208896,
+  "input_elf": "/home/meandssh/islands-sgx/dynamic/targets/challenge-exam-a/enclave.all_reg.final.so",
+  "input_elf_sha256": "9ff31d1d9870ce48568b3734146d47ba8fbc4fc71647c873fe450ad011a5d9f0",
+  "output_elf": "/home/meandssh/islands-sgx/dynamic/targets/challenge-exam-a/enclave.all_reg.4gate.so",
+  "output_elf_sha256": "e934e25d6ef519504baad37f9da6758ff1243f1e30363f46e162a4da2b65786c",
+  "schema": "atfield-4gate-patch-v1"
+}

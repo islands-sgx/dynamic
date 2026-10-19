@@ -863,18 +863,49 @@ def evaluate_sample(sample: str) -> dict:
                 "measurement_invalid": res_ho_strict_ecall["measurement_invalid"],
             },
             "overall_holdout_and_strict_verdict": overall_verdict,
-            "out_of_seed_producer_consumer_audit": (
-                (lambda r_sm4: {
-                    "workflow": "create_key(EH_SM4_CTR) -> generate_datakey(sm4_cmk) (--sm4-check)",
-                    "reason_not_auto_synthesized": "Requires multi-call producer-consumer synthesis across encrypted keyblob (enclave_create_key sealing EH_SM4_CTR metadata into AES-GCM authenticated cmk before enclave_generate_datakey)",
-                    "validator_result": validate_run_result(
-                        r_sm4,
-                        expected_returncode=0,
-                        expected_stdout_substr="PASS",
-                        expected_min_records=21,
-                        closed_workset_effects=closed_target_effects_by_fid,
-                    ),
-                })(
+            "sm4_two_tier_accounting": (
+                (lambda r_sm4: (
+                    (lambda tier1_effects: {
+                        "tier1_sm4_seeded_coverage": {
+                            "description": "Tier 1 (Seed Coverage): Legal --sm4-check workflow included as seed; verifies full producer-consumer capture & closure.",
+                            "seed_added_effects_count": sum(len(tier1_effects[fid] - closed_target_effects_by_fid[fid]) for fid in tier1_effects),
+                            "validator_result": validate_run_result(
+                                r_sm4,
+                                expected_returncode=0,
+                                expected_stdout_substr="PASS",
+                                expected_min_records=21,
+                                closed_workset_effects=tier1_effects,
+                            ),
+                        },
+                        "tier2_aes_only_seed_discovery": {
+                            "description": "Tier 2 (Un-Seeded Discovery from AES-Only Workflow): Tests whether generic explorer reaches SM4 without an SM4 seed.",
+                            "structural_limitation": "ehsm_create_sm4_key requires coupled 3-field struct changes inside ehsm_keyblob_t (metadata.keyspec=20, keybloblen=64, cmk_size=80) before domain-key AES-GCM sealing.",
+                            "validator_result": validate_run_result(
+                                r_sm4,
+                                expected_returncode=0,
+                                expected_stdout_substr="PASS",
+                                expected_min_records=21,
+                                closed_workset_effects=closed_target_effects_by_fid,
+                            ),
+                        },
+                    })({
+                        fid: set(closed_target_effects_by_fid[fid]) | {
+                            (int(it["rva"], 16), "A")
+                            for rec in r_sm4["records"]
+                            for fobs in rec["fields"]
+                            if fobs["field_id"] == fid
+                            for it in fobs["s3"]
+                        } | {
+                            (int(it["rva"], 16), "D")
+                            for rec in r_sm4["records"]
+                            for fobs in rec["fields"]
+                            if fobs["field_id"] == fid
+                            for it in fobs["s3"]
+                            if it["ad"] == "D"
+                        }
+                        for fid in closed_target_effects_by_fid
+                    })
+                ))(
                     run_sample(
                         sample,
                         mode="profile_4gate",

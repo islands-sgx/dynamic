@@ -386,6 +386,38 @@ CHALLENGE_TARGETS = {
             {"ecall_index": 5, "name": "ecall_zeta_open", "reachable_functions": ["perm_field_vault"]},
         ],
     },
+    "challenge-exam-a": {
+        "src_dir": DYN_ROOT / "challenges" / "challenge-exam-a",
+        "edl": "exam_a.edl",
+        "edl_stem": "exam_a",
+        "heap": 0x100000,
+        "stack": 0x40000,
+        "capacity_q": 16384,
+        "selectors": [
+            {"ecall_index": 0, "name": "examA_mint_credential", "reachable_functions": []},
+            {"ecall_index": 1, "name": "examA_audit_vault", "reachable_functions": ["examA_field_vault"]},
+            {"ecall_index": 2, "name": "examA_set_policy", "reachable_functions": []},
+            {"ecall_index": 3, "name": "examA_step_epoch", "reachable_functions": []},
+            {"ecall_index": 4, "name": "examA_process_frame", "reachable_functions": ["examA_field_compute"]},
+            {"ecall_index": 5, "name": "examA_boot_session", "reachable_functions": []},
+        ],
+    },
+    "challenge-exam-b": {
+        "src_dir": DYN_ROOT / "challenges" / "challenge-exam-b",
+        "edl": "exam_b.edl",
+        "edl_stem": "exam_b",
+        "heap": 0x100000,
+        "stack": 0x40000,
+        "capacity_q": 16384,
+        "selectors": [
+            {"ecall_index": 0, "name": "examB_tick_clock", "reachable_functions": []},
+            {"ecall_index": 1, "name": "examB_issue_ticket", "reachable_functions": []},
+            {"ecall_index": 2, "name": "examB_configure_gate", "reachable_functions": []},
+            {"ecall_index": 3, "name": "examB_verify_ticket", "reachable_functions": ["examB_field_verify"]},
+            {"ecall_index": 4, "name": "examB_reset_context", "reachable_functions": []},
+            {"ecall_index": 5, "name": "examB_transform_packet", "reachable_functions": ["examB_field_packet"]},
+        ],
+    },
 }
 
 
