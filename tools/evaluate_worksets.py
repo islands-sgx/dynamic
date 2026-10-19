@@ -529,13 +529,39 @@ def evaluate_sm4_two_tier(
 
     sm4_art = ledger.get("artifacts", {}).get("sm4_seeded_xr", {})
     aes_art = ledger.get("artifacts", {}).get("dynamic_xr", {})
+    prov_sm4 = validate_provenance_consistency(
+        ledger,
+        [r_sm4_cov, r_sm4_4gate, r_sm4_prod],
+        target_dir=tdir,
+        variant="sm4_seeded_xr",
+    )
+    disk_ws_sha = sha256_path(ws_sm4_path)
+    disk_aex1_sha = sha256_path(tdir / "enclave.sm4_seeded_xr.final.signed.so")
+    disk_4gate_sha = sha256_path(tdir / "enclave.sm4_seeded_xr.4gate.aex0.signed.so")
+    disk_rdy_sha = sha256_path(tdir / "enclave.sm4_seeded_xr.ready.bin")
+    exact_file_and_run_binding_ok = bool(
+        prov_sm4["status"] == "PASS"
+        and disk_ws_sha == sm4_art.get("workset_sha256")
+        and disk_aex1_sha == sm4_art.get("signed_aex1_sha256")
+        and disk_4gate_sha == sm4_art.get("gate_aex0_sha256")
+        and disk_rdy_sha == sm4_art.get("ready_bin_sha256")
+        and r_sm4_4gate.get("enclave_sha256") == disk_4gate_sha
+        and r_sm4_prod.get("enclave_sha256") == disk_aex1_sha
+        and r_sm4_prod.get("ready_table_sha256") == disk_rdy_sha
+        and sha256_path(Path(r_sm4_cov.get("trace_jsonl", ""))) == r_sm4_cov.get("trace_sha256")
+        and sha256_path(Path(r_sm4_4gate.get("trace_jsonl", ""))) == r_sm4_4gate.get("trace_sha256")
+        and sha256_path(Path(r_sm4_prod.get("trace_jsonl", ""))) == r_sm4_prod.get("trace_sha256")
+        and disk_ws_sha != aes_art.get("workset_sha256")
+        and disk_aex1_sha != aes_art.get("signed_aex1_sha256")
+        and disk_rdy_sha != aes_art.get("ready_bin_sha256")
+        and sm4_art.get("seed_collection_trace_sha256", "") != r_sm4_cov["trace_sha256"]
+    )
     tier1_overall_pass = bool(
         val_t1_cov["status"] == "PASS"
         and val_t1_4gate["status"] == "PASS"
         and val_t1_prod["status"] == "PASS"
         and len(clean_rewalks) > 0 and all(x == 0 for x in clean_rewalks)
-        and sm4_art.get("workset_sha256") != aes_art.get("workset_sha256")
-        and sm4_art.get("seed_collection_trace_sha256", "") != r_sm4_cov["trace_sha256"]
+        and exact_file_and_run_binding_ok
     )
     if not tier1_overall_pass:
         raise RuntimeError(
@@ -1161,8 +1187,11 @@ def _run_main_body() -> None:
 
     manifest_entries = []
     raw_root = out_dir / "raw_traces"
+    active_trace_dirs = list(SAMPLES) + [
+        cdir.name for cdir in sorted((DYN_ROOT / "challenges").glob("challenge-*"))
+    ]
     if raw_root.is_dir():
-        for jf in sorted(p for s_name in SAMPLES if (raw_root / s_name).is_dir() for p in (raw_root / s_name).glob("*.jsonl")):
+        for jf in sorted(p for s_name in active_trace_dirs if (raw_root / s_name).is_dir() for p in (raw_root / s_name).glob("*.jsonl")):
             manifest_entries.append({
                 "rel_path": str(jf.relative_to(DYN_ROOT)),
                 "sha256": sha256_path(jf),

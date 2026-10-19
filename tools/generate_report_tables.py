@@ -360,9 +360,10 @@ def main() -> None:
     lines.append("3. **Greybox Concrete Page-Set Feedback + Anti-Starvation Base Scheduling (`ExplorationKernel`)**: Feedback tracks concrete `frozenset((page_rva, effect))` sets (ignoring random output bytes and never collapsing distinct call positions that happen to touch the same setup pages). Once a parameter slot satisfies its target branch or a selector fails `S0` integrity/repeatability checks, remaining redundant candidates on that slot are demoted to `low_priority_queue`, reallocating budget to unexplored call positions (`sseq=0, 1, 2, 3`) and multi-selector history depths.")
     lines.append("")
     lines.append("### 6.2 Under What Conditions It Can Miss (Explicit Soundness & Hardware Enforcement Boundaries)")
-    lines.append("- **Pre-Touch Omission vs `ReadyTable` Permission Enforcement & `AEX-Notify` Fail-Stop**:")
-    lines.append("  - If a page is omitted from pre-touch and has no cached TLB translation, touching it while its OS page-table entry remains valid (present and accessible) simply triggers a normal hardware page-table walk (setting `A/D` bits) **without causing an AEX or `0x1006` abort**. Therefore, `AEX-Notify` fail-stop cannot by itself serve as an automatic detector for omitted pre-touch pages in unprotected page tables; omitted pre-touch pages are measured by the 4-Gate `S3` `A/D` rewalk diagnostic.")
-    lines.append("  - Deterministic runtime fail-stop (`0x1006`) occurs only when an actual page fault (e.g., when non-`ReadyTable` pages have their permissions retracted by the kernel readiness module during a protected ECALL, or under explicit single-page retraction fault calibration) or an external interrupt triggers an AEX while `__atfield_active == 1`.")
+    lines.append("- **Pre-Touch Omission, Production `ReadyTable` (`SGX_IOC_ENCLAVE_PAGES_ACQUIRE`), and `AEX-Notify` Fail-Stop**:")
+    lines.append("  - In the current `implement` kernel module (`linux-sgx-page-readiness.patch`), `SGX_IOC_ENCLAVE_PAGES_ACQUIRE` iterates over the pages listed in `ReadyTable` to ensure they are resident and ready in EPC/page tables and verifies their mapping/permissions before Field entry; **it does not retract page-table permissions on non-`ReadyTable` enclave pages**.")
+    lines.append("  - Consequently, if an enclave page is omitted from the workset (`FieldTargetPages` / `ReadyTable`) or from pre-touch while its OS page-table mapping remains valid (present and accessible), accessing it at runtime will simply perform a normal hardware page-table walk (setting `A/D` bits) **without causing a page fault, an AEX, or a `0x1006` abort**. Neither `AEX-Notify` nor production `ReadyTable` acts as a runtime fail-stop detector for omitted workset pages.")
+    lines.append("  - Omitted workset or pre-touch pages must instead be detected during verification by the **4-Gate `S3` `A/D` coverage & pre-touch rewalk diagnostics** and the **strict diagnostic retraction harness (`ATFIELD_STRICT_READY_FILE`)**, which explicitly clears PTE permissions on non-ready pages during hold-out and single-page retraction calibration (`X/R/W` fault calibration).")
     lines.append("- **Single-Run Measurement Soundness vs Whole-Program Input Coverage**: Hardware 4-Gate AEP page-table `A/D` tracking with single-page `X/R/W` fault calibration guarantees that *every page touched during an executed run is measured*, but finite dynamic exploration does **not** prove coverage over all future inputs, secrets, or un-seeded protocol states.")
     lines.append("- **Specific Structural Conditions Where Dynamic Exploration Can Miss**:")
     lines.append("  1. **Multi-Field Coupled Struct Invariants in Producer Calls (Demonstrated by `eHSM` SM4 Tier 2)**: When a producer ECALL (`enclave_create_key`) takes a nested C struct (`ehsm_keyblob_t`) requiring simultaneous coordinated updates to multiple internal struct fields (`metadata.keyspec = 20`, `keybloblen = 64`) and an outer EDL size scalar (`cmk_size = 80`) before sealing an authenticated blob, single-scalar replacement does not synthesize the valid struct tuple without a legal seed or struct-binding spec (resulting in the `4` / `14` uncovered pages caught by Tier 2).")
@@ -408,9 +409,57 @@ def main() -> None:
     lines.append("")
 
     content = "\n".join(lines)
+    verify_report_matches_json(content, eval_data, strat_data, manifest_data, ledgers)
     (DYN_ROOT / "README.md").write_text(content)
     (DYN_ROOT / "experiments" / "SUMMARY_TABLES.md").write_text(content)
-    print("Updated README.md and experiments/SUMMARY_TABLES.md")
+    print("Updated and verified README.md and experiments/SUMMARY_TABLES.md against JSON artifacts")
+
+
+def verify_report_matches_json(
+    content: str,
+    eval_data: dict,
+    strat_data: dict,
+    manifest_data: dict,
+    ledgers: dict[str, dict],
+) -> None:
+    """Automated consistency check ensuring every hash, count, cost, and time in README.md /
+    SUMMARY_TABLES.md matches the underlying JSON artifacts (`evaluation_results.json`,
+    `strategy_comparison.json`, `traces_manifest.json`, and `witness_ledger.json`).
+    """
+    interpose_sha = ledgers["qe3"]["interpose_sha256"]
+    assert interpose_sha in content, f"Collector hash {interpose_sha} missing from report!"
+    for s, ldg in ledgers.items():
+        assert ldg["interpose_sha256"] == interpose_sha, f"Ledger interpose mismatch on {s}"
+
+    if manifest_data:
+        assert str(manifest_data["archive_sha256"]) in content, "Archive SHA-256 missing from report!"
+        assert f"{manifest_data['total_trace_files']} traces" in content, "Manifest trace count missing from report!"
+        manifest_shas = {e["sha256"] for e in manifest_data.get("traces", [])}
+    else:
+        manifest_shas = set()
+
+    for cname, ct in strat_data["real_hardware_challenge_enclaves"].items():
+        for mkey in ("fixed_round_robin", "static_priority_no_feedback", "feedback_guided"):
+            if mkey not in ct["modes"]:
+                continue
+            ms = ct["modes"][mkey]
+            exp_ec = f"{ms.get('mean_exploration_ecalls', ms['mean_total_ecalls']):.1f}"
+            exp_w = f"{ms.get('mean_exploration_wall_clock_sec', ms['mean_wall_clock_sec']):.2f}s"
+            conf_m = f"{ms.get('confirmed_mean', ms['solved_mean']):.2f}"
+            assert exp_ec in content, f"Mismatch for {cname} {mkey} mean_exploration_ecalls={exp_ec}"
+            assert exp_w in content, f"Mismatch for {cname} {mkey} mean_exploration_wall_clock_sec={exp_w}"
+            assert conf_m in content, f"Mismatch for {cname} {mkey} confirmed_mean={conf_m}"
+            # If challenge traces are persisted in manifest_data, verify every witness hash is in manifest_shas
+            has_ch_traces = any(
+                e["rel_path"].startswith(f"experiments/raw_traces/{cname}/")
+                for e in manifest_data.get("traces", [])
+            )
+            if has_ch_traces:
+                for sr in ms.get("seed_runs", []):
+                    for w in sr.get("witnesses", []):
+                        assert w["trace_sha256"] in manifest_shas, f"Missing discovery trace {w['trace_sha256']} for {cname}"
+                        if w.get("confirmation_trace_sha256"):
+                            assert w["confirmation_trace_sha256"] in manifest_shas, f"Missing confirmation trace {w['confirmation_trace_sha256']} for {cname}"
 
 
 if __name__ == "__main__":

@@ -561,16 +561,30 @@ def run_real_hardware_challenge_ablation(
         fields_by_func = {f["function"]: f"0x{f['_id_value']:016x}" for f in fields}
         selectors = resolve_selectors(tdir / "selectors.json", fields, Path(edl_schema["edl_path"]))
 
+        import shutil
+        raw_dir = dyn_root / "experiments" / "raw_traces" / sample
+        if target_names is None or len(seeds) >= 5:
+            shutil.rmtree(raw_dir, ignore_errors=True)
+        raw_dir.mkdir(parents=True, exist_ok=True)
+
         # Independent reference hold-out set: verify all 8 challenges C1..C8 and their declared (field_id, rva, effect)
         holdout_field_effects: set[tuple[str, int, str]] = set()
         holdout_field_pages: set[tuple[str, int]] = set()
-        for hspec in holdout_specs:
-            rh = run_sample(sample, mode="profile_4gate", ipi_mask=7, intervention=hspec)
+        holdout_trace_shas: list[str] = []
+        for idx_h, hspec in enumerate(holdout_specs):
+            rh = run_sample(
+                sample,
+                mode="profile_4gate",
+                ipi_mask=7,
+                intervention=hspec,
+                persist_prefix=raw_dir / f"ref_holdout_{idx_h:02d}",
+            )
             ok_rh, rh_reasons = is_valid_measurement_run(rh, allow_nonzero_rc=False, require_ipi_mask=7, require_nonempty_s3=True)
             if not ok_rh:
                 raise RuntimeError(f"Reference hold-out run {hspec} on {sample} failed measurement admission: {rh_reasons}")
             holdout_field_effects |= obs_s3_field_effects(rh, allow_nonzero_rc=False)
             holdout_field_pages |= obs_s3_field_pages(rh, allow_nonzero_rc=False)
+            holdout_trace_shas.append(rh.get("trace_sha256", ""))
 
         ok_gt, gt_required_effects, gt_reasons = validate_challenge_ground_truth_and_holdout(
             gt_syms,
@@ -583,9 +597,14 @@ def run_real_hardware_challenge_ablation(
 
         # 1. Baseline S0 (unmodified host seed only)
         t0 = time.monotonic()
-        r_s0 = run_sample(sample, mode="profile_4gate", ipi_mask=7)
+        r_s0 = run_sample(
+            sample,
+            mode="profile_4gate",
+            ipi_mask=7,
+            persist_prefix=raw_dir / "s0_seed_only",
+        )
         s0_wall = round(time.monotonic() - t0, 3)
-        s0_feffs = obs_s3_field_effects(r_s0)
+        s0_feffs = obs_s3_field_effects(r_s0, allow_nonzero_rc=False)
         s0_fpages = obs_s3_field_pages(r_s0)
         s0_obs_solved = sorted(k for k, req in gt_required_effects.items() if req.issubset(s0_feffs))
         s0_summary = {
@@ -623,6 +642,7 @@ def run_real_hardware_challenge_ablation(
                 def runner(plan: dict) -> dict:
                     nonlocal step_counter
                     step_counter += 1
+                    safe_tag = "".join(ch if ch.isalnum() or ch in ("_", "-") else "_" for ch in str(plan.get("tag", "probe")))
                     res = run_sample(
                         sample,
                         mode="profile_4gate",
@@ -630,6 +650,7 @@ def run_real_hardware_challenge_ablation(
                         intervention=plan.get("spec", ""),
                         stop_after_selector=plan.get("stop_after", ""),
                         stop_before_normal_ecall=plan.get("stop_before", ""),
+                        persist_prefix=raw_dir / f"{mode}_seed{sd}_step{step_counter:03d}_{safe_tag}",
                     )
                     allow_nz = bool(plan.get("allow_nonzero_rc", False))
                     feffs = obs_s3_field_effects(res, allow_nonzero_rc=allow_nz)
@@ -641,6 +662,8 @@ def run_real_hardware_challenge_ablation(
                             sample_fid, sample_rva, sample_eff = sorted(req_set)[-1]
                             discovered_gt[cname] = {
                                 "challenge": cname,
+                                "mode": mode,
+                                "seed": sd,
                                 "field_id": sample_fid,
                                 "page_rva": hex(sample_rva),
                                 "required_effects": sorted(e for _, _, e in req_set),
@@ -650,7 +673,12 @@ def run_real_hardware_challenge_ablation(
                                 "spec": plan.get("spec", ""),
                                 "stop_after": plan.get("stop_after", ""),
                                 "stop_before": plan.get("stop_before", ""),
+                                "allow_nonzero_rc": allow_nz,
                                 "replayed_confirmed": "not_run",
+                                "enclave_sha256": res.get("enclave_sha256", ""),
+                                "interpose_sha256": res.get("interpose_sha256", ""),
+                                "schema_sha256": res.get("schema_sha256", ""),
+                                "trace_jsonl": res.get("trace_jsonl", ""),
                                 "trace_sha256": res.get("trace_sha256", ""),
                             }
                     curve.append({
@@ -685,10 +713,15 @@ def run_real_hardware_challenge_ablation(
                         intervention=winfo["spec"],
                         stop_after_selector=winfo["stop_after"],
                         stop_before_normal_ecall=winfo["stop_before"],
+                        persist_prefix=raw_dir / f"{mode}_seed{sd}_confirm_{cname}",
                     )
                     conf_ecalls += len(conf.get("records", []))
-                    conf_feffs = obs_s3_field_effects(conf)
+                    conf_feffs = obs_s3_field_effects(conf, allow_nonzero_rc=bool(winfo.get("allow_nonzero_rc", False)))
                     winfo["replayed_confirmed"] = bool(gt_required_effects[cname].issubset(conf_feffs))
+                    winfo["confirmation_ecalls"] = len(conf.get("records", []))
+                    winfo["confirmation_enclave_sha256"] = conf.get("enclave_sha256", "")
+                    winfo["confirmation_interpose_sha256"] = conf.get("interpose_sha256", "")
+                    winfo["confirmation_trace_jsonl"] = conf.get("trace_jsonl", "")
                     winfo["confirmation_trace_sha256"] = conf.get("trace_sha256", "")
                 conf_wall = round(time.monotonic() - t_conf0, 3)
 

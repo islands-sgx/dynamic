@@ -240,6 +240,7 @@ def run_sample(
                 shutil.copy2(trace_file, persist_prefix.with_suffix(".jsonl"))
 
         any_invalid = any(r.get("measurement_invalid", 0) != 0 for r in records)
+        schema_file = tdir / "edl_schema.json"
         result = {
             "sample": sample,
             "mode": mode,
@@ -248,6 +249,10 @@ def run_sample(
             "host_path": str(host_bin),
             "host_sha256": sha256_file(host_bin),
             "interpose_sha256": sha256_file(INTERPOSE_SO),
+            "schema_sha256": sha256_file(schema_file) if schema_file.is_file() else "",
+            "ready_table_path": str(ready_bin) if (ready_bin and is_pure_prod) else "",
+            "ready_table_sha256": sha256_file(ready_bin) if (ready_bin and is_pure_prod and ready_bin.is_file()) else "",
+            "trace_jsonl": str(persist_prefix.with_suffix(".jsonl")) if persist_prefix is not None else "",
             "trace_sha256": trace_sha256,
             "command": cmd,
             "ipi_mask": ipi_mask,
