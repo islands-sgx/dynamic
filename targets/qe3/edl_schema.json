@@ -1,0 +1,51 @@
+{
+  "schema": "atfield-edl-schema-v1",
+  "sample": "qe3",
+  "edl_path": "/home/meandssh/islands-sgx/sample/real/qe3/qe3_enclave.edl",
+  "untrusted_bridge_c": "/home/meandssh/islands-sgx/sample/build/real/qe3/anchor/real/qe3/qe3_enclave_edl_untrusted/qe3_enclave_u.c",
+  "ecalls": [
+    {
+      "ecall_index": 0,
+      "name": "ecall_get_attestation_key",
+      "return_type": "uint32_t",
+      "params": [
+        {
+          "name": "key_id",
+          "decl": "const uint8_t *key_id",
+          "attributes": [
+            "in",
+            "size=32"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "public_key",
+          "decl": "uint8_t *public_key",
+          "attributes": [
+            "out",
+            "size=64"
+          ],
+          "is_pointer": true
+        }
+      ],
+      "ms_layout": {
+        "struct": "ms_ecall_get_attestation_key_t",
+        "size": 24,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4
+          },
+          "ms_key_id": {
+            "offset": 8,
+            "size": 8
+          },
+          "ms_public_key": {
+            "offset": 16,
+            "size": 8
+          }
+        }
+      }
+    }
+  ]
+}

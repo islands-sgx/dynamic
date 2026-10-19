@@ -1,0 +1,85 @@
+{
+  "schema": "atfield-edl-schema-v1",
+  "sample": "signal-cds",
+  "edl_path": "/home/meandssh/islands-sgx/sample/real/signal-cds/sabd_enclave.edl",
+  "untrusted_bridge_c": "/home/meandssh/islands-sgx/sample/build/real/signal-cds/anchor/real/signal-cds/signal_cds_enclave_edl_untrusted/sabd_enclave_u.c",
+  "ecalls": [
+    {
+      "ecall_index": 0,
+      "name": "ecall_lookup_hash",
+      "return_type": "sgx_status_t",
+      "params": [
+        {
+          "name": "in_jids",
+          "decl": "const uint64_t *in_jids",
+          "attributes": [
+            "in",
+            "count=in_jid_count"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "in_jid_count",
+          "decl": "uint64_t in_jid_count",
+          "attributes": [],
+          "is_pointer": false
+        },
+        {
+          "name": "ab_jids",
+          "decl": "const uint64_t *ab_jids",
+          "attributes": [
+            "in",
+            "count=ab_jid_count"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "ab_jid_count",
+          "decl": "uint32_t ab_jid_count",
+          "attributes": [],
+          "is_pointer": false
+        },
+        {
+          "name": "in_ab_jids_result",
+          "decl": "uint8_t *in_ab_jids_result",
+          "attributes": [
+            "in",
+            "out",
+            "count=ab_jid_count"
+          ],
+          "is_pointer": true
+        }
+      ],
+      "ms_layout": {
+        "struct": "ms_ecall_lookup_hash_t",
+        "size": 48,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4
+          },
+          "ms_in_jids": {
+            "offset": 8,
+            "size": 8
+          },
+          "ms_in_jid_count": {
+            "offset": 16,
+            "size": 8
+          },
+          "ms_ab_jids": {
+            "offset": 24,
+            "size": 8
+          },
+          "ms_ab_jid_count": {
+            "offset": 32,
+            "size": 4
+          },
+          "ms_in_ab_jids_result": {
+            "offset": 40,
+            "size": 8
+          }
+        }
+      }
+    }
+  ]
+}

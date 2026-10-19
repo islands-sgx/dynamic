@@ -1,0 +1,1541 @@
+{
+  "closure_breakdown": {
+    "0x25c0fd3d7283b2b7": {
+      "all_business_reg_pages": 1774,
+      "closure_dlmalloc_heap_added": 2,
+      "closure_reach_code_added": 13,
+      "closure_reach_data_added": 2,
+      "closure_stack_td_added": 3,
+      "closure_stt_object_added": 6,
+      "dynamic_explored_obs_pages": 76,
+      "final_field_target_pages": 107,
+      "function": "ecdsa_sign_field",
+      "raw_single_run_pages": 70,
+      "reduction_vs_all_reg_pct": 93.97,
+      "s1_boundary_pages": 27
+    },
+    "0x6be0530730e7f5f1": {
+      "all_business_reg_pages": 1774,
+      "closure_dlmalloc_heap_added": 2,
+      "closure_reach_code_added": 6,
+      "closure_reach_data_added": 4,
+      "closure_stack_td_added": 4,
+      "closure_stt_object_added": 5,
+      "dynamic_explored_obs_pages": 72,
+      "final_field_target_pages": 98,
+      "function": "get_public_ecdsa_key_field",
+      "raw_single_run_pages": 68,
+      "reduction_vs_all_reg_pct": 94.48,
+      "s1_boundary_pages": 26
+    },
+    "0x9304e1c7e45cef0a": {
+      "all_business_reg_pages": 1774,
+      "closure_dlmalloc_heap_added": 2,
+      "closure_reach_code_added": 4,
+      "closure_reach_data_added": 3,
+      "closure_stack_td_added": 3,
+      "closure_stt_object_added": 6,
+      "dynamic_explored_obs_pages": 52,
+      "final_field_target_pages": 74,
+      "function": "set_sek_field",
+      "raw_single_run_pages": 45,
+      "reduction_vs_all_reg_pct": 95.83,
+      "s1_boundary_pages": 24
+    },
+    "0xa9d5e11946c68a33": {
+      "all_business_reg_pages": 1774,
+      "closure_dlmalloc_heap_added": 2,
+      "closure_reach_code_added": 7,
+      "closure_reach_data_added": 4,
+      "closure_stack_td_added": 4,
+      "closure_stt_object_added": 6,
+      "dynamic_explored_obs_pages": 76,
+      "final_field_target_pages": 105,
+      "function": "generate_ecdsa_key_field",
+      "raw_single_run_pages": 76,
+      "reduction_vs_all_reg_pct": 94.08,
+      "s1_boundary_pages": 27
+    },
+    "0xd9243791a2c13244": {
+      "all_business_reg_pages": 1774,
+      "closure_dlmalloc_heap_added": 2,
+      "closure_reach_code_added": 6,
+      "closure_reach_data_added": 5,
+      "closure_stack_td_added": 3,
+      "closure_stt_object_added": 6,
+      "dynamic_explored_obs_pages": 48,
+      "final_field_target_pages": 74,
+      "function": "generate_sek_field",
+      "raw_single_run_pages": 48,
+      "reduction_vs_all_reg_pct": 95.83,
+      "s1_boundary_pages": 24
+    }
+  },
+  "sample": "sgxwallet",
+  "schema": "atfield-witness-ledger-v1",
+  "stages": [
+    {
+      "description": "Full host workflow: GenerateSEK, GenerateEcdsaKey, GetPublicEcdsaKey, 1001x EcdsaSign (crossing sigCounter==1000 self_check_ecdsa!), bad key, bad hex, Enclave recreate + SetSEK + Sign",
+      "new_pages_discovered": 313,
+      "per_field_obs_counts": {
+        "0x25c0fd3d7283b2b7": 76,
+        "0x6be0530730e7f5f1": 68,
+        "0x9304e1c7e45cef0a": 45,
+        "0xa9d5e11946c68a33": 76,
+        "0xd9243791a2c13244": 48
+      },
+      "records_collected": 51,
+      "stage": "stage0_history_and_persistence"
+    },
+    {
+      "description": "Mutate EcdsaSign base=10 (decimal conversion branch) & base=99 (invalid base error), GetPublicEcdsaKey bad dec_len=8 & corrupted key",
+      "new_pages_discovered": 4,
+      "per_field_obs_counts": {
+        "0x25c0fd3d7283b2b7": 76,
+        "0x6be0530730e7f5f1": 72,
+        "0x9304e1c7e45cef0a": 45,
+        "0xa9d5e11946c68a33": 76,
+        "0xd9243791a2c13244": 48
+      },
+      "records_collected": 55,
+      "stage": "stage1_base_and_error_mutations"
+    },
+    {
+      "description": "Corrupt sealed SEK MAC tag in SetSEK (triggers sgx_unseal_data 0x3001 error branch inside set_sek_field)",
+      "new_pages_discovered": 7,
+      "per_field_obs_counts": {
+        "0x25c0fd3d7283b2b7": 76,
+        "0x6be0530730e7f5f1": 72,
+        "0x9304e1c7e45cef0a": 52,
+        "0xa9d5e11946c68a33": 76,
+        "0xd9243791a2c13244": 48
+      },
+      "records_collected": 50,
+      "stage": "stage2_setsek_corrupt_unseal"
+    }
+  ],
+  "witnesses": [
+    {
+      "call_seq": 1,
+      "ecall_index": 2,
+      "field_id": "0xd9243791a2c13244",
+      "intervention": "",
+      "new_pages": [
+        {
+          "ad": "A",
+          "rva": "0x5000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x6000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x14000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x16000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x21000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x22000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x24000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x81000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x89000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8a000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8b000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8d000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x94000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x95000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x96000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x194000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x195000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1ab000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1af000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1c5000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1c6000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1c9000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1cb000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1cd000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x26d000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x26e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x270000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x271000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x275000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x278000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x279000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x27c000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x27d000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x27e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x27f000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x280000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x287000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x289000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x28a000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x28c000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x2a2000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2ad000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x2c4000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x2c5000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x712000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x713000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x737000"
+        }
+      ],
+      "selector_seq": 0,
+      "stage": "stage0_history_and_persistence",
+      "tag": "host_normal",
+      "total_field_obs_pages": 48,
+      "tsc_s3": 238802,
+      "witness_id": "sgxwallet_stage0_history_and_persistence_seq1_c13244"
+    },
+    {
+      "call_seq": 2,
+      "ecall_index": 4,
+      "field_id": "0xa9d5e11946c68a33",
+      "intervention": "",
+      "new_pages": [
+        {
+          "ad": "A",
+          "rva": "0x3000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x4000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x6000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x9000"
+        },
+        {
+          "ad": "A",
+          "rva": "0xa000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x14000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x15000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x16000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x21000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x22000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x24000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x28000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x29000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2a000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2b000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2c000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2d000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2f000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x30000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x31000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x32000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x33000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x34000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x35000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x49000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x4e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x4f000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x81000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x82000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x83000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x84000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x85000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x89000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8a000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8b000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8c000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8d000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x94000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x95000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x96000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x194000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x195000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1ab000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1ac000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1af000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1c5000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1c6000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1c9000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1cb000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1cd000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x26d000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x26e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x270000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x271000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x275000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x278000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x279000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x27c000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x27e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x27f000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x280000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x284000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x287000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x289000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x28a000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x28c000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x28e000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x2a2000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2ad000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x2c4000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x2c5000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x712000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x713000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x737000"
+        }
+      ],
+      "selector_seq": 0,
+      "stage": "stage0_history_and_persistence",
+      "tag": "host_normal",
+      "total_field_obs_pages": 76,
+      "tsc_s3": 3889558,
+      "witness_id": "sgxwallet_stage0_history_and_persistence_seq2_c68a33"
+    },
+    {
+      "call_seq": 3,
+      "ecall_index": 5,
+      "field_id": "0x6be0530730e7f5f1",
+      "intervention": "",
+      "new_pages": [
+        {
+          "ad": "A",
+          "rva": "0x4000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x6000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x9000"
+        },
+        {
+          "ad": "A",
+          "rva": "0xa000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x14000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x15000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x16000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x21000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x22000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x24000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x28000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x29000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2a000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2b000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2c000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2d000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2f000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x30000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x31000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x32000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x33000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x34000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x35000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x49000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x4e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x4f000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x81000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x89000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8a000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8b000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8c000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8d000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x94000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x95000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x96000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x194000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x195000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1af000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1c5000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1c6000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1c9000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1cb000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1cd000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x26d000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x26e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x270000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x271000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x275000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x279000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x27c000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x27e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x27f000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x280000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x284000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x287000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x289000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x28a000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x28c000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x28e000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x2a2000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2ad000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x2c4000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x2c5000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x712000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x713000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x737000"
+        }
+      ],
+      "selector_seq": 0,
+      "stage": "stage0_history_and_persistence",
+      "tag": "host_normal",
+      "total_field_obs_pages": 68,
+      "tsc_s3": 7162740,
+      "witness_id": "sgxwallet_stage0_history_and_persistence_seq3_e7f5f1"
+    },
+    {
+      "call_seq": 4,
+      "ecall_index": 6,
+      "field_id": "0x25c0fd3d7283b2b7",
+      "intervention": "",
+      "new_pages": [
+        {
+          "ad": "A",
+          "rva": "0x1000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x4000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x6000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x9000"
+        },
+        {
+          "ad": "A",
+          "rva": "0xa000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x14000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x15000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x16000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x21000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x22000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x24000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x28000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x29000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2a000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2b000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2c000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2d000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2f000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x30000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x31000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x32000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x33000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x34000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x35000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x49000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x4e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x4f000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x81000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x89000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8a000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8b000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8c000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8d000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x94000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x95000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x96000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x194000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x195000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1af000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1c5000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1c6000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1c9000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1cb000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1cd000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x26d000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x26e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x270000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x271000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x275000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x279000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x27c000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x27e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x27f000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x280000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x284000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x287000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x289000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x28a000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x28c000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x28e000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x2a2000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2ad000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x2c4000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x2c5000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x711000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x712000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x713000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x737000"
+        }
+      ],
+      "selector_seq": 0,
+      "stage": "stage0_history_and_persistence",
+      "tag": "host_normal",
+      "total_field_obs_pages": 70,
+      "tsc_s3": 3666190,
+      "witness_id": "sgxwallet_stage0_history_and_persistence_seq4_83b2b7"
+    },
+    {
+      "call_seq": 1005,
+      "ecall_index": 6,
+      "field_id": "0x25c0fd3d7283b2b7",
+      "intervention": "",
+      "new_pages": [
+        {
+          "ad": "A",
+          "rva": "0x2000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x82000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x83000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x84000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x85000"
+        }
+      ],
+      "selector_seq": 1001,
+      "stage": "stage0_history_and_persistence",
+      "tag": "host_normal",
+      "total_field_obs_pages": 75,
+      "tsc_s3": 93548,
+      "witness_id": "sgxwallet_stage0_history_and_persistence_seq1005_83b2b7"
+    },
+    {
+      "call_seq": 1007,
+      "ecall_index": 6,
+      "field_id": "0x25c0fd3d7283b2b7",
+      "intervention": "",
+      "new_pages": [
+        {
+          "ad": "A",
+          "rva": "0x5000"
+        }
+      ],
+      "selector_seq": 1003,
+      "stage": "stage0_history_and_persistence",
+      "tag": "host_normal",
+      "total_field_obs_pages": 76,
+      "tsc_s3": 77928,
+      "witness_id": "sgxwallet_stage0_history_and_persistence_seq1007_83b2b7"
+    },
+    {
+      "call_seq": 1011,
+      "ecall_index": 3,
+      "field_id": "0x9304e1c7e45cef0a",
+      "intervention": "",
+      "new_pages": [
+        {
+          "ad": "A",
+          "rva": "0x6000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x14000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x16000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x21000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x22000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x24000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x81000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x89000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8a000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8b000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8d000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x8e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x94000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x95000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x96000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x194000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x195000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1af000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1c5000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1c6000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1c9000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1cb000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x1cd000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x26d000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x26e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x270000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x271000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x275000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x279000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x27c000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x27d000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x27e000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x27f000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x280000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x287000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x289000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x28a000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x28c000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x2a2000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x2ad000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x2c4000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x2c5000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x712000"
+        },
+        {
+          "ad": "D",
+          "rva": "0x713000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x737000"
+        }
+      ],
+      "selector_seq": 0,
+      "stage": "stage0_history_and_persistence",
+      "tag": "host_normal",
+      "total_field_obs_pages": 45,
+      "tsc_s3": 210322,
+      "witness_id": "sgxwallet_stage0_history_and_persistence_seq1011_5cef0a"
+    },
+    {
+      "call_seq": 3,
+      "ecall_index": 5,
+      "field_id": "0x6be0530730e7f5f1",
+      "intervention": "set_u32:6:0:72:10;set_u32:6:0:72:99;set_u32:5:0:24:8;xor_buf:5:0:16:0:255",
+      "new_pages": [
+        {
+          "ad": "A",
+          "rva": "0x82000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x83000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x84000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x85000"
+        }
+      ],
+      "selector_seq": 0,
+      "stage": "stage1_base_and_error_mutations",
+      "tag": "mutate_u32_off_24_val_8",
+      "total_field_obs_pages": 72,
+      "tsc_s3": 50514,
+      "witness_id": "sgxwallet_stage1_base_and_error_mutations_seq3_e7f5f1"
+    },
+    {
+      "call_seq": 1011,
+      "ecall_index": 3,
+      "field_id": "0x9304e1c7e45cef0a",
+      "intervention": "xor_buf:3:0:16:60:255",
+      "new_pages": [
+        {
+          "ad": "A",
+          "rva": "0x3000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x5000"
+        },
+        {
+          "ad": "A",
+          "rva": "0xa000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x82000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x83000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x84000"
+        },
+        {
+          "ad": "A",
+          "rva": "0x85000"
+        }
+      ],
+      "selector_seq": 0,
+      "stage": "stage2_setsek_corrupt_unseal",
+      "tag": "mutate_xor_off_16_byte_60",
+      "total_field_obs_pages": 52,
+      "tsc_s3": 193518,
+      "witness_id": "sgxwallet_stage2_setsek_corrupt_unseal_seq1011_5cef0a"
+    }
+  ]
+}

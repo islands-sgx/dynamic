@@ -1,0 +1,480 @@
+{
+  "schema": "atfield-edl-schema-v1",
+  "sample": "sgxwallet",
+  "edl_path": "/home/meandssh/islands-sgx/sample/real/sgxwallet/secure_enclave.edl",
+  "untrusted_bridge_c": "/home/meandssh/islands-sgx/sample/build/real/sgxwallet/anchor/real/sgxwallet/sgxwallet_enclave_edl_untrusted/secure_enclave_u.c",
+  "ecalls": [
+    {
+      "ecall_index": 0,
+      "name": "trustedEnclaveInit",
+      "return_type": "void",
+      "params": [
+        {
+          "name": "_logLevel",
+          "decl": "uint64_t _logLevel",
+          "attributes": [],
+          "is_pointer": false
+        }
+      ],
+      "ms_layout": {
+        "struct": "ms_trustedEnclaveInit_t",
+        "size": 8,
+        "fields": {
+          "ms__logLevel": {
+            "offset": 0,
+            "size": 8
+          }
+        }
+      }
+    },
+    {
+      "ecall_index": 1,
+      "name": "trustedEnclaveClear",
+      "return_type": "void",
+      "params": [],
+      "ms_layout": null
+    },
+    {
+      "ecall_index": 2,
+      "name": "trustedGenerateSEK",
+      "return_type": "void",
+      "params": [
+        {
+          "name": "errStatus",
+          "decl": "int *errStatus",
+          "attributes": [
+            "out"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "err_string",
+          "decl": "char *err_string",
+          "attributes": [
+            "out",
+            "count = SMALL_BUF_SIZE"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "encrypted_SEK",
+          "decl": "uint8_t *encrypted_SEK",
+          "attributes": [
+            "out",
+            "count = SMALL_BUF_SIZE"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "enc_len",
+          "decl": "uint64_t *enc_len",
+          "attributes": [
+            "out"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "hex_SEK",
+          "decl": "char* hex_SEK",
+          "attributes": [
+            "out",
+            "count = 65"
+          ],
+          "is_pointer": true
+        }
+      ],
+      "ms_layout": {
+        "struct": "ms_trustedGenerateSEK_t",
+        "size": 40,
+        "fields": {
+          "ms_errStatus": {
+            "offset": 0,
+            "size": 8
+          },
+          "ms_err_string": {
+            "offset": 8,
+            "size": 8
+          },
+          "ms_encrypted_SEK": {
+            "offset": 16,
+            "size": 8
+          },
+          "ms_enc_len": {
+            "offset": 24,
+            "size": 8
+          },
+          "ms_hex_SEK": {
+            "offset": 32,
+            "size": 8
+          }
+        }
+      }
+    },
+    {
+      "ecall_index": 3,
+      "name": "trustedSetSEK",
+      "return_type": "void",
+      "params": [
+        {
+          "name": "errStatus",
+          "decl": "int *errStatus",
+          "attributes": [
+            "out"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "err_string",
+          "decl": "char *err_string",
+          "attributes": [
+            "out",
+            "count = SMALL_BUF_SIZE"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "encrypted_SEK",
+          "decl": "uint8_t *encrypted_SEK",
+          "attributes": [
+            "in",
+            "count = SMALL_BUF_SIZE"
+          ],
+          "is_pointer": true
+        }
+      ],
+      "ms_layout": {
+        "struct": "ms_trustedSetSEK_t",
+        "size": 24,
+        "fields": {
+          "ms_errStatus": {
+            "offset": 0,
+            "size": 8
+          },
+          "ms_err_string": {
+            "offset": 8,
+            "size": 8
+          },
+          "ms_encrypted_SEK": {
+            "offset": 16,
+            "size": 8
+          }
+        }
+      }
+    },
+    {
+      "ecall_index": 4,
+      "name": "trustedGenerateEcdsaKey",
+      "return_type": "void",
+      "params": [
+        {
+          "name": "errStatus",
+          "decl": "int *errStatus",
+          "attributes": [
+            "out"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "err_string",
+          "decl": "char* err_string",
+          "attributes": [
+            "out",
+            "count = SMALL_BUF_SIZE"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "is_exportable",
+          "decl": "int *is_exportable",
+          "attributes": [
+            "in",
+            "count = 1"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "encrypted_key",
+          "decl": "uint8_t* encrypted_key",
+          "attributes": [
+            "out",
+            "count = SMALL_BUF_SIZE"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "enc_len",
+          "decl": "uint64_t *enc_len",
+          "attributes": [
+            "out"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "pub_key_x",
+          "decl": "char *pub_key_x",
+          "attributes": [
+            "out",
+            "count = SMALL_BUF_SIZE"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "pub_key_y",
+          "decl": "char *pub_key_y",
+          "attributes": [
+            "out",
+            "count = SMALL_BUF_SIZE"
+          ],
+          "is_pointer": true
+        }
+      ],
+      "ms_layout": {
+        "struct": "ms_trustedGenerateEcdsaKey_t",
+        "size": 56,
+        "fields": {
+          "ms_errStatus": {
+            "offset": 0,
+            "size": 8
+          },
+          "ms_err_string": {
+            "offset": 8,
+            "size": 8
+          },
+          "ms_is_exportable": {
+            "offset": 16,
+            "size": 8
+          },
+          "ms_encrypted_key": {
+            "offset": 24,
+            "size": 8
+          },
+          "ms_enc_len": {
+            "offset": 32,
+            "size": 8
+          },
+          "ms_pub_key_x": {
+            "offset": 40,
+            "size": 8
+          },
+          "ms_pub_key_y": {
+            "offset": 48,
+            "size": 8
+          }
+        }
+      }
+    },
+    {
+      "ecall_index": 5,
+      "name": "trustedGetPublicEcdsaKey",
+      "return_type": "void",
+      "params": [
+        {
+          "name": "errStatus",
+          "decl": "int *errStatus",
+          "attributes": [
+            "out"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "err_string",
+          "decl": "char* err_string",
+          "attributes": [
+            "out",
+            "count = SMALL_BUF_SIZE"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "encrypted_key",
+          "decl": "uint8_t* encrypted_key",
+          "attributes": [
+            "in",
+            "count = SMALL_BUF_SIZE"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "dec_len",
+          "decl": "uint64_t dec_len",
+          "attributes": [],
+          "is_pointer": false
+        },
+        {
+          "name": "pub_key_x",
+          "decl": "char *pub_key_x",
+          "attributes": [
+            "out",
+            "count = SMALL_BUF_SIZE"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "pub_key_y",
+          "decl": "char *pub_key_y",
+          "attributes": [
+            "out",
+            "count = SMALL_BUF_SIZE"
+          ],
+          "is_pointer": true
+        }
+      ],
+      "ms_layout": {
+        "struct": "ms_trustedGetPublicEcdsaKey_t",
+        "size": 48,
+        "fields": {
+          "ms_errStatus": {
+            "offset": 0,
+            "size": 8
+          },
+          "ms_err_string": {
+            "offset": 8,
+            "size": 8
+          },
+          "ms_encrypted_key": {
+            "offset": 16,
+            "size": 8
+          },
+          "ms_dec_len": {
+            "offset": 24,
+            "size": 8
+          },
+          "ms_pub_key_x": {
+            "offset": 32,
+            "size": 8
+          },
+          "ms_pub_key_y": {
+            "offset": 40,
+            "size": 8
+          }
+        }
+      }
+    },
+    {
+      "ecall_index": 6,
+      "name": "trustedEcdsaSign",
+      "return_type": "void",
+      "params": [
+        {
+          "name": "errStatus",
+          "decl": "int *errStatus",
+          "attributes": [
+            "out"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "err_string",
+          "decl": "char* err_string",
+          "attributes": [
+            "out",
+            "count = SMALL_BUF_SIZE"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "encrypted_key",
+          "decl": "uint8_t* encrypted_key",
+          "attributes": [
+            "in",
+            "count = SMALL_BUF_SIZE"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "enc_len",
+          "decl": "uint64_t enc_len",
+          "attributes": [],
+          "is_pointer": false
+        },
+        {
+          "name": "hash",
+          "decl": "const char* hash",
+          "attributes": [
+            "in",
+            "string"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "sig_r",
+          "decl": "char* sig_r",
+          "attributes": [
+            "out",
+            "count = SMALL_BUF_SIZE"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "sig_s",
+          "decl": "char* sig_s",
+          "attributes": [
+            "out",
+            "count = SMALL_BUF_SIZE"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "sig_v",
+          "decl": "uint8_t* sig_v",
+          "attributes": [
+            "out"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "base",
+          "decl": "int base",
+          "attributes": [],
+          "is_pointer": false
+        }
+      ],
+      "ms_layout": {
+        "struct": "ms_trustedEcdsaSign_t",
+        "size": 80,
+        "fields": {
+          "ms_errStatus": {
+            "offset": 0,
+            "size": 8
+          },
+          "ms_err_string": {
+            "offset": 8,
+            "size": 8
+          },
+          "ms_encrypted_key": {
+            "offset": 16,
+            "size": 8
+          },
+          "ms_enc_len": {
+            "offset": 24,
+            "size": 8
+          },
+          "ms_hash": {
+            "offset": 32,
+            "size": 8
+          },
+          "ms_hash_len": {
+            "offset": 40,
+            "size": 8
+          },
+          "ms_sig_r": {
+            "offset": 48,
+            "size": 8
+          },
+          "ms_sig_s": {
+            "offset": 56,
+            "size": 8
+          },
+          "ms_sig_v": {
+            "offset": 64,
+            "size": 8
+          },
+          "ms_base": {
+            "offset": 72,
+            "size": 4
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "assembly": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/pretouch-profile.S",
+  "blocks": [
+    {
+      "begin_offset": 0,
+      "continuation_symbol": "__atfield_after_marker_15701770856029595478",
+      "end_offset": 5,
+      "field_id": "0xd9e7e566ea39a756",
+      "size": 5,
+      "symbol": "__atfield_pretouch_15701770856029595478"
+    }
+  ],
+  "capacity_q": 16384,
+  "code_bytes": 5,
+  "fields_sha256": "dce02c5614cb5658ec6545e1dc3d5607d0e4181abd2e6b51e97d1eb054816a57",
+  "mode": "profile",
+  "pretouch_start": null,
+  "schema": "atfield-pretouch-output-v1",
+  "workset_sha256": null
+}

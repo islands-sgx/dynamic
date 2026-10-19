@@ -1,0 +1,22 @@
+{
+  "schema": "atfield-fields-v1",
+  "fields": [
+    {
+      "id": "0x2a10deb0a1ec70f8",
+      "name": "get_att_key_based_from_seal_key(_sgx_ec256_private_t*, _sgx_ec256_public_t*, _sgx_key_id_t const*)",
+      "function": "_ZL31get_att_key_based_from_seal_keyP20_sgx_ec256_private_tP19_sgx_ec256_public_tPK13_sgx_key_id_t",
+      "linkage_name": "_ZL31get_att_key_based_from_seal_keyP20_sgx_ec256_private_tP19_sgx_ec256_public_tPK13_sgx_key_id_t",
+      "demangled_name": "get_att_key_based_from_seal_key(_sgx_ec256_private_t*, _sgx_ec256_public_t*, _sgx_key_id_t const*)",
+      "order": ["0x2e5607ebad3132a6", "1"],
+      "marker_symbol": "__atfield_marker_3031167399432581368",
+      "continuation_symbol": "__atfield_after_marker_3031167399432581368",
+      "body_symbol": "__atfield_body_3031167399432581368",
+      "pretouch_symbol": "__atfield_pretouch_3031167399432581368",
+      "field_enter_symbol": "__atfield_field_enter_3031167399432581368",
+      "normal_close_symbol": "__atfield_normal_close_3031167399432581368",
+      "field_exit_symbol": "__atfield_field_exit_3031167399432581368",
+      "stack_bytes": null
+    }
+  ],
+  "selectors": []
+}

@@ -1,0 +1,572 @@
+{
+  "schema": "atfield-dynamic-evaluation-v1",
+  "samples": {
+    "qe3": {
+      "sample": "qe3",
+      "all_reg_total_pretouch_bytes": 7376,
+      "dynamic_total_pretouch_bytes": 859,
+      "all_reg_ready_table_bytes": 6872,
+      "dynamic_ready_table_bytes": 1544,
+      "strict_pte_zero_holdout": {
+        "returncode": 0,
+        "stdout": "QE3 functional checks: PASS",
+        "total_ecalls": 5,
+        "strict_enforced_ecalls": 5,
+        "non_ready_page_faults": 0,
+        "negative_control_incomplete_set_faults_caught": 0,
+        "aex_notify_failstop_on_missing_page_verified": 1
+      },
+      "fields": {
+        "0x2a10deb0a1ec70f8": {
+          "function": "_ZL31get_att_key_based_from_seal_keyP20_sgx_ec256_private_tP19_sgx_ec256_public_tPK13_sgx_key_id_t",
+          "pages": {
+            "raw_single_run": 69,
+            "dynamic_explored_obs": 69,
+            "dynamic_plus_closure": 126,
+            "all_business_reg": 850,
+            "reduction_vs_all_reg_pct": 85.18
+          },
+          "pretouch_bytes": {
+            "dynamic_plus_closure": 859,
+            "all_business_reg": 7376
+          },
+          "hardware_4gate_all_reg": {
+            "invocations": 3,
+            "s2_pages_observed": 850,
+            "tsc_s2_median": 1514716,
+            "tsc_s2_min": 806208,
+            "tsc_s3_median": 566562,
+            "s3_count_min": 3,
+            "s3_count_median": 4.0,
+            "s3_count_max": 4,
+            "zero_s3_runs": 0,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 5
+          },
+          "hardware_4gate_dynamic": {
+            "invocations": 3,
+            "s2_pages_observed": 126,
+            "tsc_s2_median": 127364,
+            "tsc_s2_min": 124366,
+            "tsc_s3_median": 549902,
+            "s3_count_min": 3,
+            "s3_count_median": 3.0,
+            "s3_count_max": 3,
+            "zero_s3_runs": 0,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 3
+          },
+          "s2_speedup_ratio": 11.89
+        }
+      }
+    },
+    "signal-cds": {
+      "sample": "signal-cds",
+      "all_reg_total_pretouch_bytes": 9060,
+      "dynamic_total_pretouch_bytes": 1928,
+      "all_reg_ready_table_bytes": 9096,
+      "dynamic_ready_table_bytes": 2472,
+      "strict_pte_zero_holdout": {
+        "returncode": 0,
+        "stdout": "Signal CDS lookup functional checks: PASS",
+        "total_ecalls": 12,
+        "strict_enforced_ecalls": 12,
+        "non_ready_page_faults": 0,
+        "negative_control_incomplete_set_faults_caught": 0,
+        "aex_notify_failstop_on_missing_page_verified": 1
+      },
+      "fields": {
+        "0xd9e7e566ea39a756": {
+          "function": "sabd_lookup_hash",
+          "pages": {
+            "raw_single_run": 16,
+            "dynamic_explored_obs": 230,
+            "dynamic_plus_closure": 242,
+            "all_business_reg": 1127,
+            "reduction_vs_all_reg_pct": 78.53
+          },
+          "pretouch_bytes": {
+            "dynamic_plus_closure": 1928,
+            "all_business_reg": 9060
+          },
+          "hardware_4gate_all_reg": {
+            "invocations": 5,
+            "s2_pages_observed": 1127,
+            "tsc_s2_median": 969984,
+            "tsc_s2_min": 952928,
+            "tsc_s3_median": 12210,
+            "s3_count_min": 0,
+            "s3_count_median": 1.0,
+            "s3_count_max": 13,
+            "zero_s3_runs": 2,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 15
+          },
+          "hardware_4gate_dynamic": {
+            "invocations": 5,
+            "s2_pages_observed": 242,
+            "tsc_s2_median": 214322,
+            "tsc_s2_min": 201654,
+            "tsc_s3_median": 5604,
+            "s3_count_min": 0,
+            "s3_count_median": 0.0,
+            "s3_count_max": 0,
+            "zero_s3_runs": 5,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 0
+          },
+          "s2_speedup_ratio": 4.53
+        }
+      }
+    },
+    "sgxwallet": {
+      "sample": "sgxwallet",
+      "all_reg_total_pretouch_bytes": 80115,
+      "dynamic_total_pretouch_bytes": 3318,
+      "all_reg_ready_table_bytes": 71352,
+      "dynamic_ready_table_bytes": 6240,
+      "strict_pte_zero_holdout": {
+        "returncode": 0,
+        "stdout": "sgxwallet ECDSA functional checks: PASS",
+        "total_ecalls": 53,
+        "strict_enforced_ecalls": 49,
+        "non_ready_page_faults": 0,
+        "negative_control_incomplete_set_faults_caught": 0,
+        "aex_notify_failstop_on_missing_page_verified": 1
+      },
+      "fields": {
+        "0x25c0fd3d7283b2b7": {
+          "function": "ecdsa_sign_field",
+          "pages": {
+            "raw_single_run": 70,
+            "dynamic_explored_obs": 76,
+            "dynamic_plus_closure": 107,
+            "all_business_reg": 1774,
+            "reduction_vs_all_reg_pct": 93.97
+          },
+          "pretouch_bytes": {
+            "dynamic_plus_closure": 759,
+            "all_business_reg": 16023
+          },
+          "hardware_4gate_all_reg": {
+            "invocations": 43,
+            "s2_pages_observed": 1774,
+            "tsc_s2_median": 1604958,
+            "tsc_s2_min": 1390400,
+            "tsc_s3_median": 3645316,
+            "s3_count_min": 8,
+            "s3_count_median": 15.0,
+            "s3_count_max": 24,
+            "zero_s3_runs": 0,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 60
+          },
+          "hardware_4gate_dynamic": {
+            "invocations": 43,
+            "s2_pages_observed": 107,
+            "tsc_s2_median": 109980,
+            "tsc_s2_min": 94784,
+            "tsc_s3_median": 3639014,
+            "s3_count_min": 0,
+            "s3_count_median": 0.0,
+            "s3_count_max": 0,
+            "zero_s3_runs": 43,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 0
+          },
+          "s2_speedup_ratio": 14.59
+        },
+        "0x6be0530730e7f5f1": {
+          "function": "get_public_ecdsa_key_field",
+          "pages": {
+            "raw_single_run": 68,
+            "dynamic_explored_obs": 72,
+            "dynamic_plus_closure": 98,
+            "all_business_reg": 1774,
+            "reduction_vs_all_reg_pct": 94.48
+          },
+          "pretouch_bytes": {
+            "dynamic_plus_closure": 702,
+            "all_business_reg": 16023
+          },
+          "hardware_4gate_all_reg": {
+            "invocations": 1,
+            "s2_pages_observed": 1774,
+            "tsc_s2_median": 1668622,
+            "tsc_s2_min": 1668622,
+            "tsc_s3_median": 7765400,
+            "s3_count_min": 12,
+            "s3_count_median": 12.0,
+            "s3_count_max": 12,
+            "zero_s3_runs": 0,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 12
+          },
+          "hardware_4gate_dynamic": {
+            "invocations": 1,
+            "s2_pages_observed": 98,
+            "tsc_s2_median": 97702,
+            "tsc_s2_min": 97702,
+            "tsc_s3_median": 7163692,
+            "s3_count_min": 0,
+            "s3_count_median": 0.0,
+            "s3_count_max": 0,
+            "zero_s3_runs": 1,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 0
+          },
+          "s2_speedup_ratio": 17.08
+        },
+        "0x9304e1c7e45cef0a": {
+          "function": "set_sek_field",
+          "pages": {
+            "raw_single_run": 45,
+            "dynamic_explored_obs": 52,
+            "dynamic_plus_closure": 74,
+            "all_business_reg": 1774,
+            "reduction_vs_all_reg_pct": 95.83
+          },
+          "pretouch_bytes": {
+            "dynamic_plus_closure": 557,
+            "all_business_reg": 16023
+          },
+          "hardware_4gate_all_reg": {
+            "invocations": 1,
+            "s2_pages_observed": 1774,
+            "tsc_s2_median": 5550360,
+            "tsc_s2_min": 5550360,
+            "tsc_s3_median": 133338,
+            "s3_count_min": 12,
+            "s3_count_median": 12.0,
+            "s3_count_max": 12,
+            "zero_s3_runs": 0,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 12
+          },
+          "hardware_4gate_dynamic": {
+            "invocations": 1,
+            "s2_pages_observed": 74,
+            "tsc_s2_median": 224252,
+            "tsc_s2_min": 224252,
+            "tsc_s3_median": 111302,
+            "s3_count_min": 1,
+            "s3_count_median": 1.0,
+            "s3_count_max": 1,
+            "zero_s3_runs": 0,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 1
+          },
+          "s2_speedup_ratio": 24.75
+        },
+        "0xa9d5e11946c68a33": {
+          "function": "generate_ecdsa_key_field",
+          "pages": {
+            "raw_single_run": 76,
+            "dynamic_explored_obs": 76,
+            "dynamic_plus_closure": 105,
+            "all_business_reg": 1774,
+            "reduction_vs_all_reg_pct": 94.08
+          },
+          "pretouch_bytes": {
+            "dynamic_plus_closure": 743,
+            "all_business_reg": 16023
+          },
+          "hardware_4gate_all_reg": {
+            "invocations": 1,
+            "s2_pages_observed": 1774,
+            "tsc_s2_median": 3614472,
+            "tsc_s2_min": 3614472,
+            "tsc_s3_median": 4108106,
+            "s3_count_min": 13,
+            "s3_count_median": 13.0,
+            "s3_count_max": 13,
+            "zero_s3_runs": 0,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 13
+          },
+          "hardware_4gate_dynamic": {
+            "invocations": 1,
+            "s2_pages_observed": 105,
+            "tsc_s2_median": 168712,
+            "tsc_s2_min": 168712,
+            "tsc_s3_median": 3803678,
+            "s3_count_min": 0,
+            "s3_count_median": 0.0,
+            "s3_count_max": 0,
+            "zero_s3_runs": 1,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 0
+          },
+          "s2_speedup_ratio": 21.42
+        },
+        "0xd9243791a2c13244": {
+          "function": "generate_sek_field",
+          "pages": {
+            "raw_single_run": 48,
+            "dynamic_explored_obs": 48,
+            "dynamic_plus_closure": 74,
+            "all_business_reg": 1774,
+            "reduction_vs_all_reg_pct": 95.83
+          },
+          "pretouch_bytes": {
+            "dynamic_plus_closure": 557,
+            "all_business_reg": 16023
+          },
+          "hardware_4gate_all_reg": {
+            "invocations": 1,
+            "s2_pages_observed": 1774,
+            "tsc_s2_median": 5811758,
+            "tsc_s2_min": 5811758,
+            "tsc_s3_median": 160222,
+            "s3_count_min": 10,
+            "s3_count_median": 10.0,
+            "s3_count_max": 10,
+            "zero_s3_runs": 0,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 10
+          },
+          "hardware_4gate_dynamic": {
+            "invocations": 1,
+            "s2_pages_observed": 74,
+            "tsc_s2_median": 202488,
+            "tsc_s2_min": 202488,
+            "tsc_s3_median": 121170,
+            "s3_count_min": 1,
+            "s3_count_median": 1.0,
+            "s3_count_max": 1,
+            "zero_s3_runs": 0,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 1
+          },
+          "s2_speedup_ratio": 28.7
+        }
+      }
+    },
+    "ehsm": {
+      "sample": "ehsm",
+      "all_reg_total_pretouch_bytes": 84112,
+      "dynamic_total_pretouch_bytes": 7318,
+      "all_reg_ready_table_bytes": 75512,
+      "dynamic_ready_table_bytes": 10000,
+      "strict_pte_zero_holdout": {
+        "returncode": 0,
+        "stdout": "eHSM AES-GCM/DataKey functional checks: PASS",
+        "total_ecalls": 52,
+        "strict_enforced_ecalls": 50,
+        "non_ready_page_faults": 0,
+        "negative_control_incomplete_set_faults_caught": 0,
+        "aex_notify_failstop_on_missing_page_verified": 1
+      },
+      "fields": {
+        "0x14991fc4b1b365ed": {
+          "function": "_Z19ehsm_create_aes_keyP14ehsm_keyblob_t",
+          "pages": {
+            "raw_single_run": 263,
+            "dynamic_explored_obs": 263,
+            "dynamic_plus_closure": 298,
+            "all_business_reg": 2349,
+            "reduction_vs_all_reg_pct": 87.31
+          },
+          "pretouch_bytes": {
+            "dynamic_plus_closure": 2166,
+            "all_business_reg": 21028
+          },
+          "hardware_4gate_all_reg": {
+            "invocations": 1,
+            "s2_pages_observed": 2349,
+            "tsc_s2_median": 7113034,
+            "tsc_s2_min": 7113034,
+            "tsc_s3_median": 3034508,
+            "s3_count_min": 133,
+            "s3_count_median": 133.0,
+            "s3_count_max": 133,
+            "zero_s3_runs": 0,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 133
+          },
+          "hardware_4gate_dynamic": {
+            "invocations": 1,
+            "s2_pages_observed": 298,
+            "tsc_s2_median": 883224,
+            "tsc_s2_min": 883224,
+            "tsc_s3_median": 2960460,
+            "s3_count_min": 0,
+            "s3_count_median": 0.0,
+            "s3_count_max": 0,
+            "zero_s3_runs": 1,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 0
+          },
+          "s2_speedup_ratio": 8.05
+        },
+        "0xb9dc6e57d1081525": {
+          "function": "_ZL21ehsm_generate_datakeyP14ehsm_keyblob_tP11ehsm_data_tS2_S2_",
+          "pages": {
+            "raw_single_run": 90,
+            "dynamic_explored_obs": 90,
+            "dynamic_plus_closure": 193,
+            "all_business_reg": 2349,
+            "reduction_vs_all_reg_pct": 91.78
+          },
+          "pretouch_bytes": {
+            "dynamic_plus_closure": 1458,
+            "all_business_reg": 21028
+          },
+          "hardware_4gate_all_reg": {
+            "invocations": 1,
+            "s2_pages_observed": 2349,
+            "tsc_s2_median": 2053084,
+            "tsc_s2_min": 2053084,
+            "tsc_s3_median": 55388,
+            "s3_count_min": 32,
+            "s3_count_median": 32.0,
+            "s3_count_max": 32,
+            "zero_s3_runs": 0,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 32
+          },
+          "hardware_4gate_dynamic": {
+            "invocations": 1,
+            "s2_pages_observed": 193,
+            "tsc_s2_median": 288132,
+            "tsc_s2_min": 288132,
+            "tsc_s3_median": 15288,
+            "s3_count_min": 0,
+            "s3_count_median": 0.0,
+            "s3_count_max": 0,
+            "zero_s3_runs": 1,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 0
+          },
+          "s2_speedup_ratio": 7.13
+        },
+        "0xbfcb9914f2185af3": {
+          "function": "_Z20ehsm_aes_gcm_encryptP11ehsm_data_tP14ehsm_keyblob_tS0_S0_",
+          "pages": {
+            "raw_single_run": 90,
+            "dynamic_explored_obs": 93,
+            "dynamic_plus_closure": 196,
+            "all_business_reg": 2349,
+            "reduction_vs_all_reg_pct": 91.66
+          },
+          "pretouch_bytes": {
+            "dynamic_plus_closure": 1482,
+            "all_business_reg": 21028
+          },
+          "hardware_4gate_all_reg": {
+            "invocations": 4,
+            "s2_pages_observed": 2349,
+            "tsc_s2_median": 2074753,
+            "tsc_s2_min": 2012208,
+            "tsc_s3_median": 66753,
+            "s3_count_min": 34,
+            "s3_count_median": 35.5,
+            "s3_count_max": 38,
+            "zero_s3_runs": 0,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 73
+          },
+          "hardware_4gate_dynamic": {
+            "invocations": 4,
+            "s2_pages_observed": 196,
+            "tsc_s2_median": 278765,
+            "tsc_s2_min": 278056,
+            "tsc_s3_median": 16149,
+            "s3_count_min": 0,
+            "s3_count_median": 0.0,
+            "s3_count_max": 0,
+            "zero_s3_runs": 4,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 0
+          },
+          "s2_speedup_ratio": 7.44
+        },
+        "0xfdc1272707f6ef35": {
+          "function": "_Z20ehsm_aes_gcm_decryptP11ehsm_data_tP14ehsm_keyblob_tS0_S0_",
+          "pages": {
+            "raw_single_run": 90,
+            "dynamic_explored_obs": 266,
+            "dynamic_plus_closure": 303,
+            "all_business_reg": 2349,
+            "reduction_vs_all_reg_pct": 87.1
+          },
+          "pretouch_bytes": {
+            "dynamic_plus_closure": 2212,
+            "all_business_reg": 21028
+          },
+          "hardware_4gate_all_reg": {
+            "invocations": 8,
+            "s2_pages_observed": 2349,
+            "tsc_s2_median": 2003150,
+            "tsc_s2_min": 1873024,
+            "tsc_s3_median": 56190,
+            "s3_count_min": 27,
+            "s3_count_median": 30.5,
+            "s3_count_max": 136,
+            "zero_s3_runs": 0,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 167
+          },
+          "hardware_4gate_dynamic": {
+            "invocations": 8,
+            "s2_pages_observed": 303,
+            "tsc_s2_median": 372839,
+            "tsc_s2_min": 361440,
+            "tsc_s3_median": 11511,
+            "s3_count_min": 0,
+            "s3_count_median": 0.0,
+            "s3_count_max": 0,
+            "zero_s3_runs": 8,
+            "not_in_s2_missing_count": 0,
+            "not_in_s2_missing_rvas": [],
+            "d_upgrade_count": 0,
+            "in_s2_tlb_rewalk_union_count": 0
+          },
+          "s2_speedup_ratio": 5.37
+        }
+      }
+    }
+  }
+}

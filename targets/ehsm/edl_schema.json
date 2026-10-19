@@ -1,0 +1,396 @@
+{
+  "schema": "atfield-edl-schema-v1",
+  "sample": "ehsm",
+  "edl_path": "/home/meandssh/islands-sgx/sample/real/ehsm/enclave_hsm.edl",
+  "untrusted_bridge_c": "/home/meandssh/islands-sgx/sample/build/real/ehsm/anchor/real/ehsm/ehsm_enclave_edl_untrusted/enclave_hsm_u.c",
+  "ecalls": [
+    {
+      "ecall_index": 0,
+      "name": "enclave_get_domain_key_from_local",
+      "return_type": "sgx_status_t",
+      "params": [],
+      "ms_layout": {
+        "struct": "ms_enclave_get_domain_key_from_local_t",
+        "size": 4,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4
+          }
+        }
+      }
+    },
+    {
+      "ecall_index": 1,
+      "name": "enclave_create_key",
+      "return_type": "sgx_status_t",
+      "params": [
+        {
+          "name": "cmk",
+          "decl": "ehsm_keyblob_t *cmk",
+          "attributes": [
+            "in",
+            "out",
+            "size=cmk_size"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "cmk_size",
+          "decl": "size_t cmk_size",
+          "attributes": [],
+          "is_pointer": false
+        }
+      ],
+      "ms_layout": {
+        "struct": "ms_enclave_create_key_t",
+        "size": 24,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4
+          },
+          "ms_cmk": {
+            "offset": 8,
+            "size": 8
+          },
+          "ms_cmk_size": {
+            "offset": 16,
+            "size": 8
+          }
+        }
+      }
+    },
+    {
+      "ecall_index": 2,
+      "name": "enclave_encrypt",
+      "return_type": "sgx_status_t",
+      "params": [
+        {
+          "name": "cmk",
+          "decl": "ehsm_keyblob_t *cmk",
+          "attributes": [
+            "in",
+            "size=cmk_size"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "cmk_size",
+          "decl": "size_t cmk_size",
+          "attributes": [],
+          "is_pointer": false
+        },
+        {
+          "name": "aad",
+          "decl": "ehsm_data_t *aad",
+          "attributes": [
+            "in",
+            "size=aad_size"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "aad_size",
+          "decl": "size_t aad_size",
+          "attributes": [],
+          "is_pointer": false
+        },
+        {
+          "name": "plaintext",
+          "decl": "ehsm_data_t *plaintext",
+          "attributes": [
+            "in",
+            "size=plaintext_size"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "plaintext_size",
+          "decl": "size_t plaintext_size",
+          "attributes": [],
+          "is_pointer": false
+        },
+        {
+          "name": "ciphertext",
+          "decl": "ehsm_data_t *ciphertext",
+          "attributes": [
+            "in",
+            "out",
+            "size=ciphertext_size"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "ciphertext_size",
+          "decl": "size_t ciphertext_size",
+          "attributes": [],
+          "is_pointer": false
+        }
+      ],
+      "ms_layout": {
+        "struct": "ms_enclave_encrypt_t",
+        "size": 72,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4
+          },
+          "ms_cmk": {
+            "offset": 8,
+            "size": 8
+          },
+          "ms_cmk_size": {
+            "offset": 16,
+            "size": 8
+          },
+          "ms_aad": {
+            "offset": 24,
+            "size": 8
+          },
+          "ms_aad_size": {
+            "offset": 32,
+            "size": 8
+          },
+          "ms_plaintext": {
+            "offset": 40,
+            "size": 8
+          },
+          "ms_plaintext_size": {
+            "offset": 48,
+            "size": 8
+          },
+          "ms_ciphertext": {
+            "offset": 56,
+            "size": 8
+          },
+          "ms_ciphertext_size": {
+            "offset": 64,
+            "size": 8
+          }
+        }
+      }
+    },
+    {
+      "ecall_index": 3,
+      "name": "enclave_decrypt",
+      "return_type": "sgx_status_t",
+      "params": [
+        {
+          "name": "cmk",
+          "decl": "ehsm_keyblob_t *cmk",
+          "attributes": [
+            "in",
+            "size=cmk_size"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "cmk_size",
+          "decl": "size_t cmk_size",
+          "attributes": [],
+          "is_pointer": false
+        },
+        {
+          "name": "aad",
+          "decl": "ehsm_data_t *aad",
+          "attributes": [
+            "in",
+            "size=aad_size"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "aad_size",
+          "decl": "size_t aad_size",
+          "attributes": [],
+          "is_pointer": false
+        },
+        {
+          "name": "ciphertext",
+          "decl": "ehsm_data_t *ciphertext",
+          "attributes": [
+            "in",
+            "size=ciphertext_size"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "ciphertext_size",
+          "decl": "size_t ciphertext_size",
+          "attributes": [],
+          "is_pointer": false
+        },
+        {
+          "name": "plaintext",
+          "decl": "ehsm_data_t *plaintext",
+          "attributes": [
+            "in",
+            "out",
+            "size=plaintext_size"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "plaintext_size",
+          "decl": "size_t plaintext_size",
+          "attributes": [],
+          "is_pointer": false
+        }
+      ],
+      "ms_layout": {
+        "struct": "ms_enclave_decrypt_t",
+        "size": 72,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4
+          },
+          "ms_cmk": {
+            "offset": 8,
+            "size": 8
+          },
+          "ms_cmk_size": {
+            "offset": 16,
+            "size": 8
+          },
+          "ms_aad": {
+            "offset": 24,
+            "size": 8
+          },
+          "ms_aad_size": {
+            "offset": 32,
+            "size": 8
+          },
+          "ms_ciphertext": {
+            "offset": 40,
+            "size": 8
+          },
+          "ms_ciphertext_size": {
+            "offset": 48,
+            "size": 8
+          },
+          "ms_plaintext": {
+            "offset": 56,
+            "size": 8
+          },
+          "ms_plaintext_size": {
+            "offset": 64,
+            "size": 8
+          }
+        }
+      }
+    },
+    {
+      "ecall_index": 4,
+      "name": "enclave_generate_datakey",
+      "return_type": "sgx_status_t",
+      "params": [
+        {
+          "name": "cmk",
+          "decl": "ehsm_keyblob_t *cmk",
+          "attributes": [
+            "in",
+            "size=cmk_size"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "cmk_size",
+          "decl": "size_t cmk_size",
+          "attributes": [],
+          "is_pointer": false
+        },
+        {
+          "name": "aad",
+          "decl": "ehsm_data_t *aad",
+          "attributes": [
+            "in",
+            "size=aad_size"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "aad_size",
+          "decl": "size_t aad_size",
+          "attributes": [],
+          "is_pointer": false
+        },
+        {
+          "name": "plaintext",
+          "decl": "ehsm_data_t *plaintext",
+          "attributes": [
+            "in",
+            "out",
+            "size=plaintext_size"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "plaintext_size",
+          "decl": "size_t plaintext_size",
+          "attributes": [],
+          "is_pointer": false
+        },
+        {
+          "name": "ciphertext",
+          "decl": "ehsm_data_t *ciphertext",
+          "attributes": [
+            "in",
+            "out",
+            "size=ciphertext_size"
+          ],
+          "is_pointer": true
+        },
+        {
+          "name": "ciphertext_size",
+          "decl": "size_t ciphertext_size",
+          "attributes": [],
+          "is_pointer": false
+        }
+      ],
+      "ms_layout": {
+        "struct": "ms_enclave_generate_datakey_t",
+        "size": 72,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4
+          },
+          "ms_cmk": {
+            "offset": 8,
+            "size": 8
+          },
+          "ms_cmk_size": {
+            "offset": 16,
+            "size": 8
+          },
+          "ms_aad": {
+            "offset": 24,
+            "size": 8
+          },
+          "ms_aad_size": {
+            "offset": 32,
+            "size": 8
+          },
+          "ms_plaintext": {
+            "offset": 40,
+            "size": 8
+          },
+          "ms_plaintext_size": {
+            "offset": 48,
+            "size": 8
+          },
+          "ms_ciphertext": {
+            "offset": 56,
+            "size": 8
+          },
+          "ms_ciphertext_size": {
+            "offset": 64,
+            "size": 8
+          }
+        }
+      }
+    }
+  ]
+}

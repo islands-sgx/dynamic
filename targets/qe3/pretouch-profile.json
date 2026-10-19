@@ -1,0 +1,20 @@
+{
+  "assembly": "/home/meandssh/islands-sgx/dynamic/targets/qe3/pretouch-profile.S",
+  "blocks": [
+    {
+      "begin_offset": 0,
+      "continuation_symbol": "__atfield_after_marker_3031167399432581368",
+      "end_offset": 5,
+      "field_id": "0x2a10deb0a1ec70f8",
+      "size": 5,
+      "symbol": "__atfield_pretouch_3031167399432581368"
+    }
+  ],
+  "capacity_q": 12288,
+  "code_bytes": 5,
+  "fields_sha256": "141948f9b6ec5685da4806e9ddbe6b7a2b68a17abc3b57b348387542b9bafb40",
+  "mode": "profile",
+  "pretouch_start": null,
+  "schema": "atfield-pretouch-output-v1",
+  "workset_sha256": null
+}

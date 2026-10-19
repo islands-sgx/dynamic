@@ -1,0 +1,10 @@
+targets/*/obj/
+targets/*/*.so
+witnesses/*/dumps/
+*.o
+__pycache__/
+.codegraph/
+.zvec-grep/
+/build/
+vendor/implement/build/field/.build-host/
+vendor/sgxstep/kernel/*.ko
