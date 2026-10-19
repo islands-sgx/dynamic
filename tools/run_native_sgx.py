@@ -148,7 +148,7 @@ def run_sample(
     timeout_sec: int = 300,
 ) -> dict:
     tdir = DYN_ROOT / "targets" / sample
-    host_bin = SAMPLE_ROOT / "build" / "real" / sample / "anchor" / "host"
+    host_bin = (tdir / "host") if (tdir / "host").is_file() else (SAMPLE_ROOT / "build" / "real" / sample / "anchor" / "host")
     encl, use_4gate = resolve_enclave_path(tdir, mode)
     spec = make_layout_spec(sample, encl)
     schema_spec = make_schema_spec(sample)

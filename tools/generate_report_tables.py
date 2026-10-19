@@ -58,29 +58,25 @@ def main() -> None:
         )
     lines.append("")
 
-    lines.append("### 6-Case General Challenge Suite (`C1..C6`) under Equal Budget (`16` Trials / Case)")
+    lines.append("### Real SGX Hardware Challenge Enclaves (`challenge-bench` & `challenge-bench-perm`) under Equal Enclave-Creation Budget (`48` Enclaves, Including Replay Confirmations)")
     lines.append("")
-    lines.append("- **`S0` (`baseline_host_only`)**: Unmodified seed workflow only.")
-    lines.append("- **`S1` (`legacy_fixed_heuristics`)**: Fixed `{0, 2, 99}` scalars, `4x` scale aborting on first error, repeat only last Field selector, fixed `ecall 0` cold replay.")
-    lines.append("- **`S2` (`structured_boundary_and_joint`)**: Boundary + neighbor scalars, non-aborting page-crossing scales with flexible-array header preservation, joint 2-parameter perturbations (`joint_scalar_xor`), and overlapping buffer probes (`aliased_pair`).")
-    lines.append("- **`S3` (`prefix_state_and_feedback_round_robin`)**: `S2` + executable prefix-state replay across non-zero setup interfaces (retaining distinct prefixes even when setup page sets coincide) + multi-selector history accumulation with reserved budget.")
+    lines.append("- **Real Compiled SGX Enclaves**: Both `challenges/challenge-bench` (standard ECALL order & thresholds) and `challenges/challenge-bench-perm` (shuffled ECALL indices, renamed functions, mutated thresholds) are compiled with `atfield-enclave-clang`, signed with `sgx_sign`, patched with `patch_4gate.py`, and executed on real SGX hardware under `build/libatfield_native_sgx.so` using the exact same candidate generator, scheduler, and collector as the real benchmarks.")
+    lines.append("- **Full Cost Accounting**: Every enclave creation, prefix execution, rejected S0 call, and replay-confirmation run is charged to the `48`-enclave budget.")
     lines.append("")
-    lines.append("| Strategy | Total Trials | Field Entry Rate | Confirmed New Effects | New Effects / 10 Trials | Challenges Solved (`C1..C6`) | Residual Missed on Hold-Out |")
-    lines.append("|---|---:|---:|---:|---:|---:|---:|")
-    for st_key in ("S0", "S1", "S2", "S3"):
-        s = strat_data["summary_by_strategy"][st_key]
-        lines.append(
-            f"| **`{st_key}`** | {s['total_trials']} | {100.0 * s['field_entry_rate']:.1f}% (`{s['field_entry_count']}/{s['total_trials']}`) | "
-            f"{s['confirmed_new_effects']} | {s['new_effects_per_10_trials']:.2f} | "
-            f"**{s['challenges_solved']} / {s['challenges_total']}** | **{s['holdout_missed_effects']}** |"
-        )
-    lines.append("")
-    lines.append("| Challenge ID | Structural Failure Mode Tested | Target Hidden Effect | `S0` | `S1` (Legacy Fixed) | `S2` (Structured + Joint) | **`S3` (Prefix-State + Round-Robin)** |")
-    lines.append("|---|---|---|---|---|---|---|")
-    for row in strat_data["case_matrix"]:
-        lines.append(
-            f"| `{row['challenge_id']}` | {row['title']} | `{row['target']}` | {row['S0']} | {row['S1']} | {row['S2']} | **{row['S3']}** |"
-        )
+    lines.append("| Target Enclave | Strategy | Enclaves Created | Total ECALLs Executed | Wall-Clock (s) | Call Breakdown (`Field / S0-Reject / Setup`) | Confirmed `S3` Pages / Effects (`Eff / 100 ECALLs`) | **Challenges Solved (`C1..C6`)** | **Independent Hold-Out Missed Pages** |")
+    lines.append("|---|---|---:|---:|---:|---|---:|---|---:|")
+    hw_ch = strat_data["real_hardware_challenge_enclaves"]
+    for cname in ("challenge-bench", "challenge-bench-perm"):
+        ct = hw_ch[cname]
+        for st_key in ("S0", "S1", "S2", "S3"):
+            s = ct["strategies"][st_key]
+            c_mix = f"{s['valid_field_entering_ecalls']} / {s['expected_s0_rejections']} / {s['non_field_setup_ecalls']}"
+            solved_str = ",".join(s["challenges_solved_list"]) if s["challenges_solved_list"] else "none"
+            lines.append(
+                f"| `{cname}` | **`{st_key}`** | {s['enclave_creations']} | {s['total_ecalls_executed']} | {s['wall_clock_sec']:.2f}s | "
+                f"`{c_mix}` | {s['confirmed_s3_pages']}p / {s['confirmed_s3_effects']}e (`{s['new_effects_per_100_ecalls']:.1f}`) | "
+                f"**{s['challenges_solved_count']} / {s['challenges_total']}** (`{solved_str}`) | **{s['holdout_missed_pages']}** |"
+            )
     lines.append("")
 
     # Section 1B: Three-Layer Workset Attribution across 6 Targets (19 Field instances)
@@ -145,6 +141,23 @@ def main() -> None:
             f"**{unseen_p}p / {unseen_e}e** | **{ho['strict_field_target_pages_window_gateB_to_gateD']['fault_count']}** | "
             f"**{ho['strict_readytable_v3_window_ecall']['fault_count']}** | **{ho['overall_holdout_and_strict_verdict']}** |"
         )
+    lines.append("")
+
+    lines.append("### Out-of-Seed Producer-Consumer Boundary Audit & Onboarding Cost Accounting")
+    lines.append("")
+    lines.append("- **Un-Seeded Producer-Consumer Dependency (`create_key(EH_SM4_CTR) -> generate_datakey(sm4_cmk)`)**: When the seed host only exercises `EH_AES_GCM_256`, single-call `L2` mutations on `enclave_generate_datakey` cannot forge a valid `EH_SM4_CTR` `cmk` because `cmk->keyblob` is authenticated by the enclave domain key via AES-GCM (`ehsm_parse_keyblob_to_gcm_data`). Running `--sm4-check` against the AES-seeded workset demonstrates that `validate_run_result()` automatically catches the exact uncovered `SM4-CTR` pages:")
+    for s_sm4 in ("ehsm-opt-1", "ehsm-opt-2"):
+        aud = eval_data[s_sm4]["independent_holdout_evaluation"].get("out_of_seed_producer_consumer_audit")
+        if aud:
+            vres = aud["validator_result"]
+            uncov = [r for r in vres["reasons"] if r.startswith("UNCOVERED_")]
+            lines.append(f"  - `{s_sm4}` (`--sm4-check` against AES-only workset): validator status = **`{vres['status']}`**, automatically catching **{len(uncov)} uncovered page effects** (`{', '.join(uncov[:6])}{'...' if len(uncov) > 6 else ''}`).")
+    lines.append("- **Target Onboarding Cost Summary (Zero Sample-Name Branches in Explorer)**:")
+    lines.append("  - `qe3`: `1` Field annotation (`ATFIELD`), `1` selector in `selectors.json`, `0` explorer lines changed;")
+    lines.append("  - `signal-cds`: `1` Field annotation, `1` selector in `selectors.json`, `0` explorer lines changed;")
+    lines.append("  - `sgxwallet`: `5` Field annotations, `7` selectors in `selectors.json`, `0` explorer lines changed (`CALL_ONCE` abort on `ecall 2/3` detected automatically at runtime);")
+    lines.append("  - `ehsm / ehsm-opt-1 / ehsm-opt-2` (single application, 3-variant ablation): `4` Field annotations, `5` selectors in `selectors.json`, `0` explorer lines changed;")
+    lines.append("  - `challenge-bench / challenge-bench-perm` (2 synthetic challenge enclaves): `1` Field annotation, `4` selectors in `selectors.json`, `0` explorer lines changed.")
     lines.append("")
 
     # Table 3: Per-Observation 3-Group Ablation

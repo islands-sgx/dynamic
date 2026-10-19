@@ -1,0 +1,16 @@
+enclave {
+    trusted {
+        public sgx_status_t ecall_init(uint32_t seed);
+        public sgx_status_t ecall_configure_stage(uint32_t stage_mode);
+        public sgx_status_t ecall_latch_phase(uint32_t phase_flag);
+        public sgx_status_t ecall_Execute(
+            uint32_t op_mode,
+            [in, size=in_len] const uint8_t *in_buf,
+            size_t in_len,
+            [in, size=aux_len] const uint8_t *aux_buf,
+            size_t aux_len,
+            [out, size=out_len] uint8_t *out_buf,
+            size_t out_len
+        );
+    };
+};

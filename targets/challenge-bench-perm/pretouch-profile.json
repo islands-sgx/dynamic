@@ -1,0 +1,20 @@
+{
+  "assembly": "/home/meandssh/islands-sgx/dynamic/targets/challenge-bench-perm/pretouch-profile.S",
+  "blocks": [
+    {
+      "begin_offset": 0,
+      "continuation_symbol": "__atfield_after_marker_12301308008568056156",
+      "end_offset": 5,
+      "field_id": "0xaab706756b5de95c",
+      "size": 5,
+      "symbol": "__atfield_pretouch_12301308008568056156"
+    }
+  ],
+  "capacity_q": 16384,
+  "code_bytes": 5,
+  "fields_sha256": "6876b9721755f406649e611c479027408c51570f8fad6ada1242f99ad363f930",
+  "mode": "profile",
+  "pretouch_start": null,
+  "schema": "atfield-pretouch-output-v1",
+  "workset_sha256": null
+}

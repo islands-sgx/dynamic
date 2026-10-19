@@ -12,6 +12,7 @@ sys.path.insert(0, str(DYN_ROOT / "tools"))
 
 from acceptance_validator import (  # noqa: E402
     sha256_path,
+    validate_diagnostic_4gate_run,
     validate_production_run_result,
     validate_provenance_consistency,
     validate_run_result,
@@ -79,16 +80,36 @@ HOLDOUT_SUITES = {
         "intervention": "typed_state_probe:2:0:0:1;typed_state_probe:4:0:0:1;xor_param:3:0:4:9:127",
         "host_args": ["--bytes", "1536", "--requests", "3"],
         "min_records": 20,
-        "aux_runs": [],
-        "desc": "Direct-sizing eHSM-opt-1 (--bytes 1536 --requests 3) + cold-enclave state replay on encrypt & generate_datakey + ciphertext byte-9 bit-flip",
+        "aux_runs": [
+            {
+                "name": "compat_query_and_capacity_matrix",
+                "expected_tags": None,
+                "intervention": "",
+                "stop_before_normal_ecall": "",
+                "host_args": ["--compat-check"],
+                "min_records": 23,
+                "expected_stdout_substr": "PASS",
+            }
+        ],
+        "desc": "Direct-sizing eHSM-opt-1 (--bytes 1536 --requests 3 + --compat-check query/capacity/canary/SM4 matrix) + cold-enclave state replay + byte-9 bit-flip",
     },
     "ehsm-opt-2": {
         "expected_tags": {"cold_state_replay_ecall_2_after_0_1", "cold_state_replay_ecall_4_after_0_1", "schema_xor_p4_byte_9"},
         "intervention": "typed_state_probe:2:0:0:1;typed_state_probe:4:0:0:1;xor_param:3:0:4:9:127",
         "host_args": ["--bytes", "1536", "--requests", "3"],
         "min_records": 20,
-        "aux_runs": [],
-        "desc": "Eager-OpenSSL-init eHSM-opt-2 (--bytes 1536 --requests 3) + cold-enclave state replay on encrypt & generate_datakey + ciphertext byte-9 bit-flip",
+        "aux_runs": [
+            {
+                "name": "compat_query_and_capacity_matrix",
+                "expected_tags": None,
+                "intervention": "",
+                "stop_before_normal_ecall": "",
+                "host_args": ["--compat-check"],
+                "min_records": 23,
+                "expected_stdout_substr": "PASS",
+            }
+        ],
+        "desc": "Eager-OpenSSL-init eHSM-opt-2 (--bytes 1536 --requests 3 + --compat-check query/capacity/canary/SM4 matrix) + cold-enclave state replay + byte-9 bit-flip",
     },
 }
 
@@ -653,11 +674,21 @@ def evaluate_sample(sample: str) -> dict:
                 allow_fast_forward=0,
                 persist_prefix=raw_dir / f"ablation_4gate_r{rnd}_{gname}",
             )
-            for rec in r4["records"]:
-                if gname == "groupB_dynamic_xr" and rnd == 0:
+            if not first_4gate_records:
+                for rec in r4["records"]:
                     first_4gate_records.append(rec)
                     if rec["fields"]:
                         field_entering_call_seqs.add(rec["call_seq"])
+            val_d4 = validate_diagnostic_4gate_run(
+                r4,
+                expected_field_ids=expected_fids,
+                expected_ecall_seq=[r["ecall_index"] for r in first_4gate_records],
+                expected_field_call_seqs=field_entering_call_seqs,
+                require_ipi_mask=3,
+            )
+            if val_d4["status"] != "PASS":
+                raise RuntimeError(f"4-Gate diagnostic validation failed on {sample} {gname} r{rnd}: {val_d4}")
+            for rec in r4["records"]:
                 for fobs in rec["fields"]:
                     fid = fobs["field_id"]
                     if fid not in gate_ablation[gname]:
@@ -832,6 +863,30 @@ def evaluate_sample(sample: str) -> dict:
                 "measurement_invalid": res_ho_strict_ecall["measurement_invalid"],
             },
             "overall_holdout_and_strict_verdict": overall_verdict,
+            "out_of_seed_producer_consumer_audit": (
+                (lambda r_sm4: {
+                    "workflow": "create_key(EH_SM4_CTR) -> generate_datakey(sm4_cmk) (--sm4-check)",
+                    "reason_not_auto_synthesized": "Requires multi-call producer-consumer synthesis across encrypted keyblob (enclave_create_key sealing EH_SM4_CTR metadata into AES-GCM authenticated cmk before enclave_generate_datakey)",
+                    "validator_result": validate_run_result(
+                        r_sm4,
+                        expected_returncode=0,
+                        expected_stdout_substr="PASS",
+                        expected_min_records=21,
+                        closed_workset_effects=closed_target_effects_by_fid,
+                    ),
+                })(
+                    run_sample(
+                        sample,
+                        mode="profile_4gate",
+                        ipi_mask=7,
+                        host_args=["--sm4-check"],
+                        allow_fast_forward=0,
+                        persist_prefix=raw_dir / "holdout_out_of_seed_sm4_audit",
+                    )
+                )
+                if sample in ("ehsm-opt-1", "ehsm-opt-2")
+                else None
+            ),
         },
         "three_group_ablation": {
             "interleaved_rounds": perf_rounds,

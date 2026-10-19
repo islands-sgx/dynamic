@@ -32,6 +32,8 @@ from generic_explorer import (  # noqa: E402
     generate_schema_mutations_for_ecall,
     get_scalable_bound_offsets,
     round_robin_schedule_interventions,
+    run_real_hardware_challenge_ablation,
+    structural_behavior_signature,
 )
 from run_native_sgx import INTERPOSE_SO, run_sample, sha256_file  # noqa: E402
 
@@ -541,37 +543,92 @@ def explore_and_close_sample(sample: str) -> dict:
                 break
             scale *= 4
 
-    # Step C: Layer 2 Round-Robin Structured & Joint Mutation Replay per Field-bearing ECALL
+    # Step C: Layer 2 Feedback-Guided Multi-Position & Prefix-Continuation Exploration
+    # Collect up to 2 distinct Field-entering selector_seq positions per ECALL (retaining later positions
+    # even when their L1 page set coincided with sseq=0)
+    field_positions_by_ecall: dict[int, list[int]] = {}
+    for rec in res0["records"]:
+        if rec["fields"]:
+            s_list = field_positions_by_ecall.setdefault(rec["ecall_index"], [])
+            if rec["selector_seq"] not in s_list and len(s_list) < 2:
+                s_list.append(rec["selector_seq"])
+
+    seen_struct_sigs: set[tuple] = {structural_behavior_signature(r) for r in res0["records"]}
+    family_credits: dict[str, float] = {"boundary": 1.0, "joint": 1.0, "alias": 1.0, "content": 0.8}
+
     for idx in field_selectors:
         ec = ecalls_by_idx.get(idx)
         if not ec:
             continue
-        target_sseq = first_field_sseq_by_ecall.get(idx, 0)
-        muts = round_robin_schedule_interventions(
-            generate_schema_mutations_for_ecall(ec, selector_seq=target_sseq, strategy="S3")
-        )
-        for m_i, m in enumerate(muts):
-            plan = {
-                "run_id": f"layer2_isolated_mut_ecall{idx}_s{target_sseq}_m{m_i}_{m['tag']}",
-                "layer": "layer2_generic_schema",
-                "subkind": "isolated_single_mutation_replay",
-                "intervention": m["spec"],
-                "allow_nonzero_rc": False,
-                "desc": f"Round-robin structured mutation ({m.get('family', 'content')}): {m['desc']} at sseq={target_sseq}",
-            }
-            res_m = run_sample(
-                sample,
-                mode="profile_4gate",
-                ipi_mask=7,
-                intervention=m["spec"],
-                stop_before_normal_ecall=f"{idx}:{target_sseq}",
-                allow_fast_forward=0,
-                persist_prefix=raw_trace_dir / plan["run_id"],
-            )
-            ingest_run(plan, res_m, is_baseline_host=False, is_seed_isolated=True)
+        sseq_list = field_positions_by_ecall.get(idx, [0])
+        for pos_rank, target_sseq in enumerate(sseq_list):
+            raw_muts = generate_schema_mutations_for_ecall(ec, selector_seq=target_sseq, strategy="S3")
+            # For secondary positions (pos_rank > 0), allocate reserved budget to control-scalar boundaries, joint, and alias
+            if pos_rank > 0:
+                raw_muts = [m for m in raw_muts if m.get("family") in ("boundary", "joint", "alias") and m.get("is_control_scalar", True)][:6]
+            muts = round_robin_schedule_interventions(raw_muts)
+            for m_i, m in enumerate(muts):
+                fam = m.get("family", "content")
+                plan = {
+                    "run_id": f"layer2_isolated_mut_ecall{idx}_s{target_sseq}_m{m_i}_{m['tag']}",
+                    "layer": "layer2_generic_schema",
+                    "subkind": "isolated_single_mutation_replay",
+                    "intervention": m["spec"],
+                    "allow_nonzero_rc": False,
+                    "desc": f"Feedback-scheduled mutation ({fam}, credit={family_credits.get(fam, 1.0):.2f}): {m['desc']} at sseq={target_sseq}",
+                }
+                res_m = run_sample(
+                    sample,
+                    mode="profile_4gate",
+                    ipi_mask=7,
+                    intervention=m["spec"],
+                    stop_before_normal_ecall=f"{idx}:{target_sseq}",
+                    allow_fast_forward=0,
+                    persist_prefix=raw_trace_dir / plan["run_id"],
+                )
+                gained = ingest_run(plan, res_m, is_baseline_host=False, is_seed_isolated=True)
+                new_sig = any(structural_behavior_signature(r) not in seen_struct_sigs for r in res_m["records"])
+                for r in res_m["records"]:
+                    seen_struct_sigs.add(structural_behavior_signature(r))
+                if gained > 0 or new_sig:
+                    family_credits[fam] = family_credits.get(fam, 1.0) + (2.0 * gained if gained > 0 else 0.5)
+                    feedback_trace.append({
+                        "ecall_index": idx,
+                        "selector_seq": target_sseq,
+                        "family": fam,
+                        "tag": m["tag"],
+                        "new_effects": gained,
+                        "new_structural_sig": new_sig,
+                        "updated_credit": round(family_credits[fam], 2),
+                    })
 
-    # Step D: Layer 2 Prefix-State Cold Enclave Replay (captures first Field-entering sseq, replays after init prefix)
-    if 0 in non_field_selectors and len(field_selectors) > 1:
+    # Step D: Layer 2 Prefix Setup Continuation & Cold-State Replay across non-Field setup selectors
+    for nf_idx in non_field_selectors:
+        nf_ec = ecalls_by_idx.get(nf_idx)
+        if nf_ec:
+            for pidx, p in enumerate(nf_ec.get("params", [])):
+                if not p.get("is_pointer"):
+                    for val in (1, 2, 16):
+                        plan = {
+                            "run_id": f"layer2_prefix_setup_ecall{nf_idx}_p{pidx}_val{val}",
+                            "layer": "layer2_generic_schema",
+                            "subkind": "prefix_setup_continuation",
+                            "intervention": f"set_scalar:{nf_idx}:0:{pidx}:{val}",
+                            "allow_nonzero_rc": True,
+                            "desc": f"Mutate setup call {nf_ec['name']}.{p['name']}={val} and continue host workflow into Field calls",
+                        }
+                        res_ps = run_sample(
+                            sample,
+                            mode="profile_4gate",
+                            ipi_mask=7,
+                            intervention=plan["intervention"],
+                            allow_fast_forward=0,
+                            persist_prefix=raw_trace_dir / plan["run_id"],
+                        )
+                        ingest_run(plan, res_ps, is_baseline_host=False, is_seed_isolated=True)
+
+    if non_field_selectors and len(field_selectors) > 1:
+        trig_idx = non_field_selectors[0]
         for idx in field_selectors:
             ec = ecalls_by_idx.get(idx)
             if not ec or not ec.get("replay_supported", True):
@@ -581,9 +638,9 @@ def explore_and_close_sample(sample: str) -> dict:
                 "run_id": f"layer2_cold_state_replay_ecall{idx}_cap{cap_seq}",
                 "layer": "layer2_generic_schema",
                 "subkind": "cold_enclave_state_replay",
-                "intervention": f"typed_state_probe:{idx}:{cap_seq}:0:1",
+                "intervention": f"typed_state_probe:{idx}:{cap_seq}:{trig_idx}:1",
                 "allow_nonzero_rc": False,
-                "desc": f"Schema-typed cold enclave state replay of {ec['name']} (cap_seq={cap_seq} -> after ecall 0 sseq=1)",
+                "desc": f"Schema-typed cold enclave state replay of {ec['name']} (cap_seq={cap_seq} -> after ecall {trig_idx} sseq=1)",
             }
             res_sr = run_sample(
                 sample,
@@ -595,18 +652,21 @@ def explore_and_close_sample(sample: str) -> dict:
             )
             ingest_run(plan, res_sr, is_baseline_host=False, is_seed_isolated=True)
 
-    # Step E: Layer 2 Quadrupling History Depth Scan (16 -> 64 -> 256 -> 1024 full calls, 0 skipped, isolated via stop_after_selector)
-    if field_selectors:
-        last_idx = field_selectors[-1]
-        ec = ecalls_by_idx[last_idx]
-        target_sseq = first_field_sseq_by_ecall.get(last_idx, 0)
-        for depth in (16, 64, 256, 1024):
+    # Step E: Layer 2 Multi-Selector Quadrupling History Depth Scan
+    # Reserves history budget (depth=16) for all Field-bearing selectors, plus full 16->64->256->1024 on primary steady-state selector
+    for idx in field_selectors:
+        ec = ecalls_by_idx.get(idx)
+        if not ec or not ec.get("replay_supported", True):
+            continue
+        target_sseq = first_field_sseq_by_ecall.get(idx, 0)
+        depths = (16, 64, 256, 1024) if idx == field_selectors[-1] else (16,)
+        for depth in depths:
             plan = {
-                "run_id": f"layer2_quadrupling_history_n{depth}_ecall{last_idx}",
+                "run_id": f"layer2_quadrupling_history_n{depth}_ecall{idx}",
                 "layer": "layer2_generic_schema",
                 "subkind": "quadrupling_history_scan",
-                "intervention": f"repeat:{last_idx}:{target_sseq}:{depth}",
-                "allow_nonzero_rc": False,
+                "intervention": f"repeat:{idx}:{target_sseq}:{depth}",
+                "allow_nonzero_rc": True,
                 "desc": f"Quadrupling history scan (4x progression, depth={depth}, 0 skipped) on {ec['name']}",
             }
             res_h = run_sample(
@@ -614,17 +674,24 @@ def explore_and_close_sample(sample: str) -> dict:
                 mode="profile_4gate",
                 ipi_mask=4,
                 intervention=plan["intervention"],
-                stop_after_selector=f"{last_idx}:{target_sseq}",
+                stop_after_selector=f"{idx}:{target_sseq}",
                 allow_fast_forward=0,
                 persist_prefix=raw_trace_dir / plan["run_id"],
             )
             ingest_run(plan, res_h, is_baseline_host=False, is_seed_isolated=True)
+            if res_h["returncode"] != 0:
+                feedback_trace.append({
+                    "ecall_index": idx,
+                    "history_depth": depth,
+                    "decision": f"stop_selector_non_repeatable_rc_{res_h['returncode']}",
+                })
+                break
             tscs = [f["tsc_s3"] for r in res_h["records"] for f in r["fields"] if r["tag"].startswith("generic_repeat_")]
             if tscs:
                 med_tsc = sorted(tscs)[len(tscs) // 2]
                 max_tsc = max(tscs)
                 feedback_trace.append({
-                    "ecall_index": last_idx, "history_depth": depth,
+                    "ecall_index": idx, "history_depth": depth,
                     "median_tsc_s3": med_tsc, "max_tsc_s3": max_tsc,
                     "regime_jump_ratio": round(max_tsc / max(med_tsc, 1), 2),
                 })
@@ -717,7 +784,7 @@ def explore_and_close_sample(sample: str) -> dict:
                     heap_added.add(p)
         for clo, chi in set(dyn_chunks[fid]):
             span = list(range(align_down(max(0, clo - 16)), align_up(chi + 16), PAGE))
-            if len(span) <= 4 and any(p in obs_pages for p in span):
+            if any(p in obs_pages for p in span):
                 for p in span:
                     if p in committed_map and p not in p_set:
                         p_set.add(p)
@@ -893,8 +960,13 @@ def explore_and_close_sample(sample: str) -> dict:
 
 def main() -> None:
     samples = sys.argv[1:] or ["qe3", "signal-cds", "sgxwallet", "ehsm", "ehsm-opt-1", "ehsm-opt-2"]
-    challenge_res = evaluate_challenge_suite(budget_per_case=16)
-    write_json(DYN_ROOT / "experiments" / "strategy_comparison.json", challenge_res)
+    hw_challenge_res = run_real_hardware_challenge_ablation(max_enclave_budget=48)
+    challenge_payload = {
+        "audit_of_legacy_heuristics": AUDIT_OF_LEGACY_HEURISTICS,
+        "equal_enclave_budget": 48,
+        "real_hardware_challenge_enclaves": hw_challenge_res,
+    }
+    write_json(DYN_ROOT / "experiments" / "strategy_comparison.json", challenge_payload)
     for s in samples:
         print(f"=== Exploring & building Group B/C variants for {s} ===", flush=True)
         res = explore_and_close_sample(s)

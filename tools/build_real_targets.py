@@ -352,12 +352,232 @@ def build_target(name: str) -> dict:
     }
 
 
+
+CHALLENGE_TARGETS = {
+    "challenge-bench": {
+        "src_dir": DYN_ROOT / "challenges" / "challenge-bench",
+        "edl": "challenge.edl",
+        "edl_stem": "challenge",
+        "heap": 0x100000,
+        "stack": 0x40000,
+        "capacity_q": 16384,
+        "selectors": [
+            {"ecall_index": 0, "name": "ecall_init", "reachable_functions": []},
+            {"ecall_index": 1, "name": "ecall_configure_stage", "reachable_functions": []},
+            {"ecall_index": 2, "name": "ecall_latch_phase", "reachable_functions": []},
+            {"ecall_index": 3, "name": "ecall_Execute", "reachable_functions": ["challenge_field_work"]},
+        ],
+    },
+    "challenge-bench-perm": {
+        "src_dir": DYN_ROOT / "challenges" / "challenge-bench-perm",
+        "edl": "challenge_perm.edl",
+        "edl_stem": "challenge_perm",
+        "heap": 0x100000,
+        "stack": 0x40000,
+        "capacity_q": 16384,
+        "selectors": [
+            {"ecall_index": 0, "name": "ecall_alpha_stage", "reachable_functions": []},
+            {"ecall_index": 1, "name": "ecall_beta_run", "reachable_functions": ["perm_field_core"]},
+            {"ecall_index": 2, "name": "ecall_gamma_reset", "reachable_functions": []},
+            {"ecall_index": 3, "name": "ecall_delta_latch", "reachable_functions": []},
+        ],
+    },
+}
+
+
+def build_challenge_target(name: str) -> dict:
+    cfg = CHALLENGE_TARGETS[name]
+    src_dir = cfg["src_dir"]
+    out_dir = DYN_ROOT / "targets" / name
+    obj_dir = out_dir / "obj"
+    edl_dir = out_dir / "edl_gen"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    obj_dir.mkdir(parents=True, exist_ok=True)
+    edl_dir.mkdir(parents=True, exist_ok=True)
+
+    edl_file = src_dir / cfg["edl"]
+    stem = cfg["edl_stem"]
+    subprocess.run([
+        f"{SGX_SDK_ROOT}/bin/x64/sgx_edger8r",
+        "--trusted", str(edl_file),
+        "--trusted-dir", str(edl_dir),
+        "--untrusted", str(edl_file),
+        "--untrusted-dir", str(edl_dir),
+        "--search-path", f"{SGX_SDK_ROOT}/include",
+    ], check=True)
+
+    cc_bin = "/nix/store/fys2jh0y4iisx69yf73b3z8k048cqx95-llvm-atfield-llc-wrapper-22.1.8/bin/cc"
+    psw_lib = "/nix/store/a1fx7mb2366qs2i5bd9mci3nis495wcb-sgx-psw-2.29.100.1/lib64"
+    tlib_dir = "/nix/store/swyss2hhip1fciv6fn5y3iza6rr0dkps-sgx-trusted-libs-anchor-2.29.100.1/lib"
+
+    env = os.environ.copy()
+    env.update({
+        "ATFIELD_ANCHOR_PREPARATION": "1",
+        "ATFIELD_FIELD_BOUNDARY": "1",
+        "ATFIELD_IMPLEMENT_ROOT": str(VENDOR_IMPL),
+        "ATFIELD_PAYLOAD_NAMESPACE": f"challenges/{name}",
+        "ATFIELD_SOURCE_ROOT": str(src_dir),
+        "ATFIELD_LLC": LLC_BIN,
+        "ATFIELD_FIELD_TOOL": str(FIELD_TOOL),
+        "ATFIELD_UPSTREAM_SOURCE_ROOT": str(src_dir),
+        "ATFIELD_UPSTREAM_PACKAGE": name,
+    })
+
+    common_t_flags = [
+        "-m64", "-O2", "-fPIC", "-nostdinc",
+        f"-I{edl_dir}",
+        f"-I{src_dir}",
+        f"-I{SGX_SDK_ROOT}/include",
+        f"-I{SGX_SDK_ROOT}/include/tlibc",
+    ]
+    t_obj = obj_dir / f"{stem}_t.o"
+    e_obj = obj_dir / "enclave.o"
+    subprocess.run([str(COMPILE_WRAPPER), cc_bin, *common_t_flags, "-c", str(edl_dir / f"{stem}_t.c"), "-o", str(t_obj)], env=env, check=True)
+    subprocess.run([str(COMPILE_WRAPPER), cc_bin, *common_t_flags, "-c", str(src_dir / "enclave.c"), "-o", str(e_obj)], env=env, check=True)
+
+    profile_elf = out_dir / "enclave.profile.so"
+    link_tail = [
+        "-fuse-ld=/nix/store/fv53kz6bwf3bkpj4qini6cfq5njl4xvn-lld-22.1.8/bin/ld.lld",
+        "-Wl,-z,relro,-z,now,-z,noexecstack",
+        "-Wl,--fatal-warnings", "-Wl,--as-needed", "-Wl,--no-undefined", "-Wl,--no-undefined-version",
+        "-nostdlib", "-nodefaultlibs", "-nostartfiles",
+        "-Wl,-Bstatic", "-Wl,-Bsymbolic", "-Wl,-pie,-eenclave_entry",
+        "-Wl,--export-dynamic", "-Wl,--defsym,__ImageBase=0", "-Wl,--gc-sections",
+        f"-Wl,--version-script={SAMPLE_ROOT / 'cmake' / 'Enclave.lds'}",
+        "-Wl,--whole-archive", f"{tlib_dir}/libsgx_trts.a", "-Wl,--no-whole-archive",
+        "-Wl,--start-group",
+        f"{tlib_dir}/libsgx_tstdc.a",
+        f"{tlib_dir}/libsgx_tcxx.a",
+        f"{tlib_dir}/libsgx_tcrypto.a",
+        f"{tlib_dir}/libsgx_tservice.a",
+        "-Wl,--end-group",
+    ]
+    subprocess.run([
+        str(PROFILE_LINK),
+        "--field-tool", str(FIELD_TOOL),
+        "--pretouch-tool", str(PRETOUCH_TOOL),
+        "--capacity-q", str(cfg["capacity_q"]),
+        "--assembler", cc_bin,
+        "--linker-script", str(POST_LD),
+        "--",
+        cc_bin,
+        str(t_obj), str(e_obj),
+        *link_tail,
+        "-o", str(profile_elf),
+    ], cwd=out_dir, check=True)
+
+    # Build untrusted host binary into out_dir / "host"
+    host_bin = out_dir / "host"
+    subprocess.run([
+        cc_bin, "-m64", "-O2", "-fPIC",
+        f'-DENCLAVE_PATH="{out_dir / "enclave.profile.aex0.signed.so"}"',
+        f"-I{edl_dir}", f"-I{SGX_SDK_ROOT}/include",
+        str(src_dir / "host.c"), str(edl_dir / f"{stem}_u.c"),
+        f"-L{psw_lib}", "-lsgx_urts", "-lpthread", "-ldl",
+        "-o", str(host_bin),
+    ], check=True)
+
+    base_xml = SAMPLE_ROOT / "real" / "signal-cds" / "Enclave.config.xml" 
+    protect_xml = out_dir / "Enclave.protect.config.xml"
+    aex0_xml = out_dir / "Enclave.aex0.config.xml"
+    subprocess.run([
+        str(PROTECT_CONFIG), str(base_xml), str(protect_xml),
+        "--heap", hex(cfg["heap"]), "--stack", hex(cfg["stack"]),
+    ], check=True)
+    aex0_xml.write_text(protect_xml.read_text().replace("<EnableAEXNotify>1</EnableAEXNotify>", "<EnableAEXNotify>0</EnableAEXNotify>"))
+
+    signed_profile = out_dir / "enclave.profile.signed.so"
+    signed_profile_aex0 = out_dir / "enclave.profile.aex0.signed.so"
+    subprocess.run([SGX_SIGN, "sign", "-key", SIGN_KEY, "-enclave", str(profile_elf), "-out", str(signed_profile), "-config", str(protect_xml)], check=True)
+    subprocess.run([SGX_SIGN, "sign", "-key", SIGN_KEY, "-enclave", str(profile_elf), "-out", str(signed_profile_aex0), "-config", str(aex0_xml)], check=True)
+
+    selectors_json = out_dir / "selectors.json"
+    selectors_json.write_text(json.dumps({"schema": "atfield-selectors-v1", "selectors": cfg["selectors"]}, indent=2) + "\n")
+
+    workset_all_reg = out_dir / "workset.all_reg.json"
+    layout_json = out_dir / "signer_layout.json"
+    subprocess.run([
+        str(WORKSET_TOOL),
+        "--profile-elf", str(profile_elf),
+        "--signed-elf", str(signed_profile),
+        "--fields", str(out_dir / "fields.json"),
+        "--selectors", str(selectors_json),
+        "--edl", str(edl_file),
+        "--capacity-q", str(cfg["capacity_q"]),
+        "--out", str(workset_all_reg),
+        "--layout-out", str(layout_json),
+    ], check=True)
+
+    final_all_reg_elf = out_dir / "enclave.all_reg.final.so"
+    final_all_reg_json = out_dir / "pretouch.all_reg.finalized.json"
+    verify_all_reg_json = out_dir / "pretouch.all_reg.verified.json"
+    signed_final_all_reg = out_dir / "enclave.all_reg.final.signed.so"
+    signed_final_all_reg_aex0 = out_dir / "enclave.all_reg.final.aex0.signed.so"
+    ready_all_reg_bin = out_dir / "enclave.all_reg.ready.bin"
+    ready_all_reg_json = out_dir / "enclave.all_reg.ready.json"
+
+    subprocess.run([
+        str(PRETOUCH_TOOL), "finalize",
+        "--profile-elf", str(profile_elf),
+        "--signed-profile-elf", str(signed_profile),
+        "--workset", str(workset_all_reg),
+        "--fields", str(out_dir / "fields.json"),
+        "--capacity-q", str(cfg["capacity_q"]),
+        "--out-elf", str(final_all_reg_elf),
+        "--out-json", str(final_all_reg_json),
+    ], check=True)
+    subprocess.run([SGX_SIGN, "sign", "-key", SIGN_KEY, "-enclave", str(final_all_reg_elf), "-out", str(signed_final_all_reg), "-config", str(protect_xml)], check=True)
+    subprocess.run([SGX_SIGN, "sign", "-key", SIGN_KEY, "-enclave", str(final_all_reg_elf), "-out", str(signed_final_all_reg_aex0), "-config", str(aex0_xml)], check=True)
+    subprocess.run([
+        str(PRETOUCH_TOOL), "verify",
+        "--profile-elf", str(profile_elf),
+        "--signed-profile-elf", str(signed_profile),
+        "--final-elf", str(final_all_reg_elf),
+        "--signed-final-elf", str(signed_final_all_reg),
+        "--workset", str(workset_all_reg),
+        "--fields", str(out_dir / "fields.json"),
+        "--capacity-q", str(cfg["capacity_q"]),
+        "--out-json", str(verify_all_reg_json),
+    ], check=True)
+    subprocess.run([
+        str(READINESS_TOOL),
+        "--workset", str(workset_all_reg),
+        "--fields", str(out_dir / "fields.json"),
+        "--pretouch", str(verify_all_reg_json),
+        "--final-elf", str(final_all_reg_elf),
+        "--signed-final-elf", str(signed_final_all_reg),
+        "--out", str(ready_all_reg_bin),
+        "--out-json", str(ready_all_reg_json),
+    ], check=True)
+    for prefix, in_elf in (("profile", profile_elf), ("all_reg", final_all_reg_elf)):
+        subprocess.run([
+            sys.executable, str(DYN_ROOT / "tools" / "patch_4gate.py"),
+            "--input-elf", str(in_elf),
+            "--fields", str(out_dir / "fields.json"),
+            "--capacity-q", str(cfg["capacity_q"]),
+            "--config-xml", str(aex0_xml),
+            "--out-elf", str(out_dir / f"enclave.{prefix}.4gate.so"),
+            "--out-signed-elf", str(out_dir / f"enclave.{prefix}.4gate.aex0.signed.so"),
+            "--out-json", str(out_dir / f"enclave.{prefix}.4gate.json"),
+        ], check=True)
+
+    ws_data = json.loads(workset_all_reg.read_text())
+    return {
+        "sample": name,
+        "field_count": 1,
+        "all_reg_pages_per_field": len(ws_data["fields"][0]["pages"]),
+    }
+
+
 def main() -> None:
-    names = sys.argv[1:] or list(TARGETS.keys())
+    names = sys.argv[1:] or (list(TARGETS.keys()) + list(CHALLENGE_TARGETS.keys()))
     summaries = []
     for name in names:
         print(f"=== Building {name} ===", flush=True)
-        summaries.append(build_target(name))
+        if name in CHALLENGE_TARGETS:
+            summaries.append(build_challenge_target(name))
+        else:
+            summaries.append(build_target(name))
     print(json.dumps(summaries, indent=2))
 
 

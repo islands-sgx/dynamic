@@ -229,6 +229,7 @@ static void run_interventions_if_matching(
                     /* Detect if cnt1_off binds a flexible-array struct (orig_blen >= 4 && *(uint32_t*)ptr == orig_blen - 4) */
                     int is_flex_struct = 0;
                     size_t orig_primary_payload = 0;
+                    if (sc_mode != 2) {
                     for (uint32_t pi = 0; pi < es->num_params; pi++) {
                         const param_schema_t *ps = &es->params[pi];
                         if (ps->is_pointer && ps->bound_kind == BOUND_SIZE && (long)ps->bound_ms_offset == cnt1_off) {
@@ -245,6 +246,7 @@ static void run_interventions_if_matching(
                         }
                     }
 
+                    }
                     /* Update scalar count/size slots */
                     for (uint32_t pi = 0; pi < es->num_params; pi++) {
                         const param_schema_t *ps = &es->params[pi];
@@ -301,7 +303,7 @@ static void run_interventions_if_matching(
                         allocs[pi] = buf;
                         const uint8_t *orig_ptr = *(const uint8_t *const *)((const uint8_t *)ms + ps->ms_offset);
                         int param_is_flex = 0;
-                        if (orig_ptr && orig_blen >= 4 && (*(const uint32_t *)orig_ptr) + 4 == orig_blen && new_blen >= 4) {
+                        if (sc_mode != 2 && orig_ptr && orig_blen >= 4 && (*(const uint32_t *)orig_ptr) + 4 == orig_blen && new_blen >= 4) {
                             param_is_flex = 1;
                         }
                         if ((ps->direction == DIR_IN || ps->direction == DIR_INOUT) && orig_ptr && orig_blen > 0 && new_blen > 0) {

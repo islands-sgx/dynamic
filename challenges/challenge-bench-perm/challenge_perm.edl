@@ -1,0 +1,16 @@
+enclave {
+    trusted {
+        public sgx_status_t ecall_alpha_stage(uint32_t stage_val);
+        public sgx_status_t ecall_beta_run(
+            uint32_t ctl_flag,
+            [in, size=pay_len] const uint8_t *pay_buf,
+            size_t pay_len,
+            [in, size=meta_len] const uint8_t *meta_buf,
+            size_t meta_len,
+            [out, size=res_len] uint8_t *res_buf,
+            size_t res_len
+        );
+        public sgx_status_t ecall_gamma_reset(uint32_t init_seed);
+        public sgx_status_t ecall_delta_latch(uint32_t latch_v);
+    };
+};

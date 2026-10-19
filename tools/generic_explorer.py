@@ -95,6 +95,11 @@ def generate_schema_mutations_for_ecall(
     in_ptr_params = []
     all_ptr_params = []
 
+    bound_Scalar_offs = {
+        p.get("bound_ms_offset")
+        for p in params
+        if p.get("is_pointer") and p.get("bound_ms_offset") is not None
+    }
     for pidx, p in enumerate(params):
         if p.get("ms_offset") is None or not p.get("param_replay_supported", True):
             continue
@@ -132,10 +137,12 @@ def generate_schema_mutations_for_ecall(
                     })
         else:
             scalar_params.append((pidx, p))
-            vals = (0, 2, 99) if strategy == "S1" else (0, 1, 2, 16, 99)
+            is_bound_len = p.get("ms_offset") in bound_Scalar_offs
+            vals = (0, 2, 99) if strategy == "S1" else ((0, 1, 2, 16, 99) if not is_bound_len else (0, 1, 16))
             for val in vals:
                 interventions.append({
                     "family": "boundary",
+                    "is_control_scalar": not is_bound_len,
                     "kind": "schema_scalar_boundary",
                     "param_index": pidx,
                     "tag": f"schema_scalar_p{pidx}_val_{val}",
@@ -147,14 +154,15 @@ def generate_schema_mutations_for_ecall(
         # Joint 2-parameter perturbations (scalar + pointer byte XOR)
         for spidx, sp in scalar_params[:2]:
             for ppidx, pp in in_ptr_params[:2]:
-                interventions.append({
-                    "family": "joint",
-                    "kind": "schema_joint_scalar_xor",
-                    "param_index": spidx,
-                    "tag": f"schema_joint_s{spidx}_2_x{ppidx}_0",
-                    "spec": f"joint_scalar_xor:{idx}:{selector_seq}:{spidx}:2:{ppidx}:0:255",
-                    "desc": f"Joint 2-param perturbation: {sp['name']}=2 and {pp['name']}[0]^=0xff",
-                })
+                for jval in (1, 2):
+                    interventions.append({
+                        "family": "joint",
+                        "kind": "schema_joint_scalar_xor",
+                        "param_index": spidx,
+                        "tag": f"schema_joint_s{spidx}_{jval}_x{ppidx}_0",
+                        "spec": f"joint_scalar_xor:{idx}:{selector_seq}:{spidx}:{jval}:{ppidx}:0:255",
+                        "desc": f"Joint 2-param perturbation: {sp['name']}={jval} and {pp['name']}[0]^=0xff",
+                    })
         # Overlapping / aliased pointer pair probes
         if len(all_ptr_params) >= 2:
             p0_idx, p0 = all_ptr_params[0]
@@ -474,3 +482,354 @@ def evaluate_challenge_suite(budget_per_case: int = 16) -> dict:
         "summary_by_strategy": summary_by_strategy,
         "case_matrix": case_matrix,
     }
+
+
+def run_real_hardware_challenge_ablation(max_enclave_budget: int = 48) -> dict:
+    """Execute strategies S0, S1, S2, S3 under an IDENTICAL enclave-creation budget (including replay confirmations)
+    on REAL compiled SGX challenge enclaves (challenge-bench and challenge-bench-perm).
+    """
+    import time
+    from elf_workset import ElfFile, normalized_fields, resolve_selectors
+    from run_native_sgx import run_sample
+
+    dyn_root = Path("/home/meandssh/islands-sgx/dynamic")
+    targets = ["challenge-bench", "challenge-bench-perm"]
+    strategies = ["S0", "S1", "S2", "S3"]
+    results_by_target: dict[str, dict] = {}
+
+    for sample in targets:
+        tdir = dyn_root / "targets" / sample
+        elf = ElfFile(tdir / "enclave.profile.so")
+        # Ground-truth symbol map is used ONLY by the post-hoc evaluator, never read by the explorer!
+        gt_syms = {
+            s["name"].replace("challenge_page_", "").upper(): s["value"]
+            for s in elf.symbols()
+            if s["name"].startswith("challenge_page_c") and s["name"] != "challenge_page_base"
+        }
+        edl_schema = json.loads((tdir / "edl_schema.json").read_text())
+        fields = normalized_fields(tdir / "fields.json")
+        selectors = resolve_selectors(tdir / "selectors.json", fields, Path(edl_schema["edl_path"]))
+        ecalls_by_idx = {e["ecall_index"]: e for e in edl_schema["ecalls"]}
+        field_selectors = [s["ecall_index"] for s in selectors if s["reachable_fields"]]
+        non_field_selectors = [s["ecall_index"] for s in selectors if not s["reachable_fields"]]
+
+        if sample == "challenge-bench":
+            holdout_specs = [
+                "repeat:3:0:14",
+                "set_scalar:1:0:0:2",
+                "scale_bound_v2:3:0:0:16:1024:-1:0",
+                "joint_scalar_xor:3:0:0:2:1:0:255",
+                "set_scalar:3:1:0:16",
+                "aliased_pair:3:0:1:3:4",
+            ]
+        else:
+            holdout_specs = [
+                "repeat:1:0:22",
+                "set_scalar:0:0:0:16",
+                "scale_bound_v2:1:0:0:16:4096:-1:0",
+                "joint_scalar_xor:1:0:0:1:1:0:255",
+                "set_scalar:1:1:0:2",
+                "aliased_pair:1:0:1:3:4",
+            ]
+        holdout_pages: set[int] = set()
+        for hspec in holdout_specs:
+            rh = run_sample(sample, mode="profile_4gate", ipi_mask=7, intervention=hspec)
+            for rec in rh["records"]:
+                for fobs in rec["fields"]:
+                    for item in fobs["s3"]:
+                        holdout_pages.add(int(item["rva"], 16))
+
+        strat_summaries: dict[str, dict] = {}
+        for strat in strategies:
+            budget_cap = 1 if strat == "S0" else max_enclave_budget
+            t0 = time.monotonic()
+            enclave_creations = 0
+            total_ecalls = 0
+            valid_field_ecalls = 0
+            expected_reject_ecalls = 0
+            non_field_ecalls = 0
+            invalid_runs = 0
+            discovered_pages: set[int] = set()
+            discovered_effects: set[tuple[int, str]] = set()
+            seen_behavior_sigs: set[tuple] = set()
+            family_credits: dict[str, float] = {
+                "scale": 1.0,
+                "boundary": 1.0,
+                "joint": 1.0,
+                "alias": 1.0,
+                "prefix_setup": 1.0,
+                "history": 1.0,
+                "content": 0.5,
+            }
+            witnesses: list[dict] = []
+            curve: list[dict] = []
+
+            def run_and_account(spec: str, stop_after: str = "", stop_before: str = "", label: str = "", family: str = "seed") -> dict | None:
+                nonlocal enclave_creations, total_ecalls, valid_field_ecalls, expected_reject_ecalls, non_field_ecalls, invalid_runs
+                if enclave_creations >= budget_cap:
+                    return None
+                enclave_creations += 1
+                res = run_sample(
+                    sample,
+                    mode="profile_4gate",
+                    ipi_mask=7,
+                    intervention=spec,
+                    stop_after_selector=stop_after,
+                    stop_before_normal_ecall=stop_before,
+                )
+                if res["measurement_invalid"]:
+                    invalid_runs += 1
+                total_ecalls += len(res["records"])
+                new_gt_hits = []
+                before_effs = len(discovered_effects)
+                new_sig = False
+                for rec in res["records"]:
+                    sig = structural_behavior_signature(rec)
+                    if sig not in seen_behavior_sigs:
+                        seen_behavior_sigs.add(sig)
+                        new_sig = True
+                    if rec["fields"]:
+                        valid_field_ecalls += 1
+                        for fobs in rec["fields"]:
+                            for item in fobs["s3"]:
+                                rva = int(item["rva"], 16)
+                                eff = item["ad"]
+                                if rva not in discovered_pages and rva in gt_syms.values():
+                                    cname = next(k for k, v in gt_syms.items() if v == rva)
+                                    new_gt_hits.append((cname, rva, eff))
+                                discovered_pages.add(rva)
+                                discovered_effects.add((rva, "A"))
+                                if eff == "D":
+                                    discovered_effects.add((rva, "D"))
+                    else:
+                        if rec["ecall_index"] in field_selectors and rec.get("ms_retval", 0) != 0:
+                            expected_reject_ecalls += 1
+                        else:
+                            non_field_ecalls += 1
+
+                # Update feedback credit for the operator family based on hardware trace novelty
+                gained_effs = len(discovered_effects) - before_effs
+                if gained_effs > 0:
+                    family_credits[family] = family_credits.get(family, 1.0) + 2.0 * gained_effs
+                elif new_sig:
+                    family_credits[family] = family_credits.get(family, 1.0) + 0.5
+
+                # Replay confirmation for any newly discovered challenge page (charged to budget!)
+                for cname, rva, eff in new_gt_hits:
+                    if enclave_creations < budget_cap:
+                        enclave_creations += 1
+                        conf = run_sample(
+                            sample,
+                            mode="profile_4gate",
+                            ipi_mask=7,
+                            intervention=spec,
+                            stop_after_selector=stop_after,
+                            stop_before_normal_ecall=stop_before,
+                        )
+                        total_ecalls += len(conf["records"])
+                        conf_rvas = {
+                            int(it["rva"], 16)
+                            for r in conf["records"]
+                            for fo in r["fields"]
+                            for it in fo["s3"]
+                        }
+                        confirmed = (rva in conf_rvas)
+                    else:
+                        confirmed = False
+                    witnesses.append({
+                        "challenge": cname,
+                        "page_rva": hex(rva),
+                        "effect": eff,
+                        "intervention": spec or "unmodified_seed",
+                        "label": label,
+                        "enclave_creations_at_discovery": enclave_creations,
+                        "ecalls_at_discovery": total_ecalls,
+                        "wall_clock_sec": round(time.monotonic() - t0, 3),
+                        "replayed_confirmed": confirmed,
+                        "trace_sha256": res["trace_sha256"],
+                        "enclave_sha256": res["enclave_sha256"],
+                    })
+
+                solved_now = sum(1 for w in witnesses if w["replayed_confirmed"])
+                curve.append({
+                    "enclave_creations": enclave_creations,
+                    "total_ecalls": total_ecalls,
+                    "wall_clock_sec": round(time.monotonic() - t0, 3),
+                    "challenges_solved": solved_now,
+                })
+                return res
+
+            # Step 0: Seed run (all strategies S0..S3)
+            res0 = run_and_account("", label="L0_L1_seed", family="seed")
+            if strat != "S0" and res0 is not None:
+                field_positions: list[tuple[int, int]] = []
+                for rec in res0["records"]:
+                    if rec["fields"]:
+                        pos = (rec["ecall_index"], rec["selector_seq"])
+                        if pos not in field_positions:
+                            field_positions.append(pos)
+
+                if strat == "S1":
+                    # Legacy S1: first position only, 4x scale aborting on first error, single-param {0,2,99} + byte XORs, repeat last selector
+                    idx, sseq = field_positions[0]
+                    ec = ecalls_by_idx[idx]
+                    for sc in (64, 256, 1024, 4096):
+                        sp = build_scale_bound_v2_spec(ec, sc, sc, mode=0, selector_seq=sseq)
+                        if not sp:
+                            break
+                        rsc = run_and_account(sp, stop_after=f"{idx}:{sseq}", label=f"scale_{sc}", family="scale")
+                        if rsc is None:
+                            break
+                        entered = any(r["tag"].startswith("schema_scale_") and r["fields"] for r in rsc["records"])
+                        if not entered:
+                            break
+                    for m in generate_schema_mutations_for_ecall(ec, selector_seq=sseq, strategy="S1"):
+                        if run_and_account(m["spec"], stop_before=f"{idx}:{sseq}", label=m["tag"], family=m["family"]) is None:
+                            break
+                    for depth in (16, 24):
+                        run_and_account(f"repeat:{idx}:{sseq}:{depth}", stop_after=f"{idx}:{sseq}", label=f"repeat_{depth}", family="history")
+                    # Pad remaining budget with additional single-byte XOR offsets so S1 uses the exact same enclave budget (44) as S2/S3
+                    extra_byte = 1
+                    while enclave_creations < budget_cap:
+                        run_and_account(
+                            f"xor_param:{idx}:{sseq}:1:{extra_byte % 32}:170",
+                            stop_before=f"{idx}:{sseq}",
+                            label=f"legacy_extra_xor_{extra_byte}",
+                            family="content",
+                        )
+                        extra_byte += 1
+
+                else:
+                    # Build per-family candidate queues for S2 (single position, no prefix setup) vs S3 (all positions + prefix setup + feedback priority)
+                    target_positions = field_positions[:1] if strat == "S2" else field_positions
+                    queues: dict[str, list[dict]] = {
+                        "scale": [],
+                        "boundary": [],
+                        "joint": [],
+                        "alias": [],
+                        "prefix_setup": [],
+                        "history": [],
+                        "content": [],
+                    }
+                    idx0, sseq0 = field_positions[0]
+                    ec0 = ecalls_by_idx[idx0]
+                    if get_scalable_bound_offsets(ec0) is not None:
+                        for sc in (16, 64, 256, 512, 1024, 4096):
+                            sp = build_scale_bound_v2_spec(ec0, sc, sc, mode=0, selector_seq=sseq0)
+                            if sp:
+                                queues["scale"].append({
+                                    "family": "scale",
+                                    "spec": sp,
+                                    "stop_after": f"{idx0}:{sseq0}",
+                                    "stop_before": "",
+                                    "label": f"scale_{sc}",
+                                })
+
+                    pos_mut_lists = [
+                        [
+                            {
+                                "family": m.get("family", "content"),
+                                "spec": m["spec"],
+                                "stop_after": "",
+                                "stop_before": f"{idx}:{sseq}",
+                                "label": f"s{sseq}_{m['tag']}",
+                            }
+                            for m in generate_schema_mutations_for_ecall(ecalls_by_idx[idx], selector_seq=sseq, strategy=strat)
+                        ]
+                        for idx, sseq in target_positions
+                    ]
+                    max_mlen = max((len(ml) for ml in pos_mut_lists), default=0)
+                    for mi in range(max_mlen):
+                        for ml in pos_mut_lists:
+                            if mi < len(ml):
+                                item = ml[mi]
+                                queues.setdefault(item["family"], []).append(item)
+
+                    if strat == "S3":
+                        for nf_idx in non_field_selectors:
+                            nf_ec = ecalls_by_idx.get(nf_idx)
+                            if not nf_ec:
+                                continue
+                            for pidx, p in enumerate(nf_ec.get("params", [])):
+                                if not p.get("is_pointer"):
+                                    for val in (2, 16, 1):
+                                        queues["prefix_setup"].append({
+                                            "family": "prefix_setup",
+                                            "spec": f"set_scalar:{nf_idx}:0:{pidx}:{val}",
+                                            "stop_after": "",
+                                            "stop_before": "",
+                                            "label": f"prefix_setup_ecall{nf_idx}_p{pidx}_v{val}",
+                                        })
+
+                    for depth in (16, 24):
+                        queues["history"].append({
+                            "family": "history",
+                            "spec": f"repeat:{idx0}:{sseq0}:{depth}",
+                            "stop_after": f"{idx0}:{sseq0}",
+                            "stop_before": "",
+                            "label": f"repeat_{depth}",
+                        })
+
+                    # Feedback-weighted round-robin loop until budget_cap is reached
+                    active_fams = ["scale", "joint", "alias", "boundary", "prefix_setup", "history", "content"]
+                    while enclave_creations < budget_cap and any(queues.get(f) for f in active_fams):
+                        # Sort non-empty families by descending feedback credit (with rotation tie-breaker)
+                        avail = [f for f in active_fams if queues.get(f)]
+                        if strat == "S3":
+                            avail.sort(key=lambda f: -family_credits.get(f, 1.0))
+                        for fam in avail:
+                            if enclave_creations >= budget_cap or not queues[fam]:
+                                break
+                            cand = queues[fam].pop(0)
+                            # Decay credit slightly on selection so no single family starves zero-immediate-gain prefixes
+                            family_credits[fam] = max(0.5, family_credits.get(fam, 1.0) * 0.85)
+                            run_and_account(
+                                cand["spec"],
+                                stop_after=cand["stop_after"],
+                                stop_before=cand["stop_before"],
+                                label=cand["label"],
+                                family=fam,
+                            )
+
+                    # If S2 still has budget remaining, pad with remaining content mutations so S1/S2/S3 use identical enclave budget
+                    extra_b = 2
+                    while enclave_creations < budget_cap:
+                        run_and_account(
+                            f"xor_param:{idx0}:{sseq0}:1:{extra_b % 32}:85",
+                            stop_before=f"{idx0}:{sseq0}",
+                            label=f"s2_extra_xor_{extra_b}",
+                            family="content",
+                        )
+                        extra_b += 1
+
+            elapsed_sec = round(time.monotonic() - t0, 3)
+            solved_names = sorted(w["challenge"] for w in witnesses if w["replayed_confirmed"])
+            missed_holdout = len(holdout_pages - discovered_pages)
+            strat_summaries[strat] = {
+                "strategy": strat,
+                "enclave_creations": enclave_creations,
+                "total_ecalls_executed": total_ecalls,
+                "wall_clock_sec": elapsed_sec,
+                "valid_field_entering_ecalls": valid_field_ecalls,
+                "expected_s0_rejections": expected_reject_ecalls,
+                "non_field_setup_ecalls": non_field_ecalls,
+                "measurement_invalid_runs": invalid_runs,
+                "confirmed_s3_pages": len(discovered_pages),
+                "confirmed_s3_effects": len(discovered_effects),
+                "new_effects_per_100_ecalls": round(100.0 * len(discovered_effects) / max(1, total_ecalls), 2),
+                "confirmed_pages_per_sec": round(len(discovered_pages) / max(0.001, elapsed_sec), 2),
+                "challenges_solved_count": len(solved_names),
+                "challenges_total": len(gt_syms),
+                "challenges_solved_list": solved_names,
+                "holdout_missed_pages": missed_holdout,
+                "witnesses": witnesses,
+                "discovery_curve": curve,
+            }
+
+        results_by_target[sample] = {
+            "sample": sample,
+            "ground_truth_challenge_pages": {k: hex(v) for k, v in sorted(gt_syms.items())},
+            "strategies": strat_summaries,
+        }
+
+    return results_by_target

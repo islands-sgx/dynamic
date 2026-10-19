@@ -6,6 +6,33 @@ import gzip
 import hashlib
 from pathlib import Path
 
+REQUIRED_RECORD_KEYS = {
+    "call_seq",
+    "ecall_index",
+    "tag",
+    "sgx_status",
+    "measurement_invalid",
+    "syscall_errors",
+    "ipi_flush_failures",
+    "fast_forwarded_prior",
+    "mutation_oob_rejected",
+    "strict_mode",
+    "strict_non_ready_fault_count",
+    "fields",
+}
+
+REQUIRED_PROD_RECORD_KEYS = REQUIRED_RECORD_KEYS | {
+    "elapsed_ns",
+    "acquire_ns",
+    "encl_body_ns",
+    "release_ns",
+    "readiness_installed",
+    "acquire_calls",
+    "acquire_rc",
+    "release_calls",
+    "release_rc",
+}
+
 
 def sha256_path(p: Path) -> str:
     if p.is_file():
@@ -15,6 +42,25 @@ def sha256_path(p: Path) -> str:
         with gzip.open(gz, "rb") as f:
             return hashlib.sha256(f.read()).hexdigest()
     return ""
+
+
+def check_business_pass_stdout(stdout: str, expected_stdout_substr: str) -> tuple[bool, str]:
+    """Verify stdout contains a genuine PASS line and no negative 'NOT PASS' / 'FAIL' markers."""
+    if not expected_stdout_substr:
+        return True, ""
+    lines = [ln.strip() for ln in (stdout or "").splitlines() if ln.strip()]
+    for ln in lines:
+        up = ln.upper()
+        if "NOT PASS" in up or "FAILED" in up or up.startswith("FAIL:") or up.startswith("ERROR:"):
+            return False, f"NEGATIVE_STDOUT_MARKER:{ln}"
+    if expected_stdout_substr == "PASS":
+        for ln in lines:
+            if ln == "PASS" or ln.endswith(": PASS") or ln.startswith("PASS:") or ln.endswith(" PASS"):
+                return True, ""
+        return False, "MISSING_BUSINESS_PASS_STDOUT:MISSING_EXACT_PASS_LINE"
+    if expected_stdout_substr not in (stdout or ""):
+        return False, f"MISSING_BUSINESS_PASS_STDOUT:{expected_stdout_substr}"
+    return True, ""
 
 
 def validate_run_result(
@@ -29,6 +75,7 @@ def validate_run_result(
     require_ipi_mask: int | None = None,
     closed_workset_effects: dict[str, set[tuple[int, str]]] | None = None,
     require_zero_strict_faults: bool = False,
+    allow_nonzero_sgx_status: bool = False,
 ) -> dict:
     """Return {'status': 'PASS'|'FAIL'|'INVALID'|'TIMEOUT', 'reasons': [...]}."""
     reasons: list[str] = []
@@ -59,9 +106,9 @@ def validate_run_result(
         fail(f"TRUNCATED_TRACE_{len(records)}_LT_{expected_min_records}", "INVALID")
 
     if expected_stdout_substr:
-        stdout = run_res.get("stdout") or ""
-        if expected_stdout_substr not in stdout:
-            fail(f"MISSING_BUSINESS_PASS_STDOUT:{expected_stdout_substr}", "FAIL")
+        ok_out, out_reason = check_business_pass_stdout(run_res.get("stdout") or "", expected_stdout_substr)
+        if not ok_out:
+            fail(out_reason, "FAIL")
 
     if run_res.get("measurement_invalid", False):
         fail("RUN_MEASUREMENT_INVALID_FLAG", "INVALID")
@@ -72,7 +119,14 @@ def validate_run_result(
     total_strict_faults = 0
 
     for idx, rec in enumerate(records):
+        missing_keys = sorted(REQUIRED_RECORD_KEYS - set(rec.keys()))
+        if missing_keys:
+            fail(f"RECORD_{idx}_MISSING_KEYS:{','.join(missing_keys)}", "INVALID")
+            continue
+
         observed_tags.add(rec.get("tag", ""))
+        if not allow_nonzero_sgx_status and rec.get("sgx_status", 0) != 0:
+            fail(f"RECORD_{idx}_SGX_TRANSPORT_ERROR:{hex(rec.get('sgx_status', 0))}", "FAIL")
         if rec.get("measurement_invalid", 0) != 0:
             fail(f"RECORD_{idx}_MEASUREMENT_INVALID:{rec.get('invalid_reason', '')}", "INVALID")
         if rec.get("syscall_errors", 0) > 0:
@@ -135,6 +189,106 @@ def validate_run_result(
 
     if require_zero_strict_faults and total_strict_faults > 0:
         fail(f"STRICT_NON_READY_FAULTS_{total_strict_faults}", "FAIL")
+
+    return {"status": status, "reasons": reasons}
+
+
+def validate_diagnostic_4gate_run(
+    run_res: dict,
+    *,
+    expected_field_ids: set[str],
+    expected_ecall_seq: list[int] | None = None,
+    expected_field_call_seqs: set[int] | None = None,
+    require_ipi_mask: int = 3,
+) -> dict:
+    """Strict validator for 4-Gate diagnostic runs before their statistics or reference call_seq are used."""
+    base = validate_run_result(
+        run_res,
+        expected_returncode=0,
+        expected_stdout_substr="PASS",
+        expected_min_records=len(expected_ecall_seq) if expected_ecall_seq else 1,
+        expected_field_ids=expected_field_ids,
+        require_ipi_mask=require_ipi_mask,
+    )
+    reasons = list(base["reasons"])
+    status = base["status"]
+
+    def fail(code: str, kind: str = "INVALID") -> None:
+        nonlocal status
+        reasons.append(code)
+        if status == "PASS":
+            status = kind
+        elif kind == "INVALID" and status != "TIMEOUT":
+            status = "INVALID"
+
+    records = run_res.get("records") or []
+    if expected_ecall_seq is not None:
+        actual_seq = [r.get("ecall_index") for r in records]
+        if actual_seq != expected_ecall_seq:
+            fail(f"DIAG_ECALL_SEQUENCE_MISMATCH:len={len(actual_seq)}_vs_{len(expected_ecall_seq)}", "INVALID")
+
+    if expected_field_call_seqs is not None:
+        actual_fseqs = {r.get("call_seq") for r in records if r.get("fields")}
+        if actual_fseqs != expected_field_call_seqs:
+            fail("DIAG_FIELD_ENTERING_CALL_SEQS_MISMATCH", "INVALID")
+
+    return {"status": status, "reasons": reasons}
+
+
+def validate_production_run_result(
+    run_res: dict,
+    *,
+    expected_stdout_substr: str,
+    expected_ecall_seq: list[int],
+    ready_sel_set: set[int] | None = None,
+    require_readiness: bool = False,
+) -> dict:
+    """Strict non-bypassable validator for production benchmark runs (Raw, No-PreTouch, Group A/B/C)."""
+    base = validate_run_result(
+        run_res,
+        expected_returncode=0,
+        expected_stdout_substr=expected_stdout_substr,
+        expected_min_records=len(expected_ecall_seq),
+    )
+    reasons = list(base["reasons"])
+    status = base["status"]
+
+    def fail(code: str, kind: str = "INVALID") -> None:
+        nonlocal status
+        reasons.append(code)
+        if status == "PASS":
+            status = kind
+        elif kind == "INVALID" and status != "TIMEOUT":
+            status = "INVALID"
+
+    records = run_res.get("records") or []
+    for idx, r in enumerate(records):
+        missing_prod = sorted(REQUIRED_PROD_RECORD_KEYS - set(r.keys()))
+        if missing_prod:
+            fail(f"RECORD_{idx}_MISSING_PROD_KEYS:{','.join(missing_prod)}", "INVALID")
+
+    actual_seq = [r.get("ecall_index") for r in records]
+    if actual_seq != expected_ecall_seq:
+        fail(f"ECALL_SEQUENCE_MISMATCH:len={len(actual_seq)}_vs_{len(expected_ecall_seq)}", "INVALID")
+
+    if require_readiness:
+        if ready_sel_set is None:
+            fail("MISSING_READY_SELECTOR_SET", "INVALID")
+        else:
+            for idx, r in enumerate(records):
+                if r.get("readiness_installed", 0) != 1:
+                    fail(f"RECORD_{idx}_READINESS_NOT_INSTALLED", "INVALID")
+                sel = r.get("ecall_index")
+                if sel in ready_sel_set:
+                    if r.get("acquire_calls", 0) != 1 or r.get("acquire_rc", -1) != 0:
+                        fail(f"RECORD_{idx}_ACQUIRE_MISSING_OR_FAILED:calls={r.get('acquire_calls')}_rc={r.get('acquire_rc')}", "INVALID")
+                    if r.get("release_calls", 0) != 1 or r.get("release_rc", -1) != 0:
+                        fail(f"RECORD_{idx}_RELEASE_MISSING_OR_FAILED:calls={r.get('release_calls')}_rc={r.get('release_rc')}", "INVALID")
+                    if r.get("acquire_ns", 0) <= 0:
+                        fail(f"RECORD_{idx}_ZERO_ACQUIRE_NS", "INVALID")
+                else:
+                    if r.get("acquire_calls", 0) != 0:
+                        fail(f"RECORD_{idx}_UNEXPECTED_ACQUIRE_ON_EMPTY_SELECTOR_{sel}", "INVALID")
 
     return {"status": status, "reasons": reasons}
 
@@ -204,58 +358,5 @@ def validate_provenance_consistency(
                 if sha256_path(fpath) != art.get(key):
                     status = "INVALID"
                     reasons.append(f"ARTIFACT_HASH_MISMATCH:{key}")
-
-    return {"status": status, "reasons": reasons}
-
-
-def validate_production_run_result(
-    run_res: dict,
-    *,
-    expected_stdout_substr: str,
-    expected_ecall_seq: list[int],
-    ready_sel_set: set[int] | None = None,
-    require_readiness: bool = False,
-) -> dict:
-    """Strict non-bypassable validator for production benchmark runs (Raw, No-PreTouch, Group A/B/C)."""
-    base = validate_run_result(
-        run_res,
-        expected_returncode=0,
-        expected_stdout_substr=expected_stdout_substr,
-        expected_min_records=len(expected_ecall_seq),
-    )
-    reasons = list(base["reasons"])
-    status = base["status"]
-
-    def fail(code: str, kind: str = "INVALID") -> None:
-        nonlocal status
-        reasons.append(code)
-        if status == "PASS":
-            status = kind
-        elif kind == "INVALID" and status != "TIMEOUT":
-            status = "INVALID"
-
-    records = run_res.get("records") or []
-    actual_seq = [r.get("ecall_index") for r in records]
-    if actual_seq != expected_ecall_seq:
-        fail(f"ECALL_SEQUENCE_MISMATCH:len={len(actual_seq)}_vs_{len(expected_ecall_seq)}", "INVALID")
-
-    if require_readiness:
-        if ready_sel_set is None:
-            fail("MISSING_READY_SELECTOR_SET", "INVALID")
-        else:
-            for idx, r in enumerate(records):
-                if r.get("readiness_installed", 0) != 1:
-                    fail(f"RECORD_{idx}_READINESS_NOT_INSTALLED", "INVALID")
-                sel = r.get("ecall_index")
-                if sel in ready_sel_set:
-                    if r.get("acquire_calls", 0) != 1 or r.get("acquire_rc", -1) != 0:
-                        fail(f"RECORD_{idx}_ACQUIRE_MISSING_OR_FAILED:calls={r.get('acquire_calls')}_rc={r.get('acquire_rc')}", "INVALID")
-                    if r.get("release_calls", 0) != 1 or r.get("release_rc", -1) != 0:
-                        fail(f"RECORD_{idx}_RELEASE_MISSING_OR_FAILED:calls={r.get('release_calls')}_rc={r.get('release_rc')}", "INVALID")
-                    if r.get("acquire_ns", 0) <= 0:
-                        fail(f"RECORD_{idx}_ZERO_ACQUIRE_NS", "INVALID")
-                else:
-                    if r.get("acquire_calls", 0) != 0:
-                        fail(f"RECORD_{idx}_UNEXPECTED_ACQUIRE_ON_EMPTY_SELECTOR_{sel}", "INVALID")
 
     return {"status": status, "reasons": reasons}

@@ -10,6 +10,7 @@ DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
 sys.path.insert(0, str(DYN_ROOT / "tools"))
 
 from acceptance_validator import (  # noqa: E402
+    validate_diagnostic_4gate_run,
     validate_production_run_result,
     validate_provenance_consistency,
     validate_run_result,
@@ -31,11 +32,21 @@ def make_valid_mock_run() -> dict:
                 "tag": "schema_xor_p2_byte_45",
                 "sgx_status": 0,
                 "ms_retval_i32": 0,
+                "elapsed_ns": 50000,
+                "acquire_ns": 20000,
+                "encl_body_ns": 15000,
+                "release_ns": 15000,
+                "readiness_installed": 1,
+                "acquire_calls": 1,
+                "acquire_rc": 0,
+                "release_calls": 1,
+                "release_rc": 0,
                 "measurement_invalid": 0,
                 "invalid_reason": "",
                 "syscall_errors": 0,
                 "ipi_flush_failures": 0,
                 "fast_forwarded_prior": 0,
+                "mutation_oob_rejected": 0,
                 "strict_mode": 2,
                 "strict_non_ready_fault_count": 0,
                 "fields": [
@@ -199,6 +210,54 @@ class TestAcceptanceValidator(unittest.TestCase):
         )
         self.assertEqual(v["status"], "INVALID")
         self.assertTrue(any("ECALL_SEQUENCE_MISMATCH" in x for x in v["reasons"]))
+
+
+
+    def test_16_false_positive_not_pass_stdout_rejected(self) -> None:
+        r = make_valid_mock_run()
+        r["stdout"] = "Mock functional checks: NOT PASS"
+        v = validate_run_result(r, expected_stdout_substr="PASS")
+        self.assertEqual(v["status"], "FAIL")
+        self.assertTrue(any("NEGATIVE_STDOUT_MARKER" in x for x in v["reasons"]))
+
+    def test_17_nonzero_sgx_status_transport_error_rejected(self) -> None:
+        r = make_valid_mock_run()
+        r["records"][0]["sgx_status"] = 0x2001
+        v = validate_production_run_result(
+            r,
+            expected_stdout_substr="PASS",
+            expected_ecall_seq=[0],
+            ready_sel_set={0},
+            require_readiness=True,
+        )
+        self.assertEqual(v["status"], "FAIL")
+        self.assertTrue(any("SGX_TRANSPORT_ERROR" in x for x in v["reasons"]))
+
+    def test_18_missing_required_record_fields_rejected(self) -> None:
+        r = make_valid_mock_run()
+        del r["records"][0]["release_calls"]
+        v = validate_production_run_result(
+            r,
+            expected_stdout_substr="PASS",
+            expected_ecall_seq=[0],
+            ready_sel_set={0},
+            require_readiness=True,
+        )
+        self.assertEqual(v["status"], "INVALID")
+        self.assertTrue(any("MISSING_PROD_KEYS" in x for x in v["reasons"]))
+
+    def test_19_diagnostic_4gate_sequence_or_field_mismatch_rejected(self) -> None:
+        r = make_valid_mock_run()
+        r["records"][0]["fields"][0]["ipi_aex_verified_mask"] = 3
+        v = validate_diagnostic_4gate_run(
+            r,
+            expected_field_ids={"0x1111111111111111"},
+            expected_ecall_seq=[0],
+            expected_field_call_seqs=set(),  # mismatch: record 0 entered a field!
+            require_ipi_mask=3,
+        )
+        self.assertEqual(v["status"], "INVALID")
+        self.assertIn("DIAG_FIELD_ENTERING_CALL_SEQS_MISMATCH", v["reasons"])
 
 
 if __name__ == "__main__":

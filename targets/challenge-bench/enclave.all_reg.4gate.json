@@ -1,0 +1,24 @@
+{
+  "fields": [
+    {
+      "enter_call_rva": 10219,
+      "exit_call_rva": 10496,
+      "field_id": "0xd510c2d93bbb0e56",
+      "function": "challenge_field_work",
+      "gate_a_rva": 196608,
+      "gate_b_rva": 196763,
+      "gate_c_rva": 196942,
+      "gate_d_rva": 197133,
+      "marker_rva": 10224,
+      "pretouch_jmp_rva": 187279,
+      "pretouch_rva": 184320
+    }
+  ],
+  "gate_bytes_used": 695,
+  "gate_helper_page_rva": 196608,
+  "input_elf": "/home/meandssh/islands-sgx/dynamic/targets/challenge-bench/enclave.all_reg.final.so",
+  "input_elf_sha256": "b9379980905447826519055bab790afd627d65b8354fd651a9f08ce2c2865aa6",
+  "output_elf": "/home/meandssh/islands-sgx/dynamic/targets/challenge-bench/enclave.all_reg.4gate.so",
+  "output_elf_sha256": "b557aecf99df61d36fc724391fb420f31b93f16e2ac73394dd6a0acc4d2fc65e",
+  "schema": "atfield-4gate-patch-v1"
+}

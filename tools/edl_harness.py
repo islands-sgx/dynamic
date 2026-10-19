@@ -78,6 +78,18 @@ SAMPLES = {
             "-I/nix/store/bz93f9hr99lpgdyr032qrsfxyi6zj6qj-ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-opt-2-clang/core/Enclave",
         ],
     },
+    "challenge-bench": {
+        "edl": DYN_ROOT / "challenges/challenge-bench/challenge.edl",
+        "u_c": DYN_ROOT / "targets/challenge-bench/edl_gen/challenge_u.c",
+        "u_dir": DYN_ROOT / "targets/challenge-bench/edl_gen",
+        "inc": [f"-I{SGX_SDK_INC}"],
+    },
+    "challenge-bench-perm": {
+        "edl": DYN_ROOT / "challenges/challenge-bench-perm/challenge_perm.edl",
+        "u_c": DYN_ROOT / "targets/challenge-bench-perm/edl_gen/challenge_perm_u.c",
+        "u_dir": DYN_ROOT / "targets/challenge-bench-perm/edl_gen",
+        "inc": [f"-I{SGX_SDK_INC}"],
+    },
 }
 
 

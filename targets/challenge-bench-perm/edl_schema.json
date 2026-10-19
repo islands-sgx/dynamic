@@ -1,0 +1,378 @@
+{
+  "sample": "challenge-bench-perm",
+  "edl_path": "/home/meandssh/islands-sgx/dynamic/challenges/challenge-bench-perm/challenge_perm.edl",
+  "u_c_path": "/home/meandssh/islands-sgx/dynamic/targets/challenge-bench-perm/edl_gen/challenge_perm_u.c",
+  "ecalls": [
+    {
+      "ecall_index": 0,
+      "name": "ecall_alpha_stage",
+      "return_type": "sgx_status_t",
+      "params": [
+        {
+          "name": "stage_val",
+          "type": "uint32_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "uint32_t stage_val",
+          "ms_offset": 4,
+          "ms_size": 4,
+          "elem_size": 4,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        }
+      ],
+      "ms_layout": {
+        "size": 8,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4,
+            "elem_size": 4,
+            "type": "sgx_status_t"
+          },
+          "ms_stage_val": {
+            "offset": 4,
+            "size": 4,
+            "elem_size": 4,
+            "type": "uint32_t"
+          }
+        },
+        "param_consts": {}
+      },
+      "has_retval": true,
+      "retval_offset": 0,
+      "retval_size": 4,
+      "replay_supported": true
+    },
+    {
+      "ecall_index": 1,
+      "name": "ecall_beta_run",
+      "return_type": "sgx_status_t",
+      "params": [
+        {
+          "name": "ctl_flag",
+          "type": "uint32_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "uint32_t ctl_flag",
+          "ms_offset": 4,
+          "ms_size": 4,
+          "elem_size": 4,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "pay_buf",
+          "type": "const uint8_t *",
+          "attributes": [
+            "in",
+            "size=pay_len"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "const uint8_t *pay_buf",
+          "ms_offset": 8,
+          "ms_size": 8,
+          "elem_size": 1,
+          "direction": "in",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "size",
+          "bound_param": "pay_len",
+          "bound_ms_offset": 16,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "pay_len",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t pay_len",
+          "ms_offset": 16,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "meta_buf",
+          "type": "const uint8_t *",
+          "attributes": [
+            "in",
+            "size=meta_len"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "const uint8_t *meta_buf",
+          "ms_offset": 24,
+          "ms_size": 8,
+          "elem_size": 1,
+          "direction": "in",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "size",
+          "bound_param": "meta_len",
+          "bound_ms_offset": 32,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "meta_len",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t meta_len",
+          "ms_offset": 32,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "res_buf",
+          "type": "uint8_t *",
+          "attributes": [
+            "out",
+            "size=res_len"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "uint8_t *res_buf",
+          "ms_offset": 40,
+          "ms_size": 8,
+          "elem_size": 1,
+          "direction": "out",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "size",
+          "bound_param": "res_len",
+          "bound_ms_offset": 48,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "res_len",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t res_len",
+          "ms_offset": 48,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        }
+      ],
+      "ms_layout": {
+        "size": 56,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4,
+            "elem_size": 4,
+            "type": "sgx_status_t"
+          },
+          "ms_ctl_flag": {
+            "offset": 4,
+            "size": 4,
+            "elem_size": 4,
+            "type": "uint32_t"
+          },
+          "ms_pay_buf": {
+            "offset": 8,
+            "size": 8,
+            "elem_size": 1,
+            "type": "const uint8_t*"
+          },
+          "ms_pay_len": {
+            "offset": 16,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          },
+          "ms_meta_buf": {
+            "offset": 24,
+            "size": 8,
+            "elem_size": 1,
+            "type": "const uint8_t*"
+          },
+          "ms_meta_len": {
+            "offset": 32,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          },
+          "ms_res_buf": {
+            "offset": 40,
+            "size": 8,
+            "elem_size": 1,
+            "type": "uint8_t*"
+          },
+          "ms_res_len": {
+            "offset": 48,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          }
+        },
+        "param_consts": {}
+      },
+      "has_retval": true,
+      "retval_offset": 0,
+      "retval_size": 4,
+      "replay_supported": true
+    },
+    {
+      "ecall_index": 2,
+      "name": "ecall_gamma_reset",
+      "return_type": "sgx_status_t",
+      "params": [
+        {
+          "name": "init_seed",
+          "type": "uint32_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "uint32_t init_seed",
+          "ms_offset": 4,
+          "ms_size": 4,
+          "elem_size": 4,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        }
+      ],
+      "ms_layout": {
+        "size": 8,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4,
+            "elem_size": 4,
+            "type": "sgx_status_t"
+          },
+          "ms_init_seed": {
+            "offset": 4,
+            "size": 4,
+            "elem_size": 4,
+            "type": "uint32_t"
+          }
+        },
+        "param_consts": {}
+      },
+      "has_retval": true,
+      "retval_offset": 0,
+      "retval_size": 4,
+      "replay_supported": true
+    },
+    {
+      "ecall_index": 3,
+      "name": "ecall_delta_latch",
+      "return_type": "sgx_status_t",
+      "params": [
+        {
+          "name": "latch_v",
+          "type": "uint32_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "uint32_t latch_v",
+          "ms_offset": 4,
+          "ms_size": 4,
+          "elem_size": 4,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        }
+      ],
+      "ms_layout": {
+        "size": 8,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4,
+            "elem_size": 4,
+            "type": "sgx_status_t"
+          },
+          "ms_latch_v": {
+            "offset": 4,
+            "size": 4,
+            "elem_size": 4,
+            "type": "uint32_t"
+          }
+        },
+        "param_consts": {}
+      },
+      "has_retval": true,
+      "retval_offset": 0,
+      "retval_size": 4,
+      "replay_supported": true
+    }
+  ]
+}
