@@ -47,7 +47,8 @@ def extract_concrete_record_feedback(rec: dict) -> dict:
     s3_rva_effects: set[tuple[int, str]] = set()
     s3_rva_pages: set[int] = set()
     heap_pages = 0
-    stack_bucket = 0
+    rsp_endpoint_delta_bucket = 0
+    observed_stack_pages = 0
     field_ids: list[str] = []
 
     for fobs in rec.get("fields", []):
@@ -61,7 +62,11 @@ def extract_concrete_record_feedback(rec: dict) -> dict:
         gb = int(fobs.get("gateB_rsp_rva", "0x0"), 16)
         gd = int(fobs.get("gateD_rsp_rva", "0x0"), 16)
         if gb and gd:
-            stack_bucket = max(stack_bucket, abs(gb - gd) // 4096)
+            rsp_endpoint_delta_bucket = max(rsp_endpoint_delta_bucket, abs(gb - gd) // 4096)
+        rsp_anchor = max(gb, gd)
+        stack_win_lo = max(0, min(gb, gd) - 16 * 4096) if (gb and gd) else 0
+        stack_win_hi = rsp_anchor + 4 * 4096 if rsp_anchor else 0
+        f_stack_rvas: set[int] = set()
         for item in fobs.get("s3", []):
             rva = int(item["rva"], 16)
             ad = item["ad"]
@@ -72,6 +77,9 @@ def extract_concrete_record_feedback(rec: dict) -> dict:
             if ad == "D":
                 s3_field_effects.add((fid, rva, "D"))
                 s3_rva_effects.add((rva, "D"))
+            if rsp_anchor and stack_win_lo <= rva <= stack_win_hi:
+                f_stack_rvas.add(rva)
+        observed_stack_pages = max(observed_stack_pages, len(f_stack_rvas))
 
     if rec.get("sgx_status", 0) != 0:
         ret_cat = 2
@@ -87,7 +95,8 @@ def extract_concrete_record_feedback(rec: dict) -> dict:
         ret_cat,
         frozenset(s3_field_effects),
         heap_pages,
-        stack_bucket,
+        rsp_endpoint_delta_bucket,
+        observed_stack_pages,
     )
     return {
         "entered_field": bool(field_ids),
@@ -98,7 +107,8 @@ def extract_concrete_record_feedback(rec: dict) -> dict:
         "s3_pages": frozenset(s3_rva_pages),
         "s3_effects": frozenset(s3_rva_effects),
         "heap_pages": heap_pages,
-        "stack_bucket": stack_bucket,
+        "rsp_endpoint_delta_bucket": rsp_endpoint_delta_bucket,
+        "observed_stack_pages": observed_stack_pages,
         "state_obs_key": state_obs_key,
     }
 
@@ -822,6 +832,9 @@ class ExplorationKernel:
         spawned_tags: set[str] = {
             cand["tag"] for q in queues.values() for cand in q
         }
+        all_generated_specs: set[str] = {
+            cand["spec"] for q in queues.values() for cand in q if cand.get("spec")
+        }
 
         fam_idx = 0
         turn = 0
@@ -831,6 +844,12 @@ class ExplorationKernel:
             elif self.mode == "feedback_guided" and self.secondary_branch_queue and turn > 0 and turn % 16 == 0:
                 # Periodic anti-starvation turn for secondary branches on already-hit parameter slots
                 cand = self.secondary_branch_queue.pop(0)
+            elif self.mode == "feedback_guided" and self.low_priority_queue and turn > 0 and turn % 28 == 14:
+                # Periodic anti-starvation budget share for low_priority_queue
+                cand = self.low_priority_queue.pop(0)
+            elif self.mode in ("feedback_guided", "static_priority_no_feedback") and queues.get("content") and turn > 0 and turn % 36 == 26:
+                # Periodic anti-starvation budget share for content mutations
+                cand = queues["content"].pop(0)
             elif self.mode in ("feedback_guided", "static_priority_no_feedback"):
                 structural_fams = [f for f in ("replace_prefix", "scale", "joint", "slice_rel", "boundary", "history") if queues.get(f)]
                 if structural_fams:
@@ -880,6 +899,18 @@ class ExplorationKernel:
         for q in all_deferred:
             f = q.get("family", "unknown")
             low_prio_by_family[f] = low_prio_by_family.get(f, 0) + 1
+        for f_c in self.follow_up_queue:
+            if f_c.get("spec"):
+                all_generated_specs.add(f_c["spec"])
+        for s_t in self.selection_trace:
+            if s_t.get("spec"):
+                all_generated_specs.add(s_t["spec"])
+        remaining_specs = [
+            c["spec"]
+            for q in queues.values()
+            for c in q
+            if c.get("spec")
+        ] + [c["spec"] for c in all_deferred if c.get("spec")] + [c["spec"] for c in self.follow_up_queue if c.get("spec")]
         unexplored_hist = [
             f"ecall_{q.get('ecall_index')}@{q.get('selector_seq')}:depth={q.get('history_depth')}"
             for q in (queues.get("history", []) + [x for x in all_deferred if x.get("family") == "history"])
@@ -912,6 +943,8 @@ class ExplorationKernel:
                 "remaining_low_priority_candidates": len(all_deferred),
                 "remaining_low_priority_tags": [c["tag"] for c in all_deferred],
                 "remaining_followup_candidates": len(self.follow_up_queue),
+                "remaining_specs": remaining_specs,
+                "all_generated_specs_count": len(all_generated_specs),
                 "unexplored_history_depths": unexplored_hist,
                 "total_unexplored_candidates": (
                     sum(remaining_by_family.values())

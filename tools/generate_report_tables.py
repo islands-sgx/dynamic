@@ -72,10 +72,10 @@ def main() -> None:
     lines.append("  - `C6`: Cross-buffer content slice relation (`aux_buf[0..11] == in_buf[off..off+11]`) + in-enclave sliding-window overlap;")
     lines.append("  - `C7`: Authenticated opaque object producer-consumer chain using Intel SGX SDK `sgx_rijndael128_cmac_msg` (128-bit AES-CMAC under per-boot `sgx_read_rand` key);")
     lines.append("  - `C8`: Multi-Field + `> 4`-page (`6..8` pages) heap object where seed calls only touch page 0 (head) and delayed operations touch the tail page (`offset 5..7 * 4096`).")
-    lines.append(f"- **Strict Dataset Split & Freeze Provenance**: `challenge-bench` and `challenge-bench-perm` form the development set (`dev`); `challenge-exam-a` and `challenge-exam-b` (inspected before the final kernel revision) are classified as `post_revision_regression`. After freezing the kernel, candidate generator, adapter, and budget at commit `{frozen_sha}`, brand-new unseen exam enclaves (`challenge-exam-c`, `challenge-exam-d`, including a multi-branch parameter slot where two distinct values on the same parameter unlock two different challenge pages) were created and evaluated as `blind_exam`.")
+    lines.append(f"- **Dataset Splits (`dev` / `post_revision_regression` / `frozen_holdout_variants`)**: `challenge-bench` and `challenge-bench-perm` form the development set (`dev`); `challenge-exam-a` and `challenge-exam-b` are classified as `post_revision_regression`; `challenge-exam-c` and `challenge-exam-d` are held-out parameter/layout/order variants (`frozen_holdout_variants`) evaluated on the frozen exploration kernel (`{frozen_sha}`) across the same 8 structural mechanism classes (`C1..C8`).")
     lines.append("")
-    lines.append("| Enclave (`Split`) | Mode | Expl. Enclaves (`+Conf = Total`) | Mean Expl. ECALLs (`+Conf = Total`) | Mean Wall-Clock (`Expl / Total`) | Discovery Curve (`@20 -> @40 -> @68`) | Per-Seed `Obs/Conf` (`101..105`) | **Mean `Obs / Conf` (`min..max`)** | **Mean Ref Hold-Out Missed (`Field-Eff / Field-Page`)** |")
-    lines.append("|---|---|---:|---:|---:|---|---|---|---:|")
+    lines.append("| Enclave (`Split`) | Mode | Expl. Enclaves (`+Conf = Total`) | Mean Expl. ECALLs (`+Conf = Total`) | Mean Wall-Clock (`Expl / Total`) | Confirmed Curves (`Encl @20/40/68` ; `ECALL @250/500/750` ; `Time @1.5/3.0/4.5s`) | Per-Seed `Obs/Conf` (`101..105`) | **Mean `Obs / Conf` (`min..max`)** | **Mean Ref Hold-Out Missed (`Field-Eff / Field-Page`)** | **Missed Attribution (`5` Seeds)** |")
+    lines.append("|---|---|---:|---:|---:|---|---|---|---|---|")
     hw_ch = strat_data["real_hardware_challenge_enclaves"]
     for cname in hw_ch:
         ct = hw_ch[cname]
@@ -85,15 +85,20 @@ def main() -> None:
         s0_fpg = s0.get("holdout_missed_field_pages", s0.get("holdout_missed_pages", 0))
         lines.append(
             f"| `{cname}` (`{sp}`) | **`S0` (Seed Only)** | `1 (+0 = 1)` | `{s0['total_ecalls_executed']:.0f} (+0 = {s0['total_ecalls_executed']:.0f})` | "
-            f"`{s0['wall_clock_sec']:.2f}s / {s0['wall_clock_sec']:.2f}s` | `0.0 -> 0.0 -> {s0['solved_count']:.1f}` | `all: {s0['solved_count']}/{s0['solved_count']}` | "
-            f"**{s0['solved_count']:.2f} / {s0['solved_count']:.2f}** | **{s0_feff:.1f}e / {s0_fpg:.1f}p** |"
+            f"`{s0['wall_clock_sec']:.2f}s / {s0['wall_clock_sec']:.2f}s` | `0.0/0.0/{s0['solved_count']:.1f}` | `all: {s0['solved_count']}/{s0['solved_count']}` | "
+            f"**{s0['solved_count']:.2f} / {s0['solved_count']:.2f}** | **{s0_feff:.1f}e / {s0_fpg:.1f}p** | `seed_only_baseline` |"
         )
         for mkey in ("fixed_round_robin", "static_priority_no_feedback", "feedback_guided"):
             if mkey not in ct["modes"]:
                 continue
             ms = ct["modes"][mkey]
             cv = ms["curve_mean_solved"]
-            curve_str = f"{cv['at_20_enclaves']:.1f} -> {cv['at_40_enclaves']:.1f} -> {cv['at_68_enclaves']:.1f}"
+            cve = ms.get("curve_mean_confirmed_by_ecalls", {})
+            cvt = ms.get("curve_mean_confirmed_by_wall_sec", {})
+            c_encl = f"{cv['at_20_enclaves']:.1f}/{cv['at_40_enclaves']:.1f}/{cv['at_68_enclaves']:.1f}"
+            c_ec = f"{cve.get('at_250_ecalls', 0):.1f}/{cve.get('at_500_ecalls', 0):.1f}/{cve.get('at_750_ecalls', 0):.1f}" if cve else "n/a"
+            c_tm = f"{cvt.get('at_1.5s', 0):.1f}/{cvt.get('at_3.0s', 0):.1f}/{cvt.get('at_4.5s', 0):.1f}" if cvt else "n/a"
+            curve_str = f"`E:{c_encl}` ; `C:{c_ec}` ; `T:{c_tm}`"
             obs_map = ms.get("observed_by_seed", ms["solved_by_seed"])
             conf_map = ms.get("confirmed_by_seed", ms["solved_by_seed"])
             seed_str = ", ".join(f"{k}:{obs_map[k]}/{conf_map[k]}" for k in conf_map)
@@ -107,16 +112,19 @@ def main() -> None:
             conf_m = ms.get("confirmed_mean", ms["solved_mean"])
             m_feff = ms.get("mean_holdout_missed_field_effects", ms["mean_holdout_missed_pages"])
             m_fpg = ms.get("mean_holdout_missed_field_pages", ms["mean_holdout_missed_pages"])
+            att = ms.get("missed_attribution_summary", {})
+            nonzero_att = [f"{k}={v}" for k, v in att.items() if v > 0]
+            att_str = f"`{', '.join(nonzero_att)}`" if nonzero_att else "`0 missed`"
             lines.append(
                 f"| `{cname}` (`{sp}`) | **`{mkey}`** | `{eb} (+{tot_e - eb:.1f} = {tot_e:.1f})` | "
                 f"`{exp_ec:.1f} (+{tot_ec - exp_ec:.1f} = {tot_ec:.1f})` | `{exp_w:.2f}s / {tot_w:.2f}s` | "
-                f"`{curve_str}` | `{seed_str}` | **{obs_m:.2f} / {conf_m:.2f}** (`{ms['solved_min']}..{ms['solved_max']}`) | "
-                f"**{m_feff:.2f}e / {m_fpg:.2f}p** |"
+                f"{curve_str} | `{seed_str}` | **{obs_m:.2f} / {conf_m:.2f}** (`{ms['solved_min']}..{ms['solved_max']}`) | "
+                f"**{m_feff:.2f}e / {m_fpg:.2f}p** | {att_str} |"
             )
     lines.append("")
 
     # Section 1B: Three-Layer Workset Attribution across 6 Targets (19 Field instances)
-    lines.append("## 1B. Three-Layer Workset Attribution Across 6 Targets (Including `ehsm`, `ehsm-opt-1`, `ehsm-opt-2`)")
+    lines.append("## 1B. Three-Layer Workset Attribution Across 4 Real Applications (6 Configurations: `qe3`, `signal-cds`, `sgxwallet`, `ehsm`, `ehsm-opt-1`, `ehsm-opt-2`)")
     lines.append("")
     lines.append("- **`ehsm` (Original)**: Unmodified two-step size-query + crypto host workflow (`32` ECALLs/round: `14` Field-entering + `16` early-return + `2` init); OpenSSL 3.0 lazy provider init occurs inside the first Field call.")
     lines.append("- **`ehsm-opt-1` (Direct Host Sizing + Backward-Compatible Enclave `S0`)**: Host allocates buffers directly using public constants (`EH_AES_GCM_256_SIZE`, `plain_len + 28`), eliminating `13` redundant size-query ECALLs (`19` ECALLs/round: `14` Field-entering + `3` negative early-return + `2` init) while preserving `S0` size-query compatibility, full `SM4` dispatch, and strict `decrypt` output capacity validation (`plaintext->datalen >= ciphertext->datalen - 28`).")
@@ -377,7 +385,7 @@ def main() -> None:
     lines.append("| `challenge-bench` & `challenge-bench-perm` (`dev`, 5 seeds, 3 modes) | `feedback_guided` achieves `7.4-7.6/8` confirmed in `~634-636` exploration ECALLs (`0.4-0.8` missed hold-out Field-effects), outperforming `static_priority_no_feedback` (`7.0-7.2/8` in `912` ECALLs) and `fixed_round_robin` (`6.0-6.8/8` in `3204` ECALLs). | Section 1A & `strategy_comparison.json` |")
     lines.append("| `challenge-exam-a` & `challenge-exam-b` (`post_revision_regression`, 5 seeds, 3 modes) | Re-evaluated honestly as post-revision regression: `feedback_guided` achieves `7.2/8` confirmed vs `5.6-6.8/8` for `static_priority_no_feedback` and `5.0-5.6/8` for `fixed_round_robin`. | Section 1A & `strategy_comparison.json` |")
     lines.append(f"| `challenge-exam-c` & `challenge-exam-d` (`blind_exam`, 5 seeds, 3 modes, frozen kernel `{frozen_sha[:7]}`) | Created and evaluated AFTER freezing `src/`, `ExplorationKernel`, `generic_explorer.py`, and `controller.py` at `{frozen_sha}`: `feedback_guided` achieves `8.0/8` (`0.0` missed Field-effects) on `exam-c` and `6.8/8` on `exam-d`, outperforming `static_priority_no_feedback` (`7.4/8`, `6.0/8`) and `fixed_round_robin` (`6.2/8`, `5.6/8`). | Section 1A & `strategy_comparison.json` |")
-    lines.append("| `qe3`, `signal-cds`, `sgxwallet`, `ehsm` (`opt-1/2`) Migration | The exact same frozen `ExplorationKernel` closes all 6 real targets (`5/5` production acceptance, `295/295` clean `0`-rewalk observations in Group B). | Sections 1B, 2, 3, 4 |")
+    lines.append("| `qe3`, `signal-cds`, `sgxwallet`, `ehsm` (`opt-1/2`) Migration | The exact same frozen `ExplorationKernel` closes all 4 real applications (6 configurations) (`5/5` production acceptance, `295/295` clean `0`-rewalk observations in Group B). | Sections 1B, 2, 3, 4 |")
     lines.append("| `ehsm-opt-1/2` Two-Tier SM4 Accounting | Tier 1 builds independent `sm4_seeded_xr` workset, `ReadyTable`, and signed `4gate`/`AEX1` enclaves and verifies fresh hold-out coverage (`PASS`), `0-rewalk` (`PASS`), and `AEX1` production execution (`PASS`); Tier 2 catches the exact `4` / `14` uncovered SM4 effects when only AES-256 is seeded (`FAIL`). | Section 2 (`sm4_two_tier_accounting`) |")
     lines.append("")
     lines.append("## 5. Clean-Checkout Reproducible Workflow")

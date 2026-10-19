@@ -638,6 +638,7 @@ def run_real_hardware_challenge_ablation(
                 all_obs_fpages: set[tuple[str, int]] = set()
                 curve: list[dict] = []
                 step_counter = 0
+                t_seed_start = time.monotonic()
 
                 def runner(plan: dict) -> dict:
                     nonlocal step_counter
@@ -681,8 +682,12 @@ def run_real_hardware_challenge_ablation(
                                 "trace_jsonl": res.get("trace_jsonl", ""),
                                 "trace_sha256": res.get("trace_sha256", ""),
                             }
+                    cum_ecalls_now = sum(x["ecalls"] for x in curve) + len(res.get("records", []))
                     curve.append({
                         "step": step_counter,
+                        "ecalls": len(res.get("records", [])),
+                        "cum_ecalls": cum_ecalls_now,
+                        "elapsed_sec": round(time.monotonic() - t_seed_start, 3),
                         "observed_solved_count": len(discovered_gt),
                         "obs_s3_field_effects": len(all_obs_feffs),
                         "obs_s3_field_pages": len(all_obs_fpages),
@@ -730,10 +735,62 @@ def run_real_hardware_challenge_ablation(
                 missed_ho_feffs = len(holdout_field_effects - all_obs_feffs)
                 missed_ho_fpages = len(holdout_field_pages - all_obs_fpages)
 
+                # Back-fill confirmed_solved_count at each step in curve
+                confirmed_steps = {
+                    cname: w["step"]
+                    for cname, w in discovered_gt.items()
+                    if w.get("replayed_confirmed") is True
+                }
+                for pt in curve:
+                    pt["confirmed_solved_count"] = sum(
+                        1 for stp in confirmed_steps.values() if stp <= pt["step"]
+                    )
+
                 cp_map = {}
                 for cp in (20, 40, max_enclave_budget):
-                    pts = [x["observed_solved_count"] for x in curve if x["step"] <= cp]
+                    pts = [x["confirmed_solved_count"] for x in curve if x["step"] <= cp]
                     cp_map[f"at_{cp}_enclaves"] = pts[-1] if pts else 0
+                cp_ecalls_map = {}
+                for ecp in (250, 500, 750):
+                    pts = [x["confirmed_solved_count"] for x in curve if x["cum_ecalls"] <= ecp]
+                    cp_ecalls_map[f"at_{ecp}_ecalls"] = pts[-1] if pts else 0
+                cp_time_map = {}
+                for tcp in (1.5, 3.0, 4.5):
+                    pts = [x["confirmed_solved_count"] for x in curve if x["elapsed_sec"] <= tcp]
+                    cp_time_map[f"at_{tcp:.1f}s"] = pts[-1] if pts else 0
+
+                # 5-category automated failure attribution for every missed challenge
+                challenge_order = sorted(gt_syms.keys())
+                spec_by_cname = {
+                    challenge_order[i]: holdout_specs[i]
+                    for i in range(min(len(challenge_order), len(holdout_specs)))
+                }
+                rem_specs = set(ksum["unexplored_frontier"].get("remaining_specs", []))
+                exec_trace = ksum.get("selection_trace", [])
+                missed_attribution: dict[str, str] = {}
+                for mc in sorted(set(gt_syms.keys()) - set(conf_solved_list)):
+                    tspec = spec_by_cname.get(mc, "")
+                    op_prefix = ":".join(tspec.split(":")[:3]) if tspec else ""
+                    if mc in discovered_gt and discovered_gt[mc].get("replayed_confirmed") is False:
+                        missed_attribution[mc] = "confirmation_replay_failed"
+                    elif any(
+                        (st.get("spec") == tspec or (op_prefix and op_prefix in st.get("spec", "")))
+                        and st.get("measurement_invalid", False)
+                        for st in exec_trace
+                    ):
+                        missed_attribution[mc] = "measurement_invalid"
+                    elif any(
+                        st.get("spec") == tspec and not st.get("measurement_invalid", False)
+                        for st in exec_trace
+                    ):
+                        missed_attribution[mc] = "precondition_not_satisfied"
+                    elif any(
+                        rs == tspec or (op_prefix and op_prefix in rs)
+                        for rs in rem_specs
+                    ):
+                        missed_attribution[mc] = "budget_not_reached"
+                    else:
+                        missed_attribution[mc] = "candidate_not_generated" 
 
                 seed_runs.append({
                     "seed": sd,
@@ -763,6 +820,9 @@ def run_real_hardware_challenge_ablation(
                     "confirmed_solved_list": conf_solved_list,
                     "solved_list": conf_solved_list,
                     "missed_list": sorted(set(gt_syms.keys()) - set(conf_solved_list)),
+                    "missed_attribution": missed_attribution,
+                    "checkpoints_by_ecalls": cp_ecalls_map,
+                    "checkpoints_by_wall_sec": cp_time_map,
                     "holdout_missed_field_effects": missed_ho_feffs,
                     "holdout_missed_field_pages": missed_ho_fpages,
                     "holdout_missed_pages": missed_ho_fpages,
@@ -804,6 +864,24 @@ def run_real_hardware_challenge_ablation(
                     "at_20_enclaves": round(statistics.mean(cp20), 2),
                     "at_40_enclaves": round(statistics.mean(cp40), 2),
                     f"at_{max_enclave_budget}_enclaves": round(statistics.mean(cp68), 2),
+                },
+                "curve_mean_confirmed_by_ecalls": {
+                    f"at_{ecp}_ecalls": round(statistics.mean([r["checkpoints_by_ecalls"][f"at_{ecp}_ecalls"] for r in seed_runs]), 2)
+                    for ecp in (250, 500, 750)
+                },
+                "curve_mean_confirmed_by_wall_sec": {
+                    f"at_{tcp:.1f}s": round(statistics.mean([r["checkpoints_by_wall_sec"][f"at_{tcp:.1f}s"] for r in seed_runs]), 2)
+                    for tcp in (1.5, 3.0, 4.5)
+                },
+                "missed_attribution_summary": {
+                    cat: sum(1 for r in seed_runs for v in r.get("missed_attribution", {}).values() if v == cat)
+                    for cat in (
+                        "budget_not_reached",
+                        "candidate_not_generated",
+                        "precondition_not_satisfied",
+                        "measurement_invalid",
+                        "confirmation_replay_failed",
+                    )
                 },
                 "mean_exploration_ecalls": round(statistics.mean(exp_ecalls), 1),
                 "mean_total_ecalls_with_confirmations": round(statistics.mean(tot_ecalls), 1),
