@@ -533,7 +533,7 @@ def evaluate_sm4_two_tier(
         val_t1_cov["status"] == "PASS"
         and val_t1_4gate["status"] == "PASS"
         and val_t1_prod["status"] == "PASS"
-        and all(x == 0 for x in clean_rewalks)
+        and len(clean_rewalks) > 0 and all(x == 0 for x in clean_rewalks)
         and sm4_art.get("workset_sha256") != aes_art.get("workset_sha256")
         and sm4_art.get("seed_collection_trace_sha256", "") != r_sm4_cov["trace_sha256"]
     )
@@ -983,7 +983,10 @@ def evaluate_sample(sample: str) -> dict:
     ready_C = json.loads((tdir / "enclave.dynamic.ready.json").read_text())
 
     all_validators_pass = bool(
-        calibration["calibration_valid"]
+        tlb_and_fixture["cold_vs_warm_tlb_calibration"]["cold_tlb_proven"]
+        and tlb_and_fixture["four_gate_fixture_equivalence"]["ecall_status_sequence_identical"]
+        and tlb_and_fixture["four_gate_fixture_equivalence"]["stdout_identical"]
+        and calibration["calibration_valid"]
         and calibration["same_fault_point_aex0_vs_aex1"]["verdict"] == "PASS"
         and val_ho_obs["status"] == "PASS"
         and all(av["validation"]["status"] == "PASS" for av in aux_validations)
@@ -994,6 +997,11 @@ def evaluate_sample(sample: str) -> dict:
             prod_aex1_attempt_stats[g]["clean_completed"] == perf_rounds
             and prod_aex1_attempt_stats[g]["other_failures"] == 0
             for g in prod_keys
+        )
+        and all(
+            ablation_summary_by_field[fid][gname]["clean_no_aex_count"] > 0
+            for fid in closed_target_pages_by_fid
+            for gname in groups
         )
     )
     overall_verdict = "PASS" if all_validators_pass else "FAIL_OR_INVALID"

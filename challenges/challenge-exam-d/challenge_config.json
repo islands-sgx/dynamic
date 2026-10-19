@@ -1,5 +1,5 @@
 {
-  "split": "blind_exam",
+  "split": "frozen_holdout_variants",
   "edl": "exam_d.edl",
   "edl_stem": "exam_d",
   "heap": 1048576,
@@ -50,5 +50,61 @@
     "aliased_pair:5:0:1:3:4",
     "replace_scalar:0:0:0:2",
     "replace_scalar:1:0:0:16"
-  ]
+  ],
+  "declared_ground_truth": {
+    "C1": {
+      "field_function": "examD_field_grant",
+      "effects": [
+        "A",
+        "D"
+      ]
+    },
+    "C2": {
+      "field_function": "examD_field_record",
+      "effects": [
+        "A"
+      ]
+    },
+    "C3": {
+      "field_function": "examD_field_record",
+      "effects": [
+        "A",
+        "D"
+      ]
+    },
+    "C4": {
+      "field_function": "examD_field_record",
+      "effects": [
+        "A"
+      ]
+    },
+    "C5": {
+      "field_function": "examD_field_record",
+      "effects": [
+        "A",
+        "D"
+      ]
+    },
+    "C6": {
+      "field_function": "examD_field_record",
+      "effects": [
+        "A",
+        "D"
+      ]
+    },
+    "C7": {
+      "field_function": "examD_field_grant",
+      "effects": [
+        "A",
+        "D"
+      ]
+    },
+    "C8": {
+      "field_function": "examD_field_grant",
+      "effects": [
+        "A",
+        "D"
+      ]
+    }
+  }
 }

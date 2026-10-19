@@ -21,6 +21,7 @@ import random
 import time
 from typing import Callable
 
+from acceptance_validator import is_valid_measurement_run
 from generic_explorer import (
     build_scale_bound_v2_spec,
     get_scalable_bound_offsets,
@@ -489,10 +490,40 @@ class ExplorationKernel:
     def _execute_plan(self, plan: dict) -> tuple[dict, dict]:
         self.enclave_creations += 1
         res = self.runner_fn(plan)
-        if res.get("measurement_invalid", False):
-            self.measurement_invalid_runs += 1
         recs = res.get("records") or []
         self.total_ecalls += len(recs)
+        valid_meas, meas_reasons = is_valid_measurement_run(
+            res,
+            allow_nonzero_rc=bool(plan.get("allow_nonzero_rc", False)),
+            require_nonempty_s3=True,
+        )
+        if not valid_meas:
+            self.measurement_invalid_runs += 1
+            delta = {
+                "measurement_invalid": True,
+                "invalid_reasons": meas_reasons,
+                "new_effects_set": [],
+                "new_effects_count": 0,
+                "new_pages_count": 0,
+                "new_state_keys": 0,
+                "target_new_state_keys": 0,
+                "heap_grew": False,
+                "any_valid_field_return": False,
+                "returncode": res.get("returncode", -1),
+            }
+            self.selection_trace.append({
+                "step": self.enclave_creations,
+                "tag": plan.get("tag", "seed"),
+                "family": plan.get("family", "seed"),
+                "spec": plan.get("spec", ""),
+                "measurement_invalid": True,
+                "invalid_reasons": meas_reasons,
+                "new_effects_count": 0,
+                "new_state_keys": 0,
+                "target_new_state_keys": 0,
+                "heap_grew": False,
+            })
+            return res, delta
 
         run_s3_field_effects: set[tuple[str, int, str]] = set()
         run_s3_field_pages: set[tuple[str, int]] = set()
@@ -584,6 +615,12 @@ class ExplorationKernel:
           anti-starvation turns and runs immediately after first-pass structural slots, before `low_priority_queue`).
         - Demotes S0-rejected non-scalable selectors and stagnant scale/history tails into `low_priority_queue`.
         """
+        if delta.get("measurement_invalid", False):
+            self.feedback_decisions.append({
+                "tag": plan.get("tag", ""),
+                "decision": f"measurement_invalid_ignored:{','.join(delta.get('invalid_reasons', []))}",
+            })
+            return
         fam = plan.get("family", "")
         eidx = plan.get("ecall_index", -1)
         sseq = plan.get("selector_seq", 0)

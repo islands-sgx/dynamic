@@ -1,5 +1,5 @@
 {
-  "split": "blind_exam",
+  "split": "frozen_holdout_variants",
   "edl": "exam_c.edl",
   "edl_stem": "exam_c",
   "heap": 1048576,
@@ -50,5 +50,61 @@
     "aliased_pair:4:0:1:3:8",
     "replace_scalar:1:0:0:16",
     "replace_scalar:2:0:0:8"
-  ]
+  ],
+  "declared_ground_truth": {
+    "C1": {
+      "field_function": "examC_field_redeem",
+      "effects": [
+        "A",
+        "D"
+      ]
+    },
+    "C2": {
+      "field_function": "examC_field_dispatch",
+      "effects": [
+        "A"
+      ]
+    },
+    "C3": {
+      "field_function": "examC_field_dispatch",
+      "effects": [
+        "A",
+        "D"
+      ]
+    },
+    "C4": {
+      "field_function": "examC_field_dispatch",
+      "effects": [
+        "A"
+      ]
+    },
+    "C5": {
+      "field_function": "examC_field_dispatch",
+      "effects": [
+        "A",
+        "D"
+      ]
+    },
+    "C6": {
+      "field_function": "examC_field_dispatch",
+      "effects": [
+        "A",
+        "D"
+      ]
+    },
+    "C7": {
+      "field_function": "examC_field_redeem",
+      "effects": [
+        "A",
+        "D"
+      ]
+    },
+    "C8": {
+      "field_function": "examC_field_redeem",
+      "effects": [
+        "A",
+        "D"
+      ]
+    }
+  }
 }

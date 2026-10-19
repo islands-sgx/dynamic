@@ -50,5 +50,61 @@
     "aliased_pair:5:0:1:3:8",
     "replace_scalar:1:0:0:3",
     "replace_scalar:3:0:0:8"
-  ]
+  ],
+  "declared_ground_truth": {
+    "C1": {
+      "field_function": "examB_field_verify",
+      "effects": [
+        "A",
+        "D"
+      ]
+    },
+    "C2": {
+      "field_function": "examB_field_packet",
+      "effects": [
+        "A"
+      ]
+    },
+    "C3": {
+      "field_function": "examB_field_packet",
+      "effects": [
+        "A",
+        "D"
+      ]
+    },
+    "C4": {
+      "field_function": "examB_field_packet",
+      "effects": [
+        "A"
+      ]
+    },
+    "C5": {
+      "field_function": "examB_field_packet",
+      "effects": [
+        "A",
+        "D"
+      ]
+    },
+    "C6": {
+      "field_function": "examB_field_packet",
+      "effects": [
+        "A",
+        "D"
+      ]
+    },
+    "C7": {
+      "field_function": "examB_field_verify",
+      "effects": [
+        "A",
+        "D"
+      ]
+    },
+    "C8": {
+      "field_function": "examB_field_verify",
+      "effects": [
+        "A",
+        "D"
+      ]
+    }
+  }
 }

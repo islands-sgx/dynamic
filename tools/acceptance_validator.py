@@ -21,6 +21,14 @@ REQUIRED_RECORD_KEYS = {
     "fields",
 }
 
+REQUIRED_FOBS_KEYS = {
+    "field_id",
+    "ipi_aex_verified_mask",
+    "heap_walk_truncated",
+    "heap_pread_failures",
+    "s3",
+}
+
 REQUIRED_PROD_RECORD_KEYS = REQUIRED_RECORD_KEYS | {
     "elapsed_ns",
     "acquire_ns",
@@ -32,6 +40,8 @@ REQUIRED_PROD_RECORD_KEYS = REQUIRED_RECORD_KEYS | {
     "release_calls",
     "release_rc",
 }
+
+EXPECTED_CHALLENGE_KEYS = {"C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8"}
 
 
 def sha256_path(p: Path) -> str:
@@ -63,6 +73,157 @@ def check_business_pass_stdout(stdout: str, expected_stdout_substr: str) -> tupl
     return True, ""
 
 
+def validate_field_observation_dict(
+    fobs: dict,
+    *,
+    rec_idx: int = 0,
+    require_ipi_mask: int | None = None,
+    require_nonempty_s3: bool = False,
+    require_aex_counter: bool = False,
+) -> list[str]:
+    """Validate that a Field observation entry contains all required keys and well-formed S3 items."""
+    errs: list[str] = []
+    if not isinstance(fobs, dict):
+        return [f"RECORD_{rec_idx}_FIELD_NOT_DICT"]
+    missing_fkeys = sorted(REQUIRED_FOBS_KEYS - set(fobs.keys()))
+    if missing_fkeys:
+        errs.append(f"RECORD_{rec_idx}_FIELD_MISSING_KEYS:{','.join(missing_fkeys)}")
+        return errs
+    fid = fobs.get("field_id", "")
+    if not isinstance(fid, str) or not fid:
+        errs.append(f"RECORD_{rec_idx}_FIELD_EMPTY_ID")
+    s3_list = fobs.get("s3")
+    if not isinstance(s3_list, list):
+        errs.append(f"RECORD_{rec_idx}_FIELD_{fid}_S3_NOT_LIST")
+        return errs
+    if require_nonempty_s3 and len(s3_list) == 0:
+        errs.append(f"RECORD_{rec_idx}_FIELD_{fid}_EMPTY_S3_OBSERVATION")
+    for item in s3_list:
+        if not isinstance(item, dict) or "rva" not in item or item.get("ad") not in ("A", "D"):
+            errs.append(f"RECORD_{rec_idx}_FIELD_{fid}_MALFORMED_S3_ITEM")
+            break
+    if require_aex_counter:
+        if "s3_active_aex_count" not in fobs or not isinstance(fobs.get("s3_active_aex_count"), int):
+            errs.append(f"RECORD_{rec_idx}_FIELD_{fid}_MISSING_S3_ACTIVE_AEX_COUNT")
+    if fobs.get("heap_walk_truncated", 0) != 0:
+        errs.append(f"RECORD_{rec_idx}_FIELD_{fid}_HEAP_WALK_TRUNCATED")
+    if fobs.get("heap_pread_failures", 0) != 0:
+        errs.append(f"RECORD_{rec_idx}_FIELD_{fid}_HEAP_PREAD_FAILURES")
+    if require_ipi_mask is not None and fobs.get("ipi_aex_verified_mask") != require_ipi_mask:
+        errs.append(
+            f"RECORD_{rec_idx}_FIELD_{fid}_IPI_MASK_{fobs.get('ipi_aex_verified_mask')}_NE_{require_ipi_mask}"
+        )
+    return errs
+
+
+def is_valid_measurement_run(
+    run_res: dict,
+    *,
+    allow_nonzero_rc: bool = False,
+    require_ipi_mask: int | None = None,
+    require_nonempty_s3: bool = True,
+) -> tuple[bool, list[str]]:
+    """Unified evidence admission gate shared by exploration feedback, reference hold-out,
+    witness confirmation, and workset merging.
+    Rejects any run with `measurement_invalid`, timeout, signal crash (`rc < 0`), unexpected
+    nonzero exit code, transport error (`sgx_status != 0`), OOB rejection, or malformed/empty S3.
+    """
+    reasons: list[str] = []
+    if not isinstance(run_res, dict):
+        return False, ["RUN_RESULT_NOT_DICT"]
+    if run_res.get("timed_out", False):
+        reasons.append("PROCESS_TIMED_OUT")
+    rc = run_res.get("returncode", 0)
+    if rc is None or rc < 0:
+        reasons.append(f"SIGNAL_EXIT_{rc}")
+    elif not allow_nonzero_rc and rc != 0:
+        reasons.append(f"UNEXPECTED_RETURNCODE_{rc}")
+    if run_res.get("measurement_invalid", False):
+        reasons.append("RUN_MEASUREMENT_INVALID_FLAG")
+    records = run_res.get("records")
+    if not isinstance(records, list) or len(records) == 0:
+        reasons.append("EMPTY_TRACE")
+        return False, reasons
+
+    for idx, rec in enumerate(records):
+        if not isinstance(rec, dict):
+            reasons.append(f"RECORD_{idx}_NOT_DICT")
+            continue
+        if rec.get("sgx_status", 0) != 0:
+            reasons.append(f"RECORD_{idx}_SGX_TRANSPORT_ERROR:{hex(rec.get('sgx_status', 0))}")
+        if rec.get("measurement_invalid", 0) != 0:
+            reasons.append(f"RECORD_{idx}_MEASUREMENT_INVALID:{rec.get('invalid_reason', '')}")
+        if rec.get("syscall_errors", 0) > 0:
+            reasons.append(f"RECORD_{idx}_SYSCALL_ERRORS_{rec.get('syscall_errors')}")
+        if rec.get("ipi_flush_failures", 0) > 0:
+            reasons.append(f"RECORD_{idx}_IPI_FLUSH_FAILURES_{rec.get('ipi_flush_failures')}")
+        if rec.get("mutation_oob_rejected", 0) > 0:
+            reasons.append(f"RECORD_{idx}_MUTATION_OOB_REJECTED")
+        fields_list = rec.get("fields")
+        if not isinstance(fields_list, list):
+            reasons.append(f"RECORD_{idx}_FIELDS_NOT_LIST")
+            continue
+        for fobs in fields_list:
+            if not isinstance(fobs, dict) or "s3" not in fobs or not isinstance(fobs.get("s3"), list):
+                reasons.append(f"RECORD_{idx}_FIELD_MISSING_S3")
+                continue
+            if require_nonempty_s3 and len(fobs["s3"]) == 0:
+                reasons.append(f"RECORD_{idx}_FIELD_{fobs.get('field_id', '')}_EMPTY_S3")
+            if fobs.get("heap_walk_truncated", 0) != 0:
+                reasons.append(f"RECORD_{idx}_FIELD_HEAP_WALK_TRUNCATED")
+            if fobs.get("heap_pread_failures", 0) != 0:
+                reasons.append(f"RECORD_{idx}_FIELD_HEAP_PREAD_FAILURES")
+            if require_ipi_mask is not None and fobs.get("ipi_aex_verified_mask") != require_ipi_mask:
+                reasons.append(f"RECORD_{idx}_FIELD_IPI_MASK_MISMATCH")
+
+    return len(reasons) == 0, reasons
+
+
+def validate_challenge_ground_truth_and_holdout(
+    gt_syms: dict[str, int],
+    declared_gt: dict[str, dict],
+    fields_by_func: dict[str, str],
+    holdout_field_effects: set[tuple[str, int, str]],
+) -> tuple[bool, dict[str, set[tuple[str, int, str]]], list[str]]:
+    """Verify that:
+    1. All 8 challenge symbols `C1..C8` exist in the ELF (`gt_syms`);
+    2. All 8 challenges `C1..C8` are declared in `declared_gt` with valid `field_function` and `effects`;
+    3. Every declared `(field_id, rva, effect)` tuple is actually observed in `holdout_field_effects`
+       (never inferring expected Field or write effect D backward from potentially incomplete observations!).
+    """
+    reasons: list[str] = []
+    if set(gt_syms.keys()) != EXPECTED_CHALLENGE_KEYS:
+        missing = sorted(EXPECTED_CHALLENGE_KEYS - set(gt_syms.keys()))
+        extra = sorted(set(gt_syms.keys()) - EXPECTED_CHALLENGE_KEYS)
+        reasons.append(f"INCOMPLETE_CHALLENGE_SYMBOLS:missing={missing},extra={extra}")
+        return False, {}, reasons
+
+    if set(declared_gt.keys()) != EXPECTED_CHALLENGE_KEYS:
+        reasons.append("INCOMPLETE_DECLARED_GROUND_TRUTH")
+        return False, {}, reasons
+
+    gt_required_effects: dict[str, set[tuple[str, int, str]]] = {}
+    for cname in sorted(EXPECTED_CHALLENGE_KEYS):
+        crva = gt_syms[cname]
+        decl = declared_gt[cname]
+        fn_name = decl.get("field_function", "")
+        fid = fields_by_func.get(fn_name, "")
+        eff_list = decl.get("effects", [])
+        if not fid or not eff_list:
+            reasons.append(f"INVALID_DECLARED_GT_FOR_{cname}:fn={fn_name}")
+            continue
+        req_set = {(fid, crva, eff) for eff in eff_list}
+        gt_required_effects[cname] = req_set
+        missing_effs = sorted(
+            f"{f_id}:{hex(r)}:{e}"
+            for f_id, r, e in (req_set - holdout_field_effects)
+        )
+        if missing_effs:
+            reasons.append(f"MISSING_DECLARED_GT_EFFECT_{cname}:{','.join(missing_effs)}")
+
+    return len(reasons) == 0, gt_required_effects, reasons
+
+
 def validate_run_result(
     run_res: dict,
     *,
@@ -76,10 +237,16 @@ def validate_run_result(
     closed_workset_effects: dict[str, set[tuple[int, str]]] | None = None,
     require_zero_strict_faults: bool = False,
     allow_nonzero_sgx_status: bool = False,
+    require_nonempty_s3: bool | None = None,
+    require_aex_counter: bool = False,
 ) -> dict:
     """Return {'status': 'PASS'|'FAIL'|'INVALID'|'TIMEOUT', 'reasons': [...]}."""
     reasons: list[str] = []
     status = "PASS"
+
+    if require_nonempty_s3 is None:
+        # In profiling/coverage mode (ipi_mask=7 or workset coverage check), S3 must never be empty!
+        require_nonempty_s3 = (require_ipi_mask == 7 or closed_workset_effects is not None)
 
     def fail(code: str, kind: str = "FAIL") -> None:
         nonlocal status
@@ -150,17 +317,19 @@ def validate_run_result(
         total_strict_faults += rec.get("strict_non_ready_fault_count", 0)
 
         for fobs in rec.get("fields", []):
+            f_errs = validate_field_observation_dict(
+                fobs,
+                rec_idx=idx,
+                require_ipi_mask=require_ipi_mask,
+                require_nonempty_s3=require_nonempty_s3,
+                require_aex_counter=require_aex_counter,
+            )
+            for fe in f_errs:
+                fail(fe, "INVALID")
+            if f_errs:
+                continue
             fid = fobs.get("field_id", "")
             observed_fields.add(fid)
-            if fobs.get("heap_walk_truncated", 0) != 0:
-                fail(f"RECORD_{idx}_FIELD_{fid}_HEAP_WALK_TRUNCATED", "INVALID")
-            if fobs.get("heap_pread_failures", 0) != 0:
-                fail(f"RECORD_{idx}_FIELD_{fid}_HEAP_PREAD_FAILURES", "INVALID")
-            if require_ipi_mask is not None and fobs.get("ipi_aex_verified_mask") != require_ipi_mask:
-                fail(
-                    f"RECORD_{idx}_FIELD_{fid}_IPI_MASK_{fobs.get('ipi_aex_verified_mask')}_NE_{require_ipi_mask}",
-                    "INVALID",
-                )
             if closed_workset_effects is not None:
                 if fid not in closed_workset_effects:
                     fail(f"UNKNOWN_FIELD_NOT_IN_WORKSET:{fid}", "INVALID")
@@ -200,8 +369,12 @@ def validate_diagnostic_4gate_run(
     expected_ecall_seq: list[int] | None = None,
     expected_field_call_seqs: set[int] | None = None,
     require_ipi_mask: int = 3,
+    require_clean_observation_per_field: bool = False,
 ) -> dict:
-    """Strict validator for 4-Gate diagnostic runs before their statistics or reference call_seq are used."""
+    """Strict validator for 4-Gate diagnostic runs before their statistics or reference call_seq are used.
+    Requires explicit `s3` and `s3_active_aex_count` on every Field observation, and rejects runs where
+    all observations are interrupt-contaminated (`NO_CLEAN_OBSERVATIONS_ALL_CONTAMINATED`).
+    """
     base = validate_run_result(
         run_res,
         expected_returncode=0,
@@ -209,6 +382,8 @@ def validate_diagnostic_4gate_run(
         expected_min_records=len(expected_ecall_seq) if expected_ecall_seq else 1,
         expected_field_ids=expected_field_ids,
         require_ipi_mask=require_ipi_mask,
+        require_nonempty_s3=(require_ipi_mask == 7),
+        require_aex_counter=True,
     )
     reasons = list(base["reasons"])
     status = base["status"]
@@ -232,6 +407,23 @@ def validate_diagnostic_4gate_run(
         if actual_fseqs != expected_field_call_seqs:
             fail("DIAG_FIELD_ENTERING_CALL_SEQS_MISMATCH", "INVALID")
 
+    if status == "PASS" and expected_field_ids:
+        clean_by_fid: dict[str, int] = {fid: 0 for fid in expected_field_ids}
+        total_clean = 0
+        for r in records:
+            for fo in r.get("fields", []):
+                fid = fo.get("field_id", "")
+                if fo.get("s3_active_aex_count") == 0:
+                    total_clean += 1
+                    if fid in clean_by_fid:
+                        clean_by_fid[fid] += 1
+        if total_clean == 0:
+            fail("NO_CLEAN_OBSERVATIONS_ALL_CONTAMINATED", "INCONCLUSIVE")
+        elif require_clean_observation_per_field:
+            for fid, cnt in sorted(clean_by_fid.items()):
+                if cnt == 0:
+                    fail(f"FIELD_{fid}_NO_CLEAN_OBSERVATIONS_ALL_CONTAMINATED", "INCONCLUSIVE")
+
     return {"status": status, "reasons": reasons}
 
 
@@ -249,6 +441,7 @@ def validate_production_run_result(
         expected_returncode=0,
         expected_stdout_substr=expected_stdout_substr,
         expected_min_records=len(expected_ecall_seq),
+        require_nonempty_s3=False,
     )
     reasons = list(base["reasons"])
     status = base["status"]

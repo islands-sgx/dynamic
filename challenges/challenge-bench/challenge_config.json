@@ -50,5 +50,61 @@
     "aliased_pair:3:0:1:3:4",
     "replace_scalar:4:0:0:2",
     "replace_scalar:5:0:0:3"
-  ]
+  ],
+  "declared_ground_truth": {
+    "C1": {
+      "field_function": "challenge_field_primary",
+      "effects": [
+        "A",
+        "D"
+      ]
+    },
+    "C2": {
+      "field_function": "challenge_field_primary",
+      "effects": [
+        "A"
+      ]
+    },
+    "C3": {
+      "field_function": "challenge_field_primary",
+      "effects": [
+        "A",
+        "D"
+      ]
+    },
+    "C4": {
+      "field_function": "challenge_field_primary",
+      "effects": [
+        "A"
+      ]
+    },
+    "C5": {
+      "field_function": "challenge_field_primary",
+      "effects": [
+        "A",
+        "D"
+      ]
+    },
+    "C6": {
+      "field_function": "challenge_field_primary",
+      "effects": [
+        "A",
+        "D"
+      ]
+    },
+    "C7": {
+      "field_function": "challenge_field_vault",
+      "effects": [
+        "A",
+        "D"
+      ]
+    },
+    "C8": {
+      "field_function": "challenge_field_vault",
+      "effects": [
+        "A",
+        "D"
+      ]
+    }
+  }
 }

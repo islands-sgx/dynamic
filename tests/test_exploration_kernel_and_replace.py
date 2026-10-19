@@ -328,5 +328,77 @@ class TestExplorationKernelAndReplace(unittest.TestCase):
         self.assertIn(gt["C7"], s3_rvas(r_c7_rep))
 
 
+    def test_measurement_invalid_and_crashed_run_isolated_from_feedback_and_discovery(self) -> None:
+        """Regression test for unified evidence admission:
+        When a probe returns `measurement_invalid=True` and `returncode=-9` with a fake S3 page
+        `0xdead000` (`ad=D`), `ExplorationKernel` must:
+          - Charge the enclave creation and ECALL count (`enclave_creations`, `total_ecalls_executed`),
+          - Increment `measurement_invalid_runs`,
+          - NOT merge `0xdead000` into `confirmed_s3_pages` / `confirmed_s3_effects`,
+          - NOT increment `valid_field_entering_ecalls` for the invalid run,
+          - Record `measurement_invalid_ignored` in `feedback_decisions`.
+        """
+        tdir = DYN_ROOT / "targets" / "challenge-bench"
+        edl_schema = json.loads((tdir / "edl_schema.json").read_text())
+        fields = normalized_fields(tdir / "fields.json")
+        selectors = resolve_selectors(tdir / "selectors.json", fields, Path(edl_schema["edl_path"]))
+
+        def runner(plan: dict) -> dict:
+            if plan["tag"] == "L0_L1_seed":
+                return {
+                    "returncode": 0,
+                    "measurement_invalid": False,
+                    "records": [
+                        {
+                            "call_seq": 0,
+                            "ecall_index": 3,
+                            "selector_seq": 0,
+                            "sgx_status": 0,
+                            "measurement_invalid": 0,
+                            "syscall_errors": 0,
+                            "ipi_flush_failures": 0,
+                            "mutation_oob_rejected": 0,
+                            "ms_retval": 0,
+                            "fields": [{"field_id": "0x1111", "s3": [{"rva": "0x12000", "ad": "D"}]}],
+                        }
+                    ],
+                }
+            # Every subsequent probe crashes with rc=-9 and measurement_invalid=True while trying to inject 0xdead000
+            return {
+                "returncode": -9,
+                "measurement_invalid": True,
+                "records": [
+                    {
+                        "call_seq": 0,
+                        "ecall_index": 3,
+                        "selector_seq": 0,
+                        "sgx_status": 0,
+                        "measurement_invalid": 1,
+                        "invalid_reason": "mock_crash",
+                        "ms_retval": 0,
+                        "fields": [{"field_id": "0x1111", "s3": [{"rva": "0xdead000", "ad": "D"}]}],
+                    }
+                ],
+            }
+
+        ksum = ExplorationKernel(
+            sample="challenge-bench",
+            edl_schema=edl_schema,
+            selectors=selectors,
+            runner_fn=runner,
+            mode="feedback_guided",
+            rng_seed=101,
+            max_enclave_creations=4,
+        ).run()
+
+        self.assertEqual(ksum["enclave_creations"], 4)
+        self.assertEqual(ksum["measurement_invalid_runs"], 3)
+        self.assertEqual(ksum["valid_field_entering_ecalls"], 1)  # Only the seed run!
+        self.assertEqual(ksum["confirmed_s3_pages"], 1)  # Only 0x12000 from seed; 0xdead000 rejected!
+        self.assertEqual(ksum["confirmed_s3_effects"], 2)
+        self.assertEqual(len(ksum["productive_plans"]), 0)
+        self.assertTrue(all(d["decision"].startswith("measurement_invalid_ignored:") for d in ksum["feedback_decisions"]))
+
+
 if __name__ == "__main__":
     unittest.main()

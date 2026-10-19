@@ -275,10 +275,32 @@ def explore_and_close_sample(sample: str) -> dict:
         nonlocal heap_truncated_runs, heap_pread_fail_runs
         if res["interpose_sha256"] != interpose_hash:
             raise RuntimeError(f"Interpose hash changed during exploration of {sample}")
-        if res["measurement_invalid"]:
-            raise RuntimeError(f"Discovery run {plan['run_id']} on {sample} has measurement_invalid=True")
-        if res["returncode"] != 0 and not plan.get("allow_nonzero_rc", False):
-            raise RuntimeError(f"Discovery run {plan['run_id']} on {sample} exited with rc={res['returncode']}")
+        from acceptance_validator import is_valid_measurement_run
+        ok_m, m_reasons = is_valid_measurement_run(
+            res,
+            allow_nonzero_rc=bool(plan.get("allow_nonzero_rc", False)),
+            require_nonempty_s3=True,
+        )
+        if not ok_m:
+            if is_baseline_host:
+                raise RuntimeError(f"Baseline discovery run {plan['run_id']} on {sample} failed measurement admission: {m_reasons}")
+            run_summaries.append({
+                "run_id": plan["run_id"],
+                "layer": plan["layer"],
+                "subkind": plan.get("subkind", ""),
+                "family": plan.get("family", ""),
+                "tag": plan["tag"],
+                "spec": plan["spec"],
+                "returncode": res["returncode"],
+                "measurement_invalid": True,
+                "invalid_reasons": m_reasons,
+                "ecall_records": len(res["records"]),
+                "new_effects_discovered": 0,
+                "interpose_sha256": res["interpose_sha256"],
+                "trace_jsonl": res.get("trace_jsonl", ""),
+                "trace_sha256": res.get("trace_sha256", ""),
+            })
+            return 0
 
         run_new_effects = 0
         for rec in res["records"]:

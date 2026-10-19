@@ -511,16 +511,23 @@ def run_real_hardware_challenge_ablation(
     from run_native_sgx import run_sample
 
     dyn_root = Path("/home/meandssh/islands-sgx/dynamic")
-    split_order = {"dev": 0, "post_revision_regression": 1, "blind_exam": 2}
+    from acceptance_validator import (
+        is_valid_measurement_run,
+        validate_challenge_ground_truth_and_holdout,
+    )
+    split_order = {"dev": 0, "post_revision_regression": 1, "frozen_holdout_variants": 2, "blind_exam": 2}
     all_target_configs = []
     for cdir in sorted((dyn_root / "challenges").glob("challenge-*")):
         cfg_file = cdir / "challenge_config.json"
         if cfg_file.is_file():
             ccfg = json.loads(cfg_file.read_text())
-            all_target_configs.append((cdir.name, ccfg["split"], ccfg["holdout_specs"]))
+            all_target_configs.append((cdir.name, ccfg["split"], ccfg["holdout_specs"], ccfg.get("declared_ground_truth", {})))
     all_target_configs.sort(key=lambda x: (split_order.get(x[1], 99), x[0]))
 
-    def obs_s3_field_effects(res: dict) -> set[tuple[str, int, str]]:
+    def obs_s3_field_effects(res: dict, *, allow_nonzero_rc: bool = True) -> set[tuple[str, int, str]]:
+        ok_m, _ = is_valid_measurement_run(res, allow_nonzero_rc=allow_nonzero_rc, require_nonempty_s3=True)
+        if not ok_m:
+            return set()
         effs: set[tuple[str, int, str]] = set()
         for r in res.get("records", []):
             for fo in r.get("fields", []):
@@ -533,11 +540,11 @@ def run_real_hardware_challenge_ablation(
                         effs.add((fid, rva, "D"))
         return effs
 
-    def obs_s3_field_pages(res: dict) -> set[tuple[str, int]]:
-        return {(fid, rva) for fid, rva, _ in obs_s3_field_effects(res)}
+    def obs_s3_field_pages(res: dict, *, allow_nonzero_rc: bool = True) -> set[tuple[str, int]]:
+        return {(fid, rva) for fid, rva, _ in obs_s3_field_effects(res, allow_nonzero_rc=allow_nonzero_rc)}
 
     results_by_target: dict[str, dict] = {}
-    for sample, split_kind, holdout_specs in all_target_configs:
+    for sample, split_kind, holdout_specs, declared_gt in all_target_configs:
         if target_names is not None and sample not in target_names:
             continue
         tdir = dyn_root / "targets" / sample
@@ -551,24 +558,28 @@ def run_real_hardware_challenge_ablation(
         }
         edl_schema = json.loads((tdir / "edl_schema.json").read_text())
         fields = normalized_fields(tdir / "fields.json")
+        fields_by_func = {f["function"]: f"0x{f['_id_value']:016x}" for f in fields}
         selectors = resolve_selectors(tdir / "selectors.json", fields, Path(edl_schema["edl_path"]))
 
-        # Independent reference hold-out set: verify all 8 challenges C1..C8 are actually triggered on hardware
+        # Independent reference hold-out set: verify all 8 challenges C1..C8 and their declared (field_id, rva, effect)
         holdout_field_effects: set[tuple[str, int, str]] = set()
         holdout_field_pages: set[tuple[str, int]] = set()
         for hspec in holdout_specs:
             rh = run_sample(sample, mode="profile_4gate", ipi_mask=7, intervention=hspec)
-            holdout_field_effects |= obs_s3_field_effects(rh)
-            holdout_field_pages |= obs_s3_field_pages(rh)
+            ok_rh, rh_reasons = is_valid_measurement_run(rh, allow_nonzero_rc=False, require_ipi_mask=7, require_nonempty_s3=True)
+            if not ok_rh:
+                raise RuntimeError(f"Reference hold-out run {hspec} on {sample} failed measurement admission: {rh_reasons}")
+            holdout_field_effects |= obs_s3_field_effects(rh, allow_nonzero_rc=False)
+            holdout_field_pages |= obs_s3_field_pages(rh, allow_nonzero_rc=False)
 
-        gt_required_effects: dict[str, set[tuple[str, int, str]]] = {}
-        for cname, crva in sorted(gt_syms.items()):
-            matched = {(fid, rva, eff) for fid, rva, eff in holdout_field_effects if rva == crva}
-            if not matched:
-                raise RuntimeError(
-                    f"Reference hold-out for {sample} failed to trigger challenge {cname} at {crva:#x}!"
-                )
-            gt_required_effects[cname] = matched
+        ok_gt, gt_required_effects, gt_reasons = validate_challenge_ground_truth_and_holdout(
+            gt_syms,
+            declared_gt,
+            fields_by_func,
+            holdout_field_effects,
+        )
+        if not ok_gt:
+            raise RuntimeError(f"Reference hold-out ground-truth verification failed on {sample}: {gt_reasons}")
 
         # 1. Baseline S0 (unmodified host seed only)
         t0 = time.monotonic()
@@ -620,8 +631,9 @@ def run_real_hardware_challenge_ablation(
                         stop_after_selector=plan.get("stop_after", ""),
                         stop_before_normal_ecall=plan.get("stop_before", ""),
                     )
-                    feffs = obs_s3_field_effects(res)
-                    fpages = obs_s3_field_pages(res)
+                    allow_nz = bool(plan.get("allow_nonzero_rc", False))
+                    feffs = obs_s3_field_effects(res, allow_nonzero_rc=allow_nz)
+                    fpages = obs_s3_field_pages(res, allow_nonzero_rc=allow_nz)
                     all_obs_feffs.update(feffs)
                     all_obs_fpages.update(fpages)
                     for cname, req_set in gt_required_effects.items():

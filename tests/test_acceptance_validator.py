@@ -10,6 +10,8 @@ DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
 sys.path.insert(0, str(DYN_ROOT / "tools"))
 
 from acceptance_validator import (  # noqa: E402
+    is_valid_measurement_run,
+    validate_challenge_ground_truth_and_holdout,
     validate_diagnostic_4gate_run,
     validate_production_run_result,
     validate_provenance_consistency,
@@ -55,6 +57,7 @@ def make_valid_mock_run() -> dict:
                         "ipi_aex_verified_mask": 7,
                         "heap_walk_truncated": 0,
                         "heap_pread_failures": 0,
+                        "s3_active_aex_count": 0,
                         "s3": [
                             {"rva": "0x1000", "ad": "A"},
                             {"rva": "0x2000", "ad": "D"},
@@ -258,6 +261,95 @@ class TestAcceptanceValidator(unittest.TestCase):
         )
         self.assertEqual(v["status"], "INVALID")
         self.assertIn("DIAG_FIELD_ENTERING_CALL_SEQS_MISMATCH", v["reasons"])
+
+
+    def test_20_missing_s3_key_or_empty_s3_rejected(self) -> None:
+        r = make_valid_mock_run()
+        del r["records"][0]["fields"][0]["s3"]
+        v = validate_run_result(
+            r,
+            expected_min_records=1,
+            expected_field_ids={"0x1111111111111111"},
+            require_ipi_mask=7,
+        )
+        self.assertEqual(v["status"], "INVALID")
+        self.assertTrue(any("FIELD_MISSING_KEYS" in x for x in v["reasons"]))
+
+        r_empty = make_valid_mock_run()
+        r_empty["records"][0]["fields"][0]["s3"] = []
+        v_empty = validate_run_result(
+            r_empty,
+            expected_min_records=1,
+            expected_field_ids={"0x1111111111111111"},
+            require_ipi_mask=7,
+        )
+        self.assertEqual(v_empty["status"], "INVALID")
+        self.assertTrue(any("EMPTY_S3_OBSERVATION" in x for x in v_empty["reasons"]))
+
+    def test_21_missing_s3_active_aex_count_rejected(self) -> None:
+        r = make_valid_mock_run()
+        r["records"][0]["fields"][0]["ipi_aex_verified_mask"] = 3
+        del r["records"][0]["fields"][0]["s3_active_aex_count"]
+        v = validate_diagnostic_4gate_run(
+            r,
+            expected_field_ids={"0x1111111111111111"},
+            expected_ecall_seq=[0],
+            expected_field_call_seqs={0},
+            require_ipi_mask=3,
+        )
+        self.assertEqual(v["status"], "INVALID")
+        self.assertTrue(any("MISSING_S3_ACTIVE_AEX_COUNT" in x for x in v["reasons"]))
+
+    def test_22_all_observations_contaminated_rejected(self) -> None:
+        r = make_valid_mock_run()
+        r["records"][0]["fields"][0]["ipi_aex_verified_mask"] = 3
+        r["records"][0]["fields"][0]["s3_active_aex_count"] = 2
+        v = validate_diagnostic_4gate_run(
+            r,
+            expected_field_ids={"0x1111111111111111"},
+            expected_ecall_seq=[0],
+            expected_field_call_seqs={0},
+            require_ipi_mask=3,
+        )
+        self.assertEqual(v["status"], "INCONCLUSIVE")
+        self.assertIn("NO_CLEAN_OBSERVATIONS_ALL_CONTAMINATED", v["reasons"])
+
+    def test_23_challenge_ground_truth_rejects_missing_symbol_wrong_field_and_missing_D(self) -> None:
+        gt_syms = {f"C{i}": 0x30000 + i * 0x1000 for i in range(1, 9)}
+        decl = {
+            f"C{i}": {"field_function": "fn_a", "effects": ["A"] if i in (2, 4) else ["A", "D"]}
+            for i in range(1, 9)
+        }
+        fmap = {"fn_a": "0xaaaa", "fn_b": "0xbbbb"}
+        full_ho = {
+            ("0xaaaa", gt_syms[f"C{i}"], eff)
+            for i in range(1, 9)
+            for eff in decl[f"C{i}"]["effects"]
+        }
+        ok, _, reasons = validate_challenge_ground_truth_and_holdout(gt_syms, decl, fmap, full_ho)
+        self.assertTrue(ok, reasons)
+
+        # 1. Missing C8 symbol
+        gt_missing = dict(gt_syms)
+        del gt_missing["C8"]
+        ok1, _, r1 = validate_challenge_ground_truth_and_holdout(gt_missing, decl, fmap, full_ho)
+        self.assertFalse(ok1)
+        self.assertTrue(any("INCOMPLETE_CHALLENGE_SYMBOLS" in x for x in r1))
+
+        # 2. Wrong Field ID (C1 observed in 0xbbbb instead of 0xaaaa)
+        ho_wrong_fid = (full_ho - {("0xaaaa", gt_syms["C1"], "A"), ("0xaaaa", gt_syms["C1"], "D")}) | {
+            ("0xbbbb", gt_syms["C1"], "A"),
+            ("0xbbbb", gt_syms["C1"], "D"),
+        }
+        ok2, _, r2 = validate_challenge_ground_truth_and_holdout(gt_syms, decl, fmap, ho_wrong_fid)
+        self.assertFalse(ok2)
+        self.assertTrue(any("MISSING_DECLARED_GT_EFFECT_C1" in x for x in r2))
+
+        # 3. Missing write effect D on C1 (only A observed)
+        ho_no_d = full_ho - {("0xaaaa", gt_syms["C1"], "D")}
+        ok3, _, r3 = validate_challenge_ground_truth_and_holdout(gt_syms, decl, fmap, ho_no_d)
+        self.assertFalse(ok3)
+        self.assertTrue(any("MISSING_DECLARED_GT_EFFECT_C1" in x for x in r3))
 
 
 if __name__ == "__main__":
