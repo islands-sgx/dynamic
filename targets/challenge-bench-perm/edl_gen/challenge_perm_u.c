@@ -27,6 +27,22 @@ typedef struct ms_ecall_delta_latch_t {
 	uint32_t ms_latch_v;
 } ms_ecall_delta_latch_t;
 
+typedef struct ms_ecall_epsilon_issue_t {
+	sgx_status_t ms_retval;
+	uint32_t ms_kind_tag;
+	uint8_t* ms_blob_out;
+	size_t ms_blob_len;
+} ms_ecall_epsilon_issue_t;
+
+typedef struct ms_ecall_zeta_open_t {
+	sgx_status_t ms_retval;
+	uint32_t ms_action_id;
+	const uint8_t* ms_blob_in;
+	size_t ms_blob_len;
+	uint8_t* ms_res_buf;
+	size_t ms_res_len;
+} ms_ecall_zeta_open_t;
+
 static const struct {
 	size_t nr_ocall;
 	void * table[1];
@@ -76,6 +92,32 @@ sgx_status_t ecall_delta_latch(sgx_enclave_id_t eid, sgx_status_t* retval, uint3
 	ms_ecall_delta_latch_t ms;
 	ms.ms_latch_v = latch_v;
 	status = sgx_ecall(eid, 3, &ocall_table_challenge_perm, &ms);
+	if (status == SGX_SUCCESS && retval) *retval = ms.ms_retval;
+	return status;
+}
+
+sgx_status_t ecall_epsilon_issue(sgx_enclave_id_t eid, sgx_status_t* retval, uint32_t kind_tag, uint8_t* blob_out, size_t blob_len)
+{
+	sgx_status_t status;
+	ms_ecall_epsilon_issue_t ms;
+	ms.ms_kind_tag = kind_tag;
+	ms.ms_blob_out = blob_out;
+	ms.ms_blob_len = blob_len;
+	status = sgx_ecall(eid, 4, &ocall_table_challenge_perm, &ms);
+	if (status == SGX_SUCCESS && retval) *retval = ms.ms_retval;
+	return status;
+}
+
+sgx_status_t ecall_zeta_open(sgx_enclave_id_t eid, sgx_status_t* retval, uint32_t action_id, const uint8_t* blob_in, size_t blob_len, uint8_t* res_buf, size_t res_len)
+{
+	sgx_status_t status;
+	ms_ecall_zeta_open_t ms;
+	ms.ms_action_id = action_id;
+	ms.ms_blob_in = blob_in;
+	ms.ms_blob_len = blob_len;
+	ms.ms_res_buf = res_buf;
+	ms.ms_res_len = res_len;
+	status = sgx_ecall(eid, 5, &ocall_table_challenge_perm, &ms);
 	if (status == SGX_SUCCESS && retval) *retval = ms.ms_retval;
 	return status;
 }

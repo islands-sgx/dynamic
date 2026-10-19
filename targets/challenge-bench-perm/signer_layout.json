@@ -1,11 +1,11 @@
 {
-  "all_committed_reg_pages": 365,
+  "all_committed_reg_pages": 368,
   "capacity_q": 16384,
   "enclave_size": 2097152,
   "excluded_regions": [
     {
       "attributes": 0,
-      "end_rva": 1314816,
+      "end_rva": 1327104,
       "excluded_reason": "TCS/SSA/guard control region",
       "kind": "signer",
       "layout_id": 10,
@@ -13,11 +13,11 @@
       "pages": 16,
       "permissions": 0,
       "si_flags": 0,
-      "start_rva": 1249280
+      "start_rva": 1261568
     },
     {
       "attributes": 0,
-      "end_rva": 1642496,
+      "end_rva": 1654784,
       "excluded_reason": "TCS/SSA/guard control region",
       "kind": "signer",
       "layout_id": 10,
@@ -25,11 +25,11 @@
       "pages": 16,
       "permissions": 0,
       "si_flags": 0,
-      "start_rva": 1576960
+      "start_rva": 1589248
     },
     {
       "attributes": 3,
-      "end_rva": 1646592,
+      "end_rva": 1658880,
       "excluded_reason": "TCS/SSA/guard control region",
       "kind": "signer",
       "layout_id": 4,
@@ -37,11 +37,11 @@
       "pages": 1,
       "permissions": 0,
       "si_flags": 256,
-      "start_rva": 1642496
+      "start_rva": 1654784
     },
     {
       "attributes": 3,
-      "end_rva": 1654784,
+      "end_rva": 1667072,
       "excluded_reason": "TCS/SSA/guard control region",
       "kind": "signer",
       "layout_id": 6,
@@ -49,11 +49,11 @@
       "pages": 2,
       "permissions": 3,
       "si_flags": 515,
-      "start_rva": 1646592
+      "start_rva": 1658880
     },
     {
       "attributes": 0,
-      "end_rva": 1720320,
+      "end_rva": 1732608,
       "excluded_reason": "TCS/SSA/guard control region",
       "kind": "signer",
       "layout_id": 10,
@@ -61,16 +61,16 @@
       "pages": 16,
       "permissions": 0,
       "si_flags": 0,
-      "start_rva": 1654784
+      "start_rva": 1667072
     }
   ],
   "metadata_version": 4294967301,
-  "ordinary_load_end": 181860,
+  "ordinary_load_end": 194180,
   "page_size": 4096,
   "pretouch_segment": true,
-  "pretouch_start": 184320,
+  "pretouch_start": 196608,
   "profile_elf": "/home/meandssh/islands-sgx/dynamic/targets/challenge-bench-perm/enclave.profile.so",
-  "profile_elf_sha256": "6bb436e546feed2abe081097c566af448d9f09f65aeeffc6bb377b3a5dfb98d2",
+  "profile_elf_sha256": "2305ce1fee7907efc9a50ad5ae663b71921dd93d3ef46215e868f551b8f62a99",
   "regions": [
     {
       "end_rva": 8192,
@@ -97,56 +97,56 @@
       "start_rva": 65536
     },
     {
-      "end_rva": 184320,
+      "end_rva": 196608,
       "kind": "PT_LOAD",
-      "pages": 27,
+      "pages": 30,
       "permissions": 3,
       "segment_index": 5,
       "start_rva": 73728
     },
     {
       "attributes": 1,
-      "end_rva": 204800,
+      "end_rva": 217088,
       "kind": "signer",
       "layout_id": 1,
       "name": "HEAP_MIN",
       "pages": 1,
       "permissions": 3,
       "si_flags": 515,
-      "start_rva": 200704
+      "start_rva": 212992
     },
     {
       "attributes": 17,
-      "end_rva": 1249280,
+      "end_rva": 1261568,
       "kind": "signer",
       "layout_id": 2,
       "name": "HEAP_INIT",
       "pages": 255,
       "permissions": 3,
       "si_flags": 515,
-      "start_rva": 204800
+      "start_rva": 217088
     },
     {
       "attributes": 3,
-      "end_rva": 1576960,
+      "end_rva": 1589248,
       "kind": "signer",
       "layout_id": 8,
       "name": "STACK_MIN",
       "pages": 64,
       "permissions": 3,
       "si_flags": 515,
-      "start_rva": 1314816
+      "start_rva": 1327104
     },
     {
       "attributes": 3,
-      "end_rva": 1724416,
+      "end_rva": 1736704,
       "kind": "signer",
       "layout_id": 5,
       "name": "TD",
       "pages": 1,
       "permissions": 3,
       "si_flags": 515,
-      "start_rva": 1720320
+      "start_rva": 1732608
     }
   ],
   "relro_pages": [
@@ -158,11 +158,11 @@
       "protected_end_rva": 69632,
       "protected_start_rva": 65536,
       "segment_index": 8,
-      "start_rva": 66048
+      "start_rva": 68096
     }
   ],
   "schema": "atfield-signer-layout-v1",
   "signed_elf": "/home/meandssh/islands-sgx/dynamic/targets/challenge-bench-perm/enclave.profile.signed.so",
-  "signed_elf_sha256": "98e1c133e43b4f3bdd554418cf0d6719896c6dcfebc98d34e5b7b16eaae492cf",
+  "signed_elf_sha256": "f0e384b3b7917ee1471e15ae193e84a77cd536529cd8ed5194a750948a001338",
   "ssa_frame_pages": 1
 }

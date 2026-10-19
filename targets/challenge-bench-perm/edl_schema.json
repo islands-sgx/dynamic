@@ -373,6 +373,277 @@
       "retval_offset": 0,
       "retval_size": 4,
       "replay_supported": true
+    },
+    {
+      "ecall_index": 4,
+      "name": "ecall_epsilon_issue",
+      "return_type": "sgx_status_t",
+      "params": [
+        {
+          "name": "kind_tag",
+          "type": "uint32_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "uint32_t kind_tag",
+          "ms_offset": 4,
+          "ms_size": 4,
+          "elem_size": 4,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "blob_out",
+          "type": "uint8_t *",
+          "attributes": [
+            "out",
+            "size=blob_len"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "uint8_t *blob_out",
+          "ms_offset": 8,
+          "ms_size": 8,
+          "elem_size": 1,
+          "direction": "out",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "size",
+          "bound_param": "blob_len",
+          "bound_ms_offset": 16,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "blob_len",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t blob_len",
+          "ms_offset": 16,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        }
+      ],
+      "ms_layout": {
+        "size": 24,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4,
+            "elem_size": 4,
+            "type": "sgx_status_t"
+          },
+          "ms_kind_tag": {
+            "offset": 4,
+            "size": 4,
+            "elem_size": 4,
+            "type": "uint32_t"
+          },
+          "ms_blob_out": {
+            "offset": 8,
+            "size": 8,
+            "elem_size": 1,
+            "type": "uint8_t*"
+          },
+          "ms_blob_len": {
+            "offset": 16,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          }
+        },
+        "param_consts": {}
+      },
+      "has_retval": true,
+      "retval_offset": 0,
+      "retval_size": 4,
+      "replay_supported": true
+    },
+    {
+      "ecall_index": 5,
+      "name": "ecall_zeta_open",
+      "return_type": "sgx_status_t",
+      "params": [
+        {
+          "name": "action_id",
+          "type": "uint32_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "uint32_t action_id",
+          "ms_offset": 4,
+          "ms_size": 4,
+          "elem_size": 4,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "blob_in",
+          "type": "const uint8_t *",
+          "attributes": [
+            "in",
+            "size=blob_len"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "const uint8_t *blob_in",
+          "ms_offset": 8,
+          "ms_size": 8,
+          "elem_size": 1,
+          "direction": "in",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "size",
+          "bound_param": "blob_len",
+          "bound_ms_offset": 16,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "blob_len",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t blob_len",
+          "ms_offset": 16,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "res_buf",
+          "type": "uint8_t *",
+          "attributes": [
+            "out",
+            "size=res_len"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "uint8_t *res_buf",
+          "ms_offset": 24,
+          "ms_size": 8,
+          "elem_size": 1,
+          "direction": "out",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "size",
+          "bound_param": "res_len",
+          "bound_ms_offset": 32,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "res_len",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t res_len",
+          "ms_offset": 32,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        }
+      ],
+      "ms_layout": {
+        "size": 40,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4,
+            "elem_size": 4,
+            "type": "sgx_status_t"
+          },
+          "ms_action_id": {
+            "offset": 4,
+            "size": 4,
+            "elem_size": 4,
+            "type": "uint32_t"
+          },
+          "ms_blob_in": {
+            "offset": 8,
+            "size": 8,
+            "elem_size": 1,
+            "type": "const uint8_t*"
+          },
+          "ms_blob_len": {
+            "offset": 16,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          },
+          "ms_res_buf": {
+            "offset": 24,
+            "size": 8,
+            "elem_size": 1,
+            "type": "uint8_t*"
+          },
+          "ms_res_len": {
+            "offset": 32,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          }
+        },
+        "param_consts": {}
+      },
+      "has_retval": true,
+      "retval_offset": 0,
+      "retval_size": 4,
+      "replay_supported": true
     }
   ]
 }

@@ -21,6 +21,8 @@ sgx_status_t ecall_alpha_stage(sgx_enclave_id_t eid, sgx_status_t* retval, uint3
 sgx_status_t ecall_beta_run(sgx_enclave_id_t eid, sgx_status_t* retval, uint32_t ctl_flag, const uint8_t* pay_buf, size_t pay_len, const uint8_t* meta_buf, size_t meta_len, uint8_t* res_buf, size_t res_len);
 sgx_status_t ecall_gamma_reset(sgx_enclave_id_t eid, sgx_status_t* retval, uint32_t init_seed);
 sgx_status_t ecall_delta_latch(sgx_enclave_id_t eid, sgx_status_t* retval, uint32_t latch_v);
+sgx_status_t ecall_epsilon_issue(sgx_enclave_id_t eid, sgx_status_t* retval, uint32_t kind_tag, uint8_t* blob_out, size_t blob_len);
+sgx_status_t ecall_zeta_open(sgx_enclave_id_t eid, sgx_status_t* retval, uint32_t action_id, const uint8_t* blob_in, size_t blob_len, uint8_t* res_buf, size_t res_len);
 
 #ifdef __cplusplus
 }

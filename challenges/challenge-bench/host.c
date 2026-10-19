@@ -31,16 +31,26 @@ int main(int argc, char **argv) {
         aux_buf[i] = (uint8_t)(0x90 ^ i);
     }
 
-    /* Call 1 (sseq=0): unlatched state */
+    /* Call 1 (sseq=0): step=0 */
     if (ecall_Execute(eid, &retval, 0, in_buf, sizeof(in_buf), aux_buf, sizeof(aux_buf), out_buf, sizeof(out_buf)) != SGX_SUCCESS || retval != SGX_SUCCESS)
         return 4;
+    if (ecall_advance_step(eid, &retval, 1) != SGX_SUCCESS || retval != SGX_SUCCESS) return 5;
 
-    /* Latch latent state without touching any new enclave page */
-    if (ecall_latch_phase(eid, &retval, 1) != SGX_SUCCESS || retval != SGX_SUCCESS) return 5;
-
-    /* Call 2 (sseq=1): latched state (identical L1 page set to sseq=0, but latent state differs) */
+    /* Call 2 (sseq=1): step=1 */
     if (ecall_Execute(eid, &retval, 0, in_buf, sizeof(in_buf), aux_buf, sizeof(aux_buf), out_buf, sizeof(out_buf)) != SGX_SUCCESS || retval != SGX_SUCCESS)
         return 6;
+    if (ecall_advance_step(eid, &retval, 1) != SGX_SUCCESS || retval != SGX_SUCCESS) return 7;
+
+    /* Call 3 (sseq=2, 3rd position!): step=2 (identical L1 page set to sseq=0 and sseq=1) */
+    if (ecall_Execute(eid, &retval, 0, in_buf, sizeof(in_buf), aux_buf, sizeof(aux_buf), out_buf, sizeof(out_buf)) != SGX_SUCCESS || retval != SGX_SUCCESS)
+        return 8;
+
+    /* Opaque authenticated token producer -> consumer Field 2 */
+    uint8_t auth_token[64] = {0};
+    if (ecall_mint_token(eid, &retval, 0, auth_token, sizeof(auth_token)) != SGX_SUCCESS || retval != SGX_SUCCESS)
+        return 9;
+    if (ecall_consume_vault(eid, &retval, 0, auth_token, sizeof(auth_token), out_buf, sizeof(out_buf)) != SGX_SUCCESS || retval != SGX_SUCCESS)
+        return 10;
 
     sgx_destroy_enclave(eid);
     puts("Challenge enclave functional checks: PASS");

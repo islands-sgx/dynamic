@@ -1,24 +1,37 @@
 {
   "fields": [
     {
-      "enter_call_rva": 10219,
-      "exit_call_rva": 10496,
-      "field_id": "0xaab706756b5de95c",
+      "enter_call_rva": 11870,
+      "exit_call_rva": 12148,
+      "field_id": "0x8bbc3f6c606e9f3b",
       "function": "perm_field_core",
-      "gate_a_rva": 196608,
-      "gate_b_rva": 196763,
-      "gate_c_rva": 196942,
-      "gate_d_rva": 197133,
-      "marker_rva": 10224,
-      "pretouch_jmp_rva": 184320,
-      "pretouch_rva": 184320
+      "gate_a_rva": 208896,
+      "gate_b_rva": 209051,
+      "gate_c_rva": 209230,
+      "gate_d_rva": 209421,
+      "marker_rva": 11875,
+      "pretouch_jmp_rva": 196608,
+      "pretouch_rva": 196608
+    },
+    {
+      "enter_call_rva": 12295,
+      "exit_call_rva": 12441,
+      "field_id": "0x4dc6b15a4a900af9",
+      "function": "perm_field_vault",
+      "gate_a_rva": 209591,
+      "gate_b_rva": 209746,
+      "gate_c_rva": 209925,
+      "gate_d_rva": 210116,
+      "marker_rva": 12300,
+      "pretouch_jmp_rva": 196613,
+      "pretouch_rva": 196613
     }
   ],
-  "gate_bytes_used": 695,
-  "gate_helper_page_rva": 196608,
+  "gate_bytes_used": 1390,
+  "gate_helper_page_rva": 208896,
   "input_elf": "/home/meandssh/islands-sgx/dynamic/targets/challenge-bench-perm/enclave.profile.so",
-  "input_elf_sha256": "6bb436e546feed2abe081097c566af448d9f09f65aeeffc6bb377b3a5dfb98d2",
+  "input_elf_sha256": "2305ce1fee7907efc9a50ad5ae663b71921dd93d3ef46215e868f551b8f62a99",
   "output_elf": "/home/meandssh/islands-sgx/dynamic/targets/challenge-bench-perm/enclave.profile.4gate.so",
-  "output_elf_sha256": "1d5cc8d6f94134cba31fc7cac3a32ac3aa649e5501dd336a76683711360e746b",
+  "output_elf_sha256": "3fe7ba136ea8796d147cc431a5d1c3e608ab24b8724fb2cce56bb72c46444454",
   "schema": "atfield-4gate-patch-v1"
 }

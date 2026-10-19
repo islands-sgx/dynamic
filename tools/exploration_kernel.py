@@ -26,7 +26,7 @@ from generic_explorer import (
 )
 
 # Declared general exploration domain constants (shared across all targets, never tuned to blind exam values)
-DECLARED_CONTROL_SCALAR_DOMAIN = (0, 1, 2, 3, 4, 7, 8, 15, 16, 17, 32, 99)
+DECLARED_CONTROL_SCALAR_DOMAIN = (0, 1, 2, 3, 4, 8, 16, 99)
 DECLARED_BOUND_SCALAR_DOMAIN = (0, 1, 16)
 DECLARED_SCALE_PROGRESSION = (16, 64, 256, 512, 1024, 4096, 16384, 65536, 262144)
 DECLARED_HISTORY_DEPTHS = (24, 64, 256, 1024)
@@ -143,12 +143,16 @@ def build_unified_candidate_queues(
 
     queues: dict[str, list[dict]] = {f: [] for f in FAMILY_ORDER}
 
-    # 1. replace_prefix: True in-place replacement (`replace_scalar`) on setup/producer calls
-    # (executes ONCE at the original call position and hands [out]/[inout] buffers + retval to host!)
-    producer_or_setup_indices = list(non_field_selectors) + [
-        idx for idx in field_selectors if len(field_selectors) > 1
-    ]
-    for p_idx_ecall in producer_or_setup_indices:
+    # 1. replace_prefix: True in-place replacement (`replace_scalar`) interleaved across all non-Field setup/producer calls
+    per_setup_lists: list[list[dict]] = []
+    sorted_non_field = sorted(
+        non_field_selectors,
+        key=lambda idx: (
+            0 if any(p.get("is_pointer") and p.get("direction") in ("out", "inout") for p in ecalls_by_idx.get(idx, {}).get("params", [])) else 1,
+            idx,
+        ),
+    )
+    for p_idx_ecall in sorted_non_field:
         ec = ecalls_by_idx.get(p_idx_ecall)
         if not ec or not ec.get("replay_supported", True):
             continue
@@ -157,14 +161,15 @@ def build_unified_candidate_queues(
             for p in ec.get("params", [])
             if p.get("is_pointer") and p.get("bound_ms_offset") is not None
         }
-        sseqs = all_observed_setup_sseqs.get(p_idx_ecall, all_observed_field_sseqs.get(p_idx_ecall, [0]))[:2]
+        sseqs = all_observed_setup_sseqs.get(p_idx_ecall, [0])[:1]
+        this_ec_list: list[dict] = []
         for sseq in sseqs:
             for pidx, p in enumerate(ec.get("params", [])):
                 if not p.get("is_pointer") and p.get("ms_offset") not in bound_offs:
-                    vals = list(DECLARED_CONTROL_SCALAR_DOMAIN[:10])
+                    vals = [v for v in DECLARED_CONTROL_SCALAR_DOMAIN if v not in (0, 99)]
                     rng.shuffle(vals)
                     for val in vals:
-                        queues["replace_prefix"].append({
+                        this_ec_list.append({
                             "family": "replace_prefix",
                             "subkind": "in_place_prefix_replacement",
                             "ecall_index": p_idx_ecall,
@@ -178,6 +183,13 @@ def build_unified_candidate_queues(
                             "tag": f"replace_prefix_e{p_idx_ecall}_s{sseq}_p{pidx}_v{val}",
                             "desc": f"In-place replacement {ec['name']}@{sseq}.{p['name']}={val} + host continuation",
                         })
+        if this_ec_list:
+            per_setup_lists.append(this_ec_list)
+    max_rp = max((len(x) for x in per_setup_lists), default=0)
+    for i in range(max_rp):
+        for lst in per_setup_lists:
+            if i < len(lst):
+                queues["replace_prefix"].append(lst[i])
 
     # 2. scale: Multi-scale expansion on scalable Field selectors (first steps queued; larger steps spawned by feedback or queued)
     for idx in field_selectors:
@@ -265,14 +277,19 @@ def build_unified_candidate_queues(
             else:
                 scalar_params.append((pidx, p))
                 is_bound = p.get("ms_offset") in bound_offs
-                dom = list(DECLARED_BOUND_SCALAR_DOMAIN if is_bound else DECLARED_CONTROL_SCALAR_DOMAIN)
+                if is_bound:
+                    dom = [1, 16] if sseq == 0 else []
+                else:
+                    dom = [v for v in DECLARED_CONTROL_SCALAR_DOMAIN if v != 0 and (v != 99 or sseq == 0)]
                 rng.shuffle(dom)
                 for val in dom:
                     # For control scalars, use in-place replace_scalar so both current call and downstream calls see the state!
                     op_name = "set_scalar" if is_bound else "replace_scalar"
                     stop_bef = f"{idx}:{sseq}" if is_bound else ""
-                    b_list.append({
-                        "family": "boundary",
+                    target_list = c_list if is_bound else b_list
+                    target_fam = "content" if is_bound else "boundary"
+                    target_list.append({
+                        "family": target_fam,
                         "subkind": "in_place_scalar_boundary" if not is_bound else "isolated_single_mutation_replay",
                         "ecall_index": idx,
                         "selector_seq": sseq,
@@ -290,44 +307,46 @@ def build_unified_candidate_queues(
         # Order control scalars ahead of bound-length scalars at each position
         b_list.sort(key=lambda x: (0 if x.get("is_control_scalar") else 1))
 
-        # Joint 2-parameter candidates
-        for spidx, sp in scalar_params[:2]:
-            for ppidx, pp in in_ptr_params[:2]:
-                jvals = [1, 2, 3, 4, 7, 16]
-                rng.shuffle(jvals)
-                for jval in jvals:
-                    j_list.append({
-                        "family": "joint",
-                        "subkind": "joint_two_param_mutation",
+        # Joint 2-parameter candidates and cross-buffer slice relation at primary position (sseq == 0) of each Field selector
+        if sseq == 0:
+            control_scalars = [(spidx, sp) for spidx, sp in scalar_params if sp.get("ms_offset") not in bound_offs]
+            for spidx, sp in (control_scalars or scalar_params[:1]):
+                for ppidx, pp in in_ptr_params[:1]:
+                    jvals = [1, 2, 3, 4, 8, 16]
+                    rng.shuffle(jvals)
+                    for jval in jvals:
+                        j_list.append({
+                            "family": "joint",
+                            "subkind": "joint_two_param_mutation",
+                            "ecall_index": idx,
+                            "selector_seq": sseq,
+                            "param_index": spidx,
+                            "scalar_val": jval,
+                            "spec": f"joint_scalar_xor:{idx}:{sseq}:{spidx}:{jval}:{ppidx}:0:255",
+                            "stop_after": "",
+                            "stop_before": f"{idx}:{sseq}",
+                            "allow_nonzero_rc": False,
+                            "tag": f"joint_e{idx}_s{sseq}_s{spidx}_{jval}_x{ppidx}_0",
+                            "desc": f"Joint 2-param {ec['name']}@{sseq}: {sp['name']}={jval} & {pp['name']}[0]^=0xff",
+                        })
+
+            if len(all_ptr_params) >= 2:
+                p0_idx, p0 = all_ptr_params[0]
+                p1_idx, p1 = all_ptr_params[1]
+                for shift in (4, 8):
+                    a_list.append({
+                        "family": "slice_rel",
+                        "subkind": "cross_buffer_slice_relation",
                         "ecall_index": idx,
                         "selector_seq": sseq,
-                        "param_index": spidx,
-                        "scalar_val": jval,
-                        "spec": f"joint_scalar_xor:{idx}:{sseq}:{spidx}:{jval}:{ppidx}:0:255",
+                        "param_index": p0_idx,
+                        "spec": f"aliased_pair:{idx}:{sseq}:{p0_idx}:{p1_idx}:{shift}",
                         "stop_after": "",
                         "stop_before": f"{idx}:{sseq}",
                         "allow_nonzero_rc": False,
-                        "tag": f"joint_e{idx}_s{sseq}_s{spidx}_{jval}_x{ppidx}_0",
-                        "desc": f"Joint 2-param {ec['name']}@{sseq}: {sp['name']}={jval} & {pp['name']}[0]^=0xff",
+                        "tag": f"slice_rel_e{idx}_s{sseq}_p{p0_idx}_p{p1_idx}_off{shift}",
+                        "desc": f"Cross-buffer slice relation {ec['name']}@{sseq}: {p1['name']} := {p0['name']}+{shift}",
                     })
-
-        # Cross-buffer content slice relation candidates
-        if len(all_ptr_params) >= 2:
-            p0_idx, p0 = all_ptr_params[0]
-            p1_idx, p1 = all_ptr_params[1]
-            for shift in (4, 8):
-                a_list.append({
-                    "family": "slice_rel",
-                    "subkind": "cross_buffer_slice_relation",
-                    "ecall_index": idx,
-                    "selector_seq": sseq,
-                    "spec": f"aliased_pair:{idx}:{sseq}:{p0_idx}:{p1_idx}:{shift}",
-                    "stop_after": "",
-                    "stop_before": f"{idx}:{sseq}",
-                    "allow_nonzero_rc": False,
-                    "tag": f"slice_rel_e{idx}_s{sseq}_p{p0_idx}_p{p1_idx}_off{shift}",
-                    "desc": f"Cross-buffer slice relation {ec['name']}@{sseq}: {p1['name']} := {p0['name']}+{shift}",
-                })
 
         per_pos_buckets["boundary"].append(b_list)
         per_pos_buckets["joint"].append(j_list)
@@ -427,6 +446,8 @@ class ExplorationKernel:
         self.cumulative_s3_effects: set[tuple[int, str]] = set()
         self.cumulative_s3_pages: set[int] = set()
         self.max_heap_pages_by_ecall: dict[int, int] = {}
+        self.scale_s3_effects_by_ecall: dict[int, set[tuple[int, str]]] = {}
+        self.scale_max_heap_by_ecall: dict[int, int] = {}
         self.seen_state_obs_keys: set[tuple] = set()
         self.productive_plans: list[dict] = []
         self.follow_up_queue: list[dict] = []
@@ -434,6 +455,9 @@ class ExplorationKernel:
         self.feedback_decisions: list[dict] = []
         self.failed_repeat_selectors: dict[int, str] = {}
         self.stagnant_scale_selectors: dict[int, int] = {}
+        self.stagnant_history_selectors: dict[int, int] = {}
+        self.slot_zero_gain_streak: dict[tuple, int] = {}
+        self.low_priority_queue: list[dict] = []
 
         # Cost accounting
         self.enclave_creations = 0
@@ -467,6 +491,7 @@ class ExplorationKernel:
         heap_grew = False
         any_valid_field_return = False
 
+        target_eidx = plan.get("ecall_index", -1)
         for rec in recs:
             fb = extract_concrete_record_feedback(rec)
             if fb["state_obs_key"] not in self.seen_state_obs_keys:
@@ -474,7 +499,11 @@ class ExplorationKernel:
                 new_state_keys += 1
             if fb["entered_field"]:
                 self.valid_field_ecalls += 1
-                if fb["ret_cat"] == 0:
+                if fb["ret_cat"] == 0 and (
+                    target_eidx < 0
+                    or plan.get("family") == "replace_prefix"
+                    or (rec.get("ecall_index") == target_eidx and rec.get("tag") != "host_normal")
+                ):
                     any_valid_field_return = True
                 run_s3_effects |= fb["s3_effects"]
                 run_s3_pages |= fb["s3_pages"]
@@ -483,6 +512,18 @@ class ExplorationKernel:
                 if fb["heap_pages"] > prev_hp:
                     self.max_heap_pages_by_ecall[eidx] = fb["heap_pages"]
                     heap_grew = True
+                if plan.get("family") == "seed" and rec.get("selector_seq") == 0:
+                    self.scale_s3_effects_by_ecall.setdefault(eidx, set()).update(fb["s3_effects"])
+                    self.scale_max_heap_by_ecall[eidx] = max(self.scale_max_heap_by_ecall.get(eidx, 0), fb["heap_pages"])
+                elif plan.get("family") == "scale" and rec.get("ecall_index") == target_eidx and rec.get("tag") != "host_normal":
+                    sc_effs = self.scale_s3_effects_by_ecall.setdefault(eidx, set())
+                    if fb["s3_effects"] - sc_effs:
+                        sc_effs.update(fb["s3_effects"])
+                        heap_grew = True
+                    prev_sc_hp = self.scale_max_heap_by_ecall.get(eidx, 0)
+                    if fb["heap_pages"] > prev_sc_hp:
+                        self.scale_max_heap_by_ecall[eidx] = fb["heap_pages"]
+                        heap_grew = True
             else:
                 if rec.get("ecall_index") in self.field_selectors and fb["ret_cat"] != 0:
                     self.expected_s0_rejections += 1
@@ -524,26 +565,55 @@ class ExplorationKernel:
         eidx = plan.get("ecall_index", -1)
         sseq = plan.get("selector_seq", 0)
 
-        if fam == "history" and delta["returncode"] != 0:
-            reason = f"repeat_attempt_failed_rc_{delta['returncode']}"
-            self.failed_repeat_selectors[eidx] = reason
-            # Prune remaining deeper history repeats on this selector
-            queues["history"] = [q for q in queues["history"] if q.get("ecall_index") != eidx]
-            self.feedback_decisions.append({
-                "tag": plan["tag"],
-                "decision": reason,
-            })
-            return
+        if fam == "history":
+            if delta["returncode"] != 0:
+                reason = f"repeat_attempt_failed_rc_{delta['returncode']}"
+                self.failed_repeat_selectors[eidx] = reason
+                queues["history"] = [q for q in queues["history"] if q.get("ecall_index") != eidx]
+                self.feedback_decisions.append({
+                    "tag": plan["tag"],
+                    "decision": reason,
+                })
+                return
+            if delta["new_effects_count"] == 0 and not delta["heap_grew"]:
+                hstag = self.stagnant_history_selectors.get(eidx, 0) + 1
+                self.stagnant_history_selectors[eidx] = hstag
+                if hstag >= 1 and plan.get("history_depth", 0) >= 64:
+                    queues["history"] = [q for q in queues["history"] if q.get("ecall_index") != eidx]
+                    self.feedback_decisions.append({
+                        "tag": plan["tag"],
+                        "decision": "stop_history_stagnant_at_64",
+                    })
+                    return
+            else:
+                self.stagnant_history_selectors[eidx] = 0
 
         if fam == "scale":
             sc = plan.get("scale", 0)
             if not delta["any_valid_field_return"]:
-                self.feedback_decisions.append({
-                    "tag": plan["tag"],
-                    "scale": sc,
-                    "decision": "continue_past_rejected_scale",
-                })
+                rej_key = ("scale_rej", eidx)
+                rstreak = self.slot_zero_gain_streak.get(rej_key, 0) + 1
+                self.slot_zero_gain_streak[rej_key] = rstreak
+                # If even the first 2 scales (16 and 64) both fail S0 without ever entering the Field on this selector,
+                # demote remaining scales on this selector to low_priority_queue (distinguishes non-scalable MAC token from hole after valid 16!)
+                if rstreak >= 2 and self.slot_zero_gain_streak.get(("scale_entered", eidx), 0) == 0 and queues.get("scale"):
+                    kept = [q for q in queues["scale"] if q.get("ecall_index") != eidx]
+                    demoted = [q for q in queues["scale"] if q.get("ecall_index") == eidx]
+                    queues["scale"] = kept
+                    self.low_priority_queue.extend(demoted)
+                    self.feedback_decisions.append({
+                        "tag": plan["tag"],
+                        "scale": sc,
+                        "decision": f"demote_non_scalable_selector_e{eidx}",
+                    })
+                else:
+                    self.feedback_decisions.append({
+                        "tag": plan["tag"],
+                        "scale": sc,
+                        "decision": "continue_past_rejected_scale",
+                    })
                 return
+            self.slot_zero_gain_streak[("scale_entered", eidx)] = 1
             if delta["new_effects_count"] > 0 or delta["heap_grew"]:
                 self.stagnant_scale_selectors[eidx] = 0
                 # Spawn larger scale step (up to 262144) if not already queued
@@ -579,7 +649,7 @@ class ExplorationKernel:
                                 "scale": sc,
                                 "decision": "stop_budget_cap_reached",
                             })
-            else:
+            elif sc >= 4096:
                 stag = self.stagnant_scale_selectors.get(eidx, 0) + 1
                 self.stagnant_scale_selectors[eidx] = stag
                 if stag >= 2:
@@ -590,16 +660,53 @@ class ExplorationKernel:
                         "decision": "stop_stagnant_2_rounds",
                     })
 
+        if fam == "joint":
+            if not delta["any_valid_field_return"]:
+                jrej_key = ("joint_rej", eidx)
+                jr = self.slot_zero_gain_streak.get(jrej_key, 0) + 1
+                self.slot_zero_gain_streak[jrej_key] = jr
+                if jr >= 2 and self.slot_zero_gain_streak.get(("joint_entered", eidx), 0) == 0 and queues.get("joint"):
+                    kept = [q for q in queues["joint"] if q.get("ecall_index") != eidx]
+                    demoted = [q for q in queues["joint"] if q.get("ecall_index") == eidx]
+                    queues["joint"] = kept
+                    self.low_priority_queue.extend(demoted)
+                    self.feedback_decisions.append({
+                        "tag": plan["tag"],
+                        "decision": f"demote_s0_rejected_joint_selector_e{eidx}",
+                    })
+            else:
+                self.slot_zero_gain_streak[("joint_entered", eidx)] = 1
+
+        # Satisfied-slot demotion (for replace_prefix, boundary, joint, slice_rel):
+        # Once a parameter slot (fam, eidx, sseq, pidx) discovers concrete new S3 effects,
+        # demote its remaining enum candidates to low_priority_queue so budget shifts to unsolved slots!
+        slot_key = (fam, eidx, sseq, plan.get("param_index", -1))
+        if fam in ("replace_prefix", "boundary", "joint", "slice_rel") and delta["new_effects_count"] > 0 and queues.get(fam):
+            kept, demoted = [], []
+            for q in queues[fam]:
+                qkey = (q.get("family"), q.get("ecall_index", -1), q.get("selector_seq", 0), q.get("param_index", -1))
+                if qkey == slot_key:
+                    demoted.append(q)
+                else:
+                    kept.append(q)
+            if demoted:
+                queues[fam] = kept
+                self.low_priority_queue.extend(demoted)
+                self.feedback_decisions.append({
+                    "tag": plan["tag"],
+                    "decision": f"demote_satisfied_slot_{fam}_e{eidx}_s{sseq}_p{plan.get('param_index')}_saved_{len(demoted)}",
+                })
+
         # If a boundary, replace_prefix, or content plan discovered new concrete effects or a new valid return state,
         # save it to productive_plans and spawn a follow-up around it!
-        if delta["new_effects_count"] > 0 or (delta["any_valid_field_return"] and delta["new_state_keys"] > 0):
+        if delta["new_effects_count"] > 0 or delta["heap_grew"]:
             self.productive_plans.append({
                 "tag": plan["tag"],
                 "family": fam,
                 "spec": plan["spec"],
                 "new_effects": delta["new_effects_set"],
             })
-            if fam == "boundary" and plan.get("scalar_val") is not None:
+            if fam == "boundary" and delta["new_effects_count"] == 0 and delta["new_state_keys"] > 0 and plan.get("scalar_val") is not None:
                 # Spawn a joint scalar+XOR probe at the same (eidx, sseq) using this productive scalar value!
                 ec = self.ecalls_by_idx.get(eidx)
                 val = plan["scalar_val"]
@@ -656,15 +763,32 @@ class ExplorationKernel:
         fam_idx = 0
         turn = 0
         while self._can_continue():
-            # In feedback_guided mode, every odd turn executes a feedback-spawned follow-up if available
-            if self.mode == "feedback_guided" and (turn % 2 == 1) and self.follow_up_queue:
+            if self.mode == "feedback_guided" and self.follow_up_queue:
                 cand = self.follow_up_queue.pop(0)
+            elif self.mode == "feedback_guided":
+                structural_fams = [f for f in ("replace_prefix", "scale", "joint", "slice_rel", "boundary", "history") if queues.get(f)]
+                if structural_fams:
+                    if turn % 2 == 1:
+                        fam = max(structural_fams, key=lambda f: len(queues[f]))
+                    else:
+                        fam = structural_fams[fam_idx % len(structural_fams)]
+                        fam_idx += 1
+                    cand = queues[fam].pop(0)
+                elif queues.get("content"):
+                    cand = queues["content"].pop(0)
+                elif self.low_priority_queue:
+                    cand = self.low_priority_queue.pop(0)
+                else:
+                    self.stop_reason = "candidates_exhausted"
+                    break
             else:
                 # Base round-robin turn across non-empty families (guarantees every family and position gets budget)
                 avail_fams = [f for f in FAMILY_ORDER if queues.get(f)]
                 if not avail_fams:
                     if self.mode == "feedback_guided" and self.follow_up_queue:
                         cand = self.follow_up_queue.pop(0)
+                    elif self.low_priority_queue:
+                        cand = self.low_priority_queue.pop(0)
                     else:
                         self.stop_reason = "candidates_exhausted"
                         break

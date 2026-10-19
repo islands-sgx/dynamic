@@ -364,8 +364,10 @@ CHALLENGE_TARGETS = {
         "selectors": [
             {"ecall_index": 0, "name": "ecall_init", "reachable_functions": []},
             {"ecall_index": 1, "name": "ecall_configure_stage", "reachable_functions": []},
-            {"ecall_index": 2, "name": "ecall_latch_phase", "reachable_functions": []},
-            {"ecall_index": 3, "name": "ecall_Execute", "reachable_functions": ["challenge_field_work"]},
+            {"ecall_index": 2, "name": "ecall_advance_step", "reachable_functions": []},
+            {"ecall_index": 3, "name": "ecall_Execute", "reachable_functions": ["challenge_field_primary"]},
+            {"ecall_index": 4, "name": "ecall_mint_token", "reachable_functions": []},
+            {"ecall_index": 5, "name": "ecall_consume_vault", "reachable_functions": ["challenge_field_vault"]},
         ],
     },
     "challenge-bench-perm": {
@@ -380,6 +382,8 @@ CHALLENGE_TARGETS = {
             {"ecall_index": 1, "name": "ecall_beta_run", "reachable_functions": ["perm_field_core"]},
             {"ecall_index": 2, "name": "ecall_gamma_reset", "reachable_functions": []},
             {"ecall_index": 3, "name": "ecall_delta_latch", "reachable_functions": []},
+            {"ecall_index": 4, "name": "ecall_epsilon_issue", "reachable_functions": []},
+            {"ecall_index": 5, "name": "ecall_zeta_open", "reachable_functions": ["perm_field_vault"]},
         ],
     },
 }
@@ -564,7 +568,7 @@ def build_challenge_target(name: str) -> dict:
     ws_data = json.loads(workset_all_reg.read_text())
     return {
         "sample": name,
-        "field_count": 1,
+        "field_count": len(ws_data["fields"]),
         "all_reg_pages_per_field": len(ws_data["fields"][0]["pages"]),
     }
 

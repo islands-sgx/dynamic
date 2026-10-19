@@ -12,5 +12,17 @@ enclave {
         );
         public sgx_status_t ecall_gamma_reset(uint32_t init_seed);
         public sgx_status_t ecall_delta_latch(uint32_t latch_v);
+        public sgx_status_t ecall_epsilon_issue(
+            uint32_t kind_tag,
+            [out, size=blob_len] uint8_t *blob_out,
+            size_t blob_len
+        );
+        public sgx_status_t ecall_zeta_open(
+            uint32_t action_id,
+            [in, size=blob_len] const uint8_t *blob_in,
+            size_t blob_len,
+            [out, size=res_len] uint8_t *res_buf,
+            size_t res_len
+        );
     };
 };

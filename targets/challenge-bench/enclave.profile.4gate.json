@@ -1,24 +1,37 @@
 {
   "fields": [
     {
-      "enter_call_rva": 10219,
-      "exit_call_rva": 10496,
-      "field_id": "0xd510c2d93bbb0e56",
-      "function": "challenge_field_work",
-      "gate_a_rva": 196608,
-      "gate_b_rva": 196763,
-      "gate_c_rva": 196942,
-      "gate_d_rva": 197133,
-      "marker_rva": 10224,
-      "pretouch_jmp_rva": 184320,
-      "pretouch_rva": 184320
+      "enter_call_rva": 11870,
+      "exit_call_rva": 12148,
+      "field_id": "0x3a2adfac050e9bb1",
+      "function": "challenge_field_primary",
+      "gate_a_rva": 208896,
+      "gate_b_rva": 209051,
+      "gate_c_rva": 209230,
+      "gate_d_rva": 209421,
+      "marker_rva": 11875,
+      "pretouch_jmp_rva": 196608,
+      "pretouch_rva": 196608
+    },
+    {
+      "enter_call_rva": 12311,
+      "exit_call_rva": 12457,
+      "field_id": "0x78206dbe1aed2ff3",
+      "function": "challenge_field_vault",
+      "gate_a_rva": 209591,
+      "gate_b_rva": 209746,
+      "gate_c_rva": 209925,
+      "gate_d_rva": 210116,
+      "marker_rva": 12316,
+      "pretouch_jmp_rva": 196613,
+      "pretouch_rva": 196613
     }
   ],
-  "gate_bytes_used": 695,
-  "gate_helper_page_rva": 196608,
+  "gate_bytes_used": 1390,
+  "gate_helper_page_rva": 208896,
   "input_elf": "/home/meandssh/islands-sgx/dynamic/targets/challenge-bench/enclave.profile.so",
-  "input_elf_sha256": "3a2ecb30f805fce208aa6ac06dea669bb25c87a9a39a6c8f8198528e82476ed2",
+  "input_elf_sha256": "8c76658e3dfcc8c2848f7de6e7498e67fbba401e8d83400528d46060d371ae21",
   "output_elf": "/home/meandssh/islands-sgx/dynamic/targets/challenge-bench/enclave.profile.4gate.so",
-  "output_elf_sha256": "1821c1b3bf1ca41454f9bfa48e8c68ac7dc2ba9cb879faaa824e4ce627754ef8",
+  "output_elf_sha256": "212eb710cb242af01ceb2ae10f53ba333b040a7102b4de826fd74024592cbaf6",
   "schema": "atfield-4gate-patch-v1"
 }

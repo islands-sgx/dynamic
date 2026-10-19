@@ -2,22 +2,41 @@
   "schema": "atfield-fields-v1",
   "fields": [
     {
-      "id": "0xd510c2d93bbb0e56",
-      "name": "challenge_field_work",
-      "function": "challenge_field_work",
-      "linkage_name": "challenge_field_work",
-      "demangled_name": "challenge_field_work",
+      "id": "0x3a2adfac050e9bb1",
+      "name": "challenge_field_primary",
+      "function": "challenge_field_primary",
+      "linkage_name": "challenge_field_primary",
+      "demangled_name": "challenge_field_primary",
       "order": [
         "0x72563d1b32c41baf",
-        "3"
+        "4"
       ],
-      "marker_symbol": "__atfield_marker_15352985367971827286",
-      "continuation_symbol": "__atfield_after_marker_15352985367971827286",
-      "body_symbol": "__atfield_body_15352985367971827286",
-      "pretouch_symbol": "__atfield_pretouch_15352985367971827286",
-      "field_enter_symbol": "__atfield_field_enter_15352985367971827286",
-      "normal_close_symbol": "__atfield_normal_close_15352985367971827286",
-      "field_exit_symbol": "__atfield_field_exit_15352985367971827286",
+      "marker_symbol": "__atfield_marker_4191408333133880241",
+      "continuation_symbol": "__atfield_after_marker_4191408333133880241",
+      "body_symbol": "__atfield_body_4191408333133880241",
+      "pretouch_symbol": "__atfield_pretouch_4191408333133880241",
+      "field_enter_symbol": "__atfield_field_enter_4191408333133880241",
+      "normal_close_symbol": "__atfield_normal_close_4191408333133880241",
+      "field_exit_symbol": "__atfield_field_exit_4191408333133880241",
+      "stack_bytes": null
+    },
+    {
+      "id": "0x78206dbe1aed2ff3",
+      "name": "challenge_field_vault",
+      "function": "challenge_field_vault",
+      "linkage_name": "challenge_field_vault",
+      "demangled_name": "challenge_field_vault",
+      "order": [
+        "0x72563d1b32c41baf",
+        "6"
+      ],
+      "marker_symbol": "__atfield_marker_8656039147069059059",
+      "continuation_symbol": "__atfield_after_marker_8656039147069059059",
+      "body_symbol": "__atfield_body_8656039147069059059",
+      "pretouch_symbol": "__atfield_pretouch_8656039147069059059",
+      "field_enter_symbol": "__atfield_field_enter_8656039147069059059",
+      "normal_close_symbol": "__atfield_normal_close_8656039147069059059",
+      "field_exit_symbol": "__atfield_field_exit_8656039147069059059",
       "stack_bytes": null
     }
   ],

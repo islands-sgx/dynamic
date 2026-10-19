@@ -2,22 +2,41 @@
   "schema": "atfield-fields-v1",
   "fields": [
     {
-      "id": "0xaab706756b5de95c",
+      "id": "0x8bbc3f6c606e9f3b",
       "name": "perm_field_core",
       "function": "perm_field_core",
       "linkage_name": "perm_field_core",
       "demangled_name": "perm_field_core",
       "order": [
         "0xc6a884c603a7ab9d",
-        "3"
+        "4"
       ],
-      "marker_symbol": "__atfield_marker_12301308008568056156",
-      "continuation_symbol": "__atfield_after_marker_12301308008568056156",
-      "body_symbol": "__atfield_body_12301308008568056156",
-      "pretouch_symbol": "__atfield_pretouch_12301308008568056156",
-      "field_enter_symbol": "__atfield_field_enter_12301308008568056156",
-      "normal_close_symbol": "__atfield_normal_close_12301308008568056156",
-      "field_exit_symbol": "__atfield_field_exit_12301308008568056156",
+      "marker_symbol": "__atfield_marker_10068992601600466747",
+      "continuation_symbol": "__atfield_after_marker_10068992601600466747",
+      "body_symbol": "__atfield_body_10068992601600466747",
+      "pretouch_symbol": "__atfield_pretouch_10068992601600466747",
+      "field_enter_symbol": "__atfield_field_enter_10068992601600466747",
+      "normal_close_symbol": "__atfield_normal_close_10068992601600466747",
+      "field_exit_symbol": "__atfield_field_exit_10068992601600466747",
+      "stack_bytes": null
+    },
+    {
+      "id": "0x4dc6b15a4a900af9",
+      "name": "perm_field_vault",
+      "function": "perm_field_vault",
+      "linkage_name": "perm_field_vault",
+      "demangled_name": "perm_field_vault",
+      "order": [
+        "0xc6a884c603a7ab9d",
+        "6"
+      ],
+      "marker_symbol": "__atfield_marker_5604361787665287929",
+      "continuation_symbol": "__atfield_after_marker_5604361787665287929",
+      "body_symbol": "__atfield_body_5604361787665287929",
+      "pretouch_symbol": "__atfield_pretouch_5604361787665287929",
+      "field_enter_symbol": "__atfield_field_enter_5604361787665287929",
+      "normal_close_symbol": "__atfield_normal_close_5604361787665287929",
+      "field_exit_symbol": "__atfield_field_exit_5604361787665287929",
       "stack_bytes": null
     }
   ],
