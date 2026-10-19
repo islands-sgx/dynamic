@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 sys.path.insert(0, "/home/meandssh/islands-sgx/dynamic/vendor/implement/build/workset")
@@ -17,7 +18,7 @@ from workset import ElfFile  # noqa: E402
 DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
 SAMPLE_ROOT = Path("/home/meandssh/islands-sgx/sample")
 INTERPOSE_SO = DYN_ROOT / "build" / "libatfield_native_sgx.so"
-ATFIELD_RUN_BIN = Path("/home/meandssh/islands-sgx/implement/host/runner/atfield-run")
+ATFIELD_RUN_BIN = DYN_ROOT / "vendor" / "implement" / "host" / "runner" / "atfield-run"
 LD_LIB_PATH = (
     "/nix/store/hg41dqig0qxm7shyi0a0xkw29a14i3js-openssl-3.6.3/lib:"
     "/nix/store/j2kgllgds4w7na8zqv1msi0mpvpjxda8-gcc-15.2.0-lib/lib:"
@@ -106,7 +107,7 @@ def resolve_enclave_path(tdir: Path, mode: str) -> tuple[Path, int]:
         "dynamic_4gate": (tdir / "enclave.dynamic.4gate.aex0.signed.so", 1),
         "dynamic_xr_4gate": (tdir / "enclave.dynamic_xr.4gate.aex0.signed.so", 1),
         "raw_unprotected": (SAMPLE_ROOT / "build" / "real" / tdir.name / "raw" / "enclave.signed.so", 0),
-        "profile_signed": (SAMPLE_ROOT / "build" / "real" / tdir.name / "anchor" / "enclave.signed.so", 0),
+        "profile_signed": (tdir / "enclave.profile.aex0.signed.so", 0),
         "all_reg_final": (tdir / "enclave.all_reg.final.signed.so", 0),
         "all_reg_final_aex0": (tdir / "enclave.all_reg.final.aex0.signed.so", 0),
         "dynamic_final": (tdir / "enclave.dynamic.final.signed.so", 0),
@@ -202,6 +203,7 @@ def run_sample(
         timed_out = False
         try:
             proc = subprocess.run(cmd, cwd=work_cwd, text=True, capture_output=True, timeout=timeout_sec)
+            time.sleep(0.01)
             rc = proc.returncode
             stdout = proc.stdout.strip()
             stderr = proc.stderr.strip()

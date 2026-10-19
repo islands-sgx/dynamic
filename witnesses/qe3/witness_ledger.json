@@ -105,38 +105,38 @@
     {
       "ecall_index": 0,
       "history_depth": 16,
-      "max_tsc_s3": 3454788,
-      "median_tsc_s3": 829230,
-      "regime_jump_ratio": 4.17
+      "max_tsc_s3": 1069562,
+      "median_tsc_s3": 795836,
+      "regime_jump_ratio": 1.34
     },
     {
       "ecall_index": 0,
       "history_depth": 64,
-      "max_tsc_s3": 3148048,
-      "median_tsc_s3": 614216,
-      "regime_jump_ratio": 5.13
+      "max_tsc_s3": 1071796,
+      "median_tsc_s3": 793824,
+      "regime_jump_ratio": 1.35
     },
     {
       "ecall_index": 0,
       "history_depth": 256,
-      "max_tsc_s3": 3130104,
-      "median_tsc_s3": 613082,
-      "regime_jump_ratio": 5.11
+      "max_tsc_s3": 1068238,
+      "median_tsc_s3": 793726,
+      "regime_jump_ratio": 1.35
     },
     {
       "ecall_index": 0,
       "history_depth": 1024,
-      "max_tsc_s3": 3134112,
-      "median_tsc_s3": 611718,
-      "regime_jump_ratio": 5.12
+      "max_tsc_s3": 1056244,
+      "median_tsc_s3": 793496,
+      "regime_jump_ratio": 1.33
     }
   ],
-  "interpose_sha256": "08f0c81edd6b85aba97eb75ffe578eda1022de35f078d29969d330f9bd88173e",
+  "interpose_sha256": "47bff7b17d82745b1558c5b951499a0870d6a59d65f3f7af3665658f09b03a70",
   "profile_elf_sha256": "5c0f4038289badf9866c3e39bb90b375c2be78bc1e8960ee1852ef7315a3b9b5",
   "runs": [
     {
       "description": "Unmodified host binary full execution (first entry per Field = Layer 0; full run = Layer 1)",
-      "interpose_sha256": "08f0c81edd6b85aba97eb75ffe578eda1022de35f078d29969d330f9bd88173e",
+      "interpose_sha256": "47bff7b17d82745b1558c5b951499a0870d6a59d65f3f7af3665658f09b03a70",
       "layer": "layer1_full_host",
       "measurement_invalid": false,
       "new_page_effects_discovered": 77,
@@ -145,11 +145,11 @@
       "run_id": "layer0_and_layer1_unmodified_host",
       "subkind": "unmodified_host_full_trace",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer0_and_layer1_unmodified_host.jsonl",
-      "trace_sha256": "7ce7366a14e29422b5f61df9dfe0a9bcf975b0738305e49c1963110030a83e8a"
+      "trace_sha256": "2ea8c9a2dce9bea009ed7996ba3fa70b63caf6c7b4bbd2d272161ff9a97b5641"
     },
     {
       "description": "Isolated fresh-enclave single mutation replay: Bounded schema XOR on ecall_get_attestation_key.key_id[0] ^= 0xff at sseq=0",
-      "interpose_sha256": "08f0c81edd6b85aba97eb75ffe578eda1022de35f078d29969d330f9bd88173e",
+      "interpose_sha256": "47bff7b17d82745b1558c5b951499a0870d6a59d65f3f7af3665658f09b03a70",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 0,
@@ -158,11 +158,11 @@
       "run_id": "layer2_isolated_mut_ecall0_s0_m0_schema_xor_p0_byte_0",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_isolated_mut_ecall0_s0_m0_schema_xor_p0_byte_0.jsonl",
-      "trace_sha256": "f55557eedb9b8e4578f878e8eef103d1860d4466cf893842891a6eb6035f6454"
+      "trace_sha256": "00f1f522defd4a883252202254b70a868ca925c2ceeb1c3f0423edc57aaa118a"
     },
     {
       "description": "Isolated fresh-enclave single mutation replay: Bounded schema XOR on ecall_get_attestation_key.key_id[15] ^= 0xaa at sseq=0",
-      "interpose_sha256": "08f0c81edd6b85aba97eb75ffe578eda1022de35f078d29969d330f9bd88173e",
+      "interpose_sha256": "47bff7b17d82745b1558c5b951499a0870d6a59d65f3f7af3665658f09b03a70",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 0,
@@ -171,11 +171,11 @@
       "run_id": "layer2_isolated_mut_ecall0_s0_m1_schema_xor_p0_byte_15",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_isolated_mut_ecall0_s0_m1_schema_xor_p0_byte_15.jsonl",
-      "trace_sha256": "5fe9d0c085982e8006855cc80ff6086dde845f1e0ab5abab11f9492f062e566a"
+      "trace_sha256": "de47103a796efe1c41e4b3c3f998207d1393636d36580cf47b769db19158e46a"
     },
     {
       "description": "Doubling history scan (depth=16, 0 skipped) on ecall_get_attestation_key",
-      "interpose_sha256": "08f0c81edd6b85aba97eb75ffe578eda1022de35f078d29969d330f9bd88173e",
+      "interpose_sha256": "47bff7b17d82745b1558c5b951499a0870d6a59d65f3f7af3665658f09b03a70",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 0,
@@ -184,11 +184,11 @@
       "run_id": "layer2_doubling_history_n16_ecall0",
       "subkind": "doubling_history_scan",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_doubling_history_n16_ecall0.jsonl",
-      "trace_sha256": "ba39debbf63b1f74eedd7a0510c5c887dba38da70354ed3a693fbd90a4513a15"
+      "trace_sha256": "d057fb319625b8488d96476c98d22b4cb1eb5289da6e9369c195a8b14f4eb530"
     },
     {
       "description": "Doubling history scan (depth=64, 0 skipped) on ecall_get_attestation_key",
-      "interpose_sha256": "08f0c81edd6b85aba97eb75ffe578eda1022de35f078d29969d330f9bd88173e",
+      "interpose_sha256": "47bff7b17d82745b1558c5b951499a0870d6a59d65f3f7af3665658f09b03a70",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 0,
@@ -197,11 +197,11 @@
       "run_id": "layer2_doubling_history_n64_ecall0",
       "subkind": "doubling_history_scan",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_doubling_history_n64_ecall0.jsonl",
-      "trace_sha256": "7928cabc514967d36e6b768509a1f3ec1dc97f797787a14a0f447292938256a9"
+      "trace_sha256": "5e3ddbd46791fd412074fc4763aaa1d98d1b327b0dbc723e0611811b855393bf"
     },
     {
       "description": "Doubling history scan (depth=256, 0 skipped) on ecall_get_attestation_key",
-      "interpose_sha256": "08f0c81edd6b85aba97eb75ffe578eda1022de35f078d29969d330f9bd88173e",
+      "interpose_sha256": "47bff7b17d82745b1558c5b951499a0870d6a59d65f3f7af3665658f09b03a70",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 0,
@@ -210,11 +210,11 @@
       "run_id": "layer2_doubling_history_n256_ecall0",
       "subkind": "doubling_history_scan",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_doubling_history_n256_ecall0.jsonl",
-      "trace_sha256": "524dfa94bba14c9b23a747729ca7e9f7e4981db0685d673231c7eed71c549593"
+      "trace_sha256": "2ba9066c913a3a9798b7a0468d348b78650935bfe251b301d572312bf5787501"
     },
     {
       "description": "Doubling history scan (depth=1024, 0 skipped) on ecall_get_attestation_key",
-      "interpose_sha256": "08f0c81edd6b85aba97eb75ffe578eda1022de35f078d29969d330f9bd88173e",
+      "interpose_sha256": "47bff7b17d82745b1558c5b951499a0870d6a59d65f3f7af3665658f09b03a70",
       "layer": "layer2_generic_schema",
       "measurement_invalid": false,
       "new_page_effects_discovered": 0,
@@ -223,7 +223,7 @@
       "run_id": "layer2_doubling_history_n1024_ecall0",
       "subkind": "doubling_history_scan",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_doubling_history_n1024_ecall0.jsonl",
-      "trace_sha256": "67e6fa149ab8b8d157014dabc77b71d8a644f6fcb617caa24eb0e9a42128b876"
+      "trace_sha256": "d805898523cd4e08d4796e458cba4a3dac8501fb5e4592de74acbf3fde7b2d1a"
     }
   ],
   "sample": "qe3",
@@ -234,7 +234,7 @@
       "ecall_index": 0,
       "enclave_sha256": "5ce0b25efcd0b36960f22d2e709572b8d90bbdaaf619d5a0b7394c522c855a59",
       "field_id": "0x2a10deb0a1ec70f8",
-      "interpose_sha256": "08f0c81edd6b85aba97eb75ffe578eda1022de35f078d29969d330f9bd88173e",
+      "interpose_sha256": "47bff7b17d82745b1558c5b951499a0870d6a59d65f3f7af3665658f09b03a70",
       "intervention": "",
       "layer": "layer0_first_call",
       "measurement_invalid": 0,
@@ -633,8 +633,8 @@
       "total_field_obs_effects": 77,
       "total_field_obs_pages": 69,
       "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer0_and_layer1_unmodified_host.jsonl",
-      "trace_sha256": "7ce7366a14e29422b5f61df9dfe0a9bcf975b0738305e49c1963110030a83e8a",
-      "tsc_s3": 3134596,
+      "trace_sha256": "2ea8c9a2dce9bea009ed7996ba3fa70b63caf6c7b4bbd2d272161ff9a97b5641",
+      "tsc_s3": 1100182,
       "witness_id": "qe3_layer0_and_layer1_unmodified_host_seq0_ec70f8"
     }
   ]

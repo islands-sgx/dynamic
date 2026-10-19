@@ -984,6 +984,16 @@ sgx_status_t sgx_create_enclave(
     }
 
     if (pure_prod_mode) {
+        static int leased_cpu = -1;
+        if (leased_cpu < 0) {
+            int cur_c = sched_getcpu();
+            leased_cpu = (cur_c >= 44 && cur_c <= 47) ? cur_c : encl_cpu;
+        }
+        cpu_set_t set0, set_encl;
+        CPU_ZERO(&set0);
+        CPU_SET(0, &set0);
+        sched_setaffinity(0, sizeof(set0), &set0);
+
         if (!g_shared) {
             void *sh = mmap((void *)GATE_SHARED_VA, 4096, PROT_READ | PROT_WRITE,
                             MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED_NOREPLACE, -1, 0);
@@ -1020,7 +1030,70 @@ sgx_status_t sgx_create_enclave(
                 free(rbuf);
                 fclose(rf);
             }
+        } else {
+            /* Unprotected baseline (Raw / No-PreTouch): fault in non-excluded REG pages on CPU 0 without /dev/sgx-step */
+            if (fd_self_mem < 0) fd_self_mem = open("/proc/self/mem", O_RDWR);
+            FILE *fp = fopen("/proc/self/maps", "r");
+            if (fp) {
+                char line[512];
+                uint64_t first = 0;
+                typedef struct { uint64_t s, e; char p[8]; } lvma_t;
+                lvma_t lvmas[128];
+                int nlv = 0;
+                while (fgets(line, sizeof(line), fp)) {
+                    if (!strstr(line, "/dev/sgx_enclave") && !strstr(line, "/dev/sgx/enclave")) continue;
+                    uint64_t s, e;
+                    char p[8];
+                    if (sscanf(line, "%lx-%lx %7s", &s, &e, p) == 3 && nlv < 128) {
+                        if (!first) first = s;
+                        lvmas[nlv].s = s; lvmas[nlv].e = e; strncpy(lvmas[nlv].p, p, 7); nlv++;
+                    }
+                }
+                fclose(fp);
+                uint64_t ex[64][2]; int nex = 0; uint64_t ltcs = 0;
+                const char *sp = getenv("ATFIELD_LAYOUT_SPEC");
+                if (sp) {
+                    const char *q;
+                    if ((q = strstr(sp, "tcs="))) ltcs = strtoull(q + 4, NULL, 16);
+                    if ((q = strstr(sp, "excl="))) {
+                        q += 5;
+                        while (*q && *q != ';' && nex < 64) {
+                            char *m1 = NULL, *m2 = NULL;
+                            ex[nex][0] = strtoull(q, &m1, 16);
+                            if (!m1 || *m1 != ':') break;
+                            ex[nex][1] = strtoull(m1 + 1, &m2, 16);
+                            nex++;
+                            if (!m2 || *m2 != ',') break;
+                            q = m2 + 1;
+                        }
+                    }
+                }
+                if (ltcs && fd_self_mem >= 0 && first) {
+                    uint64_t flg = 0;
+                    if (pread(fd_self_mem, &flg, 8, first + ltcs + 8) == 8) {
+                        flg |= 1ULL;
+                        pwrite(fd_self_mem, &flg, 8, first + ltcs + 8);
+                    }
+                }
+                for (int i = 0; i < nlv; i++) {
+                    if (lvmas[i].p[0] != 'r') continue;
+                    for (uint64_t va = lvmas[i].s; va < lvmas[i].e; va += 0x1000) {
+                        uint64_t rva = va - first;
+                        int skip = 0;
+                        for (int k = 0; k < nex; k++) {
+                            if (rva >= ex[k][0] && rva < ex[k][1]) { skip = 1; break; }
+                        }
+                        if (!skip) {
+                            volatile uint8_t b = *(volatile uint8_t *)(uintptr_t)va;
+                            (void)b;
+                        }
+                    }
+                }
+            }
         }
+        CPU_ZERO(&set_encl);
+        CPU_SET(leased_cpu, &set_encl);
+        sched_setaffinity(0, sizeof(set_encl), &set_encl);
         return st_prod;
     }
 
@@ -1655,12 +1728,10 @@ static void dump_enclave_vmas_if_requested(void) {
 }
 
 static void cleanup_interpose(void) {
-    if (!pure_prod_mode) {
-        cpu_set_t sys_set;
-        CPU_ZERO(&sys_set);
-        CPU_SET(0, &sys_set);
-        sched_setaffinity(0, sizeof(sys_set), &sys_set);
-    }
+    cpu_set_t sys_set;
+    CPU_ZERO(&sys_set);
+    CPU_SET(0, &sys_set);
+    sched_setaffinity(0, sizeof(sys_set), &sys_set);
     if (watcher_started) {
         __atomic_store_n(&watcher_stop, 1, __ATOMIC_RELEASE);
         pthread_join(watcher_thread, NULL);

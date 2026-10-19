@@ -640,6 +640,11 @@ def evaluate_sample(sample: str) -> dict:
                     else:
                         d["contaminated_s3_rewalk"].append(len(s3_set))
 
+    # Separate 4-gate diagnostic runs from production AEX1 performance benchmark, with 1 warmup round
+    for _, pmode in group_modes_prod_aex1:
+        run_sample(sample, mode=pmode, ipi_mask=0, host_args=perf_h_args, allow_fast_forward=0)
+
+    for rnd in range(perf_rounds):
         for gname, pmode in group_modes_prod_aex1:
             for att in range(4):
                 suffix = f"r{rnd}_{gname}" if att == 0 else f"r{rnd}_{gname}_retry{att}"
@@ -795,6 +800,29 @@ def evaluate_sample(sample: str) -> dict:
 
 
 def main() -> None:
+    import glob
+    no_turbo_p = Path("/sys/devices/system/cpu/intel_pstate/no_turbo")
+    orig_no_turbo = no_turbo_p.read_text().strip() if no_turbo_p.exists() else None
+    gov_paths = [Path(p) for p in glob.glob("/sys/devices/system/cpu/cpu*/cpufreq/scaling_governor")]
+    orig_govs = {}
+    for gp in gov_paths:
+        try:
+            orig_govs[gp] = gp.read_text().strip()
+        except OSError:
+            pass
+    try:
+        if no_turbo_p.exists():
+            subprocess.run(["sudo", "sh", "-c", "echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo"], check=False)
+        subprocess.run(["sudo", "sh", "-c", "for f in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do echo performance > \"$f\" 2>/dev/null || true; done"], check=False)
+        _run_main_body()
+    finally:
+        if orig_no_turbo is not None:
+            subprocess.run(["sudo", "sh", "-c", f"echo {orig_no_turbo} > /sys/devices/system/cpu/intel_pstate/no_turbo"], check=False)
+        for gp, val in orig_govs.items():
+            subprocess.run(["sudo", "sh", "-c", f"echo {val} > {gp} 2>/dev/null || true"], check=False)
+
+
+def _run_main_body() -> None:
     out_dir = DYN_ROOT / "experiments"
     out_dir.mkdir(parents=True, exist_ok=True)
     summary = {}
