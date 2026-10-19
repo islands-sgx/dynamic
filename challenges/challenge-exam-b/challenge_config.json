@@ -1,0 +1,54 @@
+{
+  "split": "post_revision_regression",
+  "edl": "exam_b.edl",
+  "edl_stem": "exam_b",
+  "heap": 1048576,
+  "stack": 262144,
+  "capacity_q": 16384,
+  "selectors": [
+    {
+      "ecall_index": 0,
+      "name": "examB_tick_clock",
+      "reachable_functions": []
+    },
+    {
+      "ecall_index": 1,
+      "name": "examB_issue_ticket",
+      "reachable_functions": []
+    },
+    {
+      "ecall_index": 2,
+      "name": "examB_configure_gate",
+      "reachable_functions": []
+    },
+    {
+      "ecall_index": 3,
+      "name": "examB_verify_ticket",
+      "reachable_functions": [
+        "examB_field_verify"
+      ]
+    },
+    {
+      "ecall_index": 4,
+      "name": "examB_reset_context",
+      "reachable_functions": []
+    },
+    {
+      "ecall_index": 5,
+      "name": "examB_transform_packet",
+      "reachable_functions": [
+        "examB_field_packet"
+      ]
+    }
+  ],
+  "holdout_specs": [
+    "repeat:3:0:22",
+    "replace_scalar:2:0:0:16",
+    "scale_bound_v2:5:0:0:16:1024:-1:0",
+    "joint_scalar_xor:5:0:0:4:1:0:255",
+    "replace_scalar:5:3:0:1",
+    "aliased_pair:5:0:1:3:8",
+    "replace_scalar:1:0:0:3",
+    "replace_scalar:3:0:0:8"
+  ]
+}

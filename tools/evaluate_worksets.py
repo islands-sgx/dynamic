@@ -407,11 +407,178 @@ def run_tlb_and_fixture_checks(sample: str, raw_dir: Path) -> dict:
     }
 
 
+def evaluate_sm4_two_tier(
+    sample: str,
+    tdir: Path,
+    raw_dir: Path,
+    ledger: dict,
+    expected_fids: set[str],
+    closed_target_effects_by_fid: dict[str, set[tuple[int, str]]],
+) -> dict:
+    """Non-circular Two-Tier SM4 Producer-Consumer Evaluation:
+    - Tier 1 loads the independently built and frozen `workset.sm4_seeded_xr.json`,
+      `enclave.sm4_seeded_xr.4gate.aex0.signed.so`, `enclave.sm4_seeded_xr.final.signed.so`,
+      and `enclave.sm4_seeded_xr.ready.bin` (whose hashes differ from the AES-only `dynamic_xr` artifacts),
+      then executes THREE fresh independent `--sm4-check` runs:
+        1. `profile_4gate` coverage check (`validate_run_result` with `expected_field_ids` & `require_ipi_mask=7`);
+        2. `sm4_seeded_xr_4gate` pre-touch diagnostic check (`validate_diagnostic_4gate_run` + 0 clean S3 rewalks);
+        3. `sm4_seeded_xr_final` protected production execution under `AEX-Notify=1` and kernel `ReadyTable`
+           enforcement (`validate_production_run_result` with `require_readiness=True`).
+    - Tier 2 validates the fresh `--sm4-check` coverage run against the AES-only `dynamic_xr` workset
+      (with `expected_field_ids` & `require_ipi_mask=7`), honestly reporting `FAIL` and the exact uncovered SM4 pages.
+    """
+    ws_sm4_path = tdir / "workset.sm4_seeded_xr.json"
+    rdy_sm4_path = tdir / "enclave.sm4_seeded_xr.ready.json"
+    if not ws_sm4_path.is_file() or not rdy_sm4_path.is_file():
+        raise FileNotFoundError(f"Missing frozen Tier-1 SM4-seeded artifacts in {tdir}")
+
+    ws_sm4 = json.loads(ws_sm4_path.read_text())
+    rdy_sm4 = json.loads(rdy_sm4_path.read_text())
+    sm4_ready_sel_set = {s["ecall_index"] for s in rdy_sm4["selectors"] if s["page_rvas"]}
+    sm4_effects_by_fid: dict[str, set[tuple[int, str]]] = {}
+    for f in ws_sm4["fields"]:
+        fid = f"0x{int(f['id'], 16):016x}" if isinstance(f["id"], str) else f"0x{f['id']:016x}"
+        effs: set[tuple[int, str]] = set()
+        for pg in f["pages"]:
+            rva = pg["page_rva"]
+            effs.add((rva, "A"))
+            if "W" in pg["effects"]:
+                effs.add((rva, "D"))
+        sm4_effects_by_fid[fid] = effs
+
+    # Fresh independent `--sm4-check` coverage run on profile_4gate
+    r_sm4_cov = run_sample(
+        sample,
+        mode="profile_4gate",
+        ipi_mask=7,
+        host_args=["--sm4-check"],
+        allow_fast_forward=0,
+        persist_prefix=raw_dir / "holdout_sm4_independent_coverage_4gate",
+    )
+    val_t1_cov = validate_run_result(
+        r_sm4_cov,
+        expected_returncode=0,
+        expected_stdout_substr="PASS",
+        expected_min_records=21,
+        expected_field_ids=expected_fids,
+        require_ipi_mask=7,
+        closed_workset_effects=sm4_effects_by_fid,
+    )
+
+    sm4_ecall_seq = [r["ecall_index"] for r in r_sm4_cov["records"]]
+    sm4_field_call_seqs = {r["call_seq"] for r in r_sm4_cov["records"] if r["fields"]}
+
+    # Fresh independent 4-Gate pre-touch diagnostic run on sm4_seeded_xr_4gate
+    r_sm4_4gate = run_sample(
+        sample,
+        mode="sm4_seeded_xr_4gate",
+        ipi_mask=3,
+        host_args=["--sm4-check"],
+        allow_fast_forward=0,
+        persist_prefix=raw_dir / "holdout_tier1_sm4_4gate_pretouch",
+    )
+    val_t1_4gate = validate_diagnostic_4gate_run(
+        r_sm4_4gate,
+        expected_field_ids=expected_fids,
+        expected_ecall_seq=sm4_ecall_seq,
+        expected_field_call_seqs=sm4_field_call_seqs,
+        require_ipi_mask=3,
+    )
+    clean_rewalks = [
+        len(fobs["s3"])
+        for rec in r_sm4_4gate["records"]
+        for fobs in rec["fields"]
+        if fobs.get("s3_active_aex_count", 0) == 0
+    ]
+
+    # Fresh independent production protected execution on sm4_seeded_xr_final (AEX-Notify=1 + ReadyTable)
+    val_t1_prod = {"status": "FAIL", "reasons": ["NOT_RUN"]}
+    r_sm4_prod = {}
+    for att in range(4):
+        sfx = "" if att == 0 else f"_retry{att}"
+        r_sm4_prod = run_sample(
+            sample,
+            mode="sm4_seeded_xr_final",
+            ipi_mask=0,
+            host_args=["--sm4-check"],
+            allow_fast_forward=0,
+            persist_prefix=raw_dir / f"holdout_tier1_sm4_prod_aex1{sfx}",
+        )
+        val_t1_prod = validate_production_run_result(
+            r_sm4_prod,
+            expected_stdout_substr="PASS",
+            expected_ecall_seq=sm4_ecall_seq,
+            ready_sel_set=sm4_ready_sel_set,
+            require_readiness=True,
+        )
+        if val_t1_prod["status"] == "PASS":
+            break
+        if not any(r.get("sgx_status") == 0x1006 for r in r_sm4_prod.get("records", [])):
+            break
+
+    # Tier 2: Validate the exact same independent `--sm4-check` run against the AES-only `dynamic_xr` workset
+    val_t2_cov = validate_run_result(
+        r_sm4_cov,
+        expected_returncode=0,
+        expected_stdout_substr="PASS",
+        expected_min_records=21,
+        expected_field_ids=expected_fids,
+        require_ipi_mask=7,
+        closed_workset_effects=closed_target_effects_by_fid,
+    )
+
+    sm4_art = ledger.get("artifacts", {}).get("sm4_seeded_xr", {})
+    aes_art = ledger.get("artifacts", {}).get("dynamic_xr", {})
+    tier1_overall_pass = bool(
+        val_t1_cov["status"] == "PASS"
+        and val_t1_4gate["status"] == "PASS"
+        and val_t1_prod["status"] == "PASS"
+        and all(x == 0 for x in clean_rewalks)
+        and sm4_art.get("workset_sha256") != aes_art.get("workset_sha256")
+        and sm4_art.get("seed_collection_trace_sha256", "") != r_sm4_cov["trace_sha256"]
+    )
+    if not tier1_overall_pass:
+        raise RuntimeError(
+            f"Tier-1 SM4 independent protected verification failed on {sample}: "
+            f"cov={val_t1_cov['status']} 4gate={val_t1_4gate['status']} prod={val_t1_prod['status']} rewalks={clean_rewalks}"
+        )
+
+    return {
+        "tier1_sm4_seeded_coverage": {
+            "description": "Tier 1 (Seed Coverage): Independent sm4_seeded_xr workset, ReadyTable, and signed 4gate/protect enclaves built from seed run and verified by fresh hold-out coverage, 4-gate 0-rewalk, and AEX1 production runs.",
+            "seed_added_effects_count": sum(len(sm4_effects_by_fid[fid] - closed_target_effects_by_fid[fid]) for fid in sm4_effects_by_fid),
+            "independent_artifacts": {
+                "workset_sha256": sha256_path(ws_sm4_path),
+                "signed_aex1_sha256": sha256_path(tdir / "enclave.sm4_seeded_xr.final.signed.so"),
+                "gate_aex0_sha256": sha256_path(tdir / "enclave.sm4_seeded_xr.4gate.aex0.signed.so"),
+                "ready_bin_sha256": sha256_path(tdir / "enclave.sm4_seeded_xr.ready.bin"),
+                "distinct_from_aes_only_workset": sm4_art.get("workset_sha256") != aes_art.get("workset_sha256"),
+                "seed_trace_sha256": sm4_art.get("seed_collection_trace_sha256", ""),
+                "holdout_coverage_trace_sha256": r_sm4_cov["trace_sha256"],
+                "holdout_prod_trace_sha256": r_sm4_prod.get("trace_sha256", ""),
+            },
+            "validator_result": val_t1_cov,
+            "diagnostic_4gate_validator_result": val_t1_4gate,
+            "clean_zero_rewalk_observations": f"{sum(1 for x in clean_rewalks if x == 0)}/{len(clean_rewalks)}",
+            "protected_production_validator_result": val_t1_prod,
+            "overall_tier1_status": "PASS" if tier1_overall_pass else "FAIL",
+        },
+        "tier2_aes_only_seed_discovery": {
+            "description": "Tier 2 (Un-Seeded Discovery from AES-Only Workflow): Validates fresh --sm4-check run against AES-only dynamic_xr workset (with expected_field_ids and require_ipi_mask=7).",
+            "structural_limitation": "ehsm_create_sm4_key requires coupled 3-field struct changes inside ehsm_keyblob_t (metadata.keyspec=20, keybloblen=64, cmk_size=80) before domain-key AES-GCM sealing.",
+            "validator_result": val_t2_cov,
+        },
+    }
+
+
 def evaluate_sample(sample: str) -> dict:
     tdir = DYN_ROOT / "targets" / sample
     wdir = DYN_ROOT / "witnesses" / sample
     raw_dir = DYN_ROOT / "experiments" / "raw_traces" / sample
     raw_dir.mkdir(parents=True, exist_ok=True)
+    for old_f in raw_dir.glob("*"):
+        if old_f.name.startswith(("holdout_", "cal_", "ablation_", "tlb_", "uninstrumented_", "four_gate_")):
+            old_f.unlink(missing_ok=True)
 
     ledger = json.loads((wdir / "witness_ledger.json").read_text())
     # Default candidate is Group B (workset.dynamic_xr.json, keeping RX = XR conservatively!)
@@ -473,6 +640,7 @@ def evaluate_sample(sample: str) -> dict:
             expected_returncode=0,
             expected_stdout_substr=aux.get("expected_stdout_substr", ""),
             expected_min_records=aux["min_records"],
+            expected_field_ids=expected_fids if aux.get("expected_stdout_substr") == "PASS" else None,
             expected_tags=aux.get("expected_tags"),
             require_ipi_mask=7,
             closed_workset_effects=closed_target_effects_by_fid,
@@ -864,56 +1032,13 @@ def evaluate_sample(sample: str) -> dict:
             },
             "overall_holdout_and_strict_verdict": overall_verdict,
             "sm4_two_tier_accounting": (
-                (lambda r_sm4: (
-                    (lambda tier1_effects: {
-                        "tier1_sm4_seeded_coverage": {
-                            "description": "Tier 1 (Seed Coverage): Legal --sm4-check workflow included as seed; verifies full producer-consumer capture & closure.",
-                            "seed_added_effects_count": sum(len(tier1_effects[fid] - closed_target_effects_by_fid[fid]) for fid in tier1_effects),
-                            "validator_result": validate_run_result(
-                                r_sm4,
-                                expected_returncode=0,
-                                expected_stdout_substr="PASS",
-                                expected_min_records=21,
-                                closed_workset_effects=tier1_effects,
-                            ),
-                        },
-                        "tier2_aes_only_seed_discovery": {
-                            "description": "Tier 2 (Un-Seeded Discovery from AES-Only Workflow): Tests whether generic explorer reaches SM4 without an SM4 seed.",
-                            "structural_limitation": "ehsm_create_sm4_key requires coupled 3-field struct changes inside ehsm_keyblob_t (metadata.keyspec=20, keybloblen=64, cmk_size=80) before domain-key AES-GCM sealing.",
-                            "validator_result": validate_run_result(
-                                r_sm4,
-                                expected_returncode=0,
-                                expected_stdout_substr="PASS",
-                                expected_min_records=21,
-                                closed_workset_effects=closed_target_effects_by_fid,
-                            ),
-                        },
-                    })({
-                        fid: set(closed_target_effects_by_fid[fid]) | {
-                            (int(it["rva"], 16), "A")
-                            for rec in r_sm4["records"]
-                            for fobs in rec["fields"]
-                            if fobs["field_id"] == fid
-                            for it in fobs["s3"]
-                        } | {
-                            (int(it["rva"], 16), "D")
-                            for rec in r_sm4["records"]
-                            for fobs in rec["fields"]
-                            if fobs["field_id"] == fid
-                            for it in fobs["s3"]
-                            if it["ad"] == "D"
-                        }
-                        for fid in closed_target_effects_by_fid
-                    })
-                ))(
-                    run_sample(
-                        sample,
-                        mode="profile_4gate",
-                        ipi_mask=7,
-                        host_args=["--sm4-check"],
-                        allow_fast_forward=0,
-                        persist_prefix=raw_dir / "holdout_out_of_seed_sm4_audit",
-                    )
+                evaluate_sm4_two_tier(
+                    sample,
+                    tdir,
+                    raw_dir,
+                    ledger,
+                    expected_fids,
+                    closed_target_effects_by_fid,
                 )
                 if sample in ("ehsm-opt-1", "ehsm-opt-2")
                 else None
@@ -1029,7 +1154,7 @@ def _run_main_body() -> None:
     manifest_entries = []
     raw_root = out_dir / "raw_traces"
     if raw_root.is_dir():
-        for jf in sorted(raw_root.rglob("*.jsonl")):
+        for jf in sorted(p for s_name in SAMPLES if (raw_root / s_name).is_dir() for p in (raw_root / s_name).glob("*.jsonl")):
             manifest_entries.append({
                 "rel_path": str(jf.relative_to(DYN_ROOT)),
                 "sha256": sha256_path(jf),

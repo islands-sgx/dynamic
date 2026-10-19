@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sgx_trts.h>
+#include <sgx_tcrypto.h>
 #include "exam_b_t.h"
 
 __attribute__((aligned(4096), used, section(".data.eb_pad")))
@@ -41,18 +42,8 @@ volatile uint8_t challenge_page_vault_base[4096] = {0x12};
 static uint32_t g_eb_verify_calls = 0;
 static uint32_t g_eb_gate = 0;
 static uint32_t g_eb_clock = 0;
-static uint64_t g_eb_mac_key = 0;
+static sgx_cmac_128bit_key_t g_eb_mac_key = {0};
 static volatile uint8_t *g_eb_heap_obj = NULL;
-
-static uint64_t eb_keyed_mac(uint64_t key, const uint8_t *buf, size_t len) {
-    uint64_t h = 0xcbf29ce484222325ULL ^ key;
-    for (size_t i = 0; i < len; i++) {
-        h ^= (uint64_t)buf[i];
-        h *= 0x100000001b3ULL;
-        h ^= (key >> ((i & 7U) * 8U));
-    }
-    return h;
-}
 
 sgx_status_t examB_reset_context(uint32_t ctx_seed) {
     g_eb_verify_calls = (ctx_seed & 1U);
@@ -91,8 +82,11 @@ sgx_status_t examB_issue_ticket(uint32_t ticket_kind, uint8_t *tkt_out, size_t t
     if (sgx_read_rand(tkt_out + 8, 8) != SGX_SUCCESS) {
         return SGX_ERROR_UNEXPECTED;
     }
-    uint64_t mac = eb_keyed_mac(g_eb_mac_key, tkt_out, 16);
-    memcpy(tkt_out + 16, &mac, 8);
+    sgx_cmac_128bit_tag_t cmac_tag = {0};
+    if (sgx_rijndael128_cmac_msg(&g_eb_mac_key, tkt_out, 16, &cmac_tag) != SGX_SUCCESS) {
+        return SGX_ERROR_UNEXPECTED;
+    }
+    memcpy(tkt_out + 16, &cmac_tag, sizeof(cmac_tag));
     return SGX_SUCCESS;
 }
 
@@ -148,11 +142,13 @@ sgx_status_t examB_verify_ticket(
         return SGX_ERROR_INVALID_PARAMETER;
     }
     uint32_t magic = 0, ticket_kind = 0;
-    uint64_t got_mac = 0;
+    sgx_cmac_128bit_tag_t expected_tag = {0};
     memcpy(&magic, tkt_in + 0, 4);
     memcpy(&ticket_kind, tkt_in + 4, 4);
-    memcpy(&got_mac, tkt_in + 16, 8);
-    if (magic != 0x45584232U || eb_keyed_mac(g_eb_mac_key, tkt_in, 16) != got_mac) {
+    if (sgx_rijndael128_cmac_msg(&g_eb_mac_key, tkt_in, 16, &expected_tag) != SGX_SUCCESS) {
+        return SGX_ERROR_UNEXPECTED;
+    }
+    if (magic != 0x45584232U || memcmp(tkt_in + 16, &expected_tag, sizeof(expected_tag)) != 0) {
         return SGX_ERROR_MAC_MISMATCH;
     }
     return examB_field_verify(verify_cmd, ticket_kind, out_buf, out_len);

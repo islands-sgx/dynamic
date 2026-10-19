@@ -353,76 +353,22 @@ def build_target(name: str) -> dict:
 
 
 
-CHALLENGE_TARGETS = {
-    "challenge-bench": {
-        "src_dir": DYN_ROOT / "challenges" / "challenge-bench",
-        "edl": "challenge.edl",
-        "edl_stem": "challenge",
-        "heap": 0x100000,
-        "stack": 0x40000,
-        "capacity_q": 16384,
-        "selectors": [
-            {"ecall_index": 0, "name": "ecall_init", "reachable_functions": []},
-            {"ecall_index": 1, "name": "ecall_configure_stage", "reachable_functions": []},
-            {"ecall_index": 2, "name": "ecall_advance_step", "reachable_functions": []},
-            {"ecall_index": 3, "name": "ecall_Execute", "reachable_functions": ["challenge_field_primary"]},
-            {"ecall_index": 4, "name": "ecall_mint_token", "reachable_functions": []},
-            {"ecall_index": 5, "name": "ecall_consume_vault", "reachable_functions": ["challenge_field_vault"]},
-        ],
-    },
-    "challenge-bench-perm": {
-        "src_dir": DYN_ROOT / "challenges" / "challenge-bench-perm",
-        "edl": "challenge_perm.edl",
-        "edl_stem": "challenge_perm",
-        "heap": 0x100000,
-        "stack": 0x40000,
-        "capacity_q": 16384,
-        "selectors": [
-            {"ecall_index": 0, "name": "ecall_alpha_stage", "reachable_functions": []},
-            {"ecall_index": 1, "name": "ecall_beta_run", "reachable_functions": ["perm_field_core"]},
-            {"ecall_index": 2, "name": "ecall_gamma_reset", "reachable_functions": []},
-            {"ecall_index": 3, "name": "ecall_delta_latch", "reachable_functions": []},
-            {"ecall_index": 4, "name": "ecall_epsilon_issue", "reachable_functions": []},
-            {"ecall_index": 5, "name": "ecall_zeta_open", "reachable_functions": ["perm_field_vault"]},
-        ],
-    },
-    "challenge-exam-a": {
-        "src_dir": DYN_ROOT / "challenges" / "challenge-exam-a",
-        "edl": "exam_a.edl",
-        "edl_stem": "exam_a",
-        "heap": 0x100000,
-        "stack": 0x40000,
-        "capacity_q": 16384,
-        "selectors": [
-            {"ecall_index": 0, "name": "examA_mint_credential", "reachable_functions": []},
-            {"ecall_index": 1, "name": "examA_audit_vault", "reachable_functions": ["examA_field_vault"]},
-            {"ecall_index": 2, "name": "examA_set_policy", "reachable_functions": []},
-            {"ecall_index": 3, "name": "examA_step_epoch", "reachable_functions": []},
-            {"ecall_index": 4, "name": "examA_process_frame", "reachable_functions": ["examA_field_compute"]},
-            {"ecall_index": 5, "name": "examA_boot_session", "reachable_functions": []},
-        ],
-    },
-    "challenge-exam-b": {
-        "src_dir": DYN_ROOT / "challenges" / "challenge-exam-b",
-        "edl": "exam_b.edl",
-        "edl_stem": "exam_b",
-        "heap": 0x100000,
-        "stack": 0x40000,
-        "capacity_q": 16384,
-        "selectors": [
-            {"ecall_index": 0, "name": "examB_tick_clock", "reachable_functions": []},
-            {"ecall_index": 1, "name": "examB_issue_ticket", "reachable_functions": []},
-            {"ecall_index": 2, "name": "examB_configure_gate", "reachable_functions": []},
-            {"ecall_index": 3, "name": "examB_verify_ticket", "reachable_functions": ["examB_field_verify"]},
-            {"ecall_index": 4, "name": "examB_reset_context", "reachable_functions": []},
-            {"ecall_index": 5, "name": "examB_transform_packet", "reachable_functions": ["examB_field_packet"]},
-        ],
-    },
-}
+def load_challenge_targets() -> dict[str, dict]:
+    out: dict[str, dict] = {}
+    for cdir in sorted((DYN_ROOT / "challenges").glob("challenge-*")):
+        cfg_file = cdir / "challenge_config.json"
+        if cfg_file.is_file():
+            cfg = json.loads(cfg_file.read_text())
+            cfg["src_dir"] = cdir
+            out[cdir.name] = cfg
+    return out
+
+
+CHALLENGE_TARGETS = load_challenge_targets()
 
 
 def build_challenge_target(name: str) -> dict:
-    cfg = CHALLENGE_TARGETS[name]
+    cfg = load_challenge_targets()[name]
     src_dir = cfg["src_dir"]
     out_dir = DYN_ROOT / "targets" / name
     obj_dir = out_dir / "obj"
@@ -606,11 +552,11 @@ def build_challenge_target(name: str) -> dict:
 
 
 def main() -> None:
-    names = sys.argv[1:] or (list(TARGETS.keys()) + list(CHALLENGE_TARGETS.keys()))
+    names = sys.argv[1:] or (list(TARGETS.keys()) + list(load_challenge_targets().keys()))
     summaries = []
     for name in names:
         print(f"=== Building {name} ===", flush=True)
-        if name in CHALLENGE_TARGETS:
+        if name in load_challenge_targets():
             summaries.append(build_challenge_target(name))
         else:
             summaries.append(build_target(name))

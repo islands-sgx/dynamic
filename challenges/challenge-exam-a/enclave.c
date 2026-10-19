@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sgx_trts.h>
+#include <sgx_tcrypto.h>
 #include "exam_a_t.h"
 
 __attribute__((aligned(4096), used, section(".data.ea_pad")))
@@ -41,18 +42,8 @@ volatile uint8_t challenge_page_vault_base[4096] = {0x12};
 static uint32_t g_ea_audit_calls = 0;
 static uint32_t g_ea_policy = 0;
 static uint32_t g_ea_epoch = 0;
-static uint64_t g_ea_mac_key = 0;
+static sgx_cmac_128bit_key_t g_ea_mac_key = {0};
 static volatile uint8_t *g_ea_heap_obj = NULL;
-
-static uint64_t ea_keyed_mac(uint64_t key, const uint8_t *buf, size_t len) {
-    uint64_t h = 0xcbf29ce484222325ULL ^ key;
-    for (size_t i = 0; i < len; i++) {
-        h ^= (uint64_t)buf[i];
-        h *= 0x100000001b3ULL;
-        h ^= (key >> ((i & 7U) * 8U));
-    }
-    return h;
-}
 
 sgx_status_t examA_boot_session(uint32_t boot_seed) {
     g_ea_audit_calls = (boot_seed & 1U);
@@ -91,8 +82,11 @@ sgx_status_t examA_mint_credential(uint32_t cred_level, uint8_t *cred_out, size_
     if (sgx_read_rand(cred_out + 8, 8) != SGX_SUCCESS) {
         return SGX_ERROR_UNEXPECTED;
     }
-    uint64_t mac = ea_keyed_mac(g_ea_mac_key, cred_out, 16);
-    memcpy(cred_out + 16, &mac, 8);
+    sgx_cmac_128bit_tag_t cmac_tag = {0};
+    if (sgx_rijndael128_cmac_msg(&g_ea_mac_key, cred_out, 16, &cmac_tag) != SGX_SUCCESS) {
+        return SGX_ERROR_UNEXPECTED;
+    }
+    memcpy(cred_out + 16, &cmac_tag, sizeof(cmac_tag));
     return SGX_SUCCESS;
 }
 
@@ -148,11 +142,13 @@ sgx_status_t examA_audit_vault(
         return SGX_ERROR_INVALID_PARAMETER;
     }
     uint32_t magic = 0, cred_level = 0;
-    uint64_t got_mac = 0;
+    sgx_cmac_128bit_tag_t expected_tag = {0};
     memcpy(&magic, cred_in + 0, 4);
     memcpy(&cred_level, cred_in + 4, 4);
-    memcpy(&got_mac, cred_in + 16, 8);
-    if (magic != 0x45584131U || ea_keyed_mac(g_ea_mac_key, cred_in, 16) != got_mac) {
+    if (sgx_rijndael128_cmac_msg(&g_ea_mac_key, cred_in, 16, &expected_tag) != SGX_SUCCESS) {
+        return SGX_ERROR_UNEXPECTED;
+    }
+    if (magic != 0x45584131U || memcmp(cred_in + 16, &expected_tag, sizeof(expected_tag)) != 0) {
         return SGX_ERROR_MAC_MISMATCH;
     }
     return examA_field_vault(audit_cmd, cred_level, out_buf, out_len);

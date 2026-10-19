@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sgx_trts.h>
+#include <sgx_tcrypto.h>
 #include "challenge_t.h"
 
 __attribute__((aligned(4096), used, section(".data.c_base")))
@@ -39,18 +40,8 @@ static uint32_t g_call_counter = 0;
 static uint32_t g_stage_mode = 0;
 static uint32_t g_latent_step = 0;
 static uint32_t g_vault_counter = 0;
-static uint64_t g_boot_mac_key = 0;
+static sgx_cmac_128bit_key_t g_boot_mac_key = {0};
 static volatile uint8_t *g_large_heap_obj = NULL;
-
-static uint64_t compute_keyed_mac(uint64_t key, const uint8_t *buf, size_t len) {
-    uint64_t h = 0xcbf29ce484222325ULL ^ key;
-    for (size_t i = 0; i < len; i++) {
-        h ^= (uint64_t)buf[i];
-        h *= 0x100000001b3ULL;
-        h ^= (key >> ((i & 7U) * 8U));
-    }
-    return h;
-}
 
 sgx_status_t ecall_init(uint32_t seed) {
     g_call_counter = (seed & 1U);
@@ -93,8 +84,11 @@ sgx_status_t ecall_mint_token(uint32_t token_profile, uint8_t *token_out, size_t
     if (sgx_read_rand(token_out + 8, 8) != SGX_SUCCESS) {
         return SGX_ERROR_UNEXPECTED;
     }
-    uint64_t mac = compute_keyed_mac(g_boot_mac_key, token_out, 16);
-    memcpy(token_out + 16, &mac, 8);
+    sgx_cmac_128bit_tag_t cmac_tag = {0};
+    if (sgx_rijndael128_cmac_msg(&g_boot_mac_key, token_out, 16, &cmac_tag) != SGX_SUCCESS) {
+        return SGX_ERROR_UNEXPECTED;
+    }
+    memcpy(token_out + 16, &cmac_tag, sizeof(cmac_tag));
     return SGX_SUCCESS;
 }
 
@@ -219,11 +213,13 @@ sgx_status_t ecall_consume_vault(
         return SGX_ERROR_INVALID_PARAMETER;
     }
     uint32_t magic = 0, token_profile = 0;
-    uint64_t got_mac = 0;
+    sgx_cmac_128bit_tag_t expected_tag = {0};
     memcpy(&magic, token_in + 0, 4);
     memcpy(&token_profile, token_in + 4, 4);
-    memcpy(&got_mac, token_in + 16, 8);
-    if (magic != 0x544F4B31U || compute_keyed_mac(g_boot_mac_key, token_in, 16) != got_mac) {
+    if (sgx_rijndael128_cmac_msg(&g_boot_mac_key, token_in, 16, &expected_tag) != SGX_SUCCESS) {
+        return SGX_ERROR_UNEXPECTED;
+    }
+    if (magic != 0x544F4B31U || memcmp(token_in + 16, &expected_tag, sizeof(expected_tag)) != 0) {
         return SGX_ERROR_MAC_MISMATCH;
     }
     return challenge_field_vault(vault_op, token_profile, out_buf, out_len);

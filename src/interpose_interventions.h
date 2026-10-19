@@ -148,11 +148,17 @@ static void run_interventions_if_matching(
             }
         } else if (sscanf(tok, "replace_scalar:%d:%d:%d:%lu", &t_idx, &t_seq, &p_idx, &val) == 4) {
             /* In-place call replacement:
+             * - Rejects duplicate replacement tokens targeting the same (index, sseq)
              * - Modifies scalar parameter p_idx at (t_idx, t_seq)
              * - Refuses if any [out]/[inout] buffer bound would exceed the host's allocated capacity
              * - Executes the ECALL ONCE, writing [out]/[inout] data and ms_retval directly back to the host's ms!
              */
             if (t_idx == index && t_seq == sseq && es && p_idx >= 0 && (uint32_t)p_idx < es->num_params) {
+                if (out_was_replaced && *out_was_replaced) {
+                    mutation_oob_rejected_count++;
+                    mark_invalid("duplicate_replace_at_same_callsite");
+                    continue;
+                }
                 const param_schema_t *ps = &es->params[p_idx];
                 if (!ps->is_pointer && check_ms_frame_capacity(es, es->ms_size) == 0) {
                     uint8_t ms_work[MAX_MS_FRAME_BYTES] = {0};
@@ -193,6 +199,9 @@ static void run_interventions_if_matching(
                             }
                             if (out_was_replaced) *out_was_replaced = 1;
                             if (out_replaced_status) *out_replaced_status = rst;
+                        } else {
+                            mutation_oob_rejected_count++;
+                            mark_invalid("replace_scalar_capacity_or_alloc_rejected");
                         }
                         for (int pi = 0; pi < MAX_SCHEMA_PARAMS; pi++) free(in_allocs[pi]);
                     }
@@ -200,9 +209,15 @@ static void run_interventions_if_matching(
             }
         } else if (sscanf(tok, "replace_xor:%d:%d:%d:%lu:%lu", &t_idx, &t_seq, &p_idx, &sub, &val) == 5) {
             /* In-place byte XOR replacement on an [in] or [inout] pointer parameter:
+             * Rejects duplicate replacement tokens and allocation failures;
              * Executes ONCE and hands [out]/[inout] buffers + ms_retval back to the host.
              */
             if (t_idx == index && t_seq == sseq && es && p_idx >= 0 && (uint32_t)p_idx < es->num_params) {
+                if (out_was_replaced && *out_was_replaced) {
+                    mutation_oob_rejected_count++;
+                    mark_invalid("duplicate_replace_at_same_callsite");
+                    continue;
+                }
                 const param_schema_t *ps = &es->params[p_idx];
                 size_t orig_b = 0, orig_u = 0;
                 if (ps->is_pointer && (ps->direction == DIR_IN || ps->direction == DIR_INOUT) &&
@@ -214,9 +229,14 @@ static void run_interventions_if_matching(
                     uint8_t *orig_ptr = *(uint8_t **)((uint8_t *)ms + ps->ms_offset);
                     if (orig_ptr) {
                         uint8_t *tmp_in = NULL;
+                        int prep_ok = 1;
                         if (ps->direction == DIR_IN) {
                             tmp_in = (uint8_t *)calloc(1, orig_b ? orig_b : 8);
-                            if (tmp_in) {
+                            if (!tmp_in) {
+                                prep_ok = 0;
+                                mutation_oob_rejected_count++;
+                                mark_invalid("replace_xor_alloc_failed");
+                            } else {
                                 memcpy(tmp_in, orig_ptr, orig_b);
                                 tmp_in[sub] ^= (uint8_t)val;
                                 *(void **)(ms_work + ps->ms_offset) = tmp_in;
@@ -224,15 +244,17 @@ static void run_interventions_if_matching(
                         } else {
                             orig_ptr[sub] ^= (uint8_t)val;
                         }
-                        char tag[72];
-                        snprintf(tag, sizeof(tag), "replace_xor_p%d_byte_%lu", p_idx, sub);
-                        sgx_status_t rst = execute_one_measured_ecall(eid, index, ocall_table, ms_work, tag, 1);
-                        if (es->has_retval && (size_t)es->retval_offset + (size_t)es->retval_size <= es->ms_size) {
-                            memcpy((uint8_t *)ms + es->retval_offset, ms_work + es->retval_offset, es->retval_size);
+                        if (prep_ok) {
+                            char tag[72];
+                            snprintf(tag, sizeof(tag), "replace_xor_p%d_byte_%lu", p_idx, sub);
+                            sgx_status_t rst = execute_one_measured_ecall(eid, index, ocall_table, ms_work, tag, 1);
+                            if (es->has_retval && (size_t)es->retval_offset + (size_t)es->retval_size <= es->ms_size) {
+                                memcpy((uint8_t *)ms + es->retval_offset, ms_work + es->retval_offset, es->retval_size);
+                            }
+                            free(tmp_in);
+                            if (out_was_replaced) *out_was_replaced = 1;
+                            if (out_replaced_status) *out_replaced_status = rst;
                         }
-                        free(tmp_in);
-                        if (out_was_replaced) *out_was_replaced = 1;
-                        if (out_replaced_status) *out_replaced_status = rst;
                     }
                 }
             }

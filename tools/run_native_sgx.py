@@ -123,6 +123,9 @@ def resolve_enclave_path(tdir: Path, mode: str) -> tuple[Path, int]:
         "dynamic_final_aex0": (tdir / "enclave.dynamic.final.aex0.signed.so", 0),
         "dynamic_xr_final": (tdir / "enclave.dynamic_xr.final.signed.so", 0),
         "dynamic_xr_final_aex0": (tdir / "enclave.dynamic_xr.final.aex0.signed.so", 0),
+        "sm4_seeded_xr_4gate": (tdir / "enclave.sm4_seeded_xr.4gate.aex0.signed.so", 1),
+        "sm4_seeded_xr_final": (tdir / "enclave.sm4_seeded_xr.final.signed.so", 0),
+        "sm4_seeded_xr_final_aex0": (tdir / "enclave.sm4_seeded_xr.final.aex0.signed.so", 0),
     }
     if mode not in mapping:
         raise ValueError(f"unknown mode: {mode}")
@@ -159,7 +162,7 @@ def run_sample(
         "all_reg_final": tdir / "enclave.all_reg.ready.bin",
         "dynamic_xr_final": tdir / "enclave.dynamic_xr.ready.bin",
         "dynamic_final": tdir / "enclave.dynamic.ready.bin",
-        
+        "sm4_seeded_xr_final": tdir / "enclave.sm4_seeded_xr.ready.bin",
     }
     ready_bin = ready_table_map.get(mode)
     is_pure_prod = (
@@ -171,7 +174,7 @@ def run_sample(
         and stop_after_call is None
         and not stop_after_selector
         and not stop_before_normal_ecall
-        and mode in ("raw_unprotected", "profile_signed", "all_reg_final", "dynamic_xr_final", "dynamic_final")
+        and mode in ("raw_unprotected", "profile_signed", "all_reg_final", "dynamic_xr_final", "dynamic_final", "sm4_seeded_xr_final")
     )
 
     with tempfile.TemporaryDirectory(prefix=f"atfield_run_{sample}_") as work_cwd:

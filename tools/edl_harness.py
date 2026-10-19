@@ -78,31 +78,18 @@ SAMPLES = {
             "-I/nix/store/bz93f9hr99lpgdyr032qrsfxyi6zj6qj-ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-opt-2-clang/core/Enclave",
         ],
     },
-    "challenge-bench": {
-        "edl": DYN_ROOT / "challenges/challenge-bench/challenge.edl",
-        "u_c": DYN_ROOT / "targets/challenge-bench/edl_gen/challenge_u.c",
-        "u_dir": DYN_ROOT / "targets/challenge-bench/edl_gen",
-        "inc": [f"-I{SGX_SDK_INC}"],
-    },
-    "challenge-bench-perm": {
-        "edl": DYN_ROOT / "challenges/challenge-bench-perm/challenge_perm.edl",
-        "u_c": DYN_ROOT / "targets/challenge-bench-perm/edl_gen/challenge_perm_u.c",
-        "u_dir": DYN_ROOT / "targets/challenge-bench-perm/edl_gen",
-        "inc": [f"-I{SGX_SDK_INC}"],
-    },
-    "challenge-exam-a": {
-        "edl": DYN_ROOT / "challenges/challenge-exam-a/exam_a.edl",
-        "u_c": DYN_ROOT / "targets/challenge-exam-a/edl_gen/exam_a_u.c",
-        "u_dir": DYN_ROOT / "targets/challenge-exam-a/edl_gen",
-        "inc": [f"-I{SGX_SDK_INC}"],
-    },
-    "challenge-exam-b": {
-        "edl": DYN_ROOT / "challenges/challenge-exam-b/exam_b.edl",
-        "u_c": DYN_ROOT / "targets/challenge-exam-b/edl_gen/exam_b_u.c",
-        "u_dir": DYN_ROOT / "targets/challenge-exam-b/edl_gen",
-        "inc": [f"-I{SGX_SDK_INC}"],
-    },
 }
+for _cdir in sorted((DYN_ROOT / "challenges").glob("challenge-*")):
+    _cfg_f = _cdir / "challenge_config.json"
+    if _cfg_f.is_file():
+        _ccfg = json.loads(_cfg_f.read_text())
+        _stem = _ccfg["edl_stem"]
+        SAMPLES[_cdir.name] = {
+            "edl": _cdir / _ccfg["edl"],
+            "u_c": DYN_ROOT / "targets" / _cdir.name / "edl_gen" / f"{_stem}_u.c",
+            "u_dir": DYN_ROOT / "targets" / _cdir.name / "edl_gen",
+            "inc": [f"-I{SGX_SDK_INC}"],
+        }
 
 
 def strip_comments(text: str) -> str:

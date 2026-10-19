@@ -487,12 +487,22 @@ def evaluate_challenge_suite(budget_per_case: int = 16) -> dict:
 def run_real_hardware_challenge_ablation(
     max_enclave_budget: int = 68,
     seeds: tuple[int, ...] = (101, 102, 103, 104, 105),
+    target_names: tuple[str, ...] | None = None,
 ) -> dict:
-    """Evaluate the FROZEN Unified ExplorationKernel (`fixed_round_robin` vs `feedback_guided`)
+    """Evaluate the Unified ExplorationKernel across 3 scheduling modes:
+      - `fixed_round_robin` (pure 1-for-1 family rotation)
+      - `static_priority_no_feedback` (same candidate domain & static priority as feedback_guided, feedback off)
+      - `feedback_guided` (full runtime greybox feedback + slot reprioritization + follow-up spawning)
     across 5 independent random seeds on:
       - Public Development Set (`dev`): `challenge-bench`, `challenge-bench-perm`
-      - Frozen Blind Exam Set (`blind_exam`): `challenge-exam-a`, `challenge-exam-b`
-    Scores are computed strictly from raw dynamic S3 page observations (never counting post-hoc closure).
+      - Post-Revision Regression Set (`post_revision_regression`): `challenge-exam-a`, `challenge-exam-b`
+      - Frozen Blind Exam Set (`blind_exam`): `challenge-exam-c`, `challenge-exam-d` (when present)
+
+    Separates three distinct evaluation dimensions:
+      1. `observed_solved_count` vs `confirmed_solved_count` (verified by fresh hardware replay on ALL seeds);
+      2. `holdout_missed_field_effects` & `holdout_missed_field_pages` computed strictly per `(field_id, page_rva, effect)`;
+      3. Separate exploration cost (`exploration_enclaves / exploration_ecalls / exploration_wall_sec`) and
+         replay confirmation cost (`confirmation_enclaves / confirmation_ecalls / total_enclaves_with_confirmations`).
     """
     import statistics
     import time
@@ -501,40 +511,38 @@ def run_real_hardware_challenge_ablation(
     from run_native_sgx import run_sample
 
     dyn_root = Path("/home/meandssh/islands-sgx/dynamic")
-    target_configs = [
-        ("challenge-bench", "dev", [
-            "repeat:3:0:20", "replace_scalar:1:0:0:2", "scale_bound_v2:3:0:0:16:1024:-1:0",
-            "joint_scalar_xor:3:0:0:2:1:0:255", "replace_scalar:3:2:0:16", "aliased_pair:3:0:1:3:4",
-            "replace_scalar:4:0:0:2", "replace_scalar:5:0:0:3",
-        ]),
-        ("challenge-bench-perm", "dev", [
-            "repeat:1:0:22", "replace_scalar:0:0:0:4", "scale_bound_v2:1:0:0:16:4096:-1:0",
-            "joint_scalar_xor:1:0:0:3:1:0:255", "replace_scalar:1:2:0:8", "aliased_pair:1:0:1:3:4",
-            "replace_scalar:4:0:0:4", "replace_scalar:5:0:0:16",
-        ]),
-        ("challenge-exam-a", "blind_exam", [
-            "repeat:1:0:24", "replace_scalar:2:0:0:8", "scale_bound_v2:4:0:0:16:4096:-1:0",
-            "joint_scalar_xor:4:0:0:16:1:0:255", "replace_scalar:4:2:0:3", "aliased_pair:4:0:1:3:4",
-            "replace_scalar:0:0:0:8", "replace_scalar:1:0:0:4",
-        ]),
-        ("challenge-exam-b", "blind_exam", [
-            "repeat:3:0:22", "replace_scalar:2:0:0:16", "scale_bound_v2:5:0:0:16:1024:-1:0",
-            "joint_scalar_xor:5:0:0:4:1:0:255", "replace_scalar:5:3:0:1", "aliased_pair:5:0:1:3:8",
-            "replace_scalar:1:0:0:3", "replace_scalar:3:0:0:8",
-        ]),
-    ]
+    split_order = {"dev": 0, "post_revision_regression": 1, "blind_exam": 2}
+    all_target_configs = []
+    for cdir in sorted((dyn_root / "challenges").glob("challenge-*")):
+        cfg_file = cdir / "challenge_config.json"
+        if cfg_file.is_file():
+            ccfg = json.loads(cfg_file.read_text())
+            all_target_configs.append((cdir.name, ccfg["split"], ccfg["holdout_specs"]))
+    all_target_configs.sort(key=lambda x: (split_order.get(x[1], 99), x[0]))
 
-    def obs_s3_rvas(res: dict) -> set[int]:
-        return {
-            int(it["rva"], 16)
-            for r in res.get("records", [])
-            for fo in r.get("fields", [])
-            for it in fo.get("s3", [])
-        }
+    def obs_s3_field_effects(res: dict) -> set[tuple[str, int, str]]:
+        effs: set[tuple[str, int, str]] = set()
+        for r in res.get("records", []):
+            for fo in r.get("fields", []):
+                fid = str(fo.get("field_id", "0x0"))
+                for it in fo.get("s3", []):
+                    rva = int(it["rva"], 16)
+                    ad = it["ad"]
+                    effs.add((fid, rva, "A"))
+                    if ad == "D":
+                        effs.add((fid, rva, "D"))
+        return effs
+
+    def obs_s3_field_pages(res: dict) -> set[tuple[str, int]]:
+        return {(fid, rva) for fid, rva, _ in obs_s3_field_effects(res)}
 
     results_by_target: dict[str, dict] = {}
-    for sample, split_kind, holdout_specs in target_configs:
+    for sample, split_kind, holdout_specs in all_target_configs:
+        if target_names is not None and sample not in target_names:
+            continue
         tdir = dyn_root / "targets" / sample
+        if not (tdir / "enclave.profile.so").is_file():
+            continue
         elf = ElfFile(tdir / "enclave.profile.so")
         gt_syms = {
             s["name"].replace("challenge_page_", "").upper(): s["value"]
@@ -545,33 +553,59 @@ def run_real_hardware_challenge_ablation(
         fields = normalized_fields(tdir / "fields.json")
         selectors = resolve_selectors(tdir / "selectors.json", fields, Path(edl_schema["edl_path"]))
 
-        # Independent reference hold-out set (exercising all 8 branches C1..C8 on hardware)
-        holdout_pages: set[int] = set()
+        # Independent reference hold-out set: verify all 8 challenges C1..C8 are actually triggered on hardware
+        holdout_field_effects: set[tuple[str, int, str]] = set()
+        holdout_field_pages: set[tuple[str, int]] = set()
         for hspec in holdout_specs:
             rh = run_sample(sample, mode="profile_4gate", ipi_mask=7, intervention=hspec)
-            holdout_pages |= obs_s3_rvas(rh)
+            holdout_field_effects |= obs_s3_field_effects(rh)
+            holdout_field_pages |= obs_s3_field_pages(rh)
+
+        gt_required_effects: dict[str, set[tuple[str, int, str]]] = {}
+        for cname, crva in sorted(gt_syms.items()):
+            matched = {(fid, rva, eff) for fid, rva, eff in holdout_field_effects if rva == crva}
+            if not matched:
+                raise RuntimeError(
+                    f"Reference hold-out for {sample} failed to trigger challenge {cname} at {crva:#x}!"
+                )
+            gt_required_effects[cname] = matched
 
         # 1. Baseline S0 (unmodified host seed only)
         t0 = time.monotonic()
         r_s0 = run_sample(sample, mode="profile_4gate", ipi_mask=7)
-        s0_pages = obs_s3_rvas(r_s0)
-        s0_solved = sorted(k for k, v in gt_syms.items() if v in s0_pages)
+        s0_wall = round(time.monotonic() - t0, 3)
+        s0_feffs = obs_s3_field_effects(r_s0)
+        s0_fpages = obs_s3_field_pages(r_s0)
+        s0_obs_solved = sorted(k for k, req in gt_required_effects.items() if req.issubset(s0_feffs))
         s0_summary = {
             "mode": "S0_seed_only",
+            "exploration_enclave_creations": 1,
+            "confirmation_enclave_creations": 0,
             "enclave_creations": 1,
+            "exploration_ecalls_executed": len(r_s0["records"]),
+            "confirmation_ecalls_executed": 0,
             "total_ecalls_executed": len(r_s0["records"]),
-            "wall_clock_sec": round(time.monotonic() - t0, 3),
-            "solved_count": len(s0_solved),
-            "solved_list": s0_solved,
-            "holdout_missed_pages": len(holdout_pages - s0_pages),
+            "exploration_wall_clock_sec": s0_wall,
+            "confirmation_wall_clock_sec": 0.0,
+            "wall_clock_sec": s0_wall,
+            "observed_solved_count": len(s0_obs_solved),
+            "confirmed_solved_count": len(s0_obs_solved),
+            "solved_count": len(s0_obs_solved),
+            "observed_solved_list": s0_obs_solved,
+            "confirmed_solved_list": s0_obs_solved,
+            "solved_list": s0_obs_solved,
+            "holdout_missed_field_effects": len(holdout_field_effects - s0_feffs),
+            "holdout_missed_field_pages": len(holdout_field_pages - s0_fpages),
+            "holdout_missed_pages": len(holdout_field_pages - s0_fpages),
         }
 
         mode_summaries: dict[str, dict] = {"S0": s0_summary}
-        for mode in ("fixed_round_robin", "feedback_guided"):
+        for mode in ("fixed_round_robin", "static_priority_no_feedback", "feedback_guided"):
             seed_runs: list[dict] = []
             for sd in seeds:
                 discovered_gt: dict[str, dict] = {}
-                all_obs_pages: set[int] = set()
+                all_obs_feffs: set[tuple[str, int, str]] = set()
+                all_obs_fpages: set[tuple[str, int]] = set()
                 curve: list[dict] = []
                 step_counter = 0
 
@@ -586,36 +620,32 @@ def run_real_hardware_challenge_ablation(
                         stop_after_selector=plan.get("stop_after", ""),
                         stop_before_normal_ecall=plan.get("stop_before", ""),
                     )
-                    rvas = obs_s3_rvas(res)
-                    all_obs_pages.update(rvas)
-                    for cname, crva in gt_syms.items():
-                        if crva in rvas and cname not in discovered_gt:
-                            # Replay confirmation on seed==seeds[0] to record hardware witness
-                            if sd == seeds[0]:
-                                conf = run_sample(
-                                    sample,
-                                    mode="profile_4gate",
-                                    ipi_mask=4 if plan.get("family") == "history" else 7,
-                                    intervention=plan.get("spec", ""),
-                                    stop_after_selector=plan.get("stop_after", ""),
-                                    stop_before_normal_ecall=plan.get("stop_before", ""),
-                                )
-                                replayed_ok = (crva in obs_s3_rvas(conf))
-                            else:
-                                replayed_ok = True
+                    feffs = obs_s3_field_effects(res)
+                    fpages = obs_s3_field_pages(res)
+                    all_obs_feffs.update(feffs)
+                    all_obs_fpages.update(fpages)
+                    for cname, req_set in gt_required_effects.items():
+                        if cname not in discovered_gt and req_set.issubset(feffs):
+                            sample_fid, sample_rva, sample_eff = sorted(req_set)[-1]
                             discovered_gt[cname] = {
                                 "challenge": cname,
-                                "page_rva": hex(crva),
+                                "field_id": sample_fid,
+                                "page_rva": hex(sample_rva),
+                                "required_effects": sorted(e for _, _, e in req_set),
                                 "step": step_counter,
                                 "tag": plan.get("tag"),
-                                "spec": plan.get("spec"),
-                                "replayed_confirmed": replayed_ok,
+                                "family": plan.get("family"),
+                                "spec": plan.get("spec", ""),
+                                "stop_after": plan.get("stop_after", ""),
+                                "stop_before": plan.get("stop_before", ""),
+                                "replayed_confirmed": "not_run",
                                 "trace_sha256": res.get("trace_sha256", ""),
                             }
                     curve.append({
                         "step": step_counter,
-                        "solved_count": len(discovered_gt),
-                        "obs_s3_pages": len(all_obs_pages),
+                        "observed_solved_count": len(discovered_gt),
+                        "obs_s3_field_effects": len(all_obs_feffs),
+                        "obs_s3_field_pages": len(all_obs_fpages),
                     })
                     return res
 
@@ -629,37 +659,83 @@ def run_real_hardware_challenge_ablation(
                     max_enclave_creations=max_enclave_budget,
                 ).run()
 
-                solved_list = sorted(discovered_gt.keys())
-                missed_ho = len(holdout_pages - all_obs_pages)
-                # Checkpoint solved counts at 20, 40, 68 enclaves for discovery curve reporting
+                # Now execute hardware replay confirmations AFTER ExplorationKernel.run() finishes,
+                # across ALL seeds, and account for their enclave creations, ECALLs, and wall-clock time!
+                t_conf0 = time.monotonic()
+                conf_enclaves = 0
+                conf_ecalls = 0
+                for cname, winfo in sorted(discovered_gt.items()):
+                    conf_enclaves += 1
+                    conf = run_sample(
+                        sample,
+                        mode="profile_4gate",
+                        ipi_mask=4 if winfo.get("family") == "history" else 7,
+                        intervention=winfo["spec"],
+                        stop_after_selector=winfo["stop_after"],
+                        stop_before_normal_ecall=winfo["stop_before"],
+                    )
+                    conf_ecalls += len(conf.get("records", []))
+                    conf_feffs = obs_s3_field_effects(conf)
+                    winfo["replayed_confirmed"] = bool(gt_required_effects[cname].issubset(conf_feffs))
+                    winfo["confirmation_trace_sha256"] = conf.get("trace_sha256", "")
+                conf_wall = round(time.monotonic() - t_conf0, 3)
+
+                obs_solved_list = sorted(discovered_gt.keys())
+                conf_solved_list = sorted(k for k, w in discovered_gt.items() if w["replayed_confirmed"] is True)
+                missed_ho_feffs = len(holdout_field_effects - all_obs_feffs)
+                missed_ho_fpages = len(holdout_field_pages - all_obs_fpages)
+
                 cp_map = {}
                 for cp in (20, 40, max_enclave_budget):
-                    pts = [x["solved_count"] for x in curve if x["step"] <= cp]
+                    pts = [x["observed_solved_count"] for x in curve if x["step"] <= cp]
                     cp_map[f"at_{cp}_enclaves"] = pts[-1] if pts else 0
 
                 seed_runs.append({
                     "seed": sd,
+                    "exploration_enclave_creations": ksum["enclave_creations"],
+                    "confirmation_enclave_creations": conf_enclaves,
                     "enclave_creations": ksum["enclave_creations"],
+                    "total_enclaves_with_confirmations": ksum["enclave_creations"] + conf_enclaves,
+                    "exploration_ecalls_executed": ksum["total_ecalls_executed"],
+                    "confirmation_ecalls_executed": conf_ecalls,
                     "total_ecalls_executed": ksum["total_ecalls_executed"],
+                    "total_ecalls_with_confirmations": ksum["total_ecalls_executed"] + conf_ecalls,
+                    "exploration_wall_clock_sec": ksum["wall_clock_sec"],
+                    "confirmation_wall_clock_sec": conf_wall,
                     "wall_clock_sec": ksum["wall_clock_sec"],
+                    "total_wall_clock_sec_with_confirmations": round(ksum["wall_clock_sec"] + conf_wall, 3),
                     "valid_field_entering_ecalls": ksum["valid_field_entering_ecalls"],
                     "expected_s0_rejections": ksum["expected_s0_rejections"],
                     "non_field_setup_ecalls": ksum["non_field_setup_ecalls"],
+                    "confirmed_s3_field_pages": ksum["confirmed_s3_field_pages"],
+                    "confirmed_s3_field_effects": ksum["confirmed_s3_field_effects"],
                     "confirmed_s3_pages": ksum["confirmed_s3_pages"],
                     "confirmed_s3_effects": ksum["confirmed_s3_effects"],
-                    "solved_count": len(solved_list),
-                    "solved_list": solved_list,
-                    "missed_list": sorted(set(gt_syms.keys()) - set(solved_list)),
-                    "holdout_missed_pages": missed_ho,
+                    "observed_solved_count": len(obs_solved_list),
+                    "confirmed_solved_count": len(conf_solved_list),
+                    "solved_count": len(conf_solved_list),
+                    "observed_solved_list": obs_solved_list,
+                    "confirmed_solved_list": conf_solved_list,
+                    "solved_list": conf_solved_list,
+                    "missed_list": sorted(set(gt_syms.keys()) - set(conf_solved_list)),
+                    "holdout_missed_field_effects": missed_ho_feffs,
+                    "holdout_missed_field_pages": missed_ho_fpages,
+                    "holdout_missed_pages": missed_ho_fpages,
                     "checkpoints": cp_map,
-                    "witnesses": list(discovered_gt.values()) if sd == seeds[0] else [],
+                    "witnesses": list(discovered_gt.values()),
                     "stop_reason": ksum["stop_reason"],
+                    "unexplored_frontier": ksum["unexplored_frontier"],
                 })
 
-            solved_counts = [r["solved_count"] for r in seed_runs]
-            ecall_counts = [r["total_ecalls_executed"] for r in seed_runs]
-            wall_secs = [r["wall_clock_sec"] for r in seed_runs]
-            ho_misses = [r["holdout_missed_pages"] for r in seed_runs]
+            obs_counts = [r["observed_solved_count"] for r in seed_runs]
+            conf_counts = [r["confirmed_solved_count"] for r in seed_runs]
+            exp_ecalls = [r["exploration_ecalls_executed"] for r in seed_runs]
+            tot_ecalls = [r["total_ecalls_with_confirmations"] for r in seed_runs]
+            tot_encls = [r["total_enclaves_with_confirmations"] for r in seed_runs]
+            exp_walls = [r["exploration_wall_clock_sec"] for r in seed_runs]
+            tot_walls = [r["total_wall_clock_sec_with_confirmations"] for r in seed_runs]
+            ho_feff_misses = [r["holdout_missed_field_effects"] for r in seed_runs]
+            ho_fpg_misses = [r["holdout_missed_field_pages"] for r in seed_runs]
             cp20 = [r["checkpoints"]["at_20_enclaves"] for r in seed_runs]
             cp40 = [r["checkpoints"]["at_40_enclaves"] for r in seed_runs]
             cp68 = [r["checkpoints"][f"at_{max_enclave_budget}_enclaves"] for r in seed_runs]
@@ -668,28 +744,51 @@ def run_real_hardware_challenge_ablation(
                 "mode": mode,
                 "num_seeds": len(seeds),
                 "enclave_budget": max_enclave_budget,
-                "solved_by_seed": {str(r["seed"]): r["solved_count"] for r in seed_runs},
-                "solved_mean": round(statistics.mean(solved_counts), 2),
-                "solved_median": statistics.median(solved_counts),
-                "solved_min": min(solved_counts),
-                "solved_max": max(solved_counts),
+                "mean_total_enclaves_with_confirmations": round(statistics.mean(tot_encls), 1),
+                "observed_by_seed": {str(r["seed"]): r["observed_solved_count"] for r in seed_runs},
+                "confirmed_by_seed": {str(r["seed"]): r["confirmed_solved_count"] for r in seed_runs},
+                "solved_by_seed": {str(r["seed"]): r["confirmed_solved_count"] for r in seed_runs},
+                "observed_mean": round(statistics.mean(obs_counts), 2),
+                "confirmed_mean": round(statistics.mean(conf_counts), 2),
+                "solved_mean": round(statistics.mean(conf_counts), 2),
+                "solved_median": statistics.median(conf_counts),
+                "solved_min": min(conf_counts),
+                "solved_max": max(conf_counts),
                 "challenges_total": len(gt_syms),
                 "curve_mean_solved": {
                     "at_20_enclaves": round(statistics.mean(cp20), 2),
                     "at_40_enclaves": round(statistics.mean(cp40), 2),
                     f"at_{max_enclave_budget}_enclaves": round(statistics.mean(cp68), 2),
                 },
-                "mean_total_ecalls": round(statistics.mean(ecall_counts), 1),
-                "mean_wall_clock_sec": round(statistics.mean(wall_secs), 2),
-                "mean_holdout_missed_pages": round(statistics.mean(ho_misses), 2),
+                "mean_exploration_ecalls": round(statistics.mean(exp_ecalls), 1),
+                "mean_total_ecalls_with_confirmations": round(statistics.mean(tot_ecalls), 1),
+                "mean_total_ecalls": round(statistics.mean(exp_ecalls), 1),
+                "mean_exploration_wall_clock_sec": round(statistics.mean(exp_walls), 2),
+                "mean_total_wall_clock_sec_with_confirmations": round(statistics.mean(tot_walls), 2),
+                "mean_wall_clock_sec": round(statistics.mean(exp_walls), 2),
+                "mean_holdout_missed_field_effects": round(statistics.mean(ho_feff_misses), 2),
+                "mean_holdout_missed_field_pages": round(statistics.mean(ho_fpg_misses), 2),
+                "mean_holdout_missed_pages": round(statistics.mean(ho_fpg_misses), 2),
                 "seed_runs": seed_runs,
             }
 
         results_by_target[sample] = {
             "sample": sample,
             "split": split_kind,
-            "ground_truth_challenge_pages": {k: hex(v) for k, v in sorted(gt_syms.items())},
-            "holdout_total_s3_pages": len(holdout_pages),
+            "reference_holdout_verified_all_8_challenges": True,
+            "ground_truth_challenge_pages": {
+                k: {
+                    "rva": hex(gt_syms[k]),
+                    "required_field_effects": [
+                        {"field_id": fid, "rva": hex(rva), "effect": eff}
+                        for fid, rva, eff in sorted(gt_required_effects[k])
+                    ],
+                }
+                for k in sorted(gt_syms)
+            },
+            "holdout_total_s3_field_effects": len(holdout_field_effects),
+            "holdout_total_s3_field_pages": len(holdout_field_pages),
+            "holdout_total_s3_pages": len(holdout_field_pages),
             "modes": mode_summaries,
         }
 

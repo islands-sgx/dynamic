@@ -1,27 +1,28 @@
 #!/usr/bin/env python3
 """Unified Exploration Kernel for ATField-SGX Dynamic Workset Acquisition.
 
-Both the synthetic challenge enclaves (dev & blind exam sets) and the real SGX applications
-(qe3, signal-cds, sgxwallet, ehsm, ehsm-opt-1, ehsm-opt-2) execute this exact same kernel,
-differing only in the thin execution adapter (`runner_fn`) and optional budget ceiling.
+Both the synthetic challenge enclaves (dev, regression, and blind exam sets) and the real SGX
+applications (qe3, signal-cds, sgxwallet, ehsm, ehsm-opt-1, ehsm-opt-2) execute this exact same
+kernel, differing only in the thin execution adapter (`runner_fn`) and optional budget ceiling.
 
-Two scheduling modes share the exact same candidate space, operators, and seed workflow:
-  1. `fixed_round_robin`: Deterministic round-robin across operator families and call positions.
-  2. `feedback_guided`: Uses concrete S3 page-effect sets `frozenset((rva, eff))` and business
-     return categories to save productive intervention plans, spawn compound follow-up candidates,
-     and prioritize productive families/positions while preserving anti-starvation base turns.
+Three scheduling modes share the exact same candidate space, operators, and seed workflow:
+  1. `fixed_round_robin`: Pure 1-for-1 round-robin across operator families and call positions.
+  2. `static_priority_no_feedback`: Same candidate domain and static structural family schedule
+     as `feedback_guided`, but with runtime feedback disabled (isolates static priority vs feedback).
+  3. `feedback_guided`: Uses concrete per-Field S3 page-effect sets `frozenset((fid, rva, eff))`
+     and per-(selector, sseq, Field) business state keys to save productive intervention plans,
+     spawn compound follow-up candidates on new effects or new valid states, reprioritize active
+     slots into `secondary_branch_queue` with periodic anti-starvation turns, and demote stagnant
+     scale/history sequences into `low_priority_queue`.
 """
 from __future__ import annotations
 
 import random
 import time
-from pathlib import Path
 from typing import Callable
 
 from generic_explorer import (
-    AUDIT_OF_LEGACY_HEURISTICS,
     build_scale_bound_v2_spec,
-    generate_schema_mutations_for_ecall,
     get_scalable_bound_offsets,
 )
 
@@ -35,18 +36,21 @@ FAMILY_ORDER = ("replace_prefix", "scale", "joint", "slice_rel", "boundary", "hi
 
 def extract_concrete_record_feedback(rec: dict) -> dict:
     """Extract randomness-invariant concrete feedback from a single ECALL trace record:
-    - Concrete S3 (page_rva, effect) set (NOT just page count!)
+    - Concrete per-Field S3 `(field_id, page_rva, effect)` set (never merges across Fields or counts!)
     - Business return category (0 = success, 1 = business rejection, 2 = transport error)
+    - Call position (`selector_seq`) and Field identity included in `state_obs_key`
     - Heap span in pages & stack depth bucket
     """
-    s3_effects: set[tuple[int, str]] = set()
-    s3_pages: set[int] = set()
+    s3_field_effects: set[tuple[str, int, str]] = set()
+    s3_field_pages: set[tuple[str, int]] = set()
+    s3_rva_effects: set[tuple[int, str]] = set()
+    s3_rva_pages: set[int] = set()
     heap_pages = 0
     stack_bucket = 0
     field_ids: list[str] = []
 
     for fobs in rec.get("fields", []):
-        fid = fobs.get("field_id", "")
+        fid = str(fobs.get("field_id", "0x0"))
         if fid:
             field_ids.append(fid)
         lo = int(fobs.get("heap_lo_rva", "0x0"), 16)
@@ -60,10 +64,13 @@ def extract_concrete_record_feedback(rec: dict) -> dict:
         for item in fobs.get("s3", []):
             rva = int(item["rva"], 16)
             ad = item["ad"]
-            s3_pages.add(rva)
-            s3_effects.add((rva, "A"))
+            s3_field_pages.add((fid, rva))
+            s3_rva_pages.add(rva)
+            s3_field_effects.add((fid, rva, "A"))
+            s3_rva_effects.add((rva, "A"))
             if ad == "D":
-                s3_effects.add((rva, "D"))
+                s3_field_effects.add((fid, rva, "D"))
+                s3_rva_effects.add((rva, "D"))
 
     if rec.get("sgx_status", 0) != 0:
         ret_cat = 2
@@ -72,13 +79,12 @@ def extract_concrete_record_feedback(rec: dict) -> dict:
     else:
         ret_cat = 0 if rec.get("ms_retval", 0) == 0 else 1
 
-    # Concrete state-observation key: uses frozenset(s3_effects), NOT page count, and never merges
-    # different call positions even if their page sets coincide.
     state_obs_key = (
         rec.get("ecall_index", -1),
-        1 if field_ids else 0,
+        rec.get("selector_seq", 0),
+        tuple(sorted(set(field_ids))),
         ret_cat,
-        frozenset(s3_effects),
+        frozenset(s3_field_effects),
         heap_pages,
         stack_bucket,
     )
@@ -86,8 +92,10 @@ def extract_concrete_record_feedback(rec: dict) -> dict:
         "entered_field": bool(field_ids),
         "field_ids": field_ids,
         "ret_cat": ret_cat,
-        "s3_pages": frozenset(s3_pages),
-        "s3_effects": frozenset(s3_effects),
+        "s3_field_pages": frozenset(s3_field_pages),
+        "s3_field_effects": frozenset(s3_field_effects),
+        "s3_pages": frozenset(s3_rva_pages),
+        "s3_effects": frozenset(s3_rva_effects),
         "heap_pages": heap_pages,
         "stack_bucket": stack_bucket,
         "state_obs_key": state_obs_key,
@@ -101,10 +109,13 @@ def build_unified_candidate_queues(
     rng_seed: int = 101,
 ) -> tuple[dict[str, list[dict]], dict]:
     """Build the unified per-family candidate queues from EDL schema and seed L1 trace.
-    Removes 'only first 2 positions' and 'only last selector' assumptions:
+    All scheduling modes (`fixed_round_robin`, `static_priority_no_feedback`, `feedback_guided`)
+    receive this exact same candidate pool:
     - Collects up to 4 distinct observed selector_seq positions per Field selector (e.g. sseq=0, 1, 2, last)
       and records any remaining positions in unexplored_frontier.
-    - Schedules history scans (starting at depth=24 > 16) across ALL Field-bearing selectors.
+    - Schedules full scale progression (16..262144) across all scalable Field selectors.
+    - Schedules full history depth progression (24, 64, 256, 1024) uniformly across ALL Field-bearing
+      selectors (no `field_selectors[-1]` bias).
     - Uses true in-place replacement (`replace_scalar`) for setup/producer prefix continuation.
     """
     rng = random.Random(rng_seed)
@@ -191,17 +202,18 @@ def build_unified_candidate_queues(
             if i < len(lst):
                 queues["replace_prefix"].append(lst[i])
 
-    # 2. scale: Multi-scale expansion on scalable Field selectors (first steps queued; larger steps spawned by feedback or queued)
-    for idx in field_selectors:
-        ec = ecalls_by_idx.get(idx)
-        if not ec or get_scalable_bound_offsets(ec) is None:
-            continue
-        sseq0 = all_observed_field_sseqs.get(idx, [0])[0]
-        for sc in (16, 64, 256, 512, 1024, 4096):
+    # 2. scale: Full progression (16..262144) queued across all scalable Field selectors (identical domain across modes)
+    for sc in DECLARED_SCALE_PROGRESSION:
+        for idx in field_selectors:
+            ec = ecalls_by_idx.get(idx)
+            if not ec or get_scalable_bound_offsets(ec) is None:
+                continue
+            sseq0 = all_observed_field_sseqs.get(idx, [0])[0]
             q_sc = min(sc, 1024)
+            modes = (0, 2) if sc <= 4096 else (0,)
             specs = [
                 build_scale_bound_v2_spec(ec, sc, q_sc, mode=m, selector_seq=sseq0)
-                for m in (0, 2)
+                for m in modes
             ]
             spec_str = ";".join(s for s in specs if s)
             if spec_str:
@@ -216,10 +228,10 @@ def build_unified_candidate_queues(
                     "stop_before": "",
                     "allow_nonzero_rc": False,
                     "tag": f"scale_e{idx}_s{sseq0}_n{sc}",
-                    "desc": f"Scale expansion n={sc} (flex+raw branches) on {ec['name']}@{sseq0}",
+                    "desc": f"Scale expansion n={sc} on {ec['name']}@{sseq0}",
                 })
 
-    # 3. Interleave boundary, joint, slice_rel, and content across ALL selected_field_positions (sseq=0, 1, 2, ...)
+    # 3. boundary, joint, slice_rel, content: Interleaved across ALL selected (idx, sseq) positions!
     per_pos_buckets: dict[str, list[list[dict]]] = {
         "boundary": [],
         "joint": [],
@@ -283,7 +295,6 @@ def build_unified_candidate_queues(
                     dom = [v for v in DECLARED_CONTROL_SCALAR_DOMAIN if v != 0 and (v != 99 or sseq == 0)]
                 rng.shuffle(dom)
                 for val in dom:
-                    # For control scalars, use in-place replace_scalar so both current call and downstream calls see the state!
                     op_name = "set_scalar" if is_bound else "replace_scalar"
                     stop_bef = f"{idx}:{sseq}" if is_bound else ""
                     target_list = c_list if is_bound else b_list
@@ -304,10 +315,8 @@ def build_unified_candidate_queues(
                         "desc": f"Scalar boundary ({op_name}) {ec['name']}@{sseq}.{pname}={val}",
                     })
 
-        # Order control scalars ahead of bound-length scalars at each position
         b_list.sort(key=lambda x: (0 if x.get("is_control_scalar") else 1))
 
-        # Joint 2-parameter candidates and cross-buffer slice relation at primary position (sseq == 0) of each Field selector
         if sseq == 0:
             control_scalars = [(spidx, sp) for spidx, sp in scalar_params if sp.get("ms_offset") not in bound_offs]
             for spidx, sp in (control_scalars or scalar_params[:1]):
@@ -381,14 +390,11 @@ def build_unified_candidate_queues(
                 "desc": f"Cold-enclave state replay of {ec['name']}@{cap_seq} after ecall {trig_idx}",
             })
 
-    # 5. history: Interleave history depth scans across ALL Field-bearing selectors (starting at depth=24 > 16!)
+    # 5. history: Interleave ALL declared history depths (24, 64, 256, 1024) uniformly across ALL Field selectors
     for depth in DECLARED_HISTORY_DEPTHS:
         for idx in field_selectors:
             ec = ecalls_by_idx.get(idx)
             if not ec or not ec.get("replay_supported", True):
-                continue
-            # All Field selectors get depth=24 and depth=64; primary steady-state selector also gets 256, 1024
-            if depth > 64 and idx != field_selectors[-1]:
                 continue
             sseq0 = all_observed_field_sseqs.get(idx, [0])[0]
             queues["history"].append({
@@ -428,7 +434,7 @@ class ExplorationKernel:
         max_enclave_creations: int | None = None,
         max_total_ecalls: int | None = None,
     ) -> None:
-        if mode not in ("fixed_round_robin", "feedback_guided"):
+        if mode not in ("fixed_round_robin", "static_priority_no_feedback", "feedback_guided"):
             raise ValueError(f"Unsupported ExplorationKernel mode: {mode}")
         self.sample = sample
         self.edl_schema = edl_schema
@@ -442,22 +448,25 @@ class ExplorationKernel:
         self.ecalls_by_idx = {e["ecall_index"]: e for e in edl_schema["ecalls"]}
         self.field_selectors = {s["ecall_index"] for s in selectors if s["reachable_fields"]}
 
-        # Concrete feedback state (never conflates page count with concrete page set!)
+        # Concrete per-Field feedback state (never merges across Fields or collapses call positions!)
+        self.cumulative_s3_field_effects: set[tuple[str, int, str]] = set()
+        self.cumulative_s3_field_pages: set[tuple[str, int]] = set()
         self.cumulative_s3_effects: set[tuple[int, str]] = set()
         self.cumulative_s3_pages: set[int] = set()
         self.max_heap_pages_by_ecall: dict[int, int] = {}
-        self.scale_s3_effects_by_ecall: dict[int, set[tuple[int, str]]] = {}
+        self.scale_s3_effects_by_ecall: dict[int, set[tuple[str, int, str]]] = {}
         self.scale_max_heap_by_ecall: dict[int, int] = {}
         self.seen_state_obs_keys: set[tuple] = set()
         self.productive_plans: list[dict] = []
         self.follow_up_queue: list[dict] = []
+        self.secondary_branch_queue: list[dict] = []
+        self.low_priority_queue: list[dict] = []
         self.selection_trace: list[dict] = []
         self.feedback_decisions: list[dict] = []
         self.failed_repeat_selectors: dict[int, str] = {}
         self.stagnant_scale_selectors: dict[int, int] = {}
         self.stagnant_history_selectors: dict[int, int] = {}
         self.slot_zero_gain_streak: dict[tuple, int] = {}
-        self.low_priority_queue: list[dict] = []
 
         # Cost accounting
         self.enclave_creations = 0
@@ -485,26 +494,34 @@ class ExplorationKernel:
         recs = res.get("records") or []
         self.total_ecalls += len(recs)
 
+        run_s3_field_effects: set[tuple[str, int, str]] = set()
+        run_s3_field_pages: set[tuple[str, int]] = set()
         run_s3_effects: set[tuple[int, str]] = set()
         run_s3_pages: set[int] = set()
         new_state_keys = 0
+        target_new_state_keys = 0
         heap_grew = False
         any_valid_field_return = False
 
         target_eidx = plan.get("ecall_index", -1)
         for rec in recs:
             fb = extract_concrete_record_feedback(rec)
+            is_target_call = (
+                target_eidx < 0
+                or plan.get("family") == "replace_prefix"
+                or (rec.get("ecall_index") == target_eidx and rec.get("tag") != "host_normal")
+            )
             if fb["state_obs_key"] not in self.seen_state_obs_keys:
                 self.seen_state_obs_keys.add(fb["state_obs_key"])
                 new_state_keys += 1
+                if is_target_call and fb["entered_field"] and fb["ret_cat"] == 0:
+                    target_new_state_keys += 1
             if fb["entered_field"]:
                 self.valid_field_ecalls += 1
-                if fb["ret_cat"] == 0 and (
-                    target_eidx < 0
-                    or plan.get("family") == "replace_prefix"
-                    or (rec.get("ecall_index") == target_eidx and rec.get("tag") != "host_normal")
-                ):
+                if fb["ret_cat"] == 0 and is_target_call:
                     any_valid_field_return = True
+                run_s3_field_effects |= fb["s3_field_effects"]
+                run_s3_field_pages |= fb["s3_field_pages"]
                 run_s3_effects |= fb["s3_effects"]
                 run_s3_pages |= fb["s3_pages"]
                 eidx = rec.get("ecall_index", -1)
@@ -513,13 +530,12 @@ class ExplorationKernel:
                     self.max_heap_pages_by_ecall[eidx] = fb["heap_pages"]
                     heap_grew = True
                 if plan.get("family") == "seed" and rec.get("selector_seq") == 0:
-                    self.scale_s3_effects_by_ecall.setdefault(eidx, set()).update(fb["s3_effects"])
+                    self.scale_s3_effects_by_ecall.setdefault(eidx, set()).update(fb["s3_field_effects"])
                     self.scale_max_heap_by_ecall[eidx] = max(self.scale_max_heap_by_ecall.get(eidx, 0), fb["heap_pages"])
                 elif plan.get("family") == "scale" and rec.get("ecall_index") == target_eidx and rec.get("tag") != "host_normal":
                     sc_effs = self.scale_s3_effects_by_ecall.setdefault(eidx, set())
-                    if fb["s3_effects"] - sc_effs:
-                        sc_effs.update(fb["s3_effects"])
-                        heap_grew = True
+                    if fb["s3_field_effects"] - sc_effs:
+                        sc_effs.update(fb["s3_field_effects"])
                     prev_sc_hp = self.scale_max_heap_by_ecall.get(eidx, 0)
                     if fb["heap_pages"] > prev_sc_hp:
                         self.scale_max_heap_by_ecall[eidx] = fb["heap_pages"]
@@ -530,16 +546,19 @@ class ExplorationKernel:
                 else:
                     self.non_field_setup_ecalls += 1
 
-        new_concrete_effects = run_s3_effects - self.cumulative_s3_effects
-        new_concrete_pages = run_s3_pages - self.cumulative_s3_pages
+        new_concrete_field_effects = run_s3_field_effects - self.cumulative_s3_field_effects
+        new_concrete_field_pages = run_s3_field_pages - self.cumulative_s3_field_pages
+        self.cumulative_s3_field_effects |= run_s3_field_effects
+        self.cumulative_s3_field_pages |= run_s3_field_pages
         self.cumulative_s3_effects |= run_s3_effects
         self.cumulative_s3_pages |= run_s3_pages
 
         delta = {
-            "new_effects_set": sorted(( hex(r), e ) for r, e in new_concrete_effects),
-            "new_effects_count": len(new_concrete_effects),
-            "new_pages_count": len(new_concrete_pages),
+            "new_effects_set": sorted((fid, hex(r), e) for fid, r, e in new_concrete_field_effects),
+            "new_effects_count": len(new_concrete_field_effects),
+            "new_pages_count": len(new_concrete_field_pages),
             "new_state_keys": new_state_keys,
+            "target_new_state_keys": target_new_state_keys,
             "heap_grew": heap_grew,
             "any_valid_field_return": any_valid_field_return,
             "returncode": res.get("returncode", 0),
@@ -549,17 +568,21 @@ class ExplorationKernel:
             "tag": plan.get("tag", "seed"),
             "family": plan.get("family", "seed"),
             "spec": plan.get("spec", ""),
-            "new_effects_count": len(new_concrete_effects),
+            "new_effects_count": len(new_concrete_field_effects),
             "new_state_keys": new_state_keys,
+            "target_new_state_keys": target_new_state_keys,
             "heap_grew": heap_grew,
         })
         return res, delta
 
     def _update_feedback_and_spawn(self, plan: dict, delta: dict, queues: dict[str, list[dict]], spawned_tags: set[str]) -> None:
         """Genuine feedback update:
-        - Saves productive plans that discovered concrete new S3 effects or new valid business return states.
-        - Spawns targeted follow-up plans around productive scalar values, call positions, or scales.
-        - Records non-repeatable failures and scale stagnation.
+        - Saves productive plans that discovered concrete new per-Field S3 effects OR new valid business states.
+        - Spawns targeted follow-up plans around productive scalar values (including when new_state_keys > 0
+          without new pages or heap growth!).
+        - Moves remaining candidates of a hit slot into `secondary_branch_queue` (which receives periodic
+          anti-starvation turns and runs immediately after first-pass structural slots, before `low_priority_queue`).
+        - Demotes S0-rejected non-scalable selectors and stagnant scale/history tails into `low_priority_queue`.
         """
         fam = plan.get("family", "")
         eidx = plan.get("ecall_index", -1)
@@ -579,14 +602,27 @@ class ExplorationKernel:
                 hstag = self.stagnant_history_selectors.get(eidx, 0) + 1
                 self.stagnant_history_selectors[eidx] = hstag
                 if hstag >= 1 and plan.get("history_depth", 0) >= 64:
-                    queues["history"] = [q for q in queues["history"] if q.get("ecall_index") != eidx]
+                    kept = [q for q in queues["history"] if q.get("ecall_index") != eidx]
+                    demoted = [q for q in queues["history"] if q.get("ecall_index") == eidx]
+                    queues["history"] = kept
+                    self.low_priority_queue.extend(demoted)
                     self.feedback_decisions.append({
                         "tag": plan["tag"],
-                        "decision": "stop_history_stagnant_at_64",
+                        "decision": "demote_history_stagnant_at_64",
                     })
                     return
             else:
                 self.stagnant_history_selectors[eidx] = 0
+                next_hd = plan.get("history_depth", 0) * 4
+                for idx_q, q in enumerate(queues.get("history", [])):
+                    if q.get("ecall_index") == eidx and q.get("history_depth") == next_hd:
+                        promoted = queues["history"].pop(idx_q)
+                        self.follow_up_queue.append(promoted)
+                        self.feedback_decisions.append({
+                            "tag": plan["tag"],
+                            "decision": f"promote_history_{next_hd}_on_e{eidx}",
+                        })
+                        break
 
         if fam == "scale":
             sc = plan.get("scale", 0)
@@ -594,8 +630,6 @@ class ExplorationKernel:
                 rej_key = ("scale_rej", eidx)
                 rstreak = self.slot_zero_gain_streak.get(rej_key, 0) + 1
                 self.slot_zero_gain_streak[rej_key] = rstreak
-                # If even the first 2 scales (16 and 64) both fail S0 without ever entering the Field on this selector,
-                # demote remaining scales on this selector to low_priority_queue (distinguishes non-scalable MAC token from hole after valid 16!)
                 if rstreak >= 2 and self.slot_zero_gain_streak.get(("scale_entered", eidx), 0) == 0 and queues.get("scale"):
                     kept = [q for q in queues["scale"] if q.get("ecall_index") != eidx]
                     demoted = [q for q in queues["scale"] if q.get("ecall_index") == eidx]
@@ -614,51 +648,32 @@ class ExplorationKernel:
                     })
                 return
             self.slot_zero_gain_streak[("scale_entered", eidx)] = 1
-            if delta["new_effects_count"] > 0 or delta["heap_grew"]:
+            if delta["heap_grew"] or (sc < 4096 and delta["new_effects_count"] > 0):
                 self.stagnant_scale_selectors[eidx] = 0
-                # Spawn larger scale step (up to 262144) if not already queued
                 next_sc = sc * 4
-                if 4096 < next_sc <= 262144:
-                    ec = self.ecalls_by_idx.get(eidx)
-                    if ec:
-                        sp = build_scale_bound_v2_spec(ec, next_sc, min(next_sc, 1024), mode=0, selector_seq=sseq)
-                        ntag = f"scale_e{eidx}_s{sseq}_n{next_sc}"
-                        if sp and ntag not in spawned_tags:
-                            spawned_tags.add(ntag)
-                            self.follow_up_queue.append({
-                                "family": "scale",
-                                "subkind": "feedback_scale_expansion",
-                                "ecall_index": eidx,
-                                "selector_seq": sseq,
-                                "scale": next_sc,
-                                "spec": sp,
-                                "stop_after": f"{eidx}:{sseq}",
-                                "stop_before": "",
-                                "allow_nonzero_rc": False,
-                                "tag": ntag,
-                                "desc": f"Feedback-spawned scale step n={next_sc} on {ec['name']}@{sseq}",
-                            })
-                            self.feedback_decisions.append({
-                                "tag": plan["tag"],
-                                "scale": sc,
-                                "decision": f"spawn_scale_{next_sc}",
-                            })
-                        elif next_sc >= 262144:
-                            self.feedback_decisions.append({
-                                "tag": plan["tag"],
-                                "scale": sc,
-                                "decision": "stop_budget_cap_reached",
-                            })
-            elif sc >= 4096:
-                stag = self.stagnant_scale_selectors.get(eidx, 0) + 1
-                self.stagnant_scale_selectors[eidx] = stag
-                if stag >= 2:
-                    queues["scale"] = [q for q in queues["scale"] if q.get("ecall_index") != eidx]
-                    self.feedback_decisions.append({
-                        "tag": plan["tag"],
-                        "scale": sc,
-                        "decision": "stop_stagnant_2_rounds",
-                    })
+                if 16 < next_sc <= (262144 if delta["heap_grew"] else 4096):
+                    promoted = None
+                    for idx_q, q in enumerate(queues.get("scale", [])):
+                        if q.get("ecall_index") == eidx and q.get("scale") == next_sc:
+                            promoted = queues["scale"].pop(idx_q)
+                            break
+                    if promoted is not None:
+                        self.follow_up_queue.append(promoted)
+                        self.feedback_decisions.append({
+                            "tag": plan["tag"],
+                            "scale": sc,
+                            "decision": f"promote_scale_{next_sc}",
+                        })
+            elif sc >= 4096 and not delta["heap_grew"]:
+                kept = [q for q in queues["scale"] if q.get("ecall_index") != eidx]
+                demoted = [q for q in queues["scale"] if q.get("ecall_index") == eidx]
+                queues["scale"] = kept
+                self.low_priority_queue.extend(demoted)
+                self.feedback_decisions.append({
+                    "tag": plan["tag"],
+                    "scale": sc,
+                    "decision": "demote_stagnant_superpage_scale",
+                })
 
         if fam == "joint":
             if not delta["any_valid_field_return"]:
@@ -677,37 +692,46 @@ class ExplorationKernel:
             else:
                 self.slot_zero_gain_streak[("joint_entered", eidx)] = 1
 
-        # Satisfied-slot demotion (for replace_prefix, boundary, joint, slice_rel):
-        # Once a parameter slot (fam, eidx, sseq, pidx) discovers concrete new S3 effects,
-        # demote its remaining enum candidates to low_priority_queue so budget shifts to unsolved slots!
+        # Active-slot reprioritization (heuristic priority shift to secondary_branch_queue):
+        # When a parameter slot (fam, eidx, sseq, pidx) discovers concrete new S3 effects,
+        # move its remaining enum candidates to `secondary_branch_queue` so unhit slots get immediate
+        # turns first, and then `secondary_branch_queue` explores multi-branch values on this slot!
         slot_key = (fam, eidx, sseq, plan.get("param_index", -1))
         if fam in ("replace_prefix", "boundary", "joint", "slice_rel") and delta["new_effects_count"] > 0 and queues.get(fam):
-            kept, demoted = [], []
+            kept, reprioritized = [], []
             for q in queues[fam]:
                 qkey = (q.get("family"), q.get("ecall_index", -1), q.get("selector_seq", 0), q.get("param_index", -1))
                 if qkey == slot_key:
-                    demoted.append(q)
+                    reprioritized.append(q)
                 else:
                     kept.append(q)
-            if demoted:
+            if reprioritized:
                 queues[fam] = kept
-                self.low_priority_queue.extend(demoted)
+                self.secondary_branch_queue.extend(reprioritized)
                 self.feedback_decisions.append({
                     "tag": plan["tag"],
-                    "decision": f"demote_satisfied_slot_{fam}_e{eidx}_s{sseq}_p{plan.get('param_index')}_saved_{len(demoted)}",
+                    "decision": f"reprioritize_slot_after_hit_{fam}_e{eidx}_s{sseq}_p{plan.get('param_index')}_count_{len(reprioritized)}",
                 })
 
-        # If a boundary, replace_prefix, or content plan discovered new concrete effects or a new valid return state,
-        # save it to productive_plans and spawn a follow-up around it!
+        # Case A: Plan discovered concrete new per-Field S3 effects or heap growth
         if delta["new_effects_count"] > 0 or delta["heap_grew"]:
             self.productive_plans.append({
                 "tag": plan["tag"],
                 "family": fam,
                 "spec": plan["spec"],
+                "reason": "new_concrete_effects_or_heap",
                 "new_effects": delta["new_effects_set"],
             })
-            if fam == "boundary" and delta["new_effects_count"] == 0 and delta["new_state_keys"] > 0 and plan.get("scalar_val") is not None:
-                # Spawn a joint scalar+XOR probe at the same (eidx, sseq) using this productive scalar value!
+        # Case B: No new pages or heap growth, but a new valid Field-entering state key was observed!
+        elif delta["target_new_state_keys"] > 0 and delta["any_valid_field_return"]:
+            self.productive_plans.append({
+                "tag": plan["tag"],
+                "family": fam,
+                "spec": plan["spec"],
+                "reason": "new_valid_state_key_without_new_pages",
+                "new_effects": [],
+            })
+            if fam == "boundary" and plan.get("scalar_val") is not None:
                 ec = self.ecalls_by_idx.get(eidx)
                 val = plan["scalar_val"]
                 pidx = plan.get("param_index", 0)
@@ -722,16 +746,18 @@ class ExplorationKernel:
                                     "subkind": "feedback_spawned_joint",
                                     "ecall_index": eidx,
                                     "selector_seq": sseq,
+                                    "param_index": pidx,
+                                    "scalar_val": val,
                                     "spec": f"joint_scalar_xor:{eidx}:{sseq}:{pidx}:{val}:{ppidx}:0:255",
                                     "stop_after": "",
                                     "stop_before": f"{eidx}:{sseq}",
                                     "allow_nonzero_rc": False,
                                     "tag": ftag,
-                                    "desc": f"Feedback-spawned joint probe around productive {ec['name']}@{sseq} val={val}",
+                                    "desc": f"Feedback-spawned joint probe around state-changing {ec['name']}@{sseq} val={val}",
                                 })
                                 self.feedback_decisions.append({
                                     "tag": plan["tag"],
-                                    "decision": f"spawn_followup_{ftag}",
+                                    "decision": f"spawn_state_novelty_followup_{ftag}",
                                 })
                             break
 
@@ -765,7 +791,10 @@ class ExplorationKernel:
         while self._can_continue():
             if self.mode == "feedback_guided" and self.follow_up_queue:
                 cand = self.follow_up_queue.pop(0)
-            elif self.mode == "feedback_guided":
+            elif self.mode == "feedback_guided" and self.secondary_branch_queue and turn > 0 and turn % 16 == 0:
+                # Periodic anti-starvation turn for secondary branches on already-hit parameter slots
+                cand = self.secondary_branch_queue.pop(0)
+            elif self.mode in ("feedback_guided", "static_priority_no_feedback"):
                 structural_fams = [f for f in ("replace_prefix", "scale", "joint", "slice_rel", "boundary", "history") if queues.get(f)]
                 if structural_fams:
                     if turn % 2 == 1:
@@ -774,19 +803,20 @@ class ExplorationKernel:
                         fam = structural_fams[fam_idx % len(structural_fams)]
                         fam_idx += 1
                     cand = queues[fam].pop(0)
-                elif queues.get("content"):
-                    cand = queues["content"].pop(0)
+                elif self.secondary_branch_queue:
+                    cand = self.secondary_branch_queue.pop(0)
                 elif self.low_priority_queue:
                     cand = self.low_priority_queue.pop(0)
+                elif queues.get("content"):
+                    cand = queues["content"].pop(0)
                 else:
                     self.stop_reason = "candidates_exhausted"
                     break
             else:
-                # Base round-robin turn across non-empty families (guarantees every family and position gets budget)
                 avail_fams = [f for f in FAMILY_ORDER if queues.get(f)]
                 if not avail_fams:
-                    if self.mode == "feedback_guided" and self.follow_up_queue:
-                        cand = self.follow_up_queue.pop(0)
+                    if self.secondary_branch_queue:
+                        cand = self.secondary_branch_queue.pop(0)
                     elif self.low_priority_queue:
                         cand = self.low_priority_queue.pop(0)
                     else:
@@ -808,6 +838,15 @@ class ExplorationKernel:
                 self._update_feedback_and_spawn(plan, delta, queues, spawned_tags)
 
         remaining_by_family = {f: len(q) for f, q in queues.items() if q}
+        all_deferred = self.secondary_branch_queue + self.low_priority_queue
+        low_prio_by_family: dict[str, int] = {}
+        for q in all_deferred:
+            f = q.get("family", "unknown")
+            low_prio_by_family[f] = low_prio_by_family.get(f, 0) + 1
+        unexplored_hist = [
+            f"ecall_{q.get('ecall_index')}@{q.get('selector_seq')}:depth={q.get('history_depth')}"
+            for q in (queues.get("history", []) + [x for x in all_deferred if x.get("family") == "history"])
+        ]
         return {
             "sample": self.sample,
             "mode": self.mode,
@@ -820,6 +859,8 @@ class ExplorationKernel:
             "expected_s0_rejections": self.expected_s0_rejections,
             "non_field_setup_ecalls": self.non_field_setup_ecalls,
             "measurement_invalid_runs": self.measurement_invalid_runs,
+            "confirmed_s3_field_pages": len(self.cumulative_s3_field_pages),
+            "confirmed_s3_field_effects": len(self.cumulative_s3_field_effects),
             "confirmed_s3_pages": len(self.cumulative_s3_pages),
             "confirmed_s3_effects": len(self.cumulative_s3_effects),
             "productive_plans": self.productive_plans,
@@ -829,6 +870,16 @@ class ExplorationKernel:
                 **frontier_meta,
                 "failed_repeat_selectors": {str(k): v for k, v in self.failed_repeat_selectors.items()},
                 "remaining_candidates_by_family": remaining_by_family,
+                "remaining_secondary_branch_candidates": len(self.secondary_branch_queue),
+                "remaining_low_priority_by_family": low_prio_by_family,
+                "remaining_low_priority_candidates": len(all_deferred),
+                "remaining_low_priority_tags": [c["tag"] for c in all_deferred],
                 "remaining_followup_candidates": len(self.follow_up_queue),
+                "unexplored_history_depths": unexplored_hist,
+                "total_unexplored_candidates": (
+                    sum(remaining_by_family.values())
+                    + len(all_deferred)
+                    + len(self.follow_up_queue)
+                ),
             },
         }

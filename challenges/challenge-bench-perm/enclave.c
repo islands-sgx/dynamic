@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sgx_trts.h>
+#include <sgx_tcrypto.h>
 #include "challenge_perm_t.h"
 
 __attribute__((aligned(4096), used, section(".data.c_base")))
@@ -39,18 +40,8 @@ static uint32_t g_perm_counter = 0;
 static uint32_t g_perm_stage = 0;
 static uint32_t g_perm_step = 0;
 static uint32_t g_perm_vault_cnt = 0;
-static uint64_t g_perm_mac_key = 0;
+static sgx_cmac_128bit_key_t g_perm_mac_key = {0};
 static volatile uint8_t *g_perm_heap_obj = NULL;
-
-static uint64_t perm_keyed_mac(uint64_t key, const uint8_t *buf, size_t len) {
-    uint64_t h = 0xcbf29ce484222325ULL ^ key;
-    for (size_t i = 0; i < len; i++) {
-        h ^= (uint64_t)buf[i];
-        h *= 0x100000001b3ULL;
-        h ^= (key >> ((i & 7U) * 8U));
-    }
-    return h;
-}
 
 /* Overwriting setter at ECALL 0 */
 sgx_status_t ecall_alpha_stage(uint32_t stage_val) {
@@ -94,8 +85,11 @@ sgx_status_t ecall_epsilon_issue(uint32_t kind_tag, uint8_t *blob_out, size_t bl
     if (sgx_read_rand(blob_out + 8, 8) != SGX_SUCCESS) {
         return SGX_ERROR_UNEXPECTED;
     }
-    uint64_t mac = perm_keyed_mac(g_perm_mac_key, blob_out, 16);
-    memcpy(blob_out + 16, &mac, 8);
+    sgx_cmac_128bit_tag_t cmac_tag = {0};
+    if (sgx_rijndael128_cmac_msg(&g_perm_mac_key, blob_out, 16, &cmac_tag) != SGX_SUCCESS) {
+        return SGX_ERROR_UNEXPECTED;
+    }
+    memcpy(blob_out + 16, &cmac_tag, sizeof(cmac_tag));
     return SGX_SUCCESS;
 }
 
@@ -219,11 +213,13 @@ sgx_status_t ecall_zeta_open(
         return SGX_ERROR_INVALID_PARAMETER;
     }
     uint32_t magic = 0, kind_tag = 0;
-    uint64_t got_mac = 0;
+    sgx_cmac_128bit_tag_t expected_tag = {0};
     memcpy(&magic, blob_in + 0, 4);
     memcpy(&kind_tag, blob_in + 4, 4);
-    memcpy(&got_mac, blob_in + 16, 8);
-    if (magic != 0x50524D32U || perm_keyed_mac(g_perm_mac_key, blob_in, 16) != got_mac) {
+    if (sgx_rijndael128_cmac_msg(&g_perm_mac_key, blob_in, 16, &expected_tag) != SGX_SUCCESS) {
+        return SGX_ERROR_UNEXPECTED;
+    }
+    if (magic != 0x50524D32U || memcmp(blob_in + 16, &expected_tag, sizeof(expected_tag)) != 0) {
         return SGX_ERROR_MAC_MISMATCH;
     }
     return perm_field_vault(action_id, kind_tag, res_buf, res_len);

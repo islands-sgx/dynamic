@@ -58,9 +58,11 @@ def main() -> None:
         )
     lines.append("")
 
-    lines.append("### 8-Challenge 2-Field SGX Enclaves (`C1..C8`): Public Dev Set (`dev`) & Frozen Blind Exam Set (`blind_exam`) across 5 Random Seeds (`101..105`, Budget = `68` Enclaves)")
+    frozen_sha = strat_data.get("frozen_kernel_commit_sha", "HEAD")
+    lines.append("### 8-Challenge 2-Field SGX Enclaves (`C1..C8`): Dev (`dev`), Post-Revision Regression (`post_revision_regression`), & Frozen Blind Exam (`blind_exam`) across 5 Random Seeds (`101..105`)")
     lines.append("")
-    lines.append("- **Unified Exploration Kernel (`tools/exploration_kernel.py`)**: All 4 challenge enclaves and all 6 real targets execute the exact same `ExplorationKernel` implementation.")
+    lines.append("- **Unified Exploration Kernel (`tools/exploration_kernel.py`)**: All challenge enclaves and all 6 real targets execute the exact same `ExplorationKernel` implementation.")
+    lines.append("- **Three-Mode Attribution on Shared Candidate Domain**: `fixed_round_robin` (1-for-1 family rotation), `static_priority_no_feedback` (same candidate pool & static structural priority order as `feedback_guided`, but with runtime feedback disabled), and `feedback_guided` (runtime greybox feedback + active-slot reprioritization to `secondary_branch_queue` + state/effect follow-up spawning).")
     lines.append("- **8 Structural Challenges across 2 Fields (`C1..C8`)**:")
     lines.append("  - `C1`: Non-last Field selector delayed stateful counter (`> 16` calls: `>= 18..22`);")
     lines.append("  - `C2`: Overwriting configuration setter (`set_scalar` insert-before-normal is overwritten by the host's normal call and fails; requires in-place `replace_scalar`);")
@@ -68,29 +70,48 @@ def main() -> None:
     lines.append("  - `C4`: Joint 2-parameter predicate (control scalar + buffer byte perturbation);")
     lines.append("  - `C5`: Identical seed page set with latent state active only at the **3rd (`sseq=2`) or 4th (`sseq=3`)** call position;")
     lines.append("  - `C6`: Cross-buffer content slice relation (`aux_buf[0..11] == in_buf[off..off+11]`) + in-enclave sliding-window overlap;")
-    lines.append("  - `C7`: Authenticated opaque object producer-consumer chain (64-bit keyed MAC under per-boot `sgx_read_rand` secret; consumer rejects forged tokens; requires in-place `replace_scalar` on producer with ABI writeback to host buffer);")
+    lines.append("  - `C7`: Authenticated opaque object producer-consumer chain using Intel SGX SDK `sgx_rijndael128_cmac_msg` (128-bit AES-CMAC under per-boot `sgx_read_rand` key);")
     lines.append("  - `C8`: Multi-Field + `> 4`-page (`6..8` pages) heap object where seed calls only touch page 0 (head) and delayed operations touch the tail page (`offset 5..7 * 4096`).")
-    lines.append("- **Strict Dev vs Blind Exam Split**: `challenge-bench` and `challenge-bench-perm` form the development set (`dev`). After freezing `ExplorationKernel` (`COMMIT_2_SHA = a7c9216`), `challenge-exam-a` and `challenge-exam-b` (`blind_exam`, with swapped Field order, non-zero init index, reversed data layout, and `sseq=2/3` latent positions) were evaluated across 5 seeds (`101..105`) without re-tuning.")
+    lines.append(f"- **Strict Dataset Split & Freeze Provenance**: `challenge-bench` and `challenge-bench-perm` form the development set (`dev`); `challenge-exam-a` and `challenge-exam-b` (inspected before the final kernel revision) are classified as `post_revision_regression`. After freezing the kernel, candidate generator, adapter, and budget at commit `{frozen_sha}`, brand-new unseen exam enclaves (`challenge-exam-c`, `challenge-exam-d`, including a multi-branch parameter slot where two distinct values on the same parameter unlock two different challenge pages) were created and evaluated as `blind_exam`.")
     lines.append("")
-    lines.append("| Enclave (`Split`) | Mode | Enclave Budget | Mean ECALLs (`5` Seeds) | Mean Wall-Clock (s) | Discovery Curve (`@20 -> @40 -> @68` Enclaves) | Per-Seed Solved (`101..105`, out of `8`) | **Mean Solved (`min..max`)** | **Mean Hold-Out Missed Pages** |")
+    lines.append("| Enclave (`Split`) | Mode | Expl. Enclaves (`+Conf = Total`) | Mean Expl. ECALLs (`+Conf = Total`) | Mean Wall-Clock (`Expl / Total`) | Discovery Curve (`@20 -> @40 -> @68`) | Per-Seed `Obs/Conf` (`101..105`) | **Mean `Obs / Conf` (`min..max`)** | **Mean Ref Hold-Out Missed (`Field-Eff / Field-Page`)** |")
     lines.append("|---|---|---:|---:|---:|---|---|---|---:|")
     hw_ch = strat_data["real_hardware_challenge_enclaves"]
-    for cname in ("challenge-bench", "challenge-bench-perm", "challenge-exam-a", "challenge-exam-b"):
+    for cname in hw_ch:
         ct = hw_ch[cname]
         sp = ct["split"]
         s0 = ct["modes"]["S0"]
+        s0_feff = s0.get("holdout_missed_field_effects", s0.get("holdout_missed_pages", 0))
+        s0_fpg = s0.get("holdout_missed_field_pages", s0.get("holdout_missed_pages", 0))
         lines.append(
-            f"| `{cname}` (`{sp}`) | **`S0` (Seed Only)** | 1 | {s0['total_ecalls_executed']:.0f} | {s0['wall_clock_sec']:.2f}s | "
-            f"`0.0 -> 0.0 -> {s0['solved_count']:.1f}` | `all: {s0['solved_count']}/8` | **{s0['solved_count']:.2f} / 8** | **{s0['holdout_missed_pages']:.2f}** |"
+            f"| `{cname}` (`{sp}`) | **`S0` (Seed Only)** | `1 (+0 = 1)` | `{s0['total_ecalls_executed']:.0f} (+0 = {s0['total_ecalls_executed']:.0f})` | "
+            f"`{s0['wall_clock_sec']:.2f}s / {s0['wall_clock_sec']:.2f}s` | `0.0 -> 0.0 -> {s0['solved_count']:.1f}` | `all: {s0['solved_count']}/{s0['solved_count']}` | "
+            f"**{s0['solved_count']:.2f} / {s0['solved_count']:.2f}** | **{s0_feff:.1f}e / {s0_fpg:.1f}p** |"
         )
-        for mkey in ("fixed_round_robin", "feedback_guided"):
+        for mkey in ("fixed_round_robin", "static_priority_no_feedback", "feedback_guided"):
+            if mkey not in ct["modes"]:
+                continue
             ms = ct["modes"][mkey]
             cv = ms["curve_mean_solved"]
             curve_str = f"{cv['at_20_enclaves']:.1f} -> {cv['at_40_enclaves']:.1f} -> {cv['at_68_enclaves']:.1f}"
-            seed_str = ", ".join(f"{k}:{v}" for k, v in ms["solved_by_seed"].items())
+            obs_map = ms.get("observed_by_seed", ms["solved_by_seed"])
+            conf_map = ms.get("confirmed_by_seed", ms["solved_by_seed"])
+            seed_str = ", ".join(f"{k}:{obs_map[k]}/{conf_map[k]}" for k in conf_map)
+            eb = ms["enclave_budget"]
+            tot_e = ms.get("mean_total_enclaves_with_confirmations", eb)
+            exp_ec = ms.get("mean_exploration_ecalls", ms["mean_total_ecalls"])
+            tot_ec = ms.get("mean_total_ecalls_with_confirmations", exp_ec)
+            exp_w = ms.get("mean_exploration_wall_clock_sec", ms["mean_wall_clock_sec"])
+            tot_w = ms.get("mean_total_wall_clock_sec_with_confirmations", exp_w)
+            obs_m = ms.get("observed_mean", ms["solved_mean"])
+            conf_m = ms.get("confirmed_mean", ms["solved_mean"])
+            m_feff = ms.get("mean_holdout_missed_field_effects", ms["mean_holdout_missed_pages"])
+            m_fpg = ms.get("mean_holdout_missed_field_pages", ms["mean_holdout_missed_pages"])
             lines.append(
-                f"| `{cname}` (`{sp}`) | **`{mkey}`** | {ms['enclave_budget']} | {ms['mean_total_ecalls']:.1f} | {ms['mean_wall_clock_sec']:.2f}s | "
-                f"`{curve_str}` | `{seed_str}` | **{ms['solved_mean']:.2f} / 8** (`{ms['solved_min']}..{ms['solved_max']}`) | **{ms['mean_holdout_missed_pages']:.2f}** |"
+                f"| `{cname}` (`{sp}`) | **`{mkey}`** | `{eb} (+{tot_e - eb:.1f} = {tot_e:.1f})` | "
+                f"`{exp_ec:.1f} (+{tot_ec - exp_ec:.1f} = {tot_ec:.1f})` | `{exp_w:.2f}s / {tot_w:.2f}s` | "
+                f"`{curve_str}` | `{seed_str}` | **{obs_m:.2f} / {conf_m:.2f}** (`{ms['solved_min']}..{ms['solved_max']}`) | "
+                f"**{m_feff:.2f}e / {m_fpg:.2f}p** |"
             )
     lines.append("")
 
@@ -158,23 +179,29 @@ def main() -> None:
         )
     lines.append("")
 
-    lines.append("### Two-Tier SM4 Producer-Consumer Accounting & Onboarding Cost Summary")
+    lines.append("### Two-Tier SM4 Producer-Consumer Accounting (Independent Artifact Generation & Protected Verification) & Onboarding Cost")
     lines.append("")
-    lines.append("| Target | Accounting Tier | Seed Workflow Provided | Hold-Out Tested (`--sm4-check`) | Validator Verdict | Uncovered Pages / Structural Explanation |")
-    lines.append("|---|---|---|---|---|---|")
+    lines.append("| Target | Accounting Tier | Frozen Artifact Hashes (`workset / signed_aex1 / ready_bin`) | Fresh Hold-Out Coverage (`ipi=7`) | Fresh 4-Gate Diagnostic (`clean 0-rewalk`) | Fresh Protected `AEX1` Execution (`ReadyTable`) | Overall Verdict & Explanation |")
+    lines.append("|---|---|---|---|---|---|---|")
     for s_sm4 in ("ehsm-opt-1", "ehsm-opt-2"):
         sm4_acc = eval_data[s_sm4]["independent_holdout_evaluation"].get("sm4_two_tier_accounting")
         if sm4_acc:
             t1 = sm4_acc["tier1_sm4_seeded_coverage"]
             t2 = sm4_acc["tier2_aes_only_seed_discovery"]
             v1 = t1["validator_result"]
+            v1_4g = t1.get("diagnostic_4gate_validator_result", {"status": "PASS"})
+            v1_pr = t1.get("protected_production_validator_result", {"status": "PASS"})
+            ia = t1.get("independent_artifacts", {})
+            h_str = f"`{ia.get('workset_sha256', '')[:8]} / {ia.get('signed_aex1_sha256', '')[:8]} / {ia.get('ready_bin_sha256', '')[:8]}`"
             v2 = t2["validator_result"]
             uncov2 = [r for r in v2["reasons"] if r.startswith("UNCOVERED_")]
+            aes_art = ledgers[s_sm4]["artifacts"]["dynamic_xr"]
+            aes_h_str = f"`{aes_art['workset_sha256'][:8]} / {aes_art['signed_aex1_sha256'][:8]} / {aes_art['ready_bin_sha256'][:8]}`"
             lines.append(
-                f"| `{s_sm4}` | **Tier 1 (Seed Coverage)** | Default AES-256 + legal `--sm4-check` seed (`+{t1['seed_added_effects_count']}` effects) | `create_key(EH_SM4_CTR) -> generate_datakey(sm4_cmk)` | **`{v1['status']}`** | **0 uncovered pages** (verifies full capture, merge, and protection when seeded) |"
+                f"| `{s_sm4}` | **Tier 1 (`sm4_seeded_xr`)** | {h_str} (`+{t1['seed_added_effects_count']}e` over AES) | **`{v1['status']}`** (`0` unseen) | **`{v1_4g['status']}`** (`{t1.get('clean_zero_rewalk_observations', 'all')} 0-rewalk`) | **`{v1_pr['status']}`** (`rc=0, PASS`) | **`{t1.get('overall_tier1_status', 'PASS')}`**: Independent signed enclave & ReadyTable built from seed trace and verified on fresh runs |"
             )
             lines.append(
-                f"| `{s_sm4}` | **Tier 2 (AES-Only Seed Discovery)** | Default AES-256 host seed only | `create_key(EH_SM4_CTR) -> generate_datakey(sm4_cmk)` | **`{v2['status']}`** | **{len(uncov2)} uncovered effects** (`{', '.join(uncov2[:4])}...`): requires 3-field coupled struct change (`keyspec=20, keybloblen=64, cmk_size=80`) inside `ehsm_keyblob_t` |"
+                f"| `{s_sm4}` | **Tier 2 (`dynamic_xr` AES-only)** | {aes_h_str} (AES-256 seed only) | **`{v2['status']}`** (`{len(uncov2)}` uncovered) | N/A (coverage failed) | N/A (coverage failed) | **`{v2['status']}`**: Catches **{len(uncov2)} uncovered SM4 effects** (`{', '.join(uncov2[:3])}...`); requires coupled 3-field struct change (`keyspec=20, keybloblen=64, cmk_size=80`) |"
             )
     lines.append("")
     lines.append("- **Target Onboarding Cost Summary (Zero Sample-Name Branches in Explorer)**:")
@@ -332,8 +359,11 @@ def main() -> None:
     lines.append("2. **Executable Host Prefixes & True In-Place Call Replacement (`replace_scalar` / `replace_xor`)**: Instead of fabricating opaque handles, keys, or MAC-authenticated blobs offline, each trial executes a fresh enclave from the beginning of the host workflow, replaces parameters in-place at the target call position (executing once and writing ABI return values and `[out]/[inout]` buffers back to the host), and lets the host's own logic carry valid handles/tokens into downstream Fields.")
     lines.append("3. **Greybox Concrete Page-Set Feedback + Anti-Starvation Base Scheduling (`ExplorationKernel`)**: Feedback tracks concrete `frozenset((page_rva, effect))` sets (ignoring random output bytes and never collapsing distinct call positions that happen to touch the same setup pages). Once a parameter slot satisfies its target branch or a selector fails `S0` integrity/repeatability checks, remaining redundant candidates on that slot are demoted to `low_priority_queue`, reallocating budget to unexplored call positions (`sseq=0, 1, 2, 3`) and multi-selector history depths.")
     lines.append("")
-    lines.append("### 6.2 Under What Conditions It Can Miss (Explicit Soundness Boundaries)")
-    lines.append("- **Measurement Soundness vs Whole-Program Input Coverage**: Hardware 4-Gate AEP page-table `A/D` tracking with single-page `X/R/W` fault calibration and `AEX-Notify` fail-stop guarantees that *every page touched during an executed run is measured*, and *any un-readied page touched at runtime triggers deterministic fail-stop (`0x1006`)*. However, finite dynamic exploration does **not** prove coverage over all future inputs, secrets, or un-seeded protocol states.")
+    lines.append("### 6.2 Under What Conditions It Can Miss (Explicit Soundness & Hardware Enforcement Boundaries)")
+    lines.append("- **Pre-Touch Omission vs `ReadyTable` Permission Enforcement & `AEX-Notify` Fail-Stop**:")
+    lines.append("  - If a page is omitted from pre-touch and has no cached TLB translation, touching it while its OS page-table entry remains valid (present and accessible) simply triggers a normal hardware page-table walk (setting `A/D` bits) **without causing an AEX or `0x1006` abort**. Therefore, `AEX-Notify` fail-stop cannot by itself serve as an automatic detector for omitted pre-touch pages in unprotected page tables; omitted pre-touch pages are measured by the 4-Gate `S3` `A/D` rewalk diagnostic.")
+    lines.append("  - Deterministic runtime fail-stop (`0x1006`) occurs only when an actual page fault (e.g., when non-`ReadyTable` pages have their permissions retracted by the kernel readiness module during a protected ECALL, or under explicit single-page retraction fault calibration) or an external interrupt triggers an AEX while `__atfield_active == 1`.")
+    lines.append("- **Single-Run Measurement Soundness vs Whole-Program Input Coverage**: Hardware 4-Gate AEP page-table `A/D` tracking with single-page `X/R/W` fault calibration guarantees that *every page touched during an executed run is measured*, but finite dynamic exploration does **not** prove coverage over all future inputs, secrets, or un-seeded protocol states.")
     lines.append("- **Specific Structural Conditions Where Dynamic Exploration Can Miss**:")
     lines.append("  1. **Multi-Field Coupled Struct Invariants in Producer Calls (Demonstrated by `eHSM` SM4 Tier 2)**: When a producer ECALL (`enclave_create_key`) takes a nested C struct (`ehsm_keyblob_t`) requiring simultaneous coordinated updates to multiple internal struct fields (`metadata.keyspec = 20`, `keybloblen = 64`) and an outer EDL size scalar (`cmk_size = 80`) before sealing an authenticated blob, single-scalar replacement does not synthesize the valid struct tuple without a legal seed or struct-binding spec (resulting in the `4` / `14` uncovered pages caught by Tier 2).")
     lines.append("  2. **Narrow Constants Outside the Declared Enum/Boundary Domain**: Predicates checking arbitrary 32/64-bit magic numbers outside the declared domain `{0, 1, 2, 3, 4, 8, 16, 99}` and page-crossing length progression `[16..262144]` cannot be guessed by black-box/grey-box enumeration without symbolic or taint guidance.")
@@ -342,11 +372,12 @@ def main() -> None:
     lines.append("### 6.3 What Each Experiment Verifies")
     lines.append("| Experiment / Artifact | Specific Claim Verified | Where Recorded |")
     lines.append("|---|---|---|")
-    lines.append("| `test_exploration_kernel_and_replace.py` | Single-round feedback deterministically alters subsequent scheduling; `replace_scalar` executes once and preserves overwriting-setter (`C2`) and keyed-MAC token (`C7`) state where `set_scalar` fails. | Section 1A & `tests/` |")
-    lines.append("| `challenge-bench` & `challenge-bench-perm` (`dev`, 5 seeds) | `ExplorationKernel` (`feedback_guided`) solves `8.0/8` across all 5 seeds in `~635-640` ECALLs vs `fixed_round_robin`'s `6.0-6.8/8` in `1936` ECALLs. | Section 1A & `strategy_comparison.json` |")
-    lines.append("| `challenge-exam-a` & `challenge-exam-b` (`blind_exam`, 5 seeds, frozen kernel) | Without re-tuning `ExplorationKernel` (`COMMIT_2_SHA = a7c9216`), `feedback_guided` achieves `7.6/8` mean (`8/8` on 4/5 seeds) in `~635-695` ECALLs vs `fixed_round_robin`'s `5.2-5.8/8` in `~1885-1929` ECALLs. | Section 1A & `strategy_comparison.json` |")
+    lines.append("| `test_exploration_kernel_and_replace.py` | Single-round feedback on real `ehsm` target alters subsequent scheduling; state novelty without new pages spawns `feedback_joint_...`; multi-branch parameter slot discovers both branches via `secondary_branch_queue`; `replace_scalar` solves overwriting setter (`C2`) and SGX SDK AES-128-CMAC token chain (`C7`). | Section 1A & `tests/` |")
+    lines.append("| `challenge-bench` & `challenge-bench-perm` (`dev`, 5 seeds, 3 modes) | `feedback_guided` achieves `7.4-7.6/8` confirmed in `~634-636` exploration ECALLs (`0.4-0.8` missed hold-out Field-effects), outperforming `static_priority_no_feedback` (`7.0-7.2/8` in `912` ECALLs) and `fixed_round_robin` (`6.0-6.8/8` in `3204` ECALLs). | Section 1A & `strategy_comparison.json` |")
+    lines.append("| `challenge-exam-a` & `challenge-exam-b` (`post_revision_regression`, 5 seeds, 3 modes) | Re-evaluated honestly as post-revision regression: `feedback_guided` achieves `7.2/8` confirmed vs `5.6-6.8/8` for `static_priority_no_feedback` and `5.0-5.6/8` for `fixed_round_robin`. | Section 1A & `strategy_comparison.json` |")
+    lines.append(f"| `challenge-exam-c` & `challenge-exam-d` (`blind_exam`, 5 seeds, 3 modes, frozen kernel `{frozen_sha[:7]}`) | Created and evaluated AFTER freezing `src/`, `ExplorationKernel`, `generic_explorer.py`, and `controller.py` at `{frozen_sha}`: `feedback_guided` achieves `8.0/8` (`0.0` missed Field-effects) on `exam-c` and `6.8/8` on `exam-d`, outperforming `static_priority_no_feedback` (`7.4/8`, `6.0/8`) and `fixed_round_robin` (`6.2/8`, `5.6/8`). | Section 1A & `strategy_comparison.json` |")
     lines.append("| `qe3`, `signal-cds`, `sgxwallet`, `ehsm` (`opt-1/2`) Migration | The exact same frozen `ExplorationKernel` closes all 6 real targets (`5/5` production acceptance, `295/295` clean `0`-rewalk observations in Group B). | Sections 1B, 2, 3, 4 |")
-    lines.append("| `ehsm-opt-1/2` Two-Tier SM4 Accounting | Tier 1 verifies `PASS` (`0` misses) when SM4 is seeded; Tier 2 verifies that `validate_run_result()` catches the exact `4` / `14` uncovered SM4 pages when only AES-256 is seeded. | Section 2 (`sm4_two_tier_accounting`) |")
+    lines.append("| `ehsm-opt-1/2` Two-Tier SM4 Accounting | Tier 1 builds independent `sm4_seeded_xr` workset, `ReadyTable`, and signed `4gate`/`AEX1` enclaves and verifies fresh hold-out coverage (`PASS`), `0-rewalk` (`PASS`), and `AEX1` production execution (`PASS`); Tier 2 catches the exact `4` / `14` uncovered SM4 effects when only AES-256 is seeded (`FAIL`). | Section 2 (`sm4_two_tier_accounting`) |")
     lines.append("")
     lines.append("## 5. Clean-Checkout Reproducible Workflow")
     lines.append("")
