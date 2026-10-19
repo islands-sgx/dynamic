@@ -514,10 +514,13 @@ sgx_status_t sgx_ecall(
     if (!real_sgx_ecall)
         real_sgx_ecall = (real_ecall_fn_t)dlsym(RTLD_NEXT, "sgx_ecall");
 
-    run_interventions_if_matching(eid, index, ocall_table, ms);
-    int sseq = (index >= 0 && index < 64) ? selector_seq[index] : 0;
+    int sseq_before = (index >= 0 && index < 64) ? selector_seq[index] : 0;
+    int was_replaced = 0;
+    sgx_status_t replaced_st = 0;
+    run_interventions_if_matching(eid, index, ocall_table, ms, &was_replaced, &replaced_st);
+    int sseq = sseq_before;
 
-    /* Support stopping BEFORE host_normal on a one-shot/CALL_ONCE negative probe if requested */
+    /* Support stopping BEFORE host_normal on an isolated probe if requested */
     const char *stop_before_normal = getenv("ATFIELD_STOP_BEFORE_NORMAL_ECALL");
     if (stop_before_normal && *stop_before_normal) {
         int sb_idx = -1, sb_seq = -1;
@@ -528,7 +531,9 @@ sgx_status_t sgx_ecall(
         }
     }
 
-    sgx_status_t st = execute_one_measured_ecall(eid, index, ocall_table, ms, "host_normal", 1);
+    sgx_status_t st = was_replaced
+        ? replaced_st
+        : execute_one_measured_ecall(eid, index, ocall_table, ms, "host_normal", 1);
 
     /* Post-call typed state replay trigger */
     const char *spec_post = getenv("ATFIELD_INTERVENTION");

@@ -57,8 +57,12 @@ static void run_interventions_if_matching(
     sgx_enclave_id_t eid,
     int index,
     const void *ocall_table,
-    void *ms)
+    void *ms,
+    int *out_was_replaced,
+    sgx_status_t *out_replaced_status)
 {
+    if (out_was_replaced) *out_was_replaced = 0;
+    if (out_replaced_status) *out_replaced_status = 0;
     const char *spec = getenv("ATFIELD_INTERVENTION");
     if (!spec || !*spec || !ms || index < 0 || index >= MAX_SCHEMA_ECALLS) return;
     int sseq = selector_seq[index];
@@ -139,6 +143,96 @@ static void run_interventions_if_matching(
                     } else {
                         mutation_oob_rejected_count++;
                         mark_invalid("set_scalar_snapshot_failed");
+                    }
+                }
+            }
+        } else if (sscanf(tok, "replace_scalar:%d:%d:%d:%lu", &t_idx, &t_seq, &p_idx, &val) == 4) {
+            /* In-place call replacement:
+             * - Modifies scalar parameter p_idx at (t_idx, t_seq)
+             * - Refuses if any [out]/[inout] buffer bound would exceed the host's allocated capacity
+             * - Executes the ECALL ONCE, writing [out]/[inout] data and ms_retval directly back to the host's ms!
+             */
+            if (t_idx == index && t_seq == sseq && es && p_idx >= 0 && (uint32_t)p_idx < es->num_params) {
+                const param_schema_t *ps = &es->params[p_idx];
+                if (!ps->is_pointer && check_ms_frame_capacity(es, es->ms_size) == 0) {
+                    uint8_t ms_work[MAX_MS_FRAME_BYTES] = {0};
+                    memcpy(ms_work, ms, es->ms_size);
+                    if (write_scalar_u64(ms_work, es->ms_size, ps->ms_offset, ps->ms_size, val) == 0) {
+                        int cap_ok = 1;
+                        void *in_allocs[MAX_SCHEMA_PARAMS] = {0};
+                        for (uint32_t pi = 0; pi < es->num_params; pi++) {
+                            const param_schema_t *ppi = &es->params[pi];
+                            if (!ppi->is_pointer) continue;
+                            size_t orig_b = 0, orig_u = 0, new_b = 0, new_u = 0;
+                            if (compute_param_byte_len((const uint8_t *)ms, es->ms_size, ppi, &orig_b, &orig_u) != 0 ||
+                                compute_param_byte_len(ms_work, es->ms_size, ppi, &new_b, &new_u) != 0) {
+                                cap_ok = 0;
+                                break;
+                            }
+                            if (new_b > orig_b) {
+                                if (ppi->direction == DIR_OUT || ppi->direction == DIR_INOUT) {
+                                    /* Host output buffer capacity cannot accommodate enlarged output */
+                                    cap_ok = 0;
+                                    break;
+                                }
+                                /* Pure [in] buffer can be safely reallocated for the single replaced call */
+                                uint8_t *nbuf = (uint8_t *)calloc(1, new_b ? new_b : 8);
+                                if (!nbuf) { cap_ok = 0; break; }
+                                const uint8_t *optr = *(const uint8_t *const *)((const uint8_t *)ms + ppi->ms_offset);
+                                if (optr && orig_b > 0) memcpy(nbuf, optr, orig_b);
+                                in_allocs[pi] = nbuf;
+                                *(void **)(ms_work + ppi->ms_offset) = nbuf;
+                            }
+                        }
+                        if (cap_ok) {
+                            char tag[72];
+                            snprintf(tag, sizeof(tag), "replace_scalar_p%d_val_%lu", p_idx, val);
+                            sgx_status_t rst = execute_one_measured_ecall(eid, index, ocall_table, ms_work, tag, 1);
+                            if (es->has_retval && (size_t)es->retval_offset + (size_t)es->retval_size <= es->ms_size) {
+                                memcpy((uint8_t *)ms + es->retval_offset, ms_work + es->retval_offset, es->retval_size);
+                            }
+                            if (out_was_replaced) *out_was_replaced = 1;
+                            if (out_replaced_status) *out_replaced_status = rst;
+                        }
+                        for (int pi = 0; pi < MAX_SCHEMA_PARAMS; pi++) free(in_allocs[pi]);
+                    }
+                }
+            }
+        } else if (sscanf(tok, "replace_xor:%d:%d:%d:%lu:%lu", &t_idx, &t_seq, &p_idx, &sub, &val) == 5) {
+            /* In-place byte XOR replacement on an [in] or [inout] pointer parameter:
+             * Executes ONCE and hands [out]/[inout] buffers + ms_retval back to the host.
+             */
+            if (t_idx == index && t_seq == sseq && es && p_idx >= 0 && (uint32_t)p_idx < es->num_params) {
+                const param_schema_t *ps = &es->params[p_idx];
+                size_t orig_b = 0, orig_u = 0;
+                if (ps->is_pointer && (ps->direction == DIR_IN || ps->direction == DIR_INOUT) &&
+                    check_ms_frame_capacity(es, es->ms_size) == 0 &&
+                    compute_param_byte_len((const uint8_t *)ms, es->ms_size, ps, &orig_b, &orig_u) == 0 &&
+                    sub < orig_u) {
+                    uint8_t ms_work[MAX_MS_FRAME_BYTES] = {0};
+                    memcpy(ms_work, ms, es->ms_size);
+                    uint8_t *orig_ptr = *(uint8_t **)((uint8_t *)ms + ps->ms_offset);
+                    if (orig_ptr) {
+                        uint8_t *tmp_in = NULL;
+                        if (ps->direction == DIR_IN) {
+                            tmp_in = (uint8_t *)calloc(1, orig_b ? orig_b : 8);
+                            if (tmp_in) {
+                                memcpy(tmp_in, orig_ptr, orig_b);
+                                tmp_in[sub] ^= (uint8_t)val;
+                                *(void **)(ms_work + ps->ms_offset) = tmp_in;
+                            }
+                        } else {
+                            orig_ptr[sub] ^= (uint8_t)val;
+                        }
+                        char tag[72];
+                        snprintf(tag, sizeof(tag), "replace_xor_p%d_byte_%lu", p_idx, sub);
+                        sgx_status_t rst = execute_one_measured_ecall(eid, index, ocall_table, ms_work, tag, 1);
+                        if (es->has_retval && (size_t)es->retval_offset + (size_t)es->retval_size <= es->ms_size) {
+                            memcpy((uint8_t *)ms + es->retval_offset, ms_work + es->retval_offset, es->retval_size);
+                        }
+                        free(tmp_in);
+                        if (out_was_replaced) *out_was_replaced = 1;
+                        if (out_replaced_status) *out_replaced_status = rst;
                     }
                 }
             }
