@@ -1,341 +1,548 @@
 {
+  "artifacts": {
+    "dynamic": {
+      "final_elf_sha256": "d1dc9df2e959068f1904420d475eb4eba90d4de2f5cdf03fc46d694ee034c22e",
+      "gate_aex0_sha256": "9405ee19a627bafc56bc3fbc6ee06831381a791a52c747452900d33c9c1a2a9d",
+      "ready_bin_sha256": "61f41d7bc086fabf2c6c9902110247aa91e19b70894ee5981a1ee132cceebb00",
+      "signed_aex0_sha256": "dfc2caa8ad4a174c5008685829d9e84f3b6124a92a5791e708aee9239ccc92ac",
+      "signed_aex1_sha256": "4c9dd25ce68763e0eb1896386a0dcd4cef44fa2dbb25543df153e06e9b0b05dc",
+      "variant": "dynamic",
+      "workset_sha256": "e7144388a6fac5cd94e398e137554fab27b3dee276f02e0c78b4fb0ab350c6c4"
+    },
+    "dynamic_xr": {
+      "final_elf_sha256": "b6ecc6509dcb2e8168130354a0c62266a1d38f1d0c43578dbc1702b09301c15e",
+      "gate_aex0_sha256": "7a3839abdb9aef9de9000bcf2f69eb066ed220c93b461e6ac0a991df508b8fec",
+      "ready_bin_sha256": "61f41d7bc086fabf2c6c9902110247aa91e19b70894ee5981a1ee132cceebb00",
+      "signed_aex0_sha256": "29ade8be0a67e3ec08a525dcce1937ba62036d10ba164824e419d54cdd833c40",
+      "signed_aex1_sha256": "69759959a2e5a63a022d5978493b60e52eea8ea5f09796d76a11f37a93cfc9ac",
+      "variant": "dynamic_xr",
+      "workset_sha256": "410bcdd24e9ca03ca5d14a038789feb03f53b2326664f7868910bc375cbe9dd6"
+    }
+  },
   "closure_breakdown": {
     "0x2a10deb0a1ec70f8": {
       "all_business_reg_pages": 850,
-      "closure_dlmalloc_heap_added": 2,
-      "closure_reach_code_added": 45,
-      "closure_reach_data_added": 2,
-      "closure_stack_td_added": 2,
-      "closure_stt_object_added": 1,
+      "call_statistics": {
+        "expected_rejection_entries": 0,
+        "field_entries": 1044,
+        "succeeded_entries": 1044,
+        "transport_error_entries": 0
+      },
+      "dynamic_explored_obs_effects": 77,
       "dynamic_explored_obs_pages": 69,
       "final_field_target_pages": 126,
+      "four_layer_attribution": {
+        "layer0_first_field_call": {
+          "page_effects": 77,
+          "pages": 69
+        },
+        "layer1_full_existing_host": {
+          "added_effects_over_layer0": 0,
+          "added_pages_over_layer0": 0,
+          "page_effects": 77,
+          "pages": 69
+        },
+        "layer2_generic_schema_explorer": {
+          "added_effects_beyond_full_host_layer1": 0,
+          "added_pages_beyond_full_host_layer1": 0,
+          "cumulative_effects_after_layer2": 77,
+          "cumulative_pages_after_layer2": 69,
+          "independent_added_pages_over_layer0": 0,
+          "independent_pages_from_minimal_seed": 69
+        },
+        "layer3_domain_assisted": {
+          "added_effects_beyond_layer2": 0,
+          "added_pages_beyond_layer2": 0,
+          "cumulative_effects_after_layer3": 77,
+          "cumulative_pages_after_layer3": 69
+        }
+      },
       "function": "_ZL31get_att_key_based_from_seal_keyP20_sgx_ec256_private_tP19_sgx_ec256_public_tPK13_sgx_key_id_t",
+      "heuristic_assist_breakdown": {
+        "direct_call_depth4_code_added": 45,
+        "direct_call_rip_data_added": 2,
+        "dlmalloc_heap_and_frontier_added": 2,
+        "heap_pread_failure_runs": 0,
+        "heap_walk_truncated_runs": 0,
+        "heuristic_parameters": {
+          "direct_call_max_depth": 4,
+          "heap_top_frontier_pages": 2,
+          "stack_below_min_rsp_margin_pages": 4
+        },
+        "pruned_noreturn_callees": [
+          "__stack_chk_fail",
+          "abort",
+          "field_exit"
+        ],
+        "stack_margin_and_td_added": 2,
+        "stt_object_span_added": 1,
+        "unresolved_indirect_branch_sites_in_subgraph": 145
+      },
       "raw_single_run_pages": 69,
       "reduction_vs_all_reg_pct": 85.18,
-      "s1_boundary_pages": 24
+      "rx_pages_kept_xr_in_group_b": 101,
+      "rx_pages_refined_to_x_in_group_c": 74,
+      "s0_s1_epilogue_bridge_pages": 5
     }
   },
-  "sample": "qe3",
-  "schema": "atfield-witness-ledger-v1",
-  "stages": [
+  "ecall_statistics": {
+    "0": {
+      "ecall_invocations": 1045,
+      "field_entering_calls": 1044,
+      "nonzero_retval_calls": 1,
+      "outer_rejected_or_nofield_calls": 1,
+      "succeeded_calls": 1044,
+      "transport_error_calls": 0
+    }
+  },
+  "profile_elf_sha256": "5c0f4038289badf9866c3e39bb90b375c2be78bc1e8960ee1852ef7315a3b9b5",
+  "runs": [
     {
-      "description": "Unmodified host workflow (3 key derivations + public checks)",
-      "new_pages_discovered": 69,
-      "per_field_obs_counts": {
-        "0x2a10deb0a1ec70f8": 69
-      },
+      "description": "Unmodified host binary full execution (first entry per Field = Layer 0; full run = Layer 1)",
+      "layer": "layer1_full_host",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 77,
       "records_collected": 3,
-      "stage": "stage0_baseline"
+      "run_id": "layer0_and_layer1_unmodified_host",
+      "subkind": "unmodified_host_full_trace",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer0_and_layer1_unmodified_host.jsonl"
     },
     {
-      "description": "Mutate key_id bytes [0, 15, 31] to exercise distinct EGETKEY->CMAC->secp256r1 scalar paths",
-      "new_pages_discovered": 0,
-      "per_field_obs_counts": {
-        "0x2a10deb0a1ec70f8": 69
-      },
-      "records_collected": 6,
-      "stage": "stage1_keyid_mutations"
+      "description": "Generic edl_schema scalar boundaries & input buffer bit-flips on ecall_get_attestation_key",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 11,
+      "run_id": "layer2_schema_val_xor_ecall0",
+      "subkind": "schema_scalar_and_bitflip",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_schema_val_xor_ecall0.jsonl"
     },
     {
-      "description": "Inject NULL key_id and NULL public_key pointers",
-      "new_pages_discovered": 0,
-      "per_field_obs_counts": {
-        "0x2a10deb0a1ec70f8": 69
-      },
-      "records_collected": 5,
-      "stage": "stage1_error_paths"
+      "description": "Generic edl_schema NULL pointer injection on ecall_get_attestation_key",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 4,
+      "run_id": "layer2_schema_null_ecall0",
+      "subkind": "schema_null_pointer",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_schema_null_ecall0.jsonl"
+    },
+    {
+      "description": "Generic 1024-step full-call history exploration on ecall_get_attestation_key (0 calls skipped)",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1027,
+      "run_id": "layer2_generic_history_1024_ecall0",
+      "subkind": "exponential_history_depth_1024",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_generic_history_1024_ecall0.jsonl"
     }
   ],
+  "sample": "qe3",
+  "schema": "atfield-witness-ledger-v2",
   "witnesses": [
     {
       "call_seq": 0,
       "ecall_index": 0,
       "field_id": "0x2a10deb0a1ec70f8",
       "intervention": "",
-      "new_pages": [
+      "layer": "layer0_first_call",
+      "new_effects": [
         {
-          "ad": "A",
-          "rva": "0x2000"
+          "effect": "A",
+          "rva": "0x2000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x3000"
+          "effect": "A",
+          "rva": "0x3000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x4000"
+          "effect": "A",
+          "rva": "0x4000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x5000"
+          "effect": "A",
+          "rva": "0x5000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x7d000"
+          "effect": "A",
+          "rva": "0x7d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xb7000"
+          "effect": "A",
+          "rva": "0xb7000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xb8000"
+          "effect": "A",
+          "rva": "0xb8000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xb9000"
+          "effect": "A",
+          "rva": "0xb9000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xba000"
+          "effect": "A",
+          "rva": "0xba000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xbf000"
+          "effect": "A",
+          "rva": "0xbf000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xc0000"
+          "effect": "A",
+          "rva": "0xc0000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xc1000"
+          "effect": "A",
+          "rva": "0xc1000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xc2000"
+          "effect": "A",
+          "rva": "0xc2000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xc3000"
+          "effect": "A",
+          "rva": "0xc3000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xc9000"
+          "effect": "A",
+          "rva": "0xc9000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xd5000"
+          "effect": "A",
+          "rva": "0xd5000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xd6000"
+          "effect": "A",
+          "rva": "0xd6000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xd7000"
+          "effect": "A",
+          "rva": "0xd7000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xe5000"
+          "effect": "A",
+          "rva": "0xe5000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xe6000"
+          "effect": "A",
+          "rva": "0xe6000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xe7000"
+          "effect": "A",
+          "rva": "0xe7000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xe8000"
+          "effect": "A",
+          "rva": "0xe8000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xe9000"
+          "effect": "A",
+          "rva": "0xe9000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xea000"
+          "effect": "A",
+          "rva": "0xea000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xed000"
+          "effect": "A",
+          "rva": "0xed000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xf2000"
+          "effect": "A",
+          "rva": "0xf2000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xf3000"
+          "effect": "A",
+          "rva": "0xf3000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xf4000"
+          "effect": "A",
+          "rva": "0xf4000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xf8000"
+          "effect": "A",
+          "rva": "0xf8000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x102000"
+          "effect": "A",
+          "rva": "0x102000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x103000"
+          "effect": "A",
+          "rva": "0x103000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x104000"
+          "effect": "A",
+          "rva": "0x104000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x105000"
+          "effect": "A",
+          "rva": "0x105000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x146000"
+          "effect": "A",
+          "rva": "0x146000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x147000"
+          "effect": "A",
+          "rva": "0x147000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x148000"
+          "effect": "A",
+          "rva": "0x148000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x149000"
+          "effect": "A",
+          "rva": "0x149000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x15b000"
+          "effect": "A",
+          "rva": "0x15b000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x15d000"
+          "effect": "A",
+          "rva": "0x15d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x15f000"
+          "effect": "A",
+          "rva": "0x15f000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x160000"
+          "effect": "A",
+          "rva": "0x160000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x161000"
+          "effect": "A",
+          "rva": "0x161000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x198000"
+          "effect": "A",
+          "rva": "0x198000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x199000"
+          "effect": "A",
+          "rva": "0x199000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x19e000"
+          "effect": "A",
+          "rva": "0x19e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1a1000"
+          "effect": "A",
+          "rva": "0x1a1000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1a2000"
+          "effect": "A",
+          "rva": "0x1a2000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1b4000"
+          "effect": "A",
+          "rva": "0x1b4000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1b8000"
+          "effect": "A",
+          "rva": "0x1b8000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1b9000"
+          "effect": "A",
+          "rva": "0x1b9000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1ba000"
+          "effect": "A",
+          "rva": "0x1ba000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1e5000"
+          "effect": "A",
+          "rva": "0x1e5000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1e6000"
+          "effect": "A",
+          "rva": "0x1e6000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1e7000"
+          "effect": "A",
+          "rva": "0x1e7000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1eb000"
+          "effect": "A",
+          "rva": "0x1eb000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1ec000"
+          "effect": "A",
+          "rva": "0x1ec000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1ed000"
+          "effect": "A",
+          "rva": "0x1ed000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1ee000"
+          "effect": "A",
+          "rva": "0x1ee000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1ef000"
+          "effect": "A",
+          "rva": "0x1ef000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x1f4000"
+          "effect": "A",
+          "rva": "0x1f4000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x1f5000"
+          "effect": "D",
+          "rva": "0x1f4000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x206000"
+          "effect": "A",
+          "rva": "0x1f5000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x211000"
+          "effect": "D",
+          "rva": "0x1f5000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x215000"
+          "effect": "A",
+          "rva": "0x206000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x216000"
+          "effect": "D",
+          "rva": "0x206000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x362000"
+          "effect": "A",
+          "rva": "0x211000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x363000"
+          "effect": "A",
+          "rva": "0x215000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x364000"
+          "effect": "D",
+          "rva": "0x215000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "A",
-          "rva": "0x388000"
+          "effect": "A",
+          "rva": "0x216000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x216000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x362000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x362000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x363000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x363000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x364000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x364000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x388000",
+          "upgrade_from_A_to_D": false
         }
       ],
+      "run_id": "layer0_and_layer1_unmodified_host",
       "selector_seq": 0,
-      "stage": "stage0_baseline",
+      "subkind": "unmodified_host_full_trace",
       "tag": "host_normal",
+      "total_field_obs_effects": 77,
       "total_field_obs_pages": 69,
-      "tsc_s3": 1034380,
-      "witness_id": "qe3_stage0_baseline_seq0_ec70f8"
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer0_and_layer1_unmodified_host.jsonl",
+      "tsc_s3": 884922,
+      "witness_id": "qe3_layer0_and_layer1_unmodified_host_seq0_ec70f8"
     }
   ]
 }

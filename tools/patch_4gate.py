@@ -29,26 +29,42 @@ def rel32(opcode: int, src_rva: int, dst_rva: int) -> bytes:
     return bytes([opcode]) + struct.pack("<i", delta)
 
 
-def emit_save_regs() -> bytes:
-    # movabsq %rax, 0x700000000100 (48 A3 <u64>)
-    # movabsq $0x700000000000, %rax (48 B8 <u64>)
-    # movq %rcx, 0x108(%rax)        (48 89 88 08 01 00 00)
-    # movq %rdx, 0x110(%rax)        (48 89 90 10 01 00 00)
+def emit_save_regs(stage_code: int = 0) -> bytes:
+    # NOTE: mov instructions do NOT modify arithmetic flags (CF, PF, AF, ZF, SF, OF).
+    # 1. Save %rax to 0x700000000100 (48 A3 <u64>)
+    # 2. Load 0x700000000000 into %rax (48 B8 <u64>)
+    # 3. Save %rcx -> 0x108(%rax), %rdx -> 0x110(%rax)
+    # 4. Copy %rax -> %rcx (48 89 C1)
+    # 5. lahf (9F) + seto %al (0F 90 C0) -> saves SF:ZF:AF:PF:CF in %ah and OF in %al
+    # 6. movw %ax, 0x118(%rcx) (66 89 81 18 01 00 00)
+    # 7. Restore %rax = %rcx (48 89 C8)
+    # 8. Store current stage_code into 0x50(%rax) (C7 40 50 <u32>)
     out = bytearray()
     out += b"\x48\xa3" + struct.pack("<Q", SCRATCH_RAX_VA)
     out += b"\x48\xb8" + struct.pack("<Q", GATE_SHARED_VA)
     out += b"\x48\x89\x88\x08\x01\x00\x00"
     out += b"\x48\x89\x90\x10\x01\x00\x00"
+    out += b"\x48\x89\xc1"
+    out += b"\x9f\x0f\x90\xc0"
+    out += b"\x66\x89\x81\x18\x01\x00\x00"
+    out += b"\x48\x89\xc8"
+    out += b"\xc7\x40\x50" + struct.pack("<I", stage_code)
     return bytes(out)
 
 
-def emit_restore_regs() -> bytes:
-    # movq 0x108(%rax), %rcx        (48 8B 88 08 01 00 00)
-    # movq 0x110(%rax), %rdx        (48 8B 90 10 01 00 00)
-    # movabsq 0x700000000100, %rax  (48 A1 <u64>)
+def emit_restore_regs(next_stage_code: int = 0) -> bytes:
+    # 1. Store next_stage_code into 0x50(%rax) (C7 40 50 <u32>)
+    # 2. Restore %rcx from 0x108(%rax), %rdx from 0x110(%rax)
+    # 3. Load saved flags word from 0x118(%rax) into %ax (66 8B 80 18 01 00 00)
+    # 4. addb $0x7f, %al (04 7F) -> restores OF!
+    # 5. sahf (9E) -> restores SF, ZF, AF, PF, CF!
+    # 6. movabsq 0x700000000100, %rax (48 A1 <u64>) -> mov does not alter flags!
     out = bytearray()
+    out += b"\xc7\x40\x50" + struct.pack("<I", next_stage_code)
     out += b"\x48\x8b\x88\x08\x01\x00\x00"
     out += b"\x48\x8b\x90\x10\x01\x00\x00"
+    out += b"\x66\x8b\x80\x18\x01\x00\x00"
+    out += b"\x04\x7f\x9e"
     out += b"\x48\xa1" + struct.pack("<Q", SCRATCH_RAX_VA)
     return bytes(out)
 
@@ -177,7 +193,7 @@ def patch_elf_4gate(
         #    So __gate_A_field_<idx> must jump back to `enter_call_rva + 5`, and `marker_rva` jumps to `__gate_B_field_<idx>`!
         gate_a_rva = gate_page_rva + len(gate_buf)
         stub_a = bytearray()
-        stub_a += emit_save_regs()
+        stub_a += emit_save_regs(1)
         # Save active_field_id (%rdi) -> 0x20(%rax) and %rsp -> 0x10(%rax)
         stub_a += b"\x48\x89\x78\x20"  # movq %rdi, 0x20(%rax)
         stub_a += b"\x48\x89\x60\x10"  # movq %rsp, 0x10(%rax)
@@ -186,7 +202,7 @@ def patch_elf_4gate(
         stub_a += b"\x83\x78\x04\x01"  # cmpl $1, 4(%rax)
         stub_a += b"\x75" + bytes([len(spin_a)])
         stub_a += spin_a
-        stub_a += emit_restore_regs()
+        stub_a += emit_restore_regs(1)
         # Call real field_enter from here:
         call_fe_src = gate_a_rva + len(stub_a)
         stub_a += rel32(0xE8, call_fe_src, field_enter_rva)
@@ -198,7 +214,7 @@ def patch_elf_4gate(
         # 2. Emit __gate_B_field_<idx> (jumped to by marker_rva):
         gate_b_rva = gate_page_rva + len(gate_buf)
         stub_b = bytearray()
-        stub_b += emit_save_regs()
+        stub_b += emit_save_regs(2)
         # Record %rsp at Gate B -> 0x10(%rax)
         stub_b += b"\x48\x89\x60\x10"  # movq %rsp, 0x10(%rax)
         spin_b = bytearray(emit_gate_spin(30, 40))
@@ -210,7 +226,7 @@ def patch_elf_4gate(
         stub_b += b"\x75" + bytes([len(spin_b)])
         stub_b += spin_b
         stub_b += emit_rdtsc_to_offset(0x28)  # tsc_s2_start
-        stub_b += emit_restore_regs()
+        stub_b += emit_restore_regs(2)
         jmp_pretouch_src = gate_b_rva + len(stub_b)
         stub_b += rel32(0xE9, jmp_pretouch_src, pretouch_rva)
         gate_buf += stub_b
@@ -218,7 +234,7 @@ def patch_elf_4gate(
         # 3. Emit __gate_C_field_<idx> (jumped to by end of __atfield_pretouch_<id>):
         gate_c_rva = gate_page_rva + len(gate_buf)
         stub_c = bytearray()
-        stub_c += emit_save_regs()
+        stub_c += emit_save_regs(3)
         stub_c += emit_rdtsc_to_offset(0x30)  # tsc_s2_end
         # Restore %rsp if use_alt_rsp_in_s2 == 1:
         # cmpq $1, 8(%rax) (48 83 78 08 01); jne +4 (75 04); movq 0x10(%rax), %rsp (48 8B 60 10)
@@ -228,7 +244,7 @@ def patch_elf_4gate(
         stub_c += b"\x75" + bytes([len(spin_c)])
         stub_c += spin_c
         stub_c += emit_rdtsc_to_offset(0x38)  # tsc_s3_start
-        stub_c += emit_restore_regs()
+        stub_c += emit_restore_regs(3)
         jmp_cont_src = gate_c_rva + len(stub_c)
         stub_c += rel32(0xE9, jmp_cont_src, cont_rva)
         gate_buf += stub_c
@@ -239,14 +255,14 @@ def patch_elf_4gate(
         # First call real field_exit so closing CAS is part of S3!
         call_fx_src = gate_d_rva + len(stub_d)
         stub_d += rel32(0xE8, call_fx_src, field_exit_rva)
-        stub_d += emit_save_regs()
+        stub_d += emit_save_regs(4)
         stub_d += b"\x48\x89\x60\x48"  # movq %rsp, 0x48(%rax) (gateD_rsp)
         stub_d += emit_rdtsc_to_offset(0x40)  # tsc_s3_end
         spin_d = emit_gate_spin(70, 80)
         stub_d += b"\x83\x78\x04\x01"  # cmpl $1, 4(%rax)
         stub_d += b"\x75" + bytes([len(spin_d)])
         stub_d += spin_d
-        stub_d += emit_restore_regs()
+        stub_d += emit_restore_regs(4)
         jmp_back_d_src = gate_d_rva + len(stub_d)
         stub_d += rel32(0xE9, jmp_back_d_src, exit_call_rva + 5)
         gate_buf += stub_d

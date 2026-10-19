@@ -167,11 +167,52 @@ def introspect_u_c(sample: str, cfg: dict, ecalls: list[dict]) -> list[dict]:
     return ecalls
 
 
+
+def enrich_schema_bindings(ecalls: list[dict]) -> list[dict]:
+    TYPE_SIZES = {
+        "uint64_t": 8, "int64_t": 8, "size_t": 8, "unsigned long": 8, "long": 8,
+        "uint32_t": 4, "int32_t": 4, "int": 4, "unsigned int": 4,
+        "uint16_t": 2, "int16_t": 2, "short": 2,
+        "uint8_t": 1, "int8_t": 1, "char": 1, "unsigned char": 1, "void": 1,
+    }
+    for ec in ecalls:
+        ms = ec.get("ms_layout")
+        if not ms:
+            continue
+        flds = ms["fields"]
+        for param in ec["params"]:
+            ms_name = f"ms_{param['name']}"
+            if ms_name in flds:
+                param["ms_offset"] = flds[ms_name]["offset"]
+                param["ms_size"] = flds[ms_name]["size"]
+            attrs = param.get("attributes", [])
+            direction = "in" if any(a == "in" or a.startswith("in=") for a in attrs) else ("out" if any(a == "out" for a in attrs) else "val")
+            if any(a == "in" for a in attrs) and any(a == "out" for a in attrs):
+                direction = "inout"
+            param["direction"] = direction
+            param["is_string"] = any(a == "string" for a in attrs)
+            # Determine base element size for pointer
+            base_decl = re.sub(r"\bconst\b", "", param["decl"]).replace("*", "").strip()
+            base_type = " ".join(base_decl.split()[:-1])
+            param["elem_size"] = TYPE_SIZES.get(base_type, 1)
+            for a in attrs:
+                m_cnt = re.match(r"^(count|size)\s*=\s*(\w+)$", a)
+                if m_cnt:
+                    kind, ref_name = m_cnt.group(1), m_cnt.group(2)
+                    ref_ms = f"ms_{ref_name}"
+                    param["bound_kind"] = kind
+                    param["bound_param"] = ref_name
+                    if ref_ms in flds:
+                        param["bound_ms_offset"] = flds[ref_ms]["offset"]
+                        param["bound_ms_size"] = flds[ref_ms]["size"]
+    return ecalls
+
+
 def main() -> None:
     summary = {}
     for sample, cfg in SAMPLES.items():
         ecalls = parse_edl_ecalls(cfg["edl"].read_text())
-        ecalls = introspect_u_c(sample, cfg, ecalls)
+        ecalls = enrich_schema_bindings(introspect_u_c(sample, cfg, ecalls))
         out_path = DYN_ROOT / "targets" / sample / "edl_schema.json"
         payload = {
             "schema": "atfield-edl-schema-v1",

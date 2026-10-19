@@ -1,990 +1,4248 @@
 {
+  "artifacts": {
+    "dynamic": {
+      "final_elf_sha256": "5e303e2d3aa20adab0ac3b9ad2c7e32b5782783b205aee1ac4db1b7c33916149",
+      "gate_aex0_sha256": "1457f4342dca88f8b8ce492ee76e9237d6136dc6eb31871228d3d865731292f8",
+      "ready_bin_sha256": "20666d894deca928a80b8adbbb9290990878a4491bc8a7c59330fa12bd09f260",
+      "signed_aex0_sha256": "58e80a732d80c210a630ec4fd2fc9dd85f80e1178a645b61a40caa84a419b014",
+      "signed_aex1_sha256": "fbe78d669e8b5ce1974244cde696b17d7ec8ad078ebe378b23190d7112cf18a1",
+      "variant": "dynamic",
+      "workset_sha256": "c699944af0b1cfd3278f20b8d905dfef1c77cb4ed804a7aaf20956c1a25a01e2"
+    },
+    "dynamic_xr": {
+      "final_elf_sha256": "1799db464f5fa03db2267091b5c5485841fb51bd2943fca6382f44fb2a87ddfa",
+      "gate_aex0_sha256": "72f206dba8747afd5425b9c986746b18fcebb00161d227c3de8f97c236b95b3f",
+      "ready_bin_sha256": "20666d894deca928a80b8adbbb9290990878a4491bc8a7c59330fa12bd09f260",
+      "signed_aex0_sha256": "0b8ade7b09fbc6b9dd84ef7a1b2a6489313bb93a69c2302bfe42aa7a931c7840",
+      "signed_aex1_sha256": "95cf03460a9e2ca6a334703b685ffa343a8910ab6de5db2ad76772af19bf1929",
+      "variant": "dynamic_xr",
+      "workset_sha256": "7d266fb97626294cad189430334eeeba47482997f97dc5753286bff4760bf9f9"
+    }
+  },
   "closure_breakdown": {
     "0xd9e7e566ea39a756": {
       "all_business_reg_pages": 1127,
-      "closure_dlmalloc_heap_added": 2,
-      "closure_reach_code_added": 1,
-      "closure_reach_data_added": 0,
-      "closure_stack_td_added": 4,
-      "closure_stt_object_added": 0,
-      "dynamic_explored_obs_pages": 230,
-      "final_field_target_pages": 242,
+      "call_statistics": {
+        "expected_rejection_entries": 0,
+        "field_entries": 1097,
+        "succeeded_entries": 1097,
+        "transport_error_entries": 0
+      },
+      "dynamic_explored_obs_effects": 797,
+      "dynamic_explored_obs_pages": 554,
+      "final_field_target_pages": 566,
+      "four_layer_attribution": {
+        "layer0_first_field_call": {
+          "page_effects": 20,
+          "pages": 16
+        },
+        "layer1_full_existing_host": {
+          "added_effects_over_layer0": 413,
+          "added_pages_over_layer0": 214,
+          "page_effects": 433,
+          "pages": 230
+        },
+        "layer2_generic_schema_explorer": {
+          "added_effects_beyond_full_host_layer1": 364,
+          "added_pages_beyond_full_host_layer1": 324,
+          "cumulative_effects_after_layer2": 797,
+          "cumulative_pages_after_layer2": 554,
+          "independent_added_pages_over_layer0": 538,
+          "independent_pages_from_minimal_seed": 554
+        },
+        "layer3_domain_assisted": {
+          "added_effects_beyond_layer2": 0,
+          "added_pages_beyond_layer2": 0,
+          "cumulative_effects_after_layer3": 797,
+          "cumulative_pages_after_layer3": 554
+        }
+      },
       "function": "sabd_lookup_hash",
+      "heuristic_assist_breakdown": {
+        "direct_call_depth4_code_added": 1,
+        "direct_call_rip_data_added": 0,
+        "dlmalloc_heap_and_frontier_added": 2,
+        "heap_pread_failure_runs": 0,
+        "heap_walk_truncated_runs": 0,
+        "heuristic_parameters": {
+          "direct_call_max_depth": 4,
+          "heap_top_frontier_pages": 2,
+          "stack_below_min_rsp_margin_pages": 4
+        },
+        "pruned_noreturn_callees": [
+          "__stack_chk_fail",
+          "abort",
+          "field_exit"
+        ],
+        "stack_margin_and_td_added": 4,
+        "stt_object_span_added": 0,
+        "unresolved_indirect_branch_sites_in_subgraph": 1
+      },
       "raw_single_run_pages": 16,
-      "reduction_vs_all_reg_pct": 78.53,
-      "s1_boundary_pages": 38
+      "reduction_vs_all_reg_pct": 49.78,
+      "rx_pages_kept_xr_in_group_b": 12,
+      "rx_pages_refined_to_x_in_group_c": 8,
+      "s0_s1_epilogue_bridge_pages": 5
     }
   },
-  "sample": "signal-cds",
-  "schema": "atfield-witness-ledger-v1",
-  "stages": [
+  "ecall_statistics": {
+    "0": {
+      "ecall_invocations": 1110,
+      "field_entering_calls": 1097,
+      "nonzero_retval_calls": 7,
+      "outer_rejected_or_nofield_calls": 13,
+      "succeeded_calls": 1103,
+      "transport_error_calls": 0
+    }
+  },
+  "profile_elf_sha256": "d3673190dadcffaf4b3206ad33bdf769de0414d47a35b6a8f7886258308eaf42",
+  "runs": [
     {
-      "description": "Unmodified host workflow (empty, small, dup, 262144-record scale)",
-      "new_pages_discovered": 230,
-      "per_field_obs_counts": {
-        "0xd9e7e566ea39a756": 230
-      },
+      "description": "Unmodified host binary full execution (first entry per Field = Layer 0; full run = Layer 1)",
+      "layer": "layer1_full_host",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 433,
       "records_collected": 6,
-      "stage": "stage0_baseline"
+      "run_id": "layer0_and_layer1_unmodified_host",
+      "subkind": "unmodified_host_full_trace",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer0_and_layer1_unmodified_host.jsonl"
     },
     {
-      "description": "Scale & collision sweep: (16,16), (128,64), (512,128) all-hit, (1024,256) all-miss, (2048,512) hash-bucket dups, (4096,1024)",
-      "new_pages_discovered": 0,
-      "per_field_obs_counts": {
-        "0xd9e7e566ea39a756": 230
-      },
-      "records_collected": 12,
-      "stage": "stage1_scales_and_collisions"
+      "description": "Generic edl_schema count=/size= doubling schedule on ecall_lookup_hash",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 364,
+      "records_collected": 16,
+      "run_id": "layer2_schema_scale_ecall0",
+      "subkind": "adaptive_bound_scale",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_schema_scale_ecall0.jsonl"
+    },
+    {
+      "description": "Generic edl_schema scalar boundaries & input buffer bit-flips on ecall_lookup_hash",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 50,
+      "run_id": "layer2_schema_val_xor_ecall0",
+      "subkind": "schema_scalar_and_bitflip",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_schema_val_xor_ecall0.jsonl"
+    },
+    {
+      "description": "Generic edl_schema NULL pointer injection on ecall_lookup_hash",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 8,
+      "run_id": "layer2_schema_null_ecall0",
+      "subkind": "schema_null_pointer",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_schema_null_ecall0.jsonl"
+    },
+    {
+      "description": "Generic 1024-step full-call history exploration on ecall_lookup_hash (0 calls skipped)",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1030,
+      "run_id": "layer2_generic_history_1024_ecall0",
+      "subkind": "exponential_history_depth_1024",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_generic_history_1024_ecall0.jsonl"
     }
   ],
+  "sample": "signal-cds",
+  "schema": "atfield-witness-ledger-v2",
   "witnesses": [
     {
       "call_seq": 0,
       "ecall_index": 0,
       "field_id": "0xd9e7e566ea39a756",
       "intervention": "",
-      "new_pages": [
+      "layer": "layer0_first_call",
+      "new_effects": [
         {
-          "ad": "A",
-          "rva": "0x0"
+          "effect": "A",
+          "rva": "0x0",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2000"
+          "effect": "A",
+          "rva": "0x2000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x5000"
+          "effect": "A",
+          "rva": "0x5000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xa000"
+          "effect": "A",
+          "rva": "0xa000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xb000"
+          "effect": "A",
+          "rva": "0xb000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xc000"
+          "effect": "A",
+          "rva": "0xc000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xd000"
+          "effect": "A",
+          "rva": "0xd000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xe000"
+          "effect": "A",
+          "rva": "0xe000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xf000"
+          "effect": "A",
+          "rva": "0xf000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x10000"
+          "effect": "A",
+          "rva": "0x10000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x11000"
+          "effect": "A",
+          "rva": "0x11000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x12000"
+          "effect": "D",
+          "rva": "0x11000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x25000"
+          "effect": "A",
+          "rva": "0x12000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x2a000"
+          "effect": "A",
+          "rva": "0x25000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x479000"
+          "effect": "D",
+          "rva": "0x25000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "A",
-          "rva": "0x49d000"
+          "effect": "A",
+          "rva": "0x2a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x2a000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x479000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x479000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x49d000",
+          "upgrade_from_A_to_D": false
         }
       ],
+      "run_id": "layer0_and_layer1_unmodified_host",
       "selector_seq": 0,
-      "stage": "stage0_baseline",
+      "subkind": "unmodified_host_full_trace",
       "tag": "host_normal",
+      "total_field_obs_effects": 20,
       "total_field_obs_pages": 16,
-      "tsc_s3": 36224,
-      "witness_id": "signal-cds_stage0_baseline_seq0_39a756"
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer0_and_layer1_unmodified_host.jsonl",
+      "tsc_s3": 35486,
+      "witness_id": "signal-cds_layer0_and_layer1_unmodified_host_seq0_39a756"
     },
     {
       "call_seq": 5,
       "ecall_index": 0,
       "field_id": "0xd9e7e566ea39a756",
       "intervention": "",
-      "new_pages": [
+      "layer": "layer1_full_host",
+      "new_effects": [
         {
-          "ad": "A",
-          "rva": "0x2b000"
+          "effect": "A",
+          "rva": "0x2b000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2c000"
+          "effect": "A",
+          "rva": "0x2c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2d000"
+          "effect": "A",
+          "rva": "0x2d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2e000"
+          "effect": "A",
+          "rva": "0x2e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2f000"
+          "effect": "A",
+          "rva": "0x2f000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x30000"
+          "effect": "A",
+          "rva": "0x30000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x31000"
+          "effect": "A",
+          "rva": "0x31000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x32000"
+          "effect": "A",
+          "rva": "0x32000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x33000"
+          "effect": "A",
+          "rva": "0x33000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x34000"
+          "effect": "A",
+          "rva": "0x34000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x35000"
+          "effect": "A",
+          "rva": "0x35000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x36000"
+          "effect": "A",
+          "rva": "0x36000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x37000"
+          "effect": "A",
+          "rva": "0x37000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x38000"
+          "effect": "A",
+          "rva": "0x38000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x39000"
+          "effect": "A",
+          "rva": "0x39000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x3a000"
+          "effect": "A",
+          "rva": "0x3a000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x3b000"
+          "effect": "D",
+          "rva": "0x3a000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x3c000"
+          "effect": "A",
+          "rva": "0x3b000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x3d000"
+          "effect": "D",
+          "rva": "0x3b000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x3e000"
+          "effect": "A",
+          "rva": "0x3c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x3f000"
+          "effect": "D",
+          "rva": "0x3c000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x40000"
+          "effect": "A",
+          "rva": "0x3d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x41000"
+          "effect": "D",
+          "rva": "0x3d000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x42000"
+          "effect": "A",
+          "rva": "0x3e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x43000"
+          "effect": "D",
+          "rva": "0x3e000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x44000"
+          "effect": "A",
+          "rva": "0x3f000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x45000"
+          "effect": "D",
+          "rva": "0x3f000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x46000"
+          "effect": "A",
+          "rva": "0x40000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x47000"
+          "effect": "D",
+          "rva": "0x40000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x48000"
+          "effect": "A",
+          "rva": "0x41000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x49000"
+          "effect": "D",
+          "rva": "0x41000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x4a000"
+          "effect": "A",
+          "rva": "0x42000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x4b000"
+          "effect": "D",
+          "rva": "0x42000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x4c000"
+          "effect": "A",
+          "rva": "0x43000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x4d000"
+          "effect": "D",
+          "rva": "0x43000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x4e000"
+          "effect": "A",
+          "rva": "0x44000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x4f000"
+          "effect": "D",
+          "rva": "0x44000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x50000"
+          "effect": "A",
+          "rva": "0x45000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x51000"
+          "effect": "D",
+          "rva": "0x45000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x52000"
+          "effect": "A",
+          "rva": "0x46000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x53000"
+          "effect": "D",
+          "rva": "0x46000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x54000"
+          "effect": "A",
+          "rva": "0x47000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x55000"
+          "effect": "D",
+          "rva": "0x47000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x56000"
+          "effect": "A",
+          "rva": "0x48000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x57000"
+          "effect": "D",
+          "rva": "0x48000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x58000"
+          "effect": "A",
+          "rva": "0x49000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x59000"
+          "effect": "D",
+          "rva": "0x49000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x5a000"
+          "effect": "A",
+          "rva": "0x4a000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x5b000"
+          "effect": "D",
+          "rva": "0x4a000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x5c000"
+          "effect": "A",
+          "rva": "0x4b000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x5d000"
+          "effect": "D",
+          "rva": "0x4b000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x5e000"
+          "effect": "A",
+          "rva": "0x4c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x5f000"
+          "effect": "D",
+          "rva": "0x4c000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x60000"
+          "effect": "A",
+          "rva": "0x4d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x61000"
+          "effect": "D",
+          "rva": "0x4d000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x62000"
+          "effect": "A",
+          "rva": "0x4e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x63000"
+          "effect": "D",
+          "rva": "0x4e000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x64000"
+          "effect": "A",
+          "rva": "0x4f000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x65000"
+          "effect": "D",
+          "rva": "0x4f000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x66000"
+          "effect": "A",
+          "rva": "0x50000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x67000"
+          "effect": "D",
+          "rva": "0x50000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x68000"
+          "effect": "A",
+          "rva": "0x51000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x69000"
+          "effect": "D",
+          "rva": "0x51000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x6a000"
+          "effect": "A",
+          "rva": "0x52000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x6b000"
+          "effect": "D",
+          "rva": "0x52000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x6c000"
+          "effect": "A",
+          "rva": "0x53000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x6d000"
+          "effect": "D",
+          "rva": "0x53000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x6e000"
+          "effect": "A",
+          "rva": "0x54000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x6f000"
+          "effect": "D",
+          "rva": "0x54000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x70000"
+          "effect": "A",
+          "rva": "0x55000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x71000"
+          "effect": "D",
+          "rva": "0x55000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x72000"
+          "effect": "A",
+          "rva": "0x56000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x73000"
+          "effect": "D",
+          "rva": "0x56000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x74000"
+          "effect": "A",
+          "rva": "0x57000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x75000"
+          "effect": "D",
+          "rva": "0x57000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x76000"
+          "effect": "A",
+          "rva": "0x58000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x77000"
+          "effect": "D",
+          "rva": "0x58000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x78000"
+          "effect": "A",
+          "rva": "0x59000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x79000"
+          "effect": "D",
+          "rva": "0x59000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x7a000"
+          "effect": "A",
+          "rva": "0x5a000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x7b000"
+          "effect": "D",
+          "rva": "0x5a000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x7c000"
+          "effect": "A",
+          "rva": "0x5b000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x7d000"
+          "effect": "D",
+          "rva": "0x5b000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x7e000"
+          "effect": "A",
+          "rva": "0x5c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x7f000"
+          "effect": "D",
+          "rva": "0x5c000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x80000"
+          "effect": "A",
+          "rva": "0x5d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x81000"
+          "effect": "D",
+          "rva": "0x5d000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x82000"
+          "effect": "A",
+          "rva": "0x5e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x83000"
+          "effect": "D",
+          "rva": "0x5e000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x84000"
+          "effect": "A",
+          "rva": "0x5f000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x85000"
+          "effect": "D",
+          "rva": "0x5f000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x86000"
+          "effect": "A",
+          "rva": "0x60000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x87000"
+          "effect": "D",
+          "rva": "0x60000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x88000"
+          "effect": "A",
+          "rva": "0x61000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x89000"
+          "effect": "D",
+          "rva": "0x61000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x8a000"
+          "effect": "A",
+          "rva": "0x62000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x8b000"
+          "effect": "D",
+          "rva": "0x62000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x8c000"
+          "effect": "A",
+          "rva": "0x63000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x8d000"
+          "effect": "D",
+          "rva": "0x63000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x8e000"
+          "effect": "A",
+          "rva": "0x64000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x8f000"
+          "effect": "D",
+          "rva": "0x64000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x90000"
+          "effect": "A",
+          "rva": "0x65000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x91000"
+          "effect": "D",
+          "rva": "0x65000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x92000"
+          "effect": "A",
+          "rva": "0x66000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x93000"
+          "effect": "D",
+          "rva": "0x66000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x94000"
+          "effect": "A",
+          "rva": "0x67000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x95000"
+          "effect": "D",
+          "rva": "0x67000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x96000"
+          "effect": "A",
+          "rva": "0x68000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x97000"
+          "effect": "D",
+          "rva": "0x68000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x98000"
+          "effect": "A",
+          "rva": "0x69000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x99000"
+          "effect": "D",
+          "rva": "0x69000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x9a000"
+          "effect": "A",
+          "rva": "0x6a000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x9b000"
+          "effect": "D",
+          "rva": "0x6a000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x9c000"
+          "effect": "A",
+          "rva": "0x6b000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x9d000"
+          "effect": "D",
+          "rva": "0x6b000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x9e000"
+          "effect": "A",
+          "rva": "0x6c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x9f000"
+          "effect": "D",
+          "rva": "0x6c000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xa0000"
+          "effect": "A",
+          "rva": "0x6d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xa1000"
+          "effect": "D",
+          "rva": "0x6d000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xa2000"
+          "effect": "A",
+          "rva": "0x6e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xa3000"
+          "effect": "D",
+          "rva": "0x6e000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xa4000"
+          "effect": "A",
+          "rva": "0x6f000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xa5000"
+          "effect": "D",
+          "rva": "0x6f000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xa6000"
+          "effect": "A",
+          "rva": "0x70000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xa7000"
+          "effect": "D",
+          "rva": "0x70000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xa8000"
+          "effect": "A",
+          "rva": "0x71000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xa9000"
+          "effect": "D",
+          "rva": "0x71000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xaa000"
+          "effect": "A",
+          "rva": "0x72000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xab000"
+          "effect": "D",
+          "rva": "0x72000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xac000"
+          "effect": "A",
+          "rva": "0x73000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xad000"
+          "effect": "D",
+          "rva": "0x73000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xae000"
+          "effect": "A",
+          "rva": "0x74000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xaf000"
+          "effect": "D",
+          "rva": "0x74000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xb0000"
+          "effect": "A",
+          "rva": "0x75000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xb1000"
+          "effect": "D",
+          "rva": "0x75000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xb2000"
+          "effect": "A",
+          "rva": "0x76000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xb3000"
+          "effect": "D",
+          "rva": "0x76000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xb4000"
+          "effect": "A",
+          "rva": "0x77000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xb5000"
+          "effect": "D",
+          "rva": "0x77000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xb6000"
+          "effect": "A",
+          "rva": "0x78000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xb7000"
+          "effect": "D",
+          "rva": "0x78000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xb8000"
+          "effect": "A",
+          "rva": "0x79000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xb9000"
+          "effect": "D",
+          "rva": "0x79000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xba000"
+          "effect": "A",
+          "rva": "0x7a000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xbb000"
+          "effect": "D",
+          "rva": "0x7a000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xbc000"
+          "effect": "A",
+          "rva": "0x7b000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xbd000"
+          "effect": "D",
+          "rva": "0x7b000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xbe000"
+          "effect": "A",
+          "rva": "0x7c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xbf000"
+          "effect": "D",
+          "rva": "0x7c000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xc0000"
+          "effect": "A",
+          "rva": "0x7d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xc1000"
+          "effect": "D",
+          "rva": "0x7d000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xc2000"
+          "effect": "A",
+          "rva": "0x7e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xc3000"
+          "effect": "D",
+          "rva": "0x7e000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xc4000"
+          "effect": "A",
+          "rva": "0x7f000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xc5000"
+          "effect": "D",
+          "rva": "0x7f000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xc6000"
+          "effect": "A",
+          "rva": "0x80000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xc7000"
+          "effect": "D",
+          "rva": "0x80000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xc8000"
+          "effect": "A",
+          "rva": "0x81000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xc9000"
+          "effect": "D",
+          "rva": "0x81000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xca000"
+          "effect": "A",
+          "rva": "0x82000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xcb000"
+          "effect": "D",
+          "rva": "0x82000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xcc000"
+          "effect": "A",
+          "rva": "0x83000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xcd000"
+          "effect": "D",
+          "rva": "0x83000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xce000"
+          "effect": "A",
+          "rva": "0x84000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xcf000"
+          "effect": "D",
+          "rva": "0x84000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xd0000"
+          "effect": "A",
+          "rva": "0x85000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xd1000"
+          "effect": "D",
+          "rva": "0x85000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xd2000"
+          "effect": "A",
+          "rva": "0x86000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xd3000"
+          "effect": "D",
+          "rva": "0x86000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xd4000"
+          "effect": "A",
+          "rva": "0x87000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xd5000"
+          "effect": "D",
+          "rva": "0x87000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xd6000"
+          "effect": "A",
+          "rva": "0x88000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xd7000"
+          "effect": "D",
+          "rva": "0x88000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xd8000"
+          "effect": "A",
+          "rva": "0x89000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xd9000"
+          "effect": "D",
+          "rva": "0x89000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xda000"
+          "effect": "A",
+          "rva": "0x8a000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xdb000"
+          "effect": "D",
+          "rva": "0x8a000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xdc000"
+          "effect": "A",
+          "rva": "0x8b000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xdd000"
+          "effect": "D",
+          "rva": "0x8b000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xde000"
+          "effect": "A",
+          "rva": "0x8c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xdf000"
+          "effect": "D",
+          "rva": "0x8c000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xe0000"
+          "effect": "A",
+          "rva": "0x8d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xe1000"
+          "effect": "D",
+          "rva": "0x8d000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xe2000"
+          "effect": "A",
+          "rva": "0x8e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xe3000"
+          "effect": "D",
+          "rva": "0x8e000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xe4000"
+          "effect": "A",
+          "rva": "0x8f000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xe5000"
+          "effect": "D",
+          "rva": "0x8f000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xe6000"
+          "effect": "A",
+          "rva": "0x90000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xe7000"
+          "effect": "D",
+          "rva": "0x90000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xe8000"
+          "effect": "A",
+          "rva": "0x91000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xe9000"
+          "effect": "D",
+          "rva": "0x91000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xea000"
+          "effect": "A",
+          "rva": "0x92000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xeb000"
+          "effect": "D",
+          "rva": "0x92000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xec000"
+          "effect": "A",
+          "rva": "0x93000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xed000"
+          "effect": "D",
+          "rva": "0x93000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xee000"
+          "effect": "A",
+          "rva": "0x94000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xef000"
+          "effect": "D",
+          "rva": "0x94000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xf0000"
+          "effect": "A",
+          "rva": "0x95000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xf1000"
+          "effect": "D",
+          "rva": "0x95000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xf2000"
+          "effect": "A",
+          "rva": "0x96000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xf3000"
+          "effect": "D",
+          "rva": "0x96000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xf4000"
+          "effect": "A",
+          "rva": "0x97000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xf5000"
+          "effect": "D",
+          "rva": "0x97000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xf6000"
+          "effect": "A",
+          "rva": "0x98000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xf7000"
+          "effect": "D",
+          "rva": "0x98000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xf8000"
+          "effect": "A",
+          "rva": "0x99000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xf9000"
+          "effect": "D",
+          "rva": "0x99000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xfa000"
+          "effect": "A",
+          "rva": "0x9a000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xfb000"
+          "effect": "D",
+          "rva": "0x9a000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xfc000"
+          "effect": "A",
+          "rva": "0x9b000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xfd000"
+          "effect": "D",
+          "rva": "0x9b000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0xfe000"
+          "effect": "A",
+          "rva": "0x9c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0xff000"
+          "effect": "D",
+          "rva": "0x9c000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x100000"
+          "effect": "A",
+          "rva": "0x9d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x9d000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x9e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x9e000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x9f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x9f000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xa0000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xa0000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xa1000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xa1000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xa2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xa2000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xa3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xa3000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xa4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xa4000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xa5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xa5000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xa6000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xa6000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xa7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xa7000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xa8000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xa8000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xa9000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xa9000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xaa000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xaa000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xab000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xab000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xac000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xac000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xad000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xad000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xae000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xae000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xaf000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xaf000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xb0000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xb0000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xb1000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xb1000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xb2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xb2000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xb3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xb3000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xb4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xb4000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xb5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xb5000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xb6000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xb6000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xb7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xb7000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xb8000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xb8000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xb9000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xb9000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xba000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xba000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xbb000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xbb000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xbc000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xbc000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xbd000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xbd000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xbe000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xbe000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xbf000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xbf000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xc0000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xc0000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xc1000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xc1000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xc2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xc2000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xc3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xc3000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xc4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xc4000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xc5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xc5000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xc6000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xc6000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xc7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xc7000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xc8000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xc8000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xc9000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xc9000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xca000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xca000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xcb000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xcb000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xcc000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xcc000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xcd000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xcd000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xce000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xce000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xcf000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xcf000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xd0000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xd0000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xd1000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xd1000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xd2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xd2000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xd3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xd3000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xd4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xd4000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xd5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xd5000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xd6000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xd6000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xd7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xd7000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xd8000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xd8000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xd9000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xd9000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xda000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xda000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xdb000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xdb000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xdc000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xdc000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xdd000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xdd000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xde000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xde000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xdf000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xdf000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xe0000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xe0000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xe1000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xe1000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xe2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xe2000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xe3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xe3000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xe4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xe4000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xe5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xe5000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xe6000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xe6000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xe7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xe7000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xe8000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xe8000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xe9000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xe9000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xea000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xea000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xeb000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xeb000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xec000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xec000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xed000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xed000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xee000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xee000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xef000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xef000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xf0000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xf0000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xf1000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xf1000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xf2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xf2000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xf3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xf3000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xf4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xf4000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xf5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xf5000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xf6000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xf6000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xf7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xf7000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xf8000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xf8000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xf9000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xf9000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xfa000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xfa000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xfb000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xfb000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xfc000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xfc000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xfd000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xfd000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xfe000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xfe000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0xff000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0xff000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x100000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x100000",
+          "upgrade_from_A_to_D": true
         }
       ],
+      "run_id": "layer0_and_layer1_unmodified_host",
       "selector_seq": 5,
-      "stage": "stage0_baseline",
+      "subkind": "unmodified_host_full_trace",
       "tag": "host_normal",
+      "total_field_obs_effects": 433,
       "total_field_obs_pages": 230,
-      "tsc_s3": 959868070,
-      "witness_id": "signal-cds_stage0_baseline_seq5_39a756"
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer0_and_layer1_unmodified_host.jsonl",
+      "tsc_s3": 953541658,
+      "witness_id": "signal-cds_layer0_and_layer1_unmodified_host_seq5_39a756"
+    },
+    {
+      "call_seq": 0,
+      "ecall_index": 0,
+      "field_id": "0xd9e7e566ea39a756",
+      "intervention": "scale_bound:0:0:48:16:8:64:8:8:0:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:64:8:8:1:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:64:8:8:2:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:0:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:1:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:2:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:1:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:2:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:1:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:2:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:16384:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:65536:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:262144:8:8:0:32:4:1024:24:8:40:1",
+      "layer": "layer2_generic_schema",
+      "new_effects": [
+        {
+          "effect": "D",
+          "rva": "0x2b000",
+          "upgrade_from_A_to_D": true
+        }
+      ],
+      "run_id": "layer2_schema_scale_ecall0",
+      "selector_seq": 0,
+      "subkind": "adaptive_bound_scale",
+      "tag": "schema_scale_cnt_64_q_64_m_0",
+      "total_field_obs_effects": 434,
+      "total_field_obs_pages": 230,
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_schema_scale_ecall0.jsonl",
+      "tsc_s3": 94592,
+      "witness_id": "signal-cds_layer2_schema_scale_ecall0_seq0_39a756"
+    },
+    {
+      "call_seq": 0,
+      "ecall_index": 0,
+      "field_id": "0xd9e7e566ea39a756",
+      "intervention": "scale_bound:0:0:48:16:8:64:8:8:0:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:64:8:8:1:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:64:8:8:2:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:0:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:1:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:2:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:1:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:2:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:1:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:2:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:16384:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:65536:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:262144:8:8:0:32:4:1024:24:8:40:1",
+      "layer": "layer2_generic_schema",
+      "new_effects": [
+        {
+          "effect": "D",
+          "rva": "0x2c000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "D",
+          "rva": "0x2d000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "D",
+          "rva": "0x2e000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "D",
+          "rva": "0x2f000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "D",
+          "rva": "0x30000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "D",
+          "rva": "0x31000",
+          "upgrade_from_A_to_D": true
+        }
+      ],
+      "run_id": "layer2_schema_scale_ecall0",
+      "selector_seq": 0,
+      "subkind": "adaptive_bound_scale",
+      "tag": "schema_scale_cnt_256_q_256_m_0",
+      "total_field_obs_effects": 440,
+      "total_field_obs_pages": 230,
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_schema_scale_ecall0.jsonl",
+      "tsc_s3": 965036,
+      "witness_id": "signal-cds_layer2_schema_scale_ecall0_seq0_39a756"
+    },
+    {
+      "call_seq": 0,
+      "ecall_index": 0,
+      "field_id": "0xd9e7e566ea39a756",
+      "intervention": "scale_bound:0:0:48:16:8:64:8:8:0:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:64:8:8:1:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:64:8:8:2:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:0:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:1:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:2:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:1:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:2:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:1:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:2:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:16384:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:65536:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:262144:8:8:0:32:4:1024:24:8:40:1",
+      "layer": "layer2_generic_schema",
+      "new_effects": [
+        {
+          "effect": "D",
+          "rva": "0x32000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "D",
+          "rva": "0x33000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "D",
+          "rva": "0x34000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "D",
+          "rva": "0x35000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "D",
+          "rva": "0x36000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "D",
+          "rva": "0x37000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "D",
+          "rva": "0x38000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "D",
+          "rva": "0x39000",
+          "upgrade_from_A_to_D": true
+        }
+      ],
+      "run_id": "layer2_schema_scale_ecall0",
+      "selector_seq": 0,
+      "subkind": "adaptive_bound_scale",
+      "tag": "schema_scale_cnt_1024_q_1024_m_0",
+      "total_field_obs_effects": 448,
+      "total_field_obs_pages": 230,
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_schema_scale_ecall0.jsonl",
+      "tsc_s3": 15571968,
+      "witness_id": "signal-cds_layer2_schema_scale_ecall0_seq0_39a756"
+    },
+    {
+      "call_seq": 0,
+      "ecall_index": 0,
+      "field_id": "0xd9e7e566ea39a756",
+      "intervention": "scale_bound:0:0:48:16:8:64:8:8:0:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:64:8:8:1:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:64:8:8:2:32:4:64:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:0:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:1:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:256:8:8:2:32:4:256:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:1:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:1024:8:8:2:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:1:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:4096:8:8:2:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:16384:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:65536:8:8:0:32:4:1024:24:8:40:1;scale_bound:0:0:48:16:8:262144:8:8:0:32:4:1024:24:8:40:1",
+      "layer": "layer2_generic_schema",
+      "new_effects": [
+        {
+          "effect": "A",
+          "rva": "0x101000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x102000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x103000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x104000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x105000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x106000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x107000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x108000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x109000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x10a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x10b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x10c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x10d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x10e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x10f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x110000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x111000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x112000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x113000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x114000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x115000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x116000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x117000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x118000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x119000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x11a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x11b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x11c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x11d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x11e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x11f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x120000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x121000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x122000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x123000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x124000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x125000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x126000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x127000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x128000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x129000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x12a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x12b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x12c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x12d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x12e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x12f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x130000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x131000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x132000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x133000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x134000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x135000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x136000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x137000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x138000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x139000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x13a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x13b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x13c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x13d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x13e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x13f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x140000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x141000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x142000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x143000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x144000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x145000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x146000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x147000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x148000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x149000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x14a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x14b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x14c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x14d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x14e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x14f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x150000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x151000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x152000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x153000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x154000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x155000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x156000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x157000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x158000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x159000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x15a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x15b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x15c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x15d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x15e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x15f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x160000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x161000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x162000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x163000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x164000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x165000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x166000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x167000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x168000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x169000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x16a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x16b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x16c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x16d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x16e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x16f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x170000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x171000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x172000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x173000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x174000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x175000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x176000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x177000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x178000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x179000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x17a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x17b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x17c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x17d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x17e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x17f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x180000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x181000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x182000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x183000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x184000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x185000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x186000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x187000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x188000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x189000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x18a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x18b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x18c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x18d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x18e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x18f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x190000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x191000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x192000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x193000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x194000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x195000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x196000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x197000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x198000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x199000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x19a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x19b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x19c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x19d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x19e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x19f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a0000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a1000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a6000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a8000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1a9000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1aa000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ab000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ac000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ad000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ae000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1af000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1b0000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1b1000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1b2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1b3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1b4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1b5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1b6000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1b7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1b8000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1b9000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ba000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1bb000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1bc000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1bd000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1be000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1bf000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c0000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c1000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c6000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c8000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1c9000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ca000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1cb000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1cc000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1cd000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ce000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1cf000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d0000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d1000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d6000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d8000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1d9000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1da000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1db000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1dc000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1dd000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1de000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1df000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1e0000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1e1000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1e2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1e3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1e4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1e5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1e6000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1e7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1e8000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1e9000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ea000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1eb000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ec000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ed000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ee000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ef000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1f0000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1f1000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1f2000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1f3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1f4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1f5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1f6000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1f7000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1f8000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1f9000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1fa000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1fb000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1fc000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1fd000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1fe000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x1ff000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x200000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x201000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x202000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x203000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x204000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x205000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x206000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x207000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x208000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x209000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x20a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x20b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x20c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x20d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x20e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x20f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x210000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x211000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x212000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x213000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x214000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x215000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x216000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x217000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x218000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x219000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x21a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x21b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x21c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x21d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x21e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x21f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x220000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x221000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x222000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x223000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x224000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x225000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x226000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x227000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x228000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x229000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x22a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x22b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x22c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x22c000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x22d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x22d000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x22e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x22e000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x22f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x22f000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x230000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x230000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x231000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x231000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x232000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x232000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x233000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x233000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x234000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x234000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x235000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x235000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x236000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x236000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x237000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x237000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x238000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x238000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x239000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x239000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x23a000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x23a000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x23b000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x23b000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x23c000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x23c000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x23d000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x23d000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x23e000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x23e000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x23f000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x23f000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x240000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x240000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x241000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x241000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x242000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x242000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x243000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x243000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x244000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x244000",
+          "upgrade_from_A_to_D": true
+        }
+      ],
+      "run_id": "layer2_schema_scale_ecall0",
+      "selector_seq": 0,
+      "subkind": "adaptive_bound_scale",
+      "tag": "schema_scale_cnt_262144_q_1024_m_0",
+      "total_field_obs_effects": 797,
+      "total_field_obs_pages": 554,
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/signal-cds/layer2_schema_scale_ecall0.jsonl",
+      "tsc_s3": 23982860,
+      "witness_id": "signal-cds_layer2_schema_scale_ecall0_seq0_39a756"
     }
   ]
 }

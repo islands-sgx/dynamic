@@ -1,6 +1,8 @@
 {
   "edl_manifest": "/home/meandssh/islands-sgx/sample/real/sgxwallet/secure_enclave.edl",
+  "edl_manifest_sha256": "536f14f71505eb03f711779ea766cd7193e9e6f78c710790107c007563177a46",
   "field_manifest": "/home/meandssh/islands-sgx/dynamic/targets/sgxwallet/fields.json",
+  "field_manifest_sha256": "9e51f511f14c1bfae1563bf69d4abd478564ac435244f73251840dd3f5a42b0f",
   "fields": [
     {
       "function": "generate_sek_field",
@@ -77,19 +79,6 @@
           "relro": false
         },
         {
-          "data_anchor_rva": 36864,
-          "data_width": 1,
-          "effects": [
-            "R"
-          ],
-          "max_permissions": 1,
-          "origins": [
-            "PT_LOAD[2]"
-          ],
-          "page_rva": 36864,
-          "relro": false
-        },
-        {
           "data_anchor_rva": 40960,
           "data_width": 1,
           "effects": [
@@ -100,19 +89,6 @@
             "PT_LOAD[2]"
           ],
           "page_rva": 40960,
-          "relro": false
-        },
-        {
-          "data_anchor_rva": 45056,
-          "data_width": 1,
-          "effects": [
-            "R"
-          ],
-          "max_permissions": 1,
-          "origins": [
-            "PT_LOAD[2]"
-          ],
-          "page_rva": 45056,
           "relro": false
         },
         {
@@ -2348,6 +2324,32 @@
           "relro": false
         },
         {
+          "data_anchor_rva": 28672,
+          "data_width": 1,
+          "effects": [
+            "R"
+          ],
+          "max_permissions": 1,
+          "origins": [
+            "PT_LOAD[2]"
+          ],
+          "page_rva": 28672,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 32768,
+          "data_width": 1,
+          "effects": [
+            "R"
+          ],
+          "max_permissions": 1,
+          "origins": [
+            "PT_LOAD[2]"
+          ],
+          "page_rva": 32768,
+          "relro": false
+        },
+        {
           "data_anchor_rva": 36864,
           "data_width": 1,
           "effects": [
@@ -3645,20 +3647,6 @@
           "relro": false
         },
         {
-          "data_anchor_rva": 2752512,
-          "data_width": 1,
-          "effects": [
-            "R",
-            "W"
-          ],
-          "max_permissions": 3,
-          "origins": [
-            "PT_LOAD[5]"
-          ],
-          "page_rva": 2752512,
-          "relro": false
-        },
-        {
           "data_anchor_rva": 2756608,
           "data_width": 1,
           "effects": [
@@ -3942,6 +3930,32 @@
             "PT_LOAD[2]"
           ],
           "page_rva": 24576,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 28672,
+          "data_width": 1,
+          "effects": [
+            "R"
+          ],
+          "max_permissions": 1,
+          "origins": [
+            "PT_LOAD[2]"
+          ],
+          "page_rva": 28672,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 32768,
+          "data_width": 1,
+          "effects": [
+            "R"
+          ],
+          "max_permissions": 1,
+          "origins": [
+            "PT_LOAD[2]"
+          ],
+          "page_rva": 32768,
           "relro": false
         },
         {
@@ -5439,6 +5453,32 @@
           "relro": false
         },
         {
+          "data_anchor_rva": 28672,
+          "data_width": 1,
+          "effects": [
+            "R"
+          ],
+          "max_permissions": 1,
+          "origins": [
+            "PT_LOAD[2]"
+          ],
+          "page_rva": 28672,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 32768,
+          "data_width": 1,
+          "effects": [
+            "R"
+          ],
+          "max_permissions": 1,
+          "origins": [
+            "PT_LOAD[2]"
+          ],
+          "page_rva": 32768,
+          "relro": false
+        },
+        {
           "data_anchor_rva": 36864,
           "data_width": 1,
           "effects": [
@@ -6769,20 +6809,6 @@
           "relro": false
         },
         {
-          "data_anchor_rva": 2752512,
-          "data_width": 1,
-          "effects": [
-            "R",
-            "W"
-          ],
-          "max_permissions": 3,
-          "origins": [
-            "PT_LOAD[5]"
-          ],
-          "page_rva": 2752512,
-          "relro": false
-        },
-        {
           "data_anchor_rva": 2756608,
           "data_width": 1,
           "effects": [
@@ -7154,6 +7180,7 @@
   "page_size": 4096,
   "schema": "atfield-workset-v1",
   "selector_manifest": "/home/meandssh/islands-sgx/dynamic/targets/sgxwallet/selectors.json",
+  "selector_manifest_sha256": "e4b2ca89d8c7951186338b80e65f20e618273aca883200eaf04fc091b35ca378",
   "selectors": [
     {
       "ecall_index": 0,

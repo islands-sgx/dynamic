@@ -6,19 +6,19 @@
       "field_id": "0x2a10deb0a1ec70f8",
       "function": "_ZL31get_att_key_based_from_seal_keyP20_sgx_ec256_private_tP19_sgx_ec256_public_tPK13_sgx_key_id_t",
       "gate_a_rva": 2179072,
-      "gate_b_rva": 2179186,
-      "gate_c_rva": 2179324,
-      "gate_d_rva": 2179474,
+      "gate_b_rva": 2179227,
+      "gate_c_rva": 2179406,
+      "gate_d_rva": 2179597,
       "marker_rva": 752804,
       "pretouch_jmp_rva": 2170880,
       "pretouch_rva": 2170880
     }
   ],
-  "gate_bytes_used": 531,
+  "gate_bytes_used": 695,
   "gate_helper_page_rva": 2179072,
   "input_elf": "/home/meandssh/islands-sgx/dynamic/targets/qe3/enclave.profile.so",
   "input_elf_sha256": "5c0f4038289badf9866c3e39bb90b375c2be78bc1e8960ee1852ef7315a3b9b5",
   "output_elf": "/home/meandssh/islands-sgx/dynamic/targets/qe3/enclave.profile.4gate.so",
-  "output_elf_sha256": "80e830f0a8ebf787fb4375cc4acb656bef35819fddff26666cd517cb3644ce0a",
+  "output_elf_sha256": "5f32d2a70eefeaf18290518587d2e82474d836a7604c25542e530b3fabd67cdf",
   "schema": "atfield-4gate-patch-v1"
 }

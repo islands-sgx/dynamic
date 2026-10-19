@@ -1,0 +1,8174 @@
+{
+  "edl_manifest": "/home/meandssh/islands-sgx/sample/real/signal-cds/sabd_enclave.edl",
+  "edl_manifest_sha256": "3e41555eb147f51bea03bfa234a19c7df28aaf1afd63281183c44e4e4a330c06",
+  "field_manifest": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/fields.json",
+  "field_manifest_sha256": "dce02c5614cb5658ec6545e1dc3d5607d0e4181abd2e6b51e97d1eb054816a57",
+  "fields": [
+    {
+      "function": "sabd_lookup_hash",
+      "id": "0xd9e7e566ea39a756",
+      "name": "sabd_lookup_hash",
+      "order": [
+        18037813881014863044,
+        0
+      ],
+      "pages": [
+        {
+          "data_anchor_rva": 0,
+          "data_width": 1,
+          "effects": [
+            "R"
+          ],
+          "max_permissions": 1,
+          "origins": [
+            "PT_LOAD[2]"
+          ],
+          "page_rva": 0,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 8852,
+            "symbol": "__atf_n_25f3b6463cdf8682_0_0"
+          },
+          "data_anchor_rva": 8192,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 8192,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 16665,
+            "symbol": "__atf_n_ac47a12fa52eb1e0_0_0"
+          },
+          "data_anchor_rva": 16384,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 16384,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 20811,
+            "symbol": "__atf_n_afac04beeba3f158_8_0"
+          },
+          "data_anchor_rva": 20480,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 20480,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 24732,
+            "symbol": "__atf_n_2fe7776524024f0d_2_b"
+          },
+          "data_anchor_rva": 24576,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 24576,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 28694,
+            "symbol": "__atf_n_bbd50a5239189205_a_0"
+          },
+          "data_anchor_rva": 28672,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 28672,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 36886,
+            "symbol": "__atf_n_a4d2370179a5e9df_20_0"
+          },
+          "data_anchor_rva": 36864,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 36864,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 41019,
+            "symbol": "__atf_n_2800505f4bbe6bf1_6_0"
+          },
+          "data_anchor_rva": 40960,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 40960,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 45851,
+            "symbol": "__atf_n_b504425f1efea5fb_0_1"
+          },
+          "data_anchor_rva": 45056,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 45056,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 49265,
+            "symbol": "__atf_n_b504425f1efea5fb_1_0"
+          },
+          "data_anchor_rva": 49152,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 49152,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 53609,
+            "symbol": "__atf_n_b504425f1efea5fb_9_3"
+          },
+          "data_anchor_rva": 53248,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 53248,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 57746,
+            "symbol": "__atf_n_edd6c1a30c81da57_4_3"
+          },
+          "data_anchor_rva": 57344,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 57344,
+          "relro": false
+        },
+        {
+          "code_anchor": {
+            "rva": 61535,
+            "symbol": "__atf_n_4960bc5e19bf556f_0_1"
+          },
+          "data_anchor_rva": 61440,
+          "data_width": 1,
+          "effects": [
+            "X",
+            "R"
+          ],
+          "max_permissions": 5,
+          "origins": [
+            "PT_LOAD[3]"
+          ],
+          "page_rva": 61440,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 65536,
+          "data_width": 1,
+          "effects": [
+            "R"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "PT_LOAD[4]"
+          ],
+          "page_rva": 65536,
+          "relro": true
+        },
+        {
+          "data_anchor_rva": 69632,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "PT_LOAD[5]"
+          ],
+          "page_rva": 69632,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 73728,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "PT_LOAD[5]"
+          ],
+          "page_rva": 73728,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 77824,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "PT_LOAD[5]"
+          ],
+          "page_rva": 77824,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 86016,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "PT_LOAD[5]"
+          ],
+          "page_rva": 86016,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 151552,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "PT_LOAD[5]"
+          ],
+          "page_rva": 151552,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 172032,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_MIN"
+          ],
+          "page_rva": 172032,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 176128,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 176128,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 180224,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 180224,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 184320,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 184320,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 188416,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 188416,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 192512,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 192512,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 196608,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 196608,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 200704,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 200704,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 204800,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 204800,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 208896,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 208896,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 212992,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 212992,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 217088,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 217088,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 221184,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 221184,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 225280,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 225280,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 229376,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 229376,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 233472,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 233472,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 237568,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 237568,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 241664,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 241664,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 245760,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 245760,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 249856,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 249856,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 253952,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 253952,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 258048,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 258048,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 262144,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 262144,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 266240,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 266240,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 270336,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 270336,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 274432,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 274432,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 278528,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 278528,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 282624,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 282624,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 286720,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 286720,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 290816,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 290816,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 294912,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 294912,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 299008,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 299008,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 303104,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 303104,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 307200,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 307200,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 311296,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 311296,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 315392,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 315392,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 319488,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 319488,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 323584,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 323584,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 327680,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 327680,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 331776,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 331776,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 335872,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 335872,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 339968,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 339968,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 344064,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 344064,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 348160,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 348160,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 352256,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 352256,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 356352,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 356352,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 360448,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 360448,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 364544,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 364544,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 368640,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 368640,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 372736,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 372736,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 376832,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 376832,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 380928,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 380928,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 385024,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 385024,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 389120,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 389120,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 393216,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 393216,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 397312,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 397312,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 401408,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 401408,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 405504,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 405504,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 409600,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 409600,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 413696,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 413696,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 417792,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 417792,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 421888,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 421888,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 425984,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 425984,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 430080,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 430080,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 434176,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 434176,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 438272,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 438272,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 442368,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 442368,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 446464,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 446464,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 450560,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 450560,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 454656,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 454656,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 458752,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 458752,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 462848,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 462848,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 466944,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 466944,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 471040,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 471040,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 475136,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 475136,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 479232,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 479232,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 483328,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 483328,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 487424,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 487424,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 491520,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 491520,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 495616,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 495616,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 499712,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 499712,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 503808,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 503808,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 507904,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 507904,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 512000,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 512000,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 516096,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 516096,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 520192,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 520192,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 524288,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 524288,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 528384,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 528384,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 532480,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 532480,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 536576,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 536576,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 540672,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 540672,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 544768,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 544768,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 548864,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 548864,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 552960,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 552960,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 557056,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 557056,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 561152,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 561152,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 565248,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 565248,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 569344,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 569344,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 573440,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 573440,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 577536,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 577536,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 581632,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 581632,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 585728,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 585728,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 589824,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 589824,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 593920,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 593920,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 598016,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 598016,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 602112,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 602112,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 606208,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 606208,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 610304,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 610304,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 614400,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 614400,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 618496,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 618496,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 622592,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 622592,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 626688,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 626688,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 630784,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 630784,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 634880,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 634880,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 638976,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 638976,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 643072,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 643072,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 647168,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 647168,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 651264,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 651264,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 655360,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 655360,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 659456,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 659456,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 663552,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 663552,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 667648,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 667648,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 671744,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 671744,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 675840,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 675840,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 679936,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 679936,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 684032,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 684032,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 688128,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 688128,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 692224,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 692224,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 696320,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 696320,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 700416,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 700416,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 704512,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 704512,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 708608,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 708608,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 712704,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 712704,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 716800,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 716800,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 720896,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 720896,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 724992,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 724992,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 729088,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 729088,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 733184,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 733184,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 737280,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 737280,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 741376,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 741376,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 745472,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 745472,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 749568,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 749568,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 753664,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 753664,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 757760,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 757760,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 761856,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 761856,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 765952,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 765952,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 770048,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 770048,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 774144,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 774144,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 778240,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 778240,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 782336,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 782336,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 786432,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 786432,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 790528,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 790528,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 794624,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 794624,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 798720,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 798720,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 802816,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 802816,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 806912,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 806912,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 811008,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 811008,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 815104,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 815104,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 819200,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 819200,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 823296,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 823296,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 827392,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 827392,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 831488,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 831488,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 835584,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 835584,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 839680,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 839680,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 843776,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 843776,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 847872,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 847872,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 851968,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 851968,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 856064,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 856064,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 860160,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 860160,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 864256,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 864256,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 868352,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 868352,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 872448,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 872448,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 876544,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 876544,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 880640,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 880640,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 884736,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 884736,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 888832,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 888832,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 892928,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 892928,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 897024,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 897024,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 901120,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 901120,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 905216,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 905216,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 909312,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 909312,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 913408,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 913408,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 917504,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 917504,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 921600,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 921600,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 925696,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 925696,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 929792,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 929792,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 933888,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 933888,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 937984,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 937984,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 942080,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 942080,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 946176,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 946176,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 950272,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 950272,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 954368,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 954368,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 958464,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 958464,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 962560,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 962560,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 966656,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 966656,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 970752,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 970752,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 974848,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 974848,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 978944,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 978944,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 983040,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 983040,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 987136,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 987136,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 991232,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 991232,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 995328,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 995328,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 999424,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 999424,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1003520,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1003520,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1007616,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1007616,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1011712,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1011712,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1015808,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1015808,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1019904,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1019904,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1024000,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1024000,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1028096,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1028096,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1032192,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1032192,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1036288,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1036288,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1040384,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1040384,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1044480,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1044480,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1048576,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1048576,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1052672,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1052672,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1056768,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1056768,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1060864,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1060864,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1064960,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1064960,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1069056,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1069056,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1073152,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1073152,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1077248,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1077248,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1081344,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1081344,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1085440,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1085440,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1089536,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1089536,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1093632,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1093632,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1097728,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1097728,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1101824,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1101824,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1105920,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1105920,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1110016,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1110016,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1114112,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1114112,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1118208,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1118208,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1122304,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1122304,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1126400,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1126400,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1130496,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1130496,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1134592,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1134592,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1138688,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1138688,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1142784,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1142784,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1146880,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1146880,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1150976,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1150976,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1155072,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1155072,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1159168,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1159168,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1163264,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1163264,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1167360,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1167360,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1171456,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1171456,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1175552,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1175552,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1179648,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1179648,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1183744,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1183744,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1187840,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1187840,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1191936,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1191936,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1196032,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1196032,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1200128,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1200128,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1204224,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1204224,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1208320,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1208320,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1212416,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1212416,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1216512,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1216512,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1220608,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1220608,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1224704,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1224704,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1228800,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1228800,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1232896,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1232896,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1236992,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1236992,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1241088,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1241088,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1245184,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1245184,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1249280,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1249280,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1253376,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1253376,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1257472,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1257472,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1261568,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1261568,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1265664,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1265664,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1269760,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1269760,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1273856,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1273856,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1277952,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1277952,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1282048,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1282048,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1286144,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1286144,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1290240,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1290240,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1294336,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1294336,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1298432,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1298432,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1302528,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1302528,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1306624,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1306624,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1310720,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1310720,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1314816,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1314816,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1318912,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1318912,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1323008,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1323008,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1327104,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1327104,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1331200,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1331200,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1335296,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1335296,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1339392,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1339392,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1343488,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1343488,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1347584,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1347584,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1351680,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1351680,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1355776,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1355776,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1359872,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1359872,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1363968,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1363968,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1368064,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1368064,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1372160,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1372160,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1376256,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1376256,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1380352,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1380352,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1384448,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1384448,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1388544,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1388544,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1392640,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1392640,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1396736,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1396736,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1400832,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1400832,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1404928,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1404928,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1409024,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1409024,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1413120,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1413120,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1417216,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1417216,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1421312,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1421312,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1425408,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1425408,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1429504,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1429504,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1433600,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1433600,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1437696,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1437696,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1441792,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1441792,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1445888,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1445888,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1449984,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1449984,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1454080,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1454080,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1458176,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1458176,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1462272,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1462272,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1466368,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1466368,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1470464,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1470464,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1474560,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1474560,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1478656,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1478656,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1482752,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1482752,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1486848,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1486848,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1490944,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1490944,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1495040,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1495040,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1499136,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1499136,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1503232,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1503232,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1507328,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1507328,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1511424,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1511424,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1515520,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1515520,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1519616,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1519616,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1523712,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1523712,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1527808,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1527808,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1531904,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1531904,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1536000,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1536000,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1540096,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1540096,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1544192,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1544192,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1548288,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1548288,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1552384,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1552384,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1556480,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1556480,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1560576,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1560576,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1564672,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1564672,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1568768,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1568768,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1572864,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1572864,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1576960,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1576960,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1581056,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1581056,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1585152,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1585152,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1589248,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1589248,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1593344,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1593344,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1597440,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1597440,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1601536,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1601536,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1605632,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1605632,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1609728,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1609728,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1613824,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1613824,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1617920,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1617920,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1622016,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1622016,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1626112,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1626112,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1630208,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1630208,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1634304,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1634304,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1638400,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1638400,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1642496,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1642496,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1646592,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1646592,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1650688,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1650688,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1654784,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1654784,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1658880,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1658880,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1662976,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1662976,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1667072,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1667072,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1671168,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1671168,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1675264,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1675264,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1679360,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1679360,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1683456,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1683456,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1687552,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1687552,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1691648,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1691648,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1695744,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1695744,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1699840,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1699840,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1703936,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1703936,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1708032,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1708032,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1712128,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1712128,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1716224,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1716224,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1720320,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1720320,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1724416,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1724416,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1728512,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1728512,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1732608,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1732608,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1736704,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1736704,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1740800,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1740800,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1744896,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1744896,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1748992,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1748992,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1753088,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1753088,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1757184,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1757184,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1761280,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1761280,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1765376,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1765376,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1769472,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1769472,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1773568,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1773568,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1777664,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1777664,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1781760,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1781760,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1785856,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1785856,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1789952,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1789952,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1794048,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1794048,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1798144,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1798144,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1802240,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1802240,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1806336,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1806336,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1810432,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1810432,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1814528,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1814528,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1818624,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1818624,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1822720,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1822720,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1826816,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1826816,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1830912,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1830912,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1835008,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1835008,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1839104,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1839104,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1843200,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1843200,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1847296,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1847296,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1851392,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1851392,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1855488,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1855488,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1859584,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1859584,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1863680,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1863680,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1867776,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1867776,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1871872,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1871872,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1875968,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1875968,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1880064,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1880064,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1884160,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1884160,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1888256,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1888256,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1892352,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1892352,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1896448,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1896448,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1900544,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1900544,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1904640,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1904640,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1908736,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1908736,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1912832,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1912832,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1916928,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1916928,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1921024,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1921024,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1925120,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1925120,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1929216,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1929216,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1933312,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1933312,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1937408,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1937408,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1941504,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1941504,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1945600,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1945600,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1949696,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1949696,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1953792,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1953792,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1957888,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1957888,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1961984,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1961984,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1966080,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1966080,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1970176,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1970176,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1974272,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1974272,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1978368,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1978368,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1982464,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1982464,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1986560,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1986560,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1990656,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1990656,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1994752,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1994752,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 1998848,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 1998848,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2002944,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2002944,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2007040,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2007040,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2011136,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2011136,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2015232,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2015232,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2019328,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2019328,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2023424,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2023424,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2027520,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2027520,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2031616,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2031616,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2035712,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2035712,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2039808,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2039808,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2043904,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2043904,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2048000,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2048000,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2052096,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2052096,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2056192,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2056192,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2060288,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2060288,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2064384,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2064384,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2068480,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2068480,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2072576,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2072576,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2076672,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2076672,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2080768,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2080768,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2084864,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2084864,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2088960,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2088960,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2093056,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2093056,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2097152,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2097152,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2101248,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2101248,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2105344,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2105344,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2109440,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2109440,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2113536,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2113536,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2117632,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2117632,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2121728,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2121728,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2125824,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2125824,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2129920,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2129920,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2134016,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2134016,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2138112,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2138112,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2142208,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2142208,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2146304,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2146304,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2150400,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2150400,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2154496,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2154496,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2158592,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2158592,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2162688,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2162688,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2166784,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2166784,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2170880,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2170880,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2174976,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2174976,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2179072,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2179072,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2183168,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2183168,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2187264,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2187264,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2191360,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2191360,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2195456,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2195456,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2199552,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2199552,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2203648,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2203648,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2207744,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2207744,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2211840,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2211840,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2215936,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2215936,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2220032,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2220032,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2224128,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2224128,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2228224,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2228224,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2232320,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2232320,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2236416,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2236416,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2240512,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2240512,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2244608,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2244608,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2248704,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2248704,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2252800,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2252800,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2256896,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2256896,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2260992,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2260992,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2265088,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2265088,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2269184,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2269184,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2273280,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2273280,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2277376,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2277376,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2281472,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2281472,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2285568,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2285568,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2289664,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2289664,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2293760,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2293760,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2297856,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2297856,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2301952,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2301952,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2306048,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2306048,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2310144,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2310144,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2314240,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2314240,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2318336,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2318336,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2322432,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2322432,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2326528,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2326528,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2330624,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2330624,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2334720,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2334720,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2338816,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2338816,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2342912,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2342912,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2347008,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2347008,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2351104,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2351104,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2355200,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2355200,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2359296,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2359296,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2363392,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2363392,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2367488,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2367488,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2371584,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2371584,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2375680,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2375680,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2379776,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2379776,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 2383872,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "HEAP_INIT"
+          ],
+          "page_rva": 2383872,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 4673536,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "STACK_MIN"
+          ],
+          "page_rva": 4673536,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 4677632,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "STACK_MIN"
+          ],
+          "page_rva": 4677632,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 4681728,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "STACK_MIN"
+          ],
+          "page_rva": 4681728,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 4685824,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "STACK_MIN"
+          ],
+          "page_rva": 4685824,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 4689920,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "STACK_MIN"
+          ],
+          "page_rva": 4689920,
+          "relro": false
+        },
+        {
+          "data_anchor_rva": 4837376,
+          "data_width": 1,
+          "effects": [
+            "R",
+            "W"
+          ],
+          "max_permissions": 3,
+          "origins": [
+            "TD"
+          ],
+          "page_rva": 4837376,
+          "relro": false
+        }
+      ],
+      "stack_bytes": null
+    }
+  ],
+  "layout": {
+    "all_committed_reg_pages": 1127,
+    "capacity_q": 16384,
+    "enclave_size": 8388608,
+    "excluded_regions": [
+      {
+        "attributes": 0,
+        "end_rva": 4431872,
+        "excluded_reason": "TCS/SSA/guard control region",
+        "kind": "signer",
+        "layout_id": 10,
+        "name": "GUARD",
+        "pages": 16,
+        "permissions": 0,
+        "si_flags": 0,
+        "start_rva": 4366336
+      },
+      {
+        "attributes": 0,
+        "end_rva": 4759552,
+        "excluded_reason": "TCS/SSA/guard control region",
+        "kind": "signer",
+        "layout_id": 10,
+        "name": "GUARD",
+        "pages": 16,
+        "permissions": 0,
+        "si_flags": 0,
+        "start_rva": 4694016
+      },
+      {
+        "attributes": 3,
+        "end_rva": 4763648,
+        "excluded_reason": "TCS/SSA/guard control region",
+        "kind": "signer",
+        "layout_id": 4,
+        "name": "TCS",
+        "pages": 1,
+        "permissions": 0,
+        "si_flags": 256,
+        "start_rva": 4759552
+      },
+      {
+        "attributes": 3,
+        "end_rva": 4771840,
+        "excluded_reason": "TCS/SSA/guard control region",
+        "kind": "signer",
+        "layout_id": 6,
+        "name": "SSA",
+        "pages": 2,
+        "permissions": 3,
+        "si_flags": 515,
+        "start_rva": 4763648
+      },
+      {
+        "attributes": 0,
+        "end_rva": 4837376,
+        "excluded_reason": "TCS/SSA/guard control region",
+        "kind": "signer",
+        "layout_id": 10,
+        "name": "GUARD",
+        "pages": 16,
+        "permissions": 0,
+        "si_flags": 0,
+        "start_rva": 4771840
+      }
+    ],
+    "metadata_version": 4294967301,
+    "ordinary_load_end": 155492,
+    "page_size": 4096,
+    "pretouch_segment": true,
+    "pretouch_start": 155648,
+    "profile_elf": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/enclave.profile.so",
+    "profile_elf_sha256": "d3673190dadcffaf4b3206ad33bdf769de0414d47a35b6a8f7886258308eaf42",
+    "regions": [
+      {
+        "end_rva": 8192,
+        "kind": "PT_LOAD",
+        "pages": 2,
+        "permissions": 1,
+        "segment_index": 2,
+        "start_rva": 0
+      },
+      {
+        "end_rva": 65536,
+        "kind": "PT_LOAD",
+        "pages": 14,
+        "permissions": 5,
+        "segment_index": 3,
+        "start_rva": 8192
+      },
+      {
+        "end_rva": 69632,
+        "kind": "PT_LOAD",
+        "pages": 1,
+        "permissions": 3,
+        "segment_index": 4,
+        "start_rva": 65536
+      },
+      {
+        "end_rva": 155648,
+        "kind": "PT_LOAD",
+        "pages": 21,
+        "permissions": 3,
+        "segment_index": 5,
+        "start_rva": 69632
+      },
+      {
+        "attributes": 1,
+        "end_rva": 176128,
+        "kind": "signer",
+        "layout_id": 1,
+        "name": "HEAP_MIN",
+        "pages": 1,
+        "permissions": 3,
+        "si_flags": 515,
+        "start_rva": 172032
+      },
+      {
+        "attributes": 17,
+        "end_rva": 4366336,
+        "kind": "signer",
+        "layout_id": 2,
+        "name": "HEAP_INIT",
+        "pages": 1023,
+        "permissions": 3,
+        "si_flags": 515,
+        "start_rva": 176128
+      },
+      {
+        "attributes": 3,
+        "end_rva": 4694016,
+        "kind": "signer",
+        "layout_id": 8,
+        "name": "STACK_MIN",
+        "pages": 64,
+        "permissions": 3,
+        "si_flags": 515,
+        "start_rva": 4431872
+      },
+      {
+        "attributes": 3,
+        "end_rva": 4841472,
+        "kind": "signer",
+        "layout_id": 5,
+        "name": "TD",
+        "pages": 1,
+        "permissions": 3,
+        "si_flags": 515,
+        "start_rva": 4837376
+      }
+    ],
+    "relro_pages": [
+      65536
+    ],
+    "relro_ranges": [
+      {
+        "end_rva": 69632,
+        "protected_end_rva": 69632,
+        "protected_start_rva": 65536,
+        "segment_index": 8,
+        "start_rva": 69120
+      }
+    ],
+    "schema": "atfield-signer-layout-v1",
+    "signed_elf": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/enclave.profile.signed.so",
+    "signed_elf_sha256": "20b5b43e783fbd1c564debc25cbcf2e50edeba779f1e405e73ad05d444826002",
+    "ssa_frame_pages": 1
+  },
+  "page_size": 4096,
+  "schema": "atfield-workset-v1",
+  "selector_manifest": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/selectors.json",
+  "selector_manifest_sha256": "71fa06b2aab24212c423bec81682aed5bd423825237857abafa9c238637691f8",
+  "selectors": [
+    {
+      "ecall_index": 0,
+      "name": "ecall_lookup_hash",
+      "reachable_fields": [
+        "0xd9e7e566ea39a756"
+      ],
+      "reachable_functions": [
+        "sabd_lookup_hash"
+      ]
+    }
+  ]
+}

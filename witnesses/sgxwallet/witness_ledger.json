@@ -1,1541 +1,2566 @@
 {
+  "artifacts": {
+    "dynamic": {
+      "final_elf_sha256": "82290bf2e824133fc229bc4c3a7c1025e4eea77f504eefb89df6774b66da7d83",
+      "gate_aex0_sha256": "b1c464e371698d612ee0a5b149b0f22d888b9ba389caed8b47ff4053c8f7a6e5",
+      "ready_bin_sha256": "4f8b398bcc068bcb8f59c984a203556f71cf3e938af699c00ebb412733f95f65",
+      "signed_aex0_sha256": "f94ed74a7e188af4631500098c0e71b1a20127ff01da548ceabe939bf5801fa6",
+      "signed_aex1_sha256": "b13e2c1efbfbbeb61a347abe0a4c13188fcd224884815aaca64ad57d5408f63a",
+      "variant": "dynamic",
+      "workset_sha256": "e4280a05ae68c732f2962a1abfa06bab7132f84cc78852f4f91faafeda7db428"
+    },
+    "dynamic_xr": {
+      "final_elf_sha256": "9fb50b89626f992824cd135fb8846a428f4aa3ded980e59283be9ac674fe07bd",
+      "gate_aex0_sha256": "5549cfccf8fabac7213ad421dc6fc12e5cecb3323ed170b5f8f42e2935d7ac5b",
+      "ready_bin_sha256": "3237ec3a051eef8500ad070a0110040cb5b2ca0a3bf3424f2f16b33e56a90cfd",
+      "signed_aex0_sha256": "5a5580b07832d7f4770bf5a4a78ece99cd9f607f67fb2c1a72ca4b5cddfcb298",
+      "signed_aex1_sha256": "39687ee860e40c3ec554dda9ed5f1032784928b93530a1f4e2a6e2f903d24eb0",
+      "variant": "dynamic_xr",
+      "workset_sha256": "9c691135cbfec34d5340667b9a75dd6c2c8424f79110a7bfb9e7102d3335a05c"
+    }
+  },
   "closure_breakdown": {
     "0x25c0fd3d7283b2b7": {
       "all_business_reg_pages": 1774,
-      "closure_dlmalloc_heap_added": 2,
-      "closure_reach_code_added": 13,
-      "closure_reach_data_added": 2,
-      "closure_stack_td_added": 3,
-      "closure_stt_object_added": 6,
+      "call_statistics": {
+        "expected_rejection_entries": 2163,
+        "field_entries": 2163,
+        "succeeded_entries": 0,
+        "transport_error_entries": 0
+      },
+      "dynamic_explored_obs_effects": 84,
       "dynamic_explored_obs_pages": 76,
-      "final_field_target_pages": 107,
+      "final_field_target_pages": 108,
+      "four_layer_attribution": {
+        "layer0_first_field_call": {
+          "page_effects": 78,
+          "pages": 70
+        },
+        "layer1_full_existing_host": {
+          "added_effects_over_layer0": 6,
+          "added_pages_over_layer0": 6,
+          "page_effects": 84,
+          "pages": 76
+        },
+        "layer2_generic_schema_explorer": {
+          "added_effects_beyond_full_host_layer1": 0,
+          "added_pages_beyond_full_host_layer1": 0,
+          "cumulative_effects_after_layer2": 84,
+          "cumulative_pages_after_layer2": 76,
+          "independent_added_pages_over_layer0": 6,
+          "independent_pages_from_minimal_seed": 76
+        },
+        "layer3_domain_assisted": {
+          "added_effects_beyond_layer2": 0,
+          "added_pages_beyond_layer2": 0,
+          "cumulative_effects_after_layer3": 84,
+          "cumulative_pages_after_layer3": 76
+        }
+      },
       "function": "ecdsa_sign_field",
+      "heuristic_assist_breakdown": {
+        "direct_call_depth4_code_added": 13,
+        "direct_call_rip_data_added": 2,
+        "dlmalloc_heap_and_frontier_added": 2,
+        "heap_pread_failure_runs": 0,
+        "heap_walk_truncated_runs": 0,
+        "heuristic_parameters": {
+          "direct_call_max_depth": 4,
+          "heap_top_frontier_pages": 2,
+          "stack_below_min_rsp_margin_pages": 4
+        },
+        "pruned_noreturn_callees": [
+          "__stack_chk_fail",
+          "abort",
+          "field_exit"
+        ],
+        "stack_margin_and_td_added": 3,
+        "stt_object_span_added": 7,
+        "unresolved_indirect_branch_sites_in_subgraph": 26
+      },
       "raw_single_run_pages": 70,
-      "reduction_vs_all_reg_pct": 93.97,
-      "s1_boundary_pages": 27
+      "reduction_vs_all_reg_pct": 93.91,
+      "rx_pages_kept_xr_in_group_b": 69,
+      "rx_pages_refined_to_x_in_group_c": 48,
+      "s0_s1_epilogue_bridge_pages": 5
     },
     "0x6be0530730e7f5f1": {
       "all_business_reg_pages": 1774,
-      "closure_dlmalloc_heap_added": 2,
-      "closure_reach_code_added": 6,
-      "closure_reach_data_added": 4,
-      "closure_stack_td_added": 4,
-      "closure_stt_object_added": 5,
+      "call_statistics": {
+        "expected_rejection_entries": 30,
+        "field_entries": 30,
+        "succeeded_entries": 0,
+        "transport_error_entries": 0
+      },
+      "dynamic_explored_obs_effects": 78,
       "dynamic_explored_obs_pages": 72,
-      "final_field_target_pages": 98,
+      "final_field_target_pages": 100,
+      "four_layer_attribution": {
+        "layer0_first_field_call": {
+          "page_effects": 74,
+          "pages": 68
+        },
+        "layer1_full_existing_host": {
+          "added_effects_over_layer0": 0,
+          "added_pages_over_layer0": 0,
+          "page_effects": 74,
+          "pages": 68
+        },
+        "layer2_generic_schema_explorer": {
+          "added_effects_beyond_full_host_layer1": 4,
+          "added_pages_beyond_full_host_layer1": 4,
+          "cumulative_effects_after_layer2": 78,
+          "cumulative_pages_after_layer2": 72,
+          "independent_added_pages_over_layer0": 4,
+          "independent_pages_from_minimal_seed": 72
+        },
+        "layer3_domain_assisted": {
+          "added_effects_beyond_layer2": 0,
+          "added_pages_beyond_layer2": 0,
+          "cumulative_effects_after_layer3": 78,
+          "cumulative_pages_after_layer3": 72
+        }
+      },
       "function": "get_public_ecdsa_key_field",
+      "heuristic_assist_breakdown": {
+        "direct_call_depth4_code_added": 6,
+        "direct_call_rip_data_added": 4,
+        "dlmalloc_heap_and_frontier_added": 2,
+        "heap_pread_failure_runs": 0,
+        "heap_walk_truncated_runs": 0,
+        "heuristic_parameters": {
+          "direct_call_max_depth": 4,
+          "heap_top_frontier_pages": 2,
+          "stack_below_min_rsp_margin_pages": 4
+        },
+        "pruned_noreturn_callees": [
+          "__stack_chk_fail",
+          "abort",
+          "field_exit"
+        ],
+        "stack_margin_and_td_added": 4,
+        "stt_object_span_added": 7,
+        "unresolved_indirect_branch_sites_in_subgraph": 23
+      },
       "raw_single_run_pages": 68,
-      "reduction_vs_all_reg_pct": 94.48,
-      "s1_boundary_pages": 26
+      "reduction_vs_all_reg_pct": 94.36,
+      "rx_pages_kept_xr_in_group_b": 62,
+      "rx_pages_refined_to_x_in_group_c": 42,
+      "s0_s1_epilogue_bridge_pages": 5
     },
     "0x9304e1c7e45cef0a": {
       "all_business_reg_pages": 1774,
-      "closure_dlmalloc_heap_added": 2,
-      "closure_reach_code_added": 4,
-      "closure_reach_data_added": 3,
-      "closure_stack_td_added": 3,
-      "closure_stt_object_added": 6,
+      "call_statistics": {
+        "expected_rejection_entries": 17,
+        "field_entries": 17,
+        "succeeded_entries": 0,
+        "transport_error_entries": 0
+      },
+      "dynamic_explored_obs_effects": 59,
       "dynamic_explored_obs_pages": 52,
       "final_field_target_pages": 74,
+      "four_layer_attribution": {
+        "layer0_first_field_call": {
+          "page_effects": 52,
+          "pages": 45
+        },
+        "layer1_full_existing_host": {
+          "added_effects_over_layer0": 0,
+          "added_pages_over_layer0": 0,
+          "page_effects": 52,
+          "pages": 45
+        },
+        "layer2_generic_schema_explorer": {
+          "added_effects_beyond_full_host_layer1": 7,
+          "added_pages_beyond_full_host_layer1": 7,
+          "cumulative_effects_after_layer2": 59,
+          "cumulative_pages_after_layer2": 52,
+          "independent_added_pages_over_layer0": 7,
+          "independent_pages_from_minimal_seed": 52
+        },
+        "layer3_domain_assisted": {
+          "added_effects_beyond_layer2": 0,
+          "added_pages_beyond_layer2": 0,
+          "cumulative_effects_after_layer3": 59,
+          "cumulative_pages_after_layer3": 52
+        }
+      },
       "function": "set_sek_field",
+      "heuristic_assist_breakdown": {
+        "direct_call_depth4_code_added": 4,
+        "direct_call_rip_data_added": 3,
+        "dlmalloc_heap_and_frontier_added": 2,
+        "heap_pread_failure_runs": 0,
+        "heap_walk_truncated_runs": 0,
+        "heuristic_parameters": {
+          "direct_call_max_depth": 4,
+          "heap_top_frontier_pages": 2,
+          "stack_below_min_rsp_margin_pages": 4
+        },
+        "pruned_noreturn_callees": [
+          "__stack_chk_fail",
+          "abort",
+          "field_exit"
+        ],
+        "stack_margin_and_td_added": 3,
+        "stt_object_span_added": 6,
+        "unresolved_indirect_branch_sites_in_subgraph": 12
+      },
       "raw_single_run_pages": 45,
       "reduction_vs_all_reg_pct": 95.83,
-      "s1_boundary_pages": 24
+      "rx_pages_kept_xr_in_group_b": 41,
+      "rx_pages_refined_to_x_in_group_c": 24,
+      "s0_s1_epilogue_bridge_pages": 4
     },
     "0xa9d5e11946c68a33": {
       "all_business_reg_pages": 1774,
-      "closure_dlmalloc_heap_added": 2,
-      "closure_reach_code_added": 7,
-      "closure_reach_data_added": 4,
-      "closure_stack_td_added": 4,
-      "closure_stt_object_added": 6,
+      "call_statistics": {
+        "expected_rejection_entries": 24,
+        "field_entries": 24,
+        "succeeded_entries": 0,
+        "transport_error_entries": 0
+      },
+      "dynamic_explored_obs_effects": 82,
       "dynamic_explored_obs_pages": 76,
-      "final_field_target_pages": 105,
+      "final_field_target_pages": 106,
+      "four_layer_attribution": {
+        "layer0_first_field_call": {
+          "page_effects": 82,
+          "pages": 76
+        },
+        "layer1_full_existing_host": {
+          "added_effects_over_layer0": 0,
+          "added_pages_over_layer0": 0,
+          "page_effects": 82,
+          "pages": 76
+        },
+        "layer2_generic_schema_explorer": {
+          "added_effects_beyond_full_host_layer1": 0,
+          "added_pages_beyond_full_host_layer1": 0,
+          "cumulative_effects_after_layer2": 82,
+          "cumulative_pages_after_layer2": 76,
+          "independent_added_pages_over_layer0": 0,
+          "independent_pages_from_minimal_seed": 76
+        },
+        "layer3_domain_assisted": {
+          "added_effects_beyond_layer2": 0,
+          "added_pages_beyond_layer2": 0,
+          "cumulative_effects_after_layer3": 82,
+          "cumulative_pages_after_layer3": 76
+        }
+      },
       "function": "generate_ecdsa_key_field",
+      "heuristic_assist_breakdown": {
+        "direct_call_depth4_code_added": 7,
+        "direct_call_rip_data_added": 4,
+        "dlmalloc_heap_and_frontier_added": 2,
+        "heap_pread_failure_runs": 0,
+        "heap_walk_truncated_runs": 0,
+        "heuristic_parameters": {
+          "direct_call_max_depth": 4,
+          "heap_top_frontier_pages": 2,
+          "stack_below_min_rsp_margin_pages": 4
+        },
+        "pruned_noreturn_callees": [
+          "__stack_chk_fail",
+          "abort",
+          "field_exit"
+        ],
+        "stack_margin_and_td_added": 4,
+        "stt_object_span_added": 7,
+        "unresolved_indirect_branch_sites_in_subgraph": 23
+      },
       "raw_single_run_pages": 76,
-      "reduction_vs_all_reg_pct": 94.08,
-      "s1_boundary_pages": 27
+      "reduction_vs_all_reg_pct": 94.02,
+      "rx_pages_kept_xr_in_group_b": 67,
+      "rx_pages_refined_to_x_in_group_c": 47,
+      "s0_s1_epilogue_bridge_pages": 6
     },
     "0xd9243791a2c13244": {
       "all_business_reg_pages": 1774,
-      "closure_dlmalloc_heap_added": 2,
-      "closure_reach_code_added": 6,
-      "closure_reach_data_added": 5,
-      "closure_stack_td_added": 3,
-      "closure_stt_object_added": 6,
+      "call_statistics": {
+        "expected_rejection_entries": 21,
+        "field_entries": 21,
+        "succeeded_entries": 0,
+        "transport_error_entries": 0
+      },
+      "dynamic_explored_obs_effects": 56,
       "dynamic_explored_obs_pages": 48,
-      "final_field_target_pages": 74,
+      "final_field_target_pages": 72,
+      "four_layer_attribution": {
+        "layer0_first_field_call": {
+          "page_effects": 56,
+          "pages": 48
+        },
+        "layer1_full_existing_host": {
+          "added_effects_over_layer0": 0,
+          "added_pages_over_layer0": 0,
+          "page_effects": 56,
+          "pages": 48
+        },
+        "layer2_generic_schema_explorer": {
+          "added_effects_beyond_full_host_layer1": 0,
+          "added_pages_beyond_full_host_layer1": 0,
+          "cumulative_effects_after_layer2": 56,
+          "cumulative_pages_after_layer2": 48,
+          "independent_added_pages_over_layer0": 0,
+          "independent_pages_from_minimal_seed": 48
+        },
+        "layer3_domain_assisted": {
+          "added_effects_beyond_layer2": 0,
+          "added_pages_beyond_layer2": 0,
+          "cumulative_effects_after_layer3": 56,
+          "cumulative_pages_after_layer3": 48
+        }
+      },
       "function": "generate_sek_field",
+      "heuristic_assist_breakdown": {
+        "direct_call_depth4_code_added": 6,
+        "direct_call_rip_data_added": 5,
+        "dlmalloc_heap_and_frontier_added": 2,
+        "heap_pread_failure_runs": 0,
+        "heap_walk_truncated_runs": 0,
+        "heuristic_parameters": {
+          "direct_call_max_depth": 4,
+          "heap_top_frontier_pages": 2,
+          "stack_below_min_rsp_margin_pages": 4
+        },
+        "pruned_noreturn_callees": [
+          "__stack_chk_fail",
+          "abort",
+          "field_exit"
+        ],
+        "stack_margin_and_td_added": 3,
+        "stt_object_span_added": 4,
+        "unresolved_indirect_branch_sites_in_subgraph": 11
+      },
       "raw_single_run_pages": 48,
-      "reduction_vs_all_reg_pct": 95.83,
-      "s1_boundary_pages": 24
+      "reduction_vs_all_reg_pct": 95.94,
+      "rx_pages_kept_xr_in_group_b": 41,
+      "rx_pages_refined_to_x_in_group_c": 24,
+      "s0_s1_epilogue_bridge_pages": 4
     }
   },
-  "sample": "sgxwallet",
-  "schema": "atfield-witness-ledger-v1",
-  "stages": [
+  "ecall_statistics": {
+    "0": {
+      "ecall_invocations": 38,
+      "field_entering_calls": 0,
+      "nonzero_retval_calls": 38,
+      "outer_rejected_or_nofield_calls": 38,
+      "succeeded_calls": 0,
+      "transport_error_calls": 0
+    },
+    "1": {
+      "ecall_invocations": 34,
+      "field_entering_calls": 0,
+      "nonzero_retval_calls": 0,
+      "outer_rejected_or_nofield_calls": 34,
+      "succeeded_calls": 34,
+      "transport_error_calls": 0
+    },
+    "2": {
+      "ecall_invocations": 21,
+      "field_entering_calls": 21,
+      "nonzero_retval_calls": 21,
+      "outer_rejected_or_nofield_calls": 0,
+      "succeeded_calls": 0,
+      "transport_error_calls": 0
+    },
+    "3": {
+      "ecall_invocations": 18,
+      "field_entering_calls": 17,
+      "nonzero_retval_calls": 18,
+      "outer_rejected_or_nofield_calls": 1,
+      "succeeded_calls": 0,
+      "transport_error_calls": 0
+    },
+    "4": {
+      "ecall_invocations": 24,
+      "field_entering_calls": 24,
+      "nonzero_retval_calls": 24,
+      "outer_rejected_or_nofield_calls": 0,
+      "succeeded_calls": 0,
+      "transport_error_calls": 0
+    },
+    "5": {
+      "ecall_invocations": 31,
+      "field_entering_calls": 30,
+      "nonzero_retval_calls": 31,
+      "outer_rejected_or_nofield_calls": 1,
+      "succeeded_calls": 0,
+      "transport_error_calls": 0
+    },
+    "6": {
+      "ecall_invocations": 2165,
+      "field_entering_calls": 2163,
+      "nonzero_retval_calls": 2165,
+      "outer_rejected_or_nofield_calls": 2,
+      "succeeded_calls": 0,
+      "transport_error_calls": 0
+    }
+  },
+  "profile_elf_sha256": "b9eafd7bd2a8b414d15758ce99f6e7016f131803f5cac3b6bfaae28c72830a5e",
+  "runs": [
     {
-      "description": "Full host workflow: GenerateSEK, GenerateEcdsaKey, GetPublicEcdsaKey, 1001x EcdsaSign (crossing sigCounter==1000 self_check_ecdsa!), bad key, bad hex, Enclave recreate + SetSEK + Sign",
-      "new_pages_discovered": 313,
-      "per_field_obs_counts": {
-        "0x25c0fd3d7283b2b7": 76,
-        "0x6be0530730e7f5f1": 68,
-        "0x9304e1c7e45cef0a": 45,
-        "0xa9d5e11946c68a33": 76,
-        "0xd9243791a2c13244": 48
-      },
-      "records_collected": 51,
-      "stage": "stage0_history_and_persistence"
+      "description": "Unmodified host binary full execution (first entry per Field = Layer 0; full run = Layer 1)",
+      "layer": "layer1_full_host",
+      "measurement_invalid": true,
+      "new_page_effects_discovered": 348,
+      "records_collected": 1014,
+      "run_id": "layer0_and_layer1_unmodified_host",
+      "subkind": "unmodified_host_full_trace",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer0_and_layer1_unmodified_host.jsonl"
     },
     {
-      "description": "Mutate EcdsaSign base=10 (decimal conversion branch) & base=99 (invalid base error), GetPublicEcdsaKey bad dec_len=8 & corrupted key",
-      "new_pages_discovered": 4,
-      "per_field_obs_counts": {
-        "0x25c0fd3d7283b2b7": 76,
-        "0x6be0530730e7f5f1": 72,
-        "0x9304e1c7e45cef0a": 45,
-        "0xa9d5e11946c68a33": 76,
-        "0xd9243791a2c13244": 48
-      },
-      "records_collected": 55,
-      "stage": "stage1_base_and_error_mutations"
+      "description": "Generic edl_schema scalar boundaries & input buffer bit-flips on trustedSetSEK",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": true,
+      "new_page_effects_discovered": 7,
+      "records_collected": 12,
+      "run_id": "layer2_schema_val_xor_ecall3",
+      "subkind": "schema_scalar_and_bitflip",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_schema_val_xor_ecall3.jsonl"
     },
     {
-      "description": "Corrupt sealed SEK MAC tag in SetSEK (triggers sgx_unseal_data 0x3001 error branch inside set_sek_field)",
-      "new_pages_discovered": 7,
-      "per_field_obs_counts": {
-        "0x25c0fd3d7283b2b7": 76,
-        "0x6be0530730e7f5f1": 72,
-        "0x9304e1c7e45cef0a": 52,
-        "0xa9d5e11946c68a33": 76,
-        "0xd9243791a2c13244": 48
-      },
-      "records_collected": 50,
-      "stage": "stage2_setsek_corrupt_unseal"
+      "description": "Generic edl_schema NULL pointer injection on trustedSetSEK",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": true,
+      "new_page_effects_discovered": 0,
+      "records_collected": 12,
+      "run_id": "layer2_schema_null_ecall3",
+      "subkind": "schema_null_pointer",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_schema_null_ecall3.jsonl"
+    },
+    {
+      "description": "Generic edl_schema scalar boundaries & input buffer bit-flips on trustedGenerateEcdsaKey",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": true,
+      "new_page_effects_discovered": 0,
+      "records_collected": 18,
+      "run_id": "layer2_schema_val_xor_ecall4",
+      "subkind": "schema_scalar_and_bitflip",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_schema_val_xor_ecall4.jsonl"
+    },
+    {
+      "description": "Generic edl_schema NULL pointer injection on trustedGenerateEcdsaKey",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 2,
+      "run_id": "layer2_schema_null_ecall4",
+      "subkind": "schema_null_pointer",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_schema_null_ecall4.jsonl"
+    },
+    {
+      "description": "Generic edl_schema scalar boundaries & input buffer bit-flips on trustedGetPublicEcdsaKey",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": true,
+      "new_page_effects_discovered": 4,
+      "records_collected": 24,
+      "run_id": "layer2_schema_val_xor_ecall5",
+      "subkind": "schema_scalar_and_bitflip",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_schema_val_xor_ecall5.jsonl"
+    },
+    {
+      "description": "Generic edl_schema NULL pointer injection on trustedGetPublicEcdsaKey",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": true,
+      "new_page_effects_discovered": 0,
+      "records_collected": 15,
+      "run_id": "layer2_schema_null_ecall5",
+      "subkind": "schema_null_pointer",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_schema_null_ecall5.jsonl"
+    },
+    {
+      "description": "Generic edl_schema scalar boundaries & input buffer bit-flips on trustedEcdsaSign",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": false,
+      "new_page_effects_discovered": 0,
+      "records_collected": 35,
+      "run_id": "layer2_schema_val_xor_ecall6",
+      "subkind": "schema_scalar_and_bitflip",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_schema_val_xor_ecall6.jsonl"
+    },
+    {
+      "description": "Generic edl_schema NULL pointer injection on trustedEcdsaSign",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": true,
+      "new_page_effects_discovered": 0,
+      "records_collected": 16,
+      "run_id": "layer2_schema_null_ecall6",
+      "subkind": "schema_null_pointer",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_schema_null_ecall6.jsonl"
+    },
+    {
+      "description": "Generic L* cold-state distinguishing query on trustedGenerateSEK (cap_seq=0 -> after ecall 0 sseq=1)",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": true,
+      "new_page_effects_discovered": 0,
+      "records_collected": 15,
+      "run_id": "layer2_lstar_cold_probe_ecall2_cap0",
+      "subkind": "lstar_cold_state_probe",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_lstar_cold_probe_ecall2_cap0.jsonl"
+    },
+    {
+      "description": "Generic L* cold-state distinguishing query on trustedGenerateSEK (cap_seq=1 -> after ecall 0 sseq=1)",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": true,
+      "new_page_effects_discovered": 0,
+      "records_collected": 14,
+      "run_id": "layer2_lstar_cold_probe_ecall2_cap1",
+      "subkind": "lstar_cold_state_probe",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_lstar_cold_probe_ecall2_cap1.jsonl"
+    },
+    {
+      "description": "Generic L* cold-state distinguishing query on trustedSetSEK (cap_seq=0 -> after ecall 0 sseq=1)",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": true,
+      "new_page_effects_discovered": 0,
+      "records_collected": 14,
+      "run_id": "layer2_lstar_cold_probe_ecall3_cap0",
+      "subkind": "lstar_cold_state_probe",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_lstar_cold_probe_ecall3_cap0.jsonl"
+    },
+    {
+      "description": "Generic L* cold-state distinguishing query on trustedSetSEK (cap_seq=1 -> after ecall 0 sseq=1)",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": true,
+      "new_page_effects_discovered": 0,
+      "records_collected": 14,
+      "run_id": "layer2_lstar_cold_probe_ecall3_cap1",
+      "subkind": "lstar_cold_state_probe",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_lstar_cold_probe_ecall3_cap1.jsonl"
+    },
+    {
+      "description": "Generic L* cold-state distinguishing query on trustedGenerateEcdsaKey (cap_seq=0 -> after ecall 0 sseq=1)",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": true,
+      "new_page_effects_discovered": 0,
+      "records_collected": 15,
+      "run_id": "layer2_lstar_cold_probe_ecall4_cap0",
+      "subkind": "lstar_cold_state_probe",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_lstar_cold_probe_ecall4_cap0.jsonl"
+    },
+    {
+      "description": "Generic L* cold-state distinguishing query on trustedGenerateEcdsaKey (cap_seq=1 -> after ecall 0 sseq=1)",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": true,
+      "new_page_effects_discovered": 0,
+      "records_collected": 14,
+      "run_id": "layer2_lstar_cold_probe_ecall4_cap1",
+      "subkind": "lstar_cold_state_probe",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_lstar_cold_probe_ecall4_cap1.jsonl"
+    },
+    {
+      "description": "Generic L* cold-state distinguishing query on trustedGetPublicEcdsaKey (cap_seq=0 -> after ecall 0 sseq=1)",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": true,
+      "new_page_effects_discovered": 0,
+      "records_collected": 15,
+      "run_id": "layer2_lstar_cold_probe_ecall5_cap0",
+      "subkind": "lstar_cold_state_probe",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_lstar_cold_probe_ecall5_cap0.jsonl"
+    },
+    {
+      "description": "Generic L* cold-state distinguishing query on trustedGetPublicEcdsaKey (cap_seq=1 -> after ecall 0 sseq=1)",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": true,
+      "new_page_effects_discovered": 0,
+      "records_collected": 14,
+      "run_id": "layer2_lstar_cold_probe_ecall5_cap1",
+      "subkind": "lstar_cold_state_probe",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_lstar_cold_probe_ecall5_cap1.jsonl"
+    },
+    {
+      "description": "Generic L* cold-state distinguishing query on trustedEcdsaSign (cap_seq=0 -> after ecall 0 sseq=1)",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": true,
+      "new_page_effects_discovered": 0,
+      "records_collected": 15,
+      "run_id": "layer2_lstar_cold_probe_ecall6_cap0",
+      "subkind": "lstar_cold_state_probe",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_lstar_cold_probe_ecall6_cap0.jsonl"
+    },
+    {
+      "description": "Generic L* cold-state distinguishing query on trustedEcdsaSign (cap_seq=1 -> after ecall 0 sseq=1)",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": true,
+      "new_page_effects_discovered": 0,
+      "records_collected": 15,
+      "run_id": "layer2_lstar_cold_probe_ecall6_cap1",
+      "subkind": "lstar_cold_state_probe",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_lstar_cold_probe_ecall6_cap1.jsonl"
+    },
+    {
+      "description": "Generic 1024-step full-call history exploration on trustedEcdsaSign (0 calls skipped)",
+      "layer": "layer2_generic_schema",
+      "measurement_invalid": true,
+      "new_page_effects_discovered": 0,
+      "records_collected": 1038,
+      "run_id": "layer2_generic_history_1024_ecall6",
+      "subkind": "exponential_history_depth_1024",
+      "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_generic_history_1024_ecall6.jsonl"
     }
   ],
+  "sample": "sgxwallet",
+  "schema": "atfield-witness-ledger-v2",
   "witnesses": [
     {
       "call_seq": 1,
       "ecall_index": 2,
       "field_id": "0xd9243791a2c13244",
       "intervention": "",
-      "new_pages": [
+      "layer": "layer0_first_call",
+      "new_effects": [
         {
-          "ad": "A",
-          "rva": "0x5000"
+          "effect": "A",
+          "rva": "0x5000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x6000"
+          "effect": "A",
+          "rva": "0x6000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x14000"
+          "effect": "A",
+          "rva": "0x14000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x16000"
+          "effect": "A",
+          "rva": "0x16000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x21000"
+          "effect": "A",
+          "rva": "0x21000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x22000"
+          "effect": "A",
+          "rva": "0x22000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x24000"
+          "effect": "A",
+          "rva": "0x24000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x81000"
+          "effect": "A",
+          "rva": "0x81000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x89000"
+          "effect": "A",
+          "rva": "0x89000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8a000"
+          "effect": "A",
+          "rva": "0x8a000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8b000"
+          "effect": "A",
+          "rva": "0x8b000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8d000"
+          "effect": "A",
+          "rva": "0x8d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8e000"
+          "effect": "A",
+          "rva": "0x8e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x94000"
+          "effect": "A",
+          "rva": "0x94000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x95000"
+          "effect": "A",
+          "rva": "0x95000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x96000"
+          "effect": "A",
+          "rva": "0x96000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x194000"
+          "effect": "A",
+          "rva": "0x194000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x195000"
+          "effect": "A",
+          "rva": "0x195000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1ab000"
+          "effect": "A",
+          "rva": "0x1ab000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1af000"
+          "effect": "A",
+          "rva": "0x1af000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1c5000"
+          "effect": "A",
+          "rva": "0x1c5000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1c6000"
+          "effect": "A",
+          "rva": "0x1c6000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1c9000"
+          "effect": "A",
+          "rva": "0x1c9000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1cb000"
+          "effect": "A",
+          "rva": "0x1cb000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1cd000"
+          "effect": "A",
+          "rva": "0x1cd000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x26d000"
+          "effect": "A",
+          "rva": "0x26d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x26e000"
+          "effect": "A",
+          "rva": "0x26e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x270000"
+          "effect": "A",
+          "rva": "0x270000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x271000"
+          "effect": "A",
+          "rva": "0x271000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x275000"
+          "effect": "A",
+          "rva": "0x275000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x278000"
+          "effect": "A",
+          "rva": "0x278000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x279000"
+          "effect": "A",
+          "rva": "0x279000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x27c000"
+          "effect": "A",
+          "rva": "0x27c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x27d000"
+          "effect": "A",
+          "rva": "0x27d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x27e000"
+          "effect": "A",
+          "rva": "0x27e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x27f000"
+          "effect": "A",
+          "rva": "0x27f000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x280000"
+          "effect": "A",
+          "rva": "0x280000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x287000"
+          "effect": "A",
+          "rva": "0x287000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x289000"
+          "effect": "A",
+          "rva": "0x289000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x28a000"
+          "effect": "D",
+          "rva": "0x289000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x28c000"
+          "effect": "A",
+          "rva": "0x28a000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x2a2000"
+          "effect": "D",
+          "rva": "0x28a000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "A",
-          "rva": "0x2ad000"
+          "effect": "A",
+          "rva": "0x28c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x2c4000"
+          "effect": "D",
+          "rva": "0x28c000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x2c5000"
+          "effect": "A",
+          "rva": "0x2a2000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x712000"
+          "effect": "D",
+          "rva": "0x2a2000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x713000"
+          "effect": "A",
+          "rva": "0x2ad000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x737000"
+          "effect": "A",
+          "rva": "0x2c4000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x2c4000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x2c5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x2c5000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x712000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x712000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x713000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x713000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x737000",
+          "upgrade_from_A_to_D": false
         }
       ],
+      "run_id": "layer0_and_layer1_unmodified_host",
       "selector_seq": 0,
-      "stage": "stage0_history_and_persistence",
+      "subkind": "unmodified_host_full_trace",
       "tag": "host_normal",
+      "total_field_obs_effects": 56,
       "total_field_obs_pages": 48,
-      "tsc_s3": 238802,
-      "witness_id": "sgxwallet_stage0_history_and_persistence_seq1_c13244"
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer0_and_layer1_unmodified_host.jsonl",
+      "tsc_s3": 210926,
+      "witness_id": "sgxwallet_layer0_and_layer1_unmodified_host_seq1_c13244"
     },
     {
       "call_seq": 2,
       "ecall_index": 4,
       "field_id": "0xa9d5e11946c68a33",
       "intervention": "",
-      "new_pages": [
+      "layer": "layer0_first_call",
+      "new_effects": [
         {
-          "ad": "A",
-          "rva": "0x3000"
+          "effect": "A",
+          "rva": "0x3000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x4000"
+          "effect": "A",
+          "rva": "0x4000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x6000"
+          "effect": "A",
+          "rva": "0x6000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x9000"
+          "effect": "A",
+          "rva": "0x9000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xa000"
+          "effect": "A",
+          "rva": "0xa000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x14000"
+          "effect": "A",
+          "rva": "0x14000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x15000"
+          "effect": "A",
+          "rva": "0x15000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x16000"
+          "effect": "A",
+          "rva": "0x16000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x21000"
+          "effect": "A",
+          "rva": "0x21000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x22000"
+          "effect": "A",
+          "rva": "0x22000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x24000"
+          "effect": "A",
+          "rva": "0x24000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x28000"
+          "effect": "A",
+          "rva": "0x28000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x29000"
+          "effect": "A",
+          "rva": "0x29000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2a000"
+          "effect": "A",
+          "rva": "0x2a000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2b000"
+          "effect": "A",
+          "rva": "0x2b000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2c000"
+          "effect": "A",
+          "rva": "0x2c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2d000"
+          "effect": "A",
+          "rva": "0x2d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2e000"
+          "effect": "A",
+          "rva": "0x2e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2f000"
+          "effect": "A",
+          "rva": "0x2f000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x30000"
+          "effect": "A",
+          "rva": "0x30000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x31000"
+          "effect": "A",
+          "rva": "0x31000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x32000"
+          "effect": "A",
+          "rva": "0x32000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x33000"
+          "effect": "A",
+          "rva": "0x33000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x34000"
+          "effect": "A",
+          "rva": "0x34000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x35000"
+          "effect": "A",
+          "rva": "0x35000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x49000"
+          "effect": "A",
+          "rva": "0x49000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x4e000"
+          "effect": "A",
+          "rva": "0x4e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x4f000"
+          "effect": "A",
+          "rva": "0x4f000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x81000"
+          "effect": "A",
+          "rva": "0x81000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x82000"
+          "effect": "A",
+          "rva": "0x82000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x83000"
+          "effect": "A",
+          "rva": "0x83000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x84000"
+          "effect": "A",
+          "rva": "0x84000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x85000"
+          "effect": "A",
+          "rva": "0x85000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x89000"
+          "effect": "A",
+          "rva": "0x89000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8a000"
+          "effect": "A",
+          "rva": "0x8a000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8b000"
+          "effect": "A",
+          "rva": "0x8b000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8c000"
+          "effect": "A",
+          "rva": "0x8c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8d000"
+          "effect": "A",
+          "rva": "0x8d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8e000"
+          "effect": "A",
+          "rva": "0x8e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x94000"
+          "effect": "A",
+          "rva": "0x94000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x95000"
+          "effect": "A",
+          "rva": "0x95000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x96000"
+          "effect": "A",
+          "rva": "0x96000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x194000"
+          "effect": "A",
+          "rva": "0x194000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x195000"
+          "effect": "A",
+          "rva": "0x195000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1ab000"
+          "effect": "A",
+          "rva": "0x1ab000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1ac000"
+          "effect": "A",
+          "rva": "0x1ac000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1af000"
+          "effect": "A",
+          "rva": "0x1af000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1c5000"
+          "effect": "A",
+          "rva": "0x1c5000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1c6000"
+          "effect": "A",
+          "rva": "0x1c6000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1c9000"
+          "effect": "A",
+          "rva": "0x1c9000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1cb000"
+          "effect": "A",
+          "rva": "0x1cb000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1cd000"
+          "effect": "A",
+          "rva": "0x1cd000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x26d000"
+          "effect": "A",
+          "rva": "0x26d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x26e000"
+          "effect": "A",
+          "rva": "0x26e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x270000"
+          "effect": "A",
+          "rva": "0x270000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x271000"
+          "effect": "A",
+          "rva": "0x271000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x275000"
+          "effect": "A",
+          "rva": "0x275000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x278000"
+          "effect": "A",
+          "rva": "0x278000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x279000"
+          "effect": "A",
+          "rva": "0x279000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x27c000"
+          "effect": "A",
+          "rva": "0x27c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x27e000"
+          "effect": "A",
+          "rva": "0x27e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x27f000"
+          "effect": "A",
+          "rva": "0x27f000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x280000"
+          "effect": "A",
+          "rva": "0x280000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x284000"
+          "effect": "A",
+          "rva": "0x284000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x287000"
+          "effect": "A",
+          "rva": "0x287000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x289000"
+          "effect": "A",
+          "rva": "0x289000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x28a000"
+          "effect": "D",
+          "rva": "0x289000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "A",
-          "rva": "0x28c000"
+          "effect": "A",
+          "rva": "0x28a000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x28e000"
+          "effect": "A",
+          "rva": "0x28c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x2a2000"
+          "effect": "A",
+          "rva": "0x28e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2ad000"
+          "effect": "A",
+          "rva": "0x2a2000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x2c4000"
+          "effect": "D",
+          "rva": "0x2a2000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x2c5000"
+          "effect": "A",
+          "rva": "0x2ad000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x712000"
+          "effect": "A",
+          "rva": "0x2c4000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x713000"
+          "effect": "D",
+          "rva": "0x2c4000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "A",
-          "rva": "0x737000"
+          "effect": "A",
+          "rva": "0x2c5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x2c5000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x712000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x712000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x713000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x713000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x737000",
+          "upgrade_from_A_to_D": false
         }
       ],
+      "run_id": "layer0_and_layer1_unmodified_host",
       "selector_seq": 0,
-      "stage": "stage0_history_and_persistence",
+      "subkind": "unmodified_host_full_trace",
       "tag": "host_normal",
+      "total_field_obs_effects": 82,
       "total_field_obs_pages": 76,
-      "tsc_s3": 3889558,
-      "witness_id": "sgxwallet_stage0_history_and_persistence_seq2_c68a33"
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer0_and_layer1_unmodified_host.jsonl",
+      "tsc_s3": 3874882,
+      "witness_id": "sgxwallet_layer0_and_layer1_unmodified_host_seq2_c68a33"
     },
     {
       "call_seq": 3,
       "ecall_index": 5,
       "field_id": "0x6be0530730e7f5f1",
       "intervention": "",
-      "new_pages": [
+      "layer": "layer0_first_call",
+      "new_effects": [
         {
-          "ad": "A",
-          "rva": "0x4000"
+          "effect": "A",
+          "rva": "0x4000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x6000"
+          "effect": "A",
+          "rva": "0x6000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x9000"
+          "effect": "A",
+          "rva": "0x9000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xa000"
+          "effect": "A",
+          "rva": "0xa000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x14000"
+          "effect": "A",
+          "rva": "0x14000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x15000"
+          "effect": "A",
+          "rva": "0x15000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x16000"
+          "effect": "A",
+          "rva": "0x16000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x21000"
+          "effect": "A",
+          "rva": "0x21000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x22000"
+          "effect": "A",
+          "rva": "0x22000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x24000"
+          "effect": "A",
+          "rva": "0x24000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x28000"
+          "effect": "A",
+          "rva": "0x28000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x29000"
+          "effect": "A",
+          "rva": "0x29000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2a000"
+          "effect": "A",
+          "rva": "0x2a000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2b000"
+          "effect": "A",
+          "rva": "0x2b000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2c000"
+          "effect": "A",
+          "rva": "0x2c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2d000"
+          "effect": "A",
+          "rva": "0x2d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2e000"
+          "effect": "A",
+          "rva": "0x2e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2f000"
+          "effect": "A",
+          "rva": "0x2f000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x30000"
+          "effect": "A",
+          "rva": "0x30000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x31000"
+          "effect": "A",
+          "rva": "0x31000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x32000"
+          "effect": "A",
+          "rva": "0x32000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x33000"
+          "effect": "A",
+          "rva": "0x33000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x34000"
+          "effect": "A",
+          "rva": "0x34000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x35000"
+          "effect": "A",
+          "rva": "0x35000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x49000"
+          "effect": "A",
+          "rva": "0x49000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x4e000"
+          "effect": "A",
+          "rva": "0x4e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x4f000"
+          "effect": "A",
+          "rva": "0x4f000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x81000"
+          "effect": "A",
+          "rva": "0x81000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x89000"
+          "effect": "A",
+          "rva": "0x89000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8a000"
+          "effect": "A",
+          "rva": "0x8a000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8b000"
+          "effect": "A",
+          "rva": "0x8b000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8c000"
+          "effect": "A",
+          "rva": "0x8c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8d000"
+          "effect": "A",
+          "rva": "0x8d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8e000"
+          "effect": "A",
+          "rva": "0x8e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x94000"
+          "effect": "A",
+          "rva": "0x94000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x95000"
+          "effect": "A",
+          "rva": "0x95000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x96000"
+          "effect": "A",
+          "rva": "0x96000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x194000"
+          "effect": "A",
+          "rva": "0x194000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x195000"
+          "effect": "A",
+          "rva": "0x195000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1af000"
+          "effect": "A",
+          "rva": "0x1af000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1c5000"
+          "effect": "A",
+          "rva": "0x1c5000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1c6000"
+          "effect": "A",
+          "rva": "0x1c6000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1c9000"
+          "effect": "A",
+          "rva": "0x1c9000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1cb000"
+          "effect": "A",
+          "rva": "0x1cb000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1cd000"
+          "effect": "A",
+          "rva": "0x1cd000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x26d000"
+          "effect": "A",
+          "rva": "0x26d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x26e000"
+          "effect": "A",
+          "rva": "0x26e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x270000"
+          "effect": "A",
+          "rva": "0x270000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x271000"
+          "effect": "A",
+          "rva": "0x271000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x275000"
+          "effect": "A",
+          "rva": "0x275000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x279000"
+          "effect": "A",
+          "rva": "0x279000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x27c000"
+          "effect": "A",
+          "rva": "0x27c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x27e000"
+          "effect": "A",
+          "rva": "0x27e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x27f000"
+          "effect": "A",
+          "rva": "0x27f000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x280000"
+          "effect": "A",
+          "rva": "0x280000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x284000"
+          "effect": "A",
+          "rva": "0x284000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x287000"
+          "effect": "A",
+          "rva": "0x287000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x289000"
+          "effect": "A",
+          "rva": "0x289000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x28a000"
+          "effect": "D",
+          "rva": "0x289000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "A",
-          "rva": "0x28c000"
+          "effect": "A",
+          "rva": "0x28a000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x28e000"
+          "effect": "A",
+          "rva": "0x28c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x2a2000"
+          "effect": "A",
+          "rva": "0x28e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2ad000"
+          "effect": "A",
+          "rva": "0x2a2000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x2c4000"
+          "effect": "D",
+          "rva": "0x2a2000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x2c5000"
+          "effect": "A",
+          "rva": "0x2ad000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x712000"
+          "effect": "A",
+          "rva": "0x2c4000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x713000"
+          "effect": "D",
+          "rva": "0x2c4000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "A",
-          "rva": "0x737000"
+          "effect": "A",
+          "rva": "0x2c5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x2c5000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x712000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x712000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x713000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x713000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x737000",
+          "upgrade_from_A_to_D": false
         }
       ],
+      "run_id": "layer0_and_layer1_unmodified_host",
       "selector_seq": 0,
-      "stage": "stage0_history_and_persistence",
+      "subkind": "unmodified_host_full_trace",
       "tag": "host_normal",
+      "total_field_obs_effects": 74,
       "total_field_obs_pages": 68,
-      "tsc_s3": 7162740,
-      "witness_id": "sgxwallet_stage0_history_and_persistence_seq3_e7f5f1"
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer0_and_layer1_unmodified_host.jsonl",
+      "tsc_s3": 7120518,
+      "witness_id": "sgxwallet_layer0_and_layer1_unmodified_host_seq3_e7f5f1"
     },
     {
       "call_seq": 4,
       "ecall_index": 6,
       "field_id": "0x25c0fd3d7283b2b7",
       "intervention": "",
-      "new_pages": [
+      "layer": "layer0_first_call",
+      "new_effects": [
         {
-          "ad": "A",
-          "rva": "0x1000"
+          "effect": "A",
+          "rva": "0x1000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x4000"
+          "effect": "A",
+          "rva": "0x4000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x6000"
+          "effect": "A",
+          "rva": "0x6000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x9000"
+          "effect": "A",
+          "rva": "0x9000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0xa000"
+          "effect": "A",
+          "rva": "0xa000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x14000"
+          "effect": "A",
+          "rva": "0x14000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x15000"
+          "effect": "A",
+          "rva": "0x15000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x16000"
+          "effect": "A",
+          "rva": "0x16000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x21000"
+          "effect": "A",
+          "rva": "0x21000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x22000"
+          "effect": "A",
+          "rva": "0x22000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x24000"
+          "effect": "A",
+          "rva": "0x24000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x28000"
+          "effect": "A",
+          "rva": "0x28000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x29000"
+          "effect": "A",
+          "rva": "0x29000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2a000"
+          "effect": "A",
+          "rva": "0x2a000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2b000"
+          "effect": "A",
+          "rva": "0x2b000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2c000"
+          "effect": "A",
+          "rva": "0x2c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2d000"
+          "effect": "A",
+          "rva": "0x2d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2e000"
+          "effect": "A",
+          "rva": "0x2e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2f000"
+          "effect": "A",
+          "rva": "0x2f000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x30000"
+          "effect": "A",
+          "rva": "0x30000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x31000"
+          "effect": "A",
+          "rva": "0x31000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x32000"
+          "effect": "A",
+          "rva": "0x32000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x33000"
+          "effect": "A",
+          "rva": "0x33000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x34000"
+          "effect": "A",
+          "rva": "0x34000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x35000"
+          "effect": "A",
+          "rva": "0x35000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x49000"
+          "effect": "A",
+          "rva": "0x49000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x4e000"
+          "effect": "A",
+          "rva": "0x4e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x4f000"
+          "effect": "A",
+          "rva": "0x4f000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x81000"
+          "effect": "A",
+          "rva": "0x81000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x89000"
+          "effect": "A",
+          "rva": "0x89000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8a000"
+          "effect": "A",
+          "rva": "0x8a000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8b000"
+          "effect": "A",
+          "rva": "0x8b000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8c000"
+          "effect": "A",
+          "rva": "0x8c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8d000"
+          "effect": "A",
+          "rva": "0x8d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8e000"
+          "effect": "A",
+          "rva": "0x8e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x94000"
+          "effect": "A",
+          "rva": "0x94000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x95000"
+          "effect": "A",
+          "rva": "0x95000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x96000"
+          "effect": "A",
+          "rva": "0x96000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x194000"
+          "effect": "A",
+          "rva": "0x194000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x195000"
+          "effect": "A",
+          "rva": "0x195000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1af000"
+          "effect": "A",
+          "rva": "0x1af000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1c5000"
+          "effect": "A",
+          "rva": "0x1c5000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1c6000"
+          "effect": "A",
+          "rva": "0x1c6000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1c9000"
+          "effect": "A",
+          "rva": "0x1c9000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1cb000"
+          "effect": "A",
+          "rva": "0x1cb000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1cd000"
+          "effect": "A",
+          "rva": "0x1cd000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x26d000"
+          "effect": "A",
+          "rva": "0x26d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x26e000"
+          "effect": "A",
+          "rva": "0x26e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x270000"
+          "effect": "A",
+          "rva": "0x270000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x271000"
+          "effect": "A",
+          "rva": "0x271000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x275000"
+          "effect": "A",
+          "rva": "0x275000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x279000"
+          "effect": "A",
+          "rva": "0x279000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x27c000"
+          "effect": "A",
+          "rva": "0x27c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x27e000"
+          "effect": "A",
+          "rva": "0x27e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x27f000"
+          "effect": "A",
+          "rva": "0x27f000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x280000"
+          "effect": "A",
+          "rva": "0x280000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x284000"
+          "effect": "A",
+          "rva": "0x284000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x287000"
+          "effect": "A",
+          "rva": "0x287000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x289000"
+          "effect": "A",
+          "rva": "0x289000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x28a000"
+          "effect": "D",
+          "rva": "0x289000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "A",
-          "rva": "0x28c000"
+          "effect": "A",
+          "rva": "0x28a000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x28e000"
+          "effect": "D",
+          "rva": "0x28a000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x2a2000"
+          "effect": "A",
+          "rva": "0x28c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2ad000"
+          "effect": "A",
+          "rva": "0x28e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x2c4000"
+          "effect": "A",
+          "rva": "0x2a2000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x2c5000"
+          "effect": "D",
+          "rva": "0x2a2000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x711000"
+          "effect": "A",
+          "rva": "0x2ad000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x712000"
+          "effect": "A",
+          "rva": "0x2c4000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x713000"
+          "effect": "D",
+          "rva": "0x2c4000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "A",
-          "rva": "0x737000"
+          "effect": "A",
+          "rva": "0x2c5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x2c5000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x711000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x711000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x712000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x712000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x713000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x713000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x737000",
+          "upgrade_from_A_to_D": false
         }
       ],
+      "run_id": "layer0_and_layer1_unmodified_host",
       "selector_seq": 0,
-      "stage": "stage0_history_and_persistence",
+      "subkind": "unmodified_host_full_trace",
       "tag": "host_normal",
+      "total_field_obs_effects": 78,
       "total_field_obs_pages": 70,
-      "tsc_s3": 3666190,
-      "witness_id": "sgxwallet_stage0_history_and_persistence_seq4_83b2b7"
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer0_and_layer1_unmodified_host.jsonl",
+      "tsc_s3": 3758230,
+      "witness_id": "sgxwallet_layer0_and_layer1_unmodified_host_seq4_83b2b7"
     },
     {
       "call_seq": 1005,
       "ecall_index": 6,
       "field_id": "0x25c0fd3d7283b2b7",
       "intervention": "",
-      "new_pages": [
+      "layer": "layer1_full_host",
+      "new_effects": [
         {
-          "ad": "A",
-          "rva": "0x2000"
+          "effect": "A",
+          "rva": "0x2000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x82000"
+          "effect": "A",
+          "rva": "0x82000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x83000"
+          "effect": "A",
+          "rva": "0x83000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x84000"
+          "effect": "A",
+          "rva": "0x84000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x85000"
+          "effect": "A",
+          "rva": "0x85000",
+          "upgrade_from_A_to_D": false
         }
       ],
+      "run_id": "layer0_and_layer1_unmodified_host",
       "selector_seq": 1001,
-      "stage": "stage0_history_and_persistence",
+      "subkind": "unmodified_host_full_trace",
       "tag": "host_normal",
+      "total_field_obs_effects": 83,
       "total_field_obs_pages": 75,
-      "tsc_s3": 93548,
-      "witness_id": "sgxwallet_stage0_history_and_persistence_seq1005_83b2b7"
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer0_and_layer1_unmodified_host.jsonl",
+      "tsc_s3": 97078,
+      "witness_id": "sgxwallet_layer0_and_layer1_unmodified_host_seq1005_83b2b7"
     },
     {
       "call_seq": 1007,
       "ecall_index": 6,
       "field_id": "0x25c0fd3d7283b2b7",
       "intervention": "",
-      "new_pages": [
+      "layer": "layer1_full_host",
+      "new_effects": [
         {
-          "ad": "A",
-          "rva": "0x5000"
+          "effect": "A",
+          "rva": "0x5000",
+          "upgrade_from_A_to_D": false
         }
       ],
+      "run_id": "layer0_and_layer1_unmodified_host",
       "selector_seq": 1003,
-      "stage": "stage0_history_and_persistence",
+      "subkind": "unmodified_host_full_trace",
       "tag": "host_normal",
+      "total_field_obs_effects": 84,
       "total_field_obs_pages": 76,
-      "tsc_s3": 77928,
-      "witness_id": "sgxwallet_stage0_history_and_persistence_seq1007_83b2b7"
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer0_and_layer1_unmodified_host.jsonl",
+      "tsc_s3": 76154,
+      "witness_id": "sgxwallet_layer0_and_layer1_unmodified_host_seq1007_83b2b7"
     },
     {
       "call_seq": 1011,
       "ecall_index": 3,
       "field_id": "0x9304e1c7e45cef0a",
       "intervention": "",
-      "new_pages": [
+      "layer": "layer0_first_call",
+      "new_effects": [
         {
-          "ad": "A",
-          "rva": "0x6000"
+          "effect": "A",
+          "rva": "0x6000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x14000"
+          "effect": "A",
+          "rva": "0x14000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x16000"
+          "effect": "A",
+          "rva": "0x16000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x21000"
+          "effect": "A",
+          "rva": "0x21000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x22000"
+          "effect": "A",
+          "rva": "0x22000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x24000"
+          "effect": "A",
+          "rva": "0x24000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x81000"
+          "effect": "A",
+          "rva": "0x81000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x89000"
+          "effect": "A",
+          "rva": "0x89000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8a000"
+          "effect": "A",
+          "rva": "0x8a000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8b000"
+          "effect": "A",
+          "rva": "0x8b000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8d000"
+          "effect": "A",
+          "rva": "0x8d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x8e000"
+          "effect": "A",
+          "rva": "0x8e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x94000"
+          "effect": "A",
+          "rva": "0x94000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x95000"
+          "effect": "A",
+          "rva": "0x95000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x96000"
+          "effect": "A",
+          "rva": "0x96000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x194000"
+          "effect": "A",
+          "rva": "0x194000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x195000"
+          "effect": "A",
+          "rva": "0x195000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1af000"
+          "effect": "A",
+          "rva": "0x1af000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1c5000"
+          "effect": "A",
+          "rva": "0x1c5000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1c6000"
+          "effect": "A",
+          "rva": "0x1c6000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1c9000"
+          "effect": "A",
+          "rva": "0x1c9000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1cb000"
+          "effect": "A",
+          "rva": "0x1cb000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x1cd000"
+          "effect": "A",
+          "rva": "0x1cd000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x26d000"
+          "effect": "A",
+          "rva": "0x26d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x26e000"
+          "effect": "A",
+          "rva": "0x26e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x270000"
+          "effect": "A",
+          "rva": "0x270000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x271000"
+          "effect": "A",
+          "rva": "0x271000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x275000"
+          "effect": "A",
+          "rva": "0x275000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x279000"
+          "effect": "A",
+          "rva": "0x279000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x27c000"
+          "effect": "A",
+          "rva": "0x27c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x27d000"
+          "effect": "A",
+          "rva": "0x27d000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x27e000"
+          "effect": "A",
+          "rva": "0x27e000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x27f000"
+          "effect": "A",
+          "rva": "0x27f000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x280000"
+          "effect": "A",
+          "rva": "0x280000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x287000"
+          "effect": "A",
+          "rva": "0x287000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x289000"
+          "effect": "A",
+          "rva": "0x289000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x28a000"
+          "effect": "D",
+          "rva": "0x289000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x28c000"
+          "effect": "A",
+          "rva": "0x28a000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x2a2000"
+          "effect": "A",
+          "rva": "0x28c000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x2ad000"
+          "effect": "D",
+          "rva": "0x28c000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x2c4000"
+          "effect": "A",
+          "rva": "0x2a2000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x2c5000"
+          "effect": "D",
+          "rva": "0x2a2000",
+          "upgrade_from_A_to_D": true
         },
         {
-          "ad": "D",
-          "rva": "0x712000"
+          "effect": "A",
+          "rva": "0x2ad000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "D",
-          "rva": "0x713000"
+          "effect": "A",
+          "rva": "0x2c4000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x737000"
+          "effect": "D",
+          "rva": "0x2c4000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x2c5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x2c5000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x712000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x712000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x713000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "D",
+          "rva": "0x713000",
+          "upgrade_from_A_to_D": true
+        },
+        {
+          "effect": "A",
+          "rva": "0x737000",
+          "upgrade_from_A_to_D": false
         }
       ],
+      "run_id": "layer0_and_layer1_unmodified_host",
       "selector_seq": 0,
-      "stage": "stage0_history_and_persistence",
+      "subkind": "unmodified_host_full_trace",
       "tag": "host_normal",
+      "total_field_obs_effects": 52,
       "total_field_obs_pages": 45,
-      "tsc_s3": 210322,
-      "witness_id": "sgxwallet_stage0_history_and_persistence_seq1011_5cef0a"
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer0_and_layer1_unmodified_host.jsonl",
+      "tsc_s3": 169564,
+      "witness_id": "sgxwallet_layer0_and_layer1_unmodified_host_seq1011_5cef0a"
+    },
+    {
+      "call_seq": 11,
+      "ecall_index": 3,
+      "field_id": "0x9304e1c7e45cef0a",
+      "intervention": "xor_buf:3:0:16:0:255;xor_buf:3:0:16:15:170;xor_buf:3:0:16:31:85;xor_buf:3:0:16:60:255;xor_buf:3:1:16:0:255;xor_buf:3:1:16:15:170;xor_buf:3:1:16:31:85;xor_buf:3:1:16:60:255",
+      "layer": "layer2_generic_schema",
+      "new_effects": [
+        {
+          "effect": "A",
+          "rva": "0x3000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x5000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0xa000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x82000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x83000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x84000",
+          "upgrade_from_A_to_D": false
+        },
+        {
+          "effect": "A",
+          "rva": "0x85000",
+          "upgrade_from_A_to_D": false
+        }
+      ],
+      "run_id": "layer2_schema_val_xor_ecall3",
+      "selector_seq": 0,
+      "subkind": "schema_scalar_and_bitflip",
+      "tag": "schema_xor_off_16_byte_0",
+      "total_field_obs_effects": 59,
+      "total_field_obs_pages": 52,
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_schema_val_xor_ecall3.jsonl",
+      "tsc_s3": 59338,
+      "witness_id": "sgxwallet_layer2_schema_val_xor_ecall3_seq11_5cef0a"
     },
     {
       "call_seq": 3,
       "ecall_index": 5,
       "field_id": "0x6be0530730e7f5f1",
-      "intervention": "set_u32:6:0:72:10;set_u32:6:0:72:99;set_u32:5:0:24:8;xor_buf:5:0:16:0:255",
-      "new_pages": [
+      "intervention": "xor_buf:5:0:16:0:255;xor_buf:5:0:16:15:170;xor_buf:5:0:16:31:85;xor_buf:5:0:16:60:255;set_u64:5:0:24:0;set_u64:5:0:24:2;set_u64:5:0:24:8;set_u64:5:0:24:10;set_u64:5:0:24:16;set_u64:5:0:24:99;xor_buf:5:1:16:0:255;xor_buf:5:1:16:15:170;xor_buf:5:1:16:31:85;xor_buf:5:1:16:60:255;set_u64:5:1:24:0;set_u64:5:1:24:2;set_u64:5:1:24:8;set_u64:5:1:24:10;set_u64:5:1:24:16;set_u64:5:1:24:99",
+      "layer": "layer2_generic_schema",
+      "new_effects": [
         {
-          "ad": "A",
-          "rva": "0x82000"
+          "effect": "A",
+          "rva": "0x82000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x83000"
+          "effect": "A",
+          "rva": "0x83000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x84000"
+          "effect": "A",
+          "rva": "0x84000",
+          "upgrade_from_A_to_D": false
         },
         {
-          "ad": "A",
-          "rva": "0x85000"
+          "effect": "A",
+          "rva": "0x85000",
+          "upgrade_from_A_to_D": false
         }
       ],
+      "run_id": "layer2_schema_val_xor_ecall5",
       "selector_seq": 0,
-      "stage": "stage1_base_and_error_mutations",
-      "tag": "mutate_u32_off_24_val_8",
+      "subkind": "schema_scalar_and_bitflip",
+      "tag": "schema_xor_off_16_byte_0",
+      "total_field_obs_effects": 78,
       "total_field_obs_pages": 72,
-      "tsc_s3": 50514,
-      "witness_id": "sgxwallet_stage1_base_and_error_mutations_seq3_e7f5f1"
-    },
-    {
-      "call_seq": 1011,
-      "ecall_index": 3,
-      "field_id": "0x9304e1c7e45cef0a",
-      "intervention": "xor_buf:3:0:16:60:255",
-      "new_pages": [
-        {
-          "ad": "A",
-          "rva": "0x3000"
-        },
-        {
-          "ad": "A",
-          "rva": "0x5000"
-        },
-        {
-          "ad": "A",
-          "rva": "0xa000"
-        },
-        {
-          "ad": "A",
-          "rva": "0x82000"
-        },
-        {
-          "ad": "A",
-          "rva": "0x83000"
-        },
-        {
-          "ad": "A",
-          "rva": "0x84000"
-        },
-        {
-          "ad": "A",
-          "rva": "0x85000"
-        }
-      ],
-      "selector_seq": 0,
-      "stage": "stage2_setsek_corrupt_unseal",
-      "tag": "mutate_xor_off_16_byte_60",
-      "total_field_obs_pages": 52,
-      "tsc_s3": 193518,
-      "witness_id": "sgxwallet_stage2_setsek_corrupt_unseal_seq1011_5cef0a"
+      "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/sgxwallet/layer2_schema_val_xor_ecall5.jsonl",
+      "tsc_s3": 74464,
+      "witness_id": "sgxwallet_layer2_schema_val_xor_ecall5_seq3_e7f5f1"
     }
   ]
 }

@@ -13,7 +13,12 @@
           "name": "_logLevel",
           "decl": "uint64_t _logLevel",
           "attributes": [],
-          "is_pointer": false
+          "is_pointer": false,
+          "ms_offset": 0,
+          "ms_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "elem_size": 8
         }
       ],
       "ms_layout": {
@@ -45,7 +50,12 @@
           "attributes": [
             "out"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 0,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 4
         },
         {
           "name": "err_string",
@@ -54,7 +64,14 @@
             "out",
             "count = SMALL_BUF_SIZE"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 8,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 1,
+          "bound_kind": "count",
+          "bound_param": "SMALL_BUF_SIZE"
         },
         {
           "name": "encrypted_SEK",
@@ -63,7 +80,14 @@
             "out",
             "count = SMALL_BUF_SIZE"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 16,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 1,
+          "bound_kind": "count",
+          "bound_param": "SMALL_BUF_SIZE"
         },
         {
           "name": "enc_len",
@@ -71,7 +95,12 @@
           "attributes": [
             "out"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 24,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 8
         },
         {
           "name": "hex_SEK",
@@ -80,7 +109,14 @@
             "out",
             "count = 65"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 32,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 1,
+          "bound_kind": "count",
+          "bound_param": "65"
         }
       ],
       "ms_layout": {
@@ -121,7 +157,12 @@
           "attributes": [
             "out"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 0,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 4
         },
         {
           "name": "err_string",
@@ -130,7 +171,14 @@
             "out",
             "count = SMALL_BUF_SIZE"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 8,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 1,
+          "bound_kind": "count",
+          "bound_param": "SMALL_BUF_SIZE"
         },
         {
           "name": "encrypted_SEK",
@@ -139,7 +187,14 @@
             "in",
             "count = SMALL_BUF_SIZE"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 16,
+          "ms_size": 8,
+          "direction": "in",
+          "is_string": false,
+          "elem_size": 1,
+          "bound_kind": "count",
+          "bound_param": "SMALL_BUF_SIZE"
         }
       ],
       "ms_layout": {
@@ -172,7 +227,12 @@
           "attributes": [
             "out"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 0,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 4
         },
         {
           "name": "err_string",
@@ -181,7 +241,14 @@
             "out",
             "count = SMALL_BUF_SIZE"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 8,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 1,
+          "bound_kind": "count",
+          "bound_param": "SMALL_BUF_SIZE"
         },
         {
           "name": "is_exportable",
@@ -190,7 +257,14 @@
             "in",
             "count = 1"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 16,
+          "ms_size": 8,
+          "direction": "in",
+          "is_string": false,
+          "elem_size": 4,
+          "bound_kind": "count",
+          "bound_param": "1"
         },
         {
           "name": "encrypted_key",
@@ -199,7 +273,14 @@
             "out",
             "count = SMALL_BUF_SIZE"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 24,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 1,
+          "bound_kind": "count",
+          "bound_param": "SMALL_BUF_SIZE"
         },
         {
           "name": "enc_len",
@@ -207,7 +288,12 @@
           "attributes": [
             "out"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 32,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 8
         },
         {
           "name": "pub_key_x",
@@ -216,7 +302,14 @@
             "out",
             "count = SMALL_BUF_SIZE"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 40,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 1,
+          "bound_kind": "count",
+          "bound_param": "SMALL_BUF_SIZE"
         },
         {
           "name": "pub_key_y",
@@ -225,7 +318,14 @@
             "out",
             "count = SMALL_BUF_SIZE"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 48,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 1,
+          "bound_kind": "count",
+          "bound_param": "SMALL_BUF_SIZE"
         }
       ],
       "ms_layout": {
@@ -274,7 +374,12 @@
           "attributes": [
             "out"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 0,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 4
         },
         {
           "name": "err_string",
@@ -283,7 +388,14 @@
             "out",
             "count = SMALL_BUF_SIZE"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 8,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 1,
+          "bound_kind": "count",
+          "bound_param": "SMALL_BUF_SIZE"
         },
         {
           "name": "encrypted_key",
@@ -292,13 +404,25 @@
             "in",
             "count = SMALL_BUF_SIZE"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 16,
+          "ms_size": 8,
+          "direction": "in",
+          "is_string": false,
+          "elem_size": 1,
+          "bound_kind": "count",
+          "bound_param": "SMALL_BUF_SIZE"
         },
         {
           "name": "dec_len",
           "decl": "uint64_t dec_len",
           "attributes": [],
-          "is_pointer": false
+          "is_pointer": false,
+          "ms_offset": 24,
+          "ms_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "elem_size": 8
         },
         {
           "name": "pub_key_x",
@@ -307,7 +431,14 @@
             "out",
             "count = SMALL_BUF_SIZE"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 32,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 1,
+          "bound_kind": "count",
+          "bound_param": "SMALL_BUF_SIZE"
         },
         {
           "name": "pub_key_y",
@@ -316,7 +447,14 @@
             "out",
             "count = SMALL_BUF_SIZE"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 40,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 1,
+          "bound_kind": "count",
+          "bound_param": "SMALL_BUF_SIZE"
         }
       ],
       "ms_layout": {
@@ -361,7 +499,12 @@
           "attributes": [
             "out"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 0,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 4
         },
         {
           "name": "err_string",
@@ -370,7 +513,14 @@
             "out",
             "count = SMALL_BUF_SIZE"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 8,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 1,
+          "bound_kind": "count",
+          "bound_param": "SMALL_BUF_SIZE"
         },
         {
           "name": "encrypted_key",
@@ -379,13 +529,25 @@
             "in",
             "count = SMALL_BUF_SIZE"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 16,
+          "ms_size": 8,
+          "direction": "in",
+          "is_string": false,
+          "elem_size": 1,
+          "bound_kind": "count",
+          "bound_param": "SMALL_BUF_SIZE"
         },
         {
           "name": "enc_len",
           "decl": "uint64_t enc_len",
           "attributes": [],
-          "is_pointer": false
+          "is_pointer": false,
+          "ms_offset": 24,
+          "ms_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "elem_size": 8
         },
         {
           "name": "hash",
@@ -394,7 +556,12 @@
             "in",
             "string"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 32,
+          "ms_size": 8,
+          "direction": "in",
+          "is_string": true,
+          "elem_size": 1
         },
         {
           "name": "sig_r",
@@ -403,7 +570,14 @@
             "out",
             "count = SMALL_BUF_SIZE"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 48,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 1,
+          "bound_kind": "count",
+          "bound_param": "SMALL_BUF_SIZE"
         },
         {
           "name": "sig_s",
@@ -412,7 +586,14 @@
             "out",
             "count = SMALL_BUF_SIZE"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 56,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 1,
+          "bound_kind": "count",
+          "bound_param": "SMALL_BUF_SIZE"
         },
         {
           "name": "sig_v",
@@ -420,13 +601,23 @@
           "attributes": [
             "out"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 64,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 1
         },
         {
           "name": "base",
           "decl": "int base",
           "attributes": [],
-          "is_pointer": false
+          "is_pointer": false,
+          "ms_offset": 72,
+          "ms_size": 4,
+          "direction": "val",
+          "is_string": false,
+          "elem_size": 4
         }
       ],
       "ms_layout": {

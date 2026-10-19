@@ -16,7 +16,14 @@
             "in",
             "size=32"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 8,
+          "ms_size": 8,
+          "direction": "in",
+          "is_string": false,
+          "elem_size": 1,
+          "bound_kind": "size",
+          "bound_param": "32"
         },
         {
           "name": "public_key",
@@ -25,7 +32,14 @@
             "out",
             "size=64"
           ],
-          "is_pointer": true
+          "is_pointer": true,
+          "ms_offset": 16,
+          "ms_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "elem_size": 1,
+          "bound_kind": "size",
+          "bound_param": "64"
         }
       ],
       "ms_layout": {
