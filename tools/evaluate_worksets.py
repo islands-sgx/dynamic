@@ -800,7 +800,7 @@ def evaluate_sample(sample: str) -> dict:
 
 
 def main() -> None:
-    import glob
+    import glob, subprocess
     no_turbo_p = Path("/sys/devices/system/cpu/intel_pstate/no_turbo")
     orig_no_turbo = no_turbo_p.read_text().strip() if no_turbo_p.exists() else None
     gov_paths = [Path(p) for p in glob.glob("/sys/devices/system/cpu/cpu*/cpufreq/scaling_governor")]

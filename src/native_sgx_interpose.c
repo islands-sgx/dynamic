@@ -1084,8 +1084,12 @@ sgx_status_t sgx_create_enclave(
                             if (rva >= ex[k][0] && rva < ex[k][1]) { skip = 1; break; }
                         }
                         if (!skip) {
-                            volatile uint8_t b = *(volatile uint8_t *)(uintptr_t)va;
-                            (void)b;
+                            if (strchr(lvmas[i].p, 'w')) {
+                                __atomic_fetch_or((volatile uint8_t *)(uintptr_t)va, 0, __ATOMIC_RELAXED);
+                            } else {
+                                volatile uint8_t b = *(volatile uint8_t *)(uintptr_t)va;
+                                (void)b;
+                            }
                         }
                     }
                 }
