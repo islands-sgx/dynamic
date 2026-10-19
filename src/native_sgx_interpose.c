@@ -158,13 +158,21 @@ static volatile int in_measured_ecall = 0;
 static int aep_hooked = 0;
 static void *aep_trampoline_va = NULL;
 
+typedef struct {
+    const void *data;
+    size_t size;
+} sgx_page_readiness_table_t;
+
 typedef sgx_status_t (*real_create_fn_t)(const char *, int, void *, int *, sgx_enclave_id_t *, void *);
 typedef sgx_status_t (*real_ecall_fn_t)(sgx_enclave_id_t, int, const void *, void *);
 typedef sgx_status_t (*real_destroy_fn_t)(sgx_enclave_id_t);
+typedef sgx_status_t (*set_ready_table_fn_t)(sgx_enclave_id_t, const sgx_page_readiness_table_t *);
+typedef sgx_status_t (*set_ready_backend_fn_t)(sgx_enclave_id_t, uint32_t);
 
 static real_create_fn_t real_sgx_create_enclave = NULL;
 static real_ecall_fn_t real_sgx_ecall = NULL;
 static real_destroy_fn_t real_sgx_destroy_enclave = NULL;
+static int pure_prod_mode = 0;
 
 static void dump_enclave_vmas_if_requested(void);
 static void cleanup_interpose(void);
@@ -310,6 +318,7 @@ void on_aex_event(uint64_t tcs_va, uint64_t rax_mode) {
     uint64_t rip_rva = (encl_rip >= encl_base && encl_rip < encl_base + encl_size) ? (encl_rip - encl_base) : 0;
     uint32_t st_code = g_shared->current_stage;
 
+    int recorded_strict = 0;
     for (int i = 0; i < num_pages; i++) {
         if (strict_retracted[i] == 1) {
             uint64_t pte_now = *pte_slots[i];
@@ -327,6 +336,7 @@ void on_aex_event(uint64_t tcs_va, uint64_t rax_mode) {
                     fe->pte_healed_observed = 1;
                     fe->aep_pte = pte_now;
                     classify_confirmed_access_kind(fe, pte_now);
+                    recorded_strict = 1;
                 } else {
                     fault_events_truncated = 1;
                     mark_invalid("fault_events_truncated");
@@ -334,6 +344,7 @@ void on_aex_event(uint64_t tcs_va, uint64_t rax_mode) {
             }
         }
     }
+    (void)recorded_strict;
 }
 
 static void install_urts_aep_hook(void) {
@@ -367,8 +378,8 @@ static void install_urts_aep_hook(void) {
     }
 
     uint64_t urts_base = urts_rx_start - urts_rx_off;
-    uint64_t vdso_det_va = urts_base + 0x6a840;
-    uint64_t vdso_ptr_va = urts_base + 0x3e8128;
+    uint64_t vdso_det_va = urts_base + 0x6abd0;
+    uint64_t vdso_ptr_va = urts_base + 0x3ec128;
     if (mprotect((void *)(vdso_det_va & ~0xfffULL), 4096, PROT_READ | PROT_WRITE | PROT_EXEC) == 0) {
         *(uint8_t *)vdso_det_va = 0xc3;
         __builtin___clear_cache((char *)vdso_det_va, (char *)(vdso_det_va + 1));
@@ -377,7 +388,7 @@ static void install_urts_aep_hook(void) {
 
     uint64_t aep_va = 0;
     const uint8_t pat[] = {0x0f, 0x01, 0xd7, 0x0f, 0x0b};
-    uint64_t cand = urts_base + 0x6ab2f;
+    uint64_t cand = urts_base + 0x6aebf;
     if (cand >= urts_rx_start && cand + 5 <= urts_rx_end && memcmp((void *)cand, pat, 5) == 0) {
         aep_va = cand;
     } else {
@@ -440,7 +451,7 @@ static void install_urts_aep_hook(void) {
     };
     memcpy(t + k, epilog, sizeof(epilog));
     k += sizeof(epilog);
-    uint64_t eenterp_va = urts_base + 0x6aac9;
+    uint64_t eenterp_va = aep_va - 0x66;
     int64_t rel_ee = (int64_t)eenterp_va - (int64_t)((uintptr_t)(t + k) + 5);
     int32_t rel32_ee = (int32_t)rel_ee;
     t[k++] = 0xe9;
@@ -463,6 +474,8 @@ static void install_urts_aep_hook(void) {
     aep_hooked = 1;
 }
 
+static int ipi_dummy_prot_rw = 1;
+
 static int trigger_tlb_shootdown_ipi_verified(void) {
     __atomic_store_n(&g_shared->in_gate_spin, 1, __ATOMIC_SEQ_CST);
     uint32_t before = __atomic_load_n(&g_shared->gate_ipi_aex_count, __ATOMIC_ACQUIRE);
@@ -470,14 +483,15 @@ static int trigger_tlb_shootdown_ipi_verified(void) {
     int verified = 0;
 
     while (!__atomic_load_n(&watcher_stop, __ATOMIC_ACQUIRE)) {
-        if (mprotect((void *)ipi_dummy_page, 4096, PROT_READ) != 0 ||
-            mprotect((void *)ipi_dummy_page, 4096, PROT_READ | PROT_WRITE) != 0) {
+        int next_prot = ipi_dummy_prot_rw ? PROT_READ : (PROT_READ | PROT_WRITE);
+        if (mprotect((void *)ipi_dummy_page, 4096, next_prot) != 0) {
             syscall_error_count++;
             mark_invalid("mprotect_ipi_failed");
             break;
         }
+        ipi_dummy_prot_rw = !ipi_dummy_prot_rw;
         uint64_t round_start = monotonic_ns();
-        while (monotonic_ns() - round_start < 2000000ULL) {
+        while (monotonic_ns() - round_start < 1000000ULL) {
             if (__atomic_load_n(&g_shared->gate_ipi_aex_count, __ATOMIC_ACQUIRE) > before) {
                 verified = 1;
                 break;
@@ -490,6 +504,10 @@ static int trigger_tlb_shootdown_ipi_verified(void) {
             mark_invalid("ipi_aex_not_observed_within_50ms");
             break;
         }
+    }
+    /* Wait briefly for CPU 45 to finish returning from on_aex_event before opening gate */
+    for (int spin = 0; spin < 200; spin++) {
+        __asm__ volatile("pause" ::: "memory");
     }
     __atomic_store_n(&g_shared->in_gate_spin, 0, __ATOMIC_SEQ_CST);
     return verified;
@@ -956,12 +974,54 @@ sgx_status_t sgx_create_enclave(
     if (getenv("ATFIELD_IPI_MASK")) ipi_mask = atoi(getenv("ATFIELD_IPI_MASK"));
     if (getenv("ATFIELD_USE_4GATE")) use_4gate = atoi(getenv("ATFIELD_USE_4GATE"));
     if (getenv("ATFIELD_ALLOW_FAST_FORWARD")) allow_fast_forward = atoi(getenv("ATFIELD_ALLOW_FAST_FORWARD"));
+    if (getenv("ATFIELD_PURE_PROD")) pure_prod_mode = atoi(getenv("ATFIELD_PURE_PROD"));
 
     parse_schema_spec_env();
 
     const char *trace_out = getenv("ATFIELD_TRACE_OUT");
     if (trace_out && *trace_out && !trace_fp) {
         trace_fp = fopen(trace_out, "a");
+    }
+
+    if (pure_prod_mode) {
+        if (!g_shared) {
+            void *sh = mmap((void *)GATE_SHARED_VA, 4096, PROT_READ | PROT_WRITE,
+                            MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED_NOREPLACE, -1, 0);
+            if (sh == MAP_FAILED) sh = (void *)GATE_SHARED_VA;
+            memset(sh, 0, 4096);
+            g_shared = (gate_shared_t *)sh;
+        }
+        sgx_status_t st_prod = real_sgx_create_enclave(actual_encl, debug, launch_token, launch_token_updated, enclave_id, misc_attr);
+        if (st_prod != 0) return st_prod;
+        const char *ready_path = getenv("ATFIELD_READY_TABLE");
+        if (ready_path && *ready_path) {
+            set_ready_table_fn_t fn_tbl = (set_ready_table_fn_t)dlsym(RTLD_DEFAULT, "sgx_set_ecall_page_readiness_table");
+            set_ready_backend_fn_t fn_be = (set_ready_backend_fn_t)dlsym(RTLD_DEFAULT, "atfield_sgx_set_ecall_page_readiness_backend");
+            FILE *rf = fopen(ready_path, "rb");
+            if (!rf || !fn_tbl || !fn_be) {
+                syscall_error_count++;
+                mark_invalid("readiness_open_or_dlsym_failed");
+                if (rf) fclose(rf);
+            } else {
+                fseek(rf, 0, SEEK_END);
+                long rsz = ftell(rf);
+                fseek(rf, 0, SEEK_SET);
+                uint8_t *rbuf = (uint8_t *)malloc((size_t)rsz);
+                if (!rbuf || fread(rbuf, 1, (size_t)rsz, rf) != (size_t)rsz) {
+                    syscall_error_count++;
+                    mark_invalid("readiness_fread_failed");
+                } else {
+                    sgx_page_readiness_table_t tbl = { .data = rbuf, .size = (size_t)rsz };
+                    if (fn_tbl(*enclave_id, &tbl) != 0 || fn_be(*enclave_id, 1U) != 0) {
+                        syscall_error_count++;
+                        mark_invalid("readiness_install_ioctl_failed");
+                    }
+                }
+                free(rbuf);
+                fclose(rf);
+            }
+        }
+        return st_prod;
     }
 
     lock_fd = open("/tmp/atfield_sgxstep.lock", O_CREAT | O_RDWR, 0666);
@@ -1018,16 +1078,33 @@ sgx_status_t sgx_create_enclave(
 
     setup_enclave_ptes();
 
+    ipi_dummy_prot_rw = 1;
+    mprotect((void *)ipi_dummy_page, 4096, PROT_READ | PROT_WRITE);
+    *ipi_dummy_page = 1;
     __atomic_store_n(&watcher_ready, 0, __ATOMIC_SEQ_CST);
     __atomic_store_n(&watcher_stop, 0, __ATOMIC_SEQ_CST);
-    if (pthread_create(&watcher_thread, NULL, watcher_loop, NULL) != 0) {
-        syscall_error_count++;
-        mark_invalid("pthread_create_watcher_failed");
-    } else {
-        while (!__atomic_load_n(&watcher_ready, __ATOMIC_ACQUIRE)) {
-            __asm__ volatile("pause");
+    if (use_4gate || strict_mode == 2) {
+        if (pthread_create(&watcher_thread, NULL, watcher_loop, NULL) != 0) {
+            syscall_error_count++;
+            mark_invalid("pthread_create_watcher_failed");
+        } else {
+            while (!__atomic_load_n(&watcher_ready, __ATOMIC_ACQUIRE)) {
+                __asm__ volatile("pause");
+            }
+            watcher_started = 1;
         }
-        watcher_started = 1;
+    }
+
+    if (use_4gate || strict_mode == 2) {
+        for (int slot = 0; slot < MAX_FIELD_OBS_PER_ECALL; slot++) {
+            field_obs_t *o = &cur_obs[slot];
+            if (!o->s0_ad) {
+                o->s0_ad = (uint64_t *)calloc(MAX_TRACKED_PAGES, sizeof(uint64_t));
+                o->s1_ad = (uint64_t *)calloc(MAX_TRACKED_PAGES, sizeof(uint64_t));
+                o->s2_ad = (uint64_t *)calloc(MAX_TRACKED_PAGES, sizeof(uint64_t));
+                o->s3_ad = (uint64_t *)calloc(MAX_TRACKED_PAGES, sizeof(uint64_t));
+            }
+        }
     }
 
     CPU_ZERO(&set);
@@ -1038,6 +1115,8 @@ sgx_status_t sgx_create_enclave(
     }
     if (ipi_dummy_page) *ipi_dummy_page = 2;
     *(volatile uint8_t *)g_shared = 0;
+
+
 
     return st;
 }
@@ -1081,10 +1160,12 @@ static sgx_status_t execute_one_measured_ecall(
         }
     }
 
-    for (int i = 0; i < num_pages; i++) {
-        checked_flush_tlb(encl_base + page_rvas[i]);
+    if (use_4gate || strict_mode != 0) {
+        for (int i = 0; i < num_pages; i++) {
+            checked_flush_tlb(encl_base + page_rvas[i]);
+        }
+        clear_ad_only();
     }
-    clear_ad_only();
 
     __atomic_store_n(&in_measured_ecall, 1, __ATOMIC_SEQ_CST);
     uint64_t t0 = monotonic_ns();
@@ -1092,7 +1173,11 @@ static sgx_status_t execute_one_measured_ecall(
     uint64_t elapsed_ns = monotonic_ns() - t0;
     __atomic_store_n(&in_measured_ecall, 0, __ATOMIC_SEQ_CST);
 
-    snapshot_ad(ecall_post_ad);
+    if (use_4gate || strict_mode != 0) {
+        snapshot_ad(ecall_post_ad);
+    } else {
+        memset(ecall_post_ad, 0, sizeof(uint64_t) * num_pages);
+    }
 
     if (strict_mode == 1 && active_strict_selector >= 0) {
         disarm_and_check_strict_ptes("ECALL_WINDOW");
@@ -1570,6 +1655,12 @@ static void dump_enclave_vmas_if_requested(void) {
 }
 
 static void cleanup_interpose(void) {
+    if (!pure_prod_mode) {
+        cpu_set_t sys_set;
+        CPU_ZERO(&sys_set);
+        CPU_SET(0, &sys_set);
+        sched_setaffinity(0, sizeof(sys_set), &sys_set);
+    }
     if (watcher_started) {
         __atomic_store_n(&watcher_stop, 1, __ATOMIC_RELEASE);
         pthread_join(watcher_thread, NULL);

@@ -72,6 +72,7 @@ std::string usage() {
       "--output boundary.bc --manifest fields.json\n"
       "  atfield-field asm --manifest fields.json --input llc.s "
       "--output boundary.o\n"
+      "  atfield-field empty --manifest fields.json\n"
       "  atfield-field merge --manifest obj1.field.json "
       "--manifest obj2.field.json --out fields.json\n";
 }
@@ -472,6 +473,14 @@ bool command_ir(const Arguments &arguments, std::string &error) {
   return true;
 }
 
+bool command_empty(const Arguments &arguments, std::string &error) {
+  const auto manifest_path = required(arguments, "--manifest", error);
+  if (!manifest_path) {
+    return false;
+  }
+  return write_text(*manifest_path, write_manifest({}), error);
+}
+
 bool command_asm(const Arguments &arguments, std::string &error) {
   const auto manifest_path = required(arguments, "--manifest", error);
   const auto input_path = required(arguments, "--input", error);
@@ -582,6 +591,8 @@ int main(int argc, char **argv) {
   bool success = false;
   if (arguments->command == "ir") {
     success = command_ir(*arguments, error);
+  } else if (arguments->command == "empty") {
+    success = command_empty(*arguments, error);
   } else if (arguments->command == "asm") {
     success = command_asm(*arguments, error);
   } else if (arguments->command == "merge") {

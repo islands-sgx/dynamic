@@ -1,5 +1,6 @@
 {
   "entry_count": 1,
+  "fields_sha256": "dce02c5614cb5658ec6545e1dc3d5607d0e4181abd2e6b51e97d1eb054816a57",
   "final_elf": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/enclave.dynamic.final.so",
   "final_elf_sha256": "5e303e2d3aa20adab0ac3b9ad2c7e32b5782783b205aee1ac4db1b7c33916149",
   "format_version": 3,
@@ -649,5 +650,7 @@
   "table_bytes": 5072,
   "table_path": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/enclave.dynamic.ready.bin",
   "table_sha256": "20666d894deca928a80b8adbbb9290990878a4491bc8a7c59330fa12bd09f260",
-  "total_page_count": 627
+  "total_page_count": 627,
+  "workset": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/workset.dynamic.json",
+  "workset_sha256": "c699944af0b1cfd3278f20b8d905dfef1c77cb4ed804a7aaf20956c1a25a01e2"
 }

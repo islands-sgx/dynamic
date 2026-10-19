@@ -420,12 +420,42 @@ llvm::Error validate_function_shape(const Function &function) {
         }
       }
     }
+    if (llvm::isa<llvm::UnreachableInst>(instruction)) {
+      const auto *call =
+          llvm::dyn_cast_or_null<llvm::CallBase>(instruction.getPrevNode());
+      const Function *callee =
+          call == nullptr ? nullptr : call->getCalledFunction();
+      const StringRef callee_name =
+          callee == nullptr ? StringRef() : callee->getName();
+      const bool terminal_noreturn =
+          call != nullptr && call->doesNotReturn() &&
+          (callee_name == "abort" || callee_name == "_Exit" ||
+           callee_name == "_exit" || callee_name == "exit" ||
+           callee_name == "quick_exit" || callee_name == "llvm.trap" ||
+           callee_name == "__assert_fail" || callee_name == "__assert_rtn" ||
+           callee_name == "__stack_chk_fail");
+      if (!terminal_noreturn) {
+        const std::string message =
+            "annotated function " + function.getName().str() +
+            " has an unsupported unreachable exit in block " +
+            instruction.getParent()->getName().str() +
+            " (expected a direct terminal noreturn call)";
+        return invalid(message);
+      }
+      // This path ends the enclave execution (for example, the SGX tlibc
+      // abort path). It has no normal continuation to return to its caller,
+      // so it must remain outside the normal field_exit funnel.
+      continue;
+    }
     if (llvm::isa<llvm::ResumeInst>(instruction) ||
         llvm::isa<llvm::CleanupReturnInst>(instruction) ||
         llvm::isa<llvm::CatchSwitchInst>(instruction) ||
         llvm::isa<llvm::CatchReturnInst>(instruction) ||
         llvm::isa<llvm::IndirectBrInst>(instruction)) {
-      return invalid("annotated function has a non-normalizable exit");
+      const std::string message =
+          "annotated function " + function.getName().str() +
+          " has a non-normalizable exceptional or indirect exit";
+      return invalid(message);
     }
     if (llvm::isa<llvm::ReturnInst>(instruction)) {
       ++returns;
@@ -507,9 +537,11 @@ llvm::Expected<FieldEnterIRIdentity> transform_function(Function &function,
     return error;
   }
   LLVMContext &context = module.getContext();
-  BasicBlock &entry = function.getEntryBlock();
   const std::string id = id_suffix(field_id);
-  entry.setName("atfield.entry." + id);
+  BasicBlock *body = &function.getEntryBlock();
+  body->setName("atfield.body." + id);
+  BasicBlock *entry =
+      BasicBlock::Create(context, "atfield.entry." + id, &function, body);
 
   const std::string marker_name = kMarkerPrefix.str() + id;
   const std::string field_enter_name = kFieldEnterPrefix.str() + id;
@@ -525,16 +557,14 @@ llvm::Expected<FieldEnterIRIdentity> transform_function(Function &function,
   marker->addFnAttr(llvm::Attribute::NoUnwind);
 
   BasicBlock *marker_block =
-      BasicBlock::Create(context, "atfield.marker." + id, &function);
-  BasicBlock *body =
-      BasicBlock::Create(context, "atfield.body." + id, &function);
-  auto splice_start = entry.begin();
-  while (splice_start != entry.end() &&
-         llvm::isa<llvm::AllocaInst>(&*splice_start)) {
-    ++splice_start;
+      BasicBlock::Create(context, "atfield.marker." + id, &function, body);
+  // Keep the original entry block in place as the body so its existing
+  // terminators and PHI predecessor labels remain valid. The marker path is a
+  // new predecessor; on the original function-entry path a PHI had no
+  // predecessor value, so preserve that undefined initial value explicitly.
+  for (llvm::PHINode &phi : body->phis()) {
+    phi.addIncoming(llvm::UndefValue::get(phi.getType()), marker_block);
   }
-  entry.replaceSuccessorsPhiUsesWith(body);
-  body->splice(body->end(), &entry, splice_start, entry.end());
   BasicBlock *close_block =
       BasicBlock::Create(context, "atfield.normal-close." + id, &function);
   BasicBlock *exit_block =
@@ -544,7 +574,7 @@ llvm::Expected<FieldEnterIRIdentity> transform_function(Function &function,
 
   std::vector<std::pair<BasicBlock *, Value *>> returns;
   for (BasicBlock &block : function) {
-    if (&block == &entry || &block == marker_block || &block == close_block ||
+    if (&block == entry || &block == marker_block || &block == close_block ||
         &block == exit_block || &block == return_block ||
         block.getTerminator() == nullptr) {
       continue;
@@ -580,9 +610,9 @@ llvm::Expected<FieldEnterIRIdentity> transform_function(Function &function,
     }
   }
 
-  create_symbol_asm(&entry, field_enter_name);
-  CallInst *enter_call = create_runtime_call(&entry, field_enter, field_id);
-  llvm::BranchInst::Create(marker_block, &entry);
+  create_symbol_asm(entry, field_enter_name);
+  CallInst *enter_call = create_runtime_call(entry, field_enter, field_id);
+  llvm::BranchInst::Create(marker_block, entry);
 
   create_marker_call(marker_block, marker);
   llvm::BranchInst::Create(body, marker_block);

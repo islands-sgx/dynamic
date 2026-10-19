@@ -1,0 +1,2 @@
+#!/bin/sh
+exec "./atfield-host.py" migrate-irqs ""

@@ -1,0 +1,1079 @@
+diff --git a/common/inc/sgx_urts.h b/common/inc/sgx_urts.h
+index 8cad503c..ebad5cc2 100644
+--- a/common/inc/sgx_urts.h
++++ b/common/inc/sgx_urts.h
+@@ -42,6 +42,7 @@
+ #include "sgx_report.h"
+ 
+ #include <stddef.h>
++#include <stdint.h>
+ 
+ 
+ #define MAX_EX_FEATURES_COUNT 32
+@@ -79,6 +80,12 @@ extern "C" {
+ 
+ typedef uint8_t sgx_reserved_field_1024t[1024];
+ 
++typedef struct _sgx_page_readiness_table_t
++{
++    const uint8_t *data;
++    size_t size;
++} sgx_page_readiness_table_t;
++
+ /**
+  * @deprecated Support for launch tokens was removed in v2.28 (in favor of Flexible Launch Control). 
+  * This field is now reserved. Please update your API to use @c sgx_reserved_field_1024t type
+@@ -135,6 +142,10 @@ sgx_status_t SGXAPI sgx_create_encrypted_enclave(
+ 
+ sgx_status_t SGXAPI sgx_destroy_enclave(const sgx_enclave_id_t enclave_id);
+ 
++sgx_status_t SGXAPI sgx_set_ecall_page_readiness_table(
++    sgx_enclave_id_t enclave_id,
++    const sgx_page_readiness_table_t *table);
++
+ sgx_status_t SGXAPI sgx_get_target_info(
+ 	const sgx_enclave_id_t enclave_id,
+ 	sgx_target_info_t* target_info);
+diff --git a/psw/enclave_common/sgx_enclave_common.cpp b/psw/enclave_common/sgx_enclave_common.cpp
+index 19cc998b..712159aa 100644
+--- a/psw/enclave_common/sgx_enclave_common.cpp
++++ b/psw/enclave_common/sgx_enclave_common.cpp
+@@ -1696,3 +1696,37 @@ extern "C" uint32_t COMM_API enclave_get_file_handle(void* virt_addr, int* encla
+ }
+ #endif
+ 
++
++
++extern "C" int COMM_API enclave_pages_acquire(void* base_address, uint64_t selector, uint64_t table_ptr, uint64_t table_bytes)
++{
++    if (base_address == NULL || ((table_ptr == 0) != (table_bytes == 0)))
++        return EINVAL;
++    if (s_driver_type != SGX_DRIVER_IN_KERNEL)
++        return ENOTTY;
++
++    int hfile = get_file_handle_from_base_address(base_address);
++    if (hfile == -1)
++        return ENOENT;
++
++    struct sgx_enclave_pages_acquire request = { selector, table_ptr, table_bytes };
++    if (ioctl(hfile, SGX_IOC_ENCLAVE_PAGES_ACQUIRE, &request) == -1)
++        return errno;
++    return 0;
++}
++
++extern "C" int COMM_API enclave_pages_release(void* base_address)
++{
++    if (base_address == NULL)
++        return EINVAL;
++    if (s_driver_type != SGX_DRIVER_IN_KERNEL)
++        return ENOTTY;
++
++    int hfile = get_file_handle_from_base_address(base_address);
++    if (hfile == -1)
++        return ENOENT;
++
++    if (ioctl(hfile, SGX_IOC_ENCLAVE_PAGES_RELEASE, 0) == -1)
++        return errno;
++    return 0;
++}
+diff --git a/psw/enclave_common/sgx_enclave_common.h b/psw/enclave_common/sgx_enclave_common.h
+index 45ca49f0..06ce475b 100644
+--- a/psw/enclave_common/sgx_enclave_common.h
++++ b/psw/enclave_common/sgx_enclave_common.h
+@@ -237,6 +237,13 @@ bool COMM_API enclave_initialize(
+     COMM_IN size_t info_size,
+     COMM_OUT_OPT uint32_t* enclave_error);
+ 
++int COMM_API enclave_pages_acquire(
++    COMM_IN void* base_address,
++    COMM_IN uint64_t selector,
++    COMM_IN uint64_t table_ptr,
++    COMM_IN uint64_t table_bytes);
++int COMM_API enclave_pages_release(COMM_IN void* base_address);
++
+ /* enclave_delete()
+  * Parameters:
+  *      base_address [in] - The enclave base address as returned from the enclave_create API.
+diff --git a/psw/enclave_common/sgx_enclave_common.lds b/psw/enclave_common/sgx_enclave_common.lds
+index 617dd1b0..e0cdabf3 100644
+--- a/psw/enclave_common/sgx_enclave_common.lds
++++ b/psw/enclave_common/sgx_enclave_common.lds
+@@ -13,6 +13,8 @@ global:
+     sgx_trace_logger_callback;
+     sgx_trace_loglevel;
+     enclave_get_file_handle;
++    enclave_pages_acquire;
++    enclave_pages_release;
+ local:
+     *;
+ };
+diff --git a/psw/urts/enclave.cpp b/psw/urts/enclave.cpp
+index 2be904db..508a6e73 100644
+--- a/psw/urts/enclave.cpp
++++ b/psw/urts/enclave.cpp
+@@ -44,7 +44,12 @@
+ #include "rts.h"
+ #include "get_thread_id.h"
+ #include "sgx_switchless_itf.h"
+-
++#include "sgx_enclave_common.h"
++#include <algorithm>
++#include <climits>
++#include <errno.h>
++#include <limits>
++#include <stdint.h>
+ 
+ int do_ecall(const int fn, const void *ocall_table, const void *ms, CTrustThread *trust_thread);
+ int do_ocall(const bridge_fn_t bridge, void *ms);
+@@ -69,6 +74,14 @@ CEnclave::CEnclave()
+     , m_first_ecall(true)
+     , m_aex_notify(false)
+     , m_dynamic_tcs_list_size(0)
++    , m_page_readiness_started(false)
++    , m_page_readiness_table_set(false)
++    , m_page_readiness_backend_set(false)
++    , m_page_readiness_backend(PAGE_READINESS_BACKEND_KERNEL)
++    , m_page_readiness_table_installed(false)
++    , m_page_readiness_broken(false)
++    , m_page_readiness_txn_active(false)
++    , m_page_readiness_txn_owner(0)
+ {
+     memset(&m_enclave_info, 0, sizeof(debug_enclave_info_t));
+     memset(&m_target_info, 0, sizeof(sgx_target_info_t));
+@@ -130,6 +143,24 @@ sgx_status_t CEnclave::initialize(const se_file_t& file,  CLoader &ldr, const ui
+ {
+     const secs_t& secs = ldr.get_secs();
+ 
++    try
++    {
++        m_readable_reg_rvas = ldr.get_readable_reg_pages();
++        m_business_reg_rvas = ldr.get_business_reg_pages();
++        std::sort(m_readable_reg_rvas.begin(), m_readable_reg_rvas.end());
++        m_readable_reg_rvas.erase(
++            std::unique(m_readable_reg_rvas.begin(), m_readable_reg_rvas.end()),
++            m_readable_reg_rvas.end());
++        std::sort(m_business_reg_rvas.begin(), m_business_reg_rvas.end());
++        m_business_reg_rvas.erase(
++            std::unique(m_business_reg_rvas.begin(), m_business_reg_rvas.end()),
++            m_business_reg_rvas.end());
++    }
++    catch (...)
++    {
++        return SGX_ERROR_OUT_OF_MEMORY;
++    }
++
+     if (file.name != NULL)
+     {
+         uint32_t name_len = file.name_len;
+@@ -205,6 +236,259 @@ sgx_status_t CEnclave::initialize(const se_file_t& file,  CLoader &ldr, const ui
+     return SGX_SUCCESS;
+ }
+ 
++static uint64_t readiness_read_le64(const uint8_t *data)
++{
++    uint64_t value = 0;
++    for (unsigned int i = 0; i < 8; ++i)
++        value |= ((uint64_t)data[i]) << (i * 8);
++    return value;
++}
++
++static bool readiness_table_size(uint64_t entry_count, uint64_t page_count, size_t *size_out)
++{
++    const uint64_t max_size = (uint64_t)std::numeric_limits<size_t>::max();
++    if (size_out == NULL || entry_count > (max_size - 32) / 24)
++        return false;
++
++    const uint64_t prefix_size = 32 + entry_count * 24;
++    if (page_count > (max_size - prefix_size) / 8)
++        return false;
++
++    *size_out = (size_t)(prefix_size + page_count * 8);
++    return true;
++}
++
++static sgx_status_t readiness_errno_to_status(int error)
++{
++    switch (error)
++    {
++    case EINVAL:
++    case EFAULT:
++    case EOVERFLOW:
++        return SGX_ERROR_INVALID_PARAMETER;
++    case ENOMEM:
++        return SGX_ERROR_OUT_OF_MEMORY;
++    case EBUSY:
++    case EAGAIN:
++        return SGX_ERROR_BUSY;
++    case ENOENT:
++    case EBADF:
++    case ENODEV:
++        return SGX_ERROR_ENCLAVE_LOST;
++    case ENOTTY:
++    case ENOSYS:
++        return SGX_ERROR_FEATURE_NOT_SUPPORTED;
++    default:
++        return SGX_ERROR_UNEXPECTED;
++    }
++}
++
++bool CEnclave::is_readiness_txn_on_current_thread() const
++{
++    return m_page_readiness_txn_active.load(std::memory_order_acquire) &&
++           pthread_equal(m_page_readiness_txn_owner, pthread_self()) != 0;
++}
++
++sgx_status_t CEnclave::set_ecall_page_readiness_table(const sgx_page_readiness_table_t *table)
++{
++    if (table == NULL || table->data == NULL || table->size < 32)
++        return SGX_ERROR_INVALID_PARAMETER;
++    if (m_page_readiness_started.load(std::memory_order_acquire) ||
++        is_readiness_txn_on_current_thread())
++        return SGX_ERROR_INVALID_STATE;
++
++    se_wtlock(&m_rwlock);
++    if (m_destroyed || m_page_readiness_table_set ||
++        m_page_readiness_started.load(std::memory_order_acquire) || m_switchless != NULL)
++    {
++        se_wtunlock(&m_rwlock);
++        return SGX_ERROR_INVALID_STATE;
++    }
++
++    const uint64_t version = readiness_read_le64(table->data);
++    const uint64_t entry_count = readiness_read_le64(table->data + 8);
++    const uint64_t page_count = readiness_read_le64(table->data + 16);
++    const uint64_t reserved = readiness_read_le64(table->data + 24);
++    size_t expected_size = 0;
++    if (version != 3 || reserved != 0 ||
++        entry_count > (uint64_t)INT_MAX + 1 ||
++        !readiness_table_size(entry_count, page_count, &expected_size) ||
++        expected_size != table->size ||
++        page_count > (uint64_t)(std::numeric_limits<size_t>::max() / sizeof(uint64_t)) ||
++        (m_start_addr == NULL || m_size < SE_PAGE_SIZE ||
++         m_size > UINTPTR_MAX - (uintptr_t)m_start_addr))
++    {
++        se_wtunlock(&m_rwlock);
++        return SGX_ERROR_INVALID_PARAMETER;
++    }
++
++    std::vector<uint8_t> table_bytes;
++    std::vector<ecall_page_readiness_entry_t> entries;
++    std::vector<uint64_t> page_rvas;
++    try
++    {
++        table_bytes.assign(table->data, table->data + table->size);
++        entries.reserve((size_t)entry_count);
++        page_rvas.reserve((size_t)page_count);
++    }
++    catch (...)
++    {
++        se_wtunlock(&m_rwlock);
++        return SGX_ERROR_OUT_OF_MEMORY;
++    }
++
++    const uint8_t *bytes = table_bytes.data();
++    if (readiness_read_le64(bytes) != version ||
++        readiness_read_le64(bytes + 8) != entry_count ||
++        readiness_read_le64(bytes + 16) != page_count ||
++        readiness_read_le64(bytes + 24) != reserved)
++    {
++        se_wtunlock(&m_rwlock);
++        return SGX_ERROR_INVALID_PARAMETER;
++    }
++
++    uint64_t expected_first_page = 0;
++    uint64_t previous_selector = 0;
++    for (uint64_t i = 0; i < entry_count; ++i)
++    {
++        const size_t offset = 32 + (size_t)i * 24;
++        ecall_page_readiness_entry_t entry;
++        entry.selector = readiness_read_le64(bytes + offset);
++        entry.first_page = readiness_read_le64(bytes + offset + 8);
++        entry.page_count = readiness_read_le64(bytes + offset + 16);
++
++        if (entry.selector > INT_MAX ||
++            (i != 0 && entry.selector <= previous_selector) ||
++            entry.first_page != expected_first_page ||
++            expected_first_page > page_count ||
++            entry.page_count > page_count - expected_first_page)
++        {
++            se_wtunlock(&m_rwlock);
++            return SGX_ERROR_INVALID_PARAMETER;
++        }
++
++        const uint64_t first = entry.first_page;
++        uint64_t previous_rva = 0;
++        for (uint64_t j = 0; j < entry.page_count; ++j)
++        {
++            const size_t page_offset = 32 + (size_t)entry_count * 24 +
++                                       (size_t)(first + j) * 8;
++            const uint64_t rva = readiness_read_le64(bytes + page_offset);
++            if ((rva & (SE_PAGE_SIZE - 1)) != 0 ||
++                rva > m_size - SE_PAGE_SIZE ||
++                (j != 0 && rva <= previous_rva) ||
++                !std::binary_search(m_business_reg_rvas.begin(), m_business_reg_rvas.end(), rva))
++            {
++                se_wtunlock(&m_rwlock);
++                return SGX_ERROR_INVALID_PARAMETER;
++            }
++            try
++            {
++                page_rvas.push_back(rva);
++            }
++            catch (...)
++            {
++                se_wtunlock(&m_rwlock);
++                return SGX_ERROR_OUT_OF_MEMORY;
++            }
++            previous_rva = rva;
++        }
++
++        expected_first_page += entry.page_count;
++        previous_selector = entry.selector;
++        try
++        {
++            entries.push_back(entry);
++        }
++        catch (...)
++        {
++            se_wtunlock(&m_rwlock);
++            return SGX_ERROR_OUT_OF_MEMORY;
++        }
++    }
++
++    if (expected_first_page != page_count || page_rvas.size() != (size_t)page_count)
++    {
++        se_wtunlock(&m_rwlock);
++        return SGX_ERROR_INVALID_PARAMETER;
++    }
++
++    m_page_readiness_bytes.swap(table_bytes);
++    m_page_readiness_entries.swap(entries);
++    m_page_readiness_rvas.swap(page_rvas);
++    m_page_readiness_table_set = true;
++    se_wtunlock(&m_rwlock);
++    return SGX_SUCCESS;
++}
++
++sgx_status_t CEnclave::set_ecall_page_readiness_backend(uint32_t backend)
++{
++    if (backend != PAGE_READINESS_BACKEND_KERNEL &&
++        backend != PAGE_READINESS_BACKEND_USERSPACE)
++        return SGX_ERROR_INVALID_PARAMETER;
++    if (m_page_readiness_started.load(std::memory_order_acquire) ||
++        is_readiness_txn_on_current_thread())
++        return SGX_ERROR_INVALID_STATE;
++
++    se_wtlock(&m_rwlock);
++    if (m_destroyed || !m_page_readiness_table_set ||
++        m_page_readiness_backend_set ||
++        m_page_readiness_started.load(std::memory_order_acquire))
++    {
++        se_wtunlock(&m_rwlock);
++        return SGX_ERROR_INVALID_STATE;
++    }
++
++    if (backend == PAGE_READINESS_BACKEND_USERSPACE && !m_page_readiness_rvas.empty())
++    {
++        if (!m_dbg_flag)
++        {
++            SE_TRACE(SE_TRACE_WARNING,
++                     "ATField userspace readiness requires a debug enclave\n");
++            se_wtunlock(&m_rwlock);
++            return SGX_ERROR_FEATURE_NOT_SUPPORTED;
++        }
++        for (size_t i = 0; i < m_page_readiness_rvas.size(); ++i)
++        {
++            if (!std::binary_search(m_readable_reg_rvas.begin(), m_readable_reg_rvas.end(),
++                                    m_page_readiness_rvas[i]))
++            {
++                SE_TRACE(SE_TRACE_WARNING,
++                         "ATField userspace readiness target is not signed readable REG RVA=0x%llx\n",
++                         (unsigned long long)m_page_readiness_rvas[i]);
++                se_wtunlock(&m_rwlock);
++                return SGX_ERROR_INVALID_PARAMETER;
++            }
++        }
++    }
++
++    m_page_readiness_backend = backend;
++    m_page_readiness_backend_set = true;
++
++    static const char hex[] = "0123456789abcdef";
++    char enclave_hash[sizeof(m_target_info.mr_enclave) * 2 + 1];
++    for (size_t i = 0; i < sizeof(m_target_info.mr_enclave.m); ++i)
++    {
++        enclave_hash[i * 2] = hex[m_target_info.mr_enclave.m[i] >> 4];
++        enclave_hash[i * 2 + 1] = hex[m_target_info.mr_enclave.m[i] & 0x0f];
++    }
++    enclave_hash[sizeof(enclave_hash) - 1] = '\0';
++    SE_TRACE(SE_TRACE_NOTICE,
++             "ATField readiness backend=%s MR_ENCLAVE=%s selectors=%llu target_pages=%llu\n",
++             backend == PAGE_READINESS_BACKEND_KERNEL ? "kernel" : "userspace",
++             enclave_hash,
++             (unsigned long long)m_page_readiness_entries.size(),
++             (unsigned long long)m_page_readiness_rvas.size());
++    for (size_t i = 0; i < m_page_readiness_rvas.size(); ++i)
++    {
++        SE_TRACE(SE_TRACE_DEBUG, "ATField readiness target RVA=0x%llx\n",
++                 (unsigned long long)m_page_readiness_rvas[i]);
++    }
++
++    se_wtunlock(&m_rwlock);
++    return SGX_SUCCESS;
++}
++
+ CEnclave::~CEnclave()
+ {
+     if (m_thread_pool)
+@@ -306,160 +590,288 @@ sgx_status_t CEnclave::error_trts2urts(unsigned int trts_error)
+ 
+ sgx_status_t CEnclave::ecall(const int proc, const void *ocall_table, void *ms, const bool is_switchless)
+ {
+-    if(se_try_rdlock(&m_rwlock))
++    if (!se_try_rdlock(&m_rwlock))
++        return SGX_ERROR_ENCLAVE_LOST;
++
++    if (m_destroyed)
+     {
+-        //Maybe the enclave has been destroyed after acquire/release m_rwlock. See CEnclave::destroy()
+-        if(m_destroyed)
+-        {
+-            se_rdunlock(&m_rwlock);
+-            return SGX_ERROR_ENCLAVE_LOST;
+-        }
++        se_rdunlock(&m_rwlock);
++        return SGX_ERROR_ENCLAVE_LOST;
++    }
+ 
+-        if (m_switchless)
++    bool readiness_call = false;
++    bool readiness_nonempty = false;
++    const ecall_page_readiness_entry_t *readiness_entry = NULL;
++    std::unique_lock<std::mutex> readiness_guard(m_page_readiness_mutex, std::defer_lock);
++
++    if (proc >= 0)
++    {
++        m_page_readiness_started.store(true, std::memory_order_release);
++        if (m_page_readiness_table_set)
+         {
+-            // we need to pass ocall_table pointer to the enclave when initializing switchless on trusted side.
+-            if (m_first_ecall && ocall_table)
++            if (!readiness_guard.try_lock())
+             {
+-                // can create race condition here if we have several threads initiating "first" ecall
+-                // so it is possible the first switchless ecall will fallback
+-                m_first_ecall = false;
+-                // we are setting the flag here, cause otherwise it will create deadlock in sl_on_first_ecall_func_ptr()
+-                g_sl_funcs.sl_on_first_ecall_func_ptr(m_switchless, m_enclave_id, ocall_table);
++                se_rdunlock(&m_rwlock);
++                return SGX_ERROR_BUSY;
++            }
++            if (m_page_readiness_broken)
++            {
++                SE_TRACE(SE_TRACE_WARNING,
++                         "ATField readiness BROKEN; rejecting selector=%d\n", proc);
++                se_rdunlock(&m_rwlock);
++                return SGX_ERROR_INVALID_STATE;
+             }
+-
+-            //Do switchless ECall in a switchless way
+             if (is_switchless)
+             {
+-                int need_fallback = 0;
+-                sgx_status_t ret = SGX_ERROR_UNEXPECTED;
++                se_rdunlock(&m_rwlock);
++                return SGX_ERROR_INVALID_FUNCTION;
++            }
+ 
+-                ret = g_sl_funcs.sl_ecall_func_ptr(m_switchless, proc, ms, &need_fallback);
++            std::vector<ecall_page_readiness_entry_t>::const_iterator entry =
++                std::lower_bound(
++                    m_page_readiness_entries.begin(),
++                    m_page_readiness_entries.end(),
++                    (uint64_t)proc,
++                    [](const ecall_page_readiness_entry_t &candidate, uint64_t selector)
++                    {
++                        return candidate.selector < selector;
++                    });
++            if (entry == m_page_readiness_entries.end() || entry->selector != (uint64_t)proc)
++            {
++                se_rdunlock(&m_rwlock);
++                return SGX_ERROR_INVALID_FUNCTION;
++            }
+ 
+-                if (likely(!need_fallback))
++            readiness_entry = &(*entry);
++            readiness_call = true;
++            readiness_nonempty = readiness_entry->page_count != 0;
++
++            if (readiness_nonempty &&
++                m_page_readiness_backend == PAGE_READINESS_BACKEND_USERSPACE)
++            {
++                if (!m_dbg_flag)
+                 {
+                     se_rdunlock(&m_rwlock);
+-                    return ret;
++                    return SGX_ERROR_FEATURE_NOT_SUPPORTED;
+                 }
+ 
++                const size_t first = (size_t)readiness_entry->first_page;
++                const size_t count = (size_t)readiness_entry->page_count;
++                for (size_t i = 0; i < count; ++i)
++                {
++                    const uint64_t rva = m_page_readiness_rvas[first + i];
++                    if (!std::binary_search(m_readable_reg_rvas.begin(),
++                                            m_readable_reg_rvas.end(), rva))
++                    {
++                        SE_TRACE(SE_TRACE_WARNING,
++                                 "ATField userspace readiness rejected MR page RVA=0x%llx selector=%d\n",
++                                 (unsigned long long)rva, proc);
++                        se_rdunlock(&m_rwlock);
++                        return SGX_ERROR_INVALID_PARAMETER;
++                    }
++
++                    SE_TRACE(SE_TRACE_DEBUG,
++                             "ATField userspace readiness touching MR_ENCLAVE page RVA=0x%llx selector=%d\n",
++                             (unsigned long long)rva, proc);
++                    const uintptr_t address = (uintptr_t)m_start_addr + (uintptr_t)rva;
++                    const volatile uint8_t touched = *(const volatile uint8_t *)address;
++                    (void)touched;
++                }
+             }
++        }
++    }
+ 
++    if (!readiness_call && m_switchless)
++    {
++        // we need to pass ocall_table pointer to the enclave when initializing switchless on trusted side.
++        if (m_first_ecall && ocall_table)
++        {
++            // can create race condition here if we have several threads initiating "first" ecall
++            // so it is possible the first switchless ecall will fallback
++            m_first_ecall = false;
++            // we are setting the flag here, cause otherwise it will create deadlock in sl_on_first_ecall_func_ptr()
++            g_sl_funcs.sl_on_first_ecall_func_ptr(m_switchless, m_enclave_id, ocall_table);
+         }
+ 
+-        //Handle normal ECall or fallback'ed switchless ECall
+-        //do sgx_ecall
+-        CTrustThread *trust_thread = get_tcs(proc);
+-        unsigned ret = SGX_ERROR_OUT_OF_TCS;
++        //Do switchless ECall in a switchless way
++        if (is_switchless)
++        {
++            int need_fallback = 0;
++            sgx_status_t switchless_ret = SGX_ERROR_UNEXPECTED;
+ 
+-        if(NULL != trust_thread)
++            switchless_ret = g_sl_funcs.sl_ecall_func_ptr(m_switchless, proc, ms, &need_fallback);
++            if (likely(!need_fallback))
++            {
++                se_rdunlock(&m_rwlock);
++                return switchless_ret;
++            }
++        }
++    }
++
++    CTrustThread *trust_thread = get_tcs(proc);
++    unsigned ret = SGX_ERROR_OUT_OF_TCS;
++
++    if (NULL != trust_thread)
++    {
++        if (NULL == m_ocall_table)
++            m_ocall_table = (sgx_ocall_table_t *)ocall_table;
++
++        if (proc == ECMD_UNINIT_ENCLAVE)
+         {
+-            if (NULL == m_ocall_table)
++            if (m_pthread_is_valid == true)
+             {
+-                m_ocall_table = (sgx_ocall_table_t *)ocall_table;
++                m_pthread_is_valid = false;
++                se_event_wake(m_new_thread_event);
++                pthread_join(m_pthread_tid, NULL);
+             }
++            /*ocall_table = m_ocall_table;
+ 
+-            if (proc == ECMD_UNINIT_ENCLAVE)
++            std::vector<CTrustThread *> threads = m_thread_pool->get_thread_list();
++            for (unsigned idx = 0; idx < threads.size(); ++idx)
+             {
+-                if(m_pthread_is_valid == true)
++                if (trust_thread->get_tcs() == threads[idx]->get_tcs())
+                 {
+-                    m_pthread_is_valid = false;
+-                    se_event_wake(m_new_thread_event);
+-                    pthread_join(m_pthread_tid, NULL);
++                    continue;
+                 }
+-                /*ocall_table = m_ocall_table;
+ 
+-                std::vector<CTrustThread *> threads = m_thread_pool->get_thread_list();
+-                for (unsigned idx = 0; idx < threads.size(); ++idx)
++                uint64_t start = (uint64_t)(threads[idx]->get_tcs());
++                uint64_t end = start + (1 << SE_PAGE_SHIFT);
++
++                if (get_enclave_creator()->is_EDMM_supported(CEnclave::get_enclave_id()))
+                 {
+-                    if (trust_thread->get_tcs() == threads[idx]->get_tcs())
++                    // Change TCS permission to Read only to let driver not handle the
++                    // #PF caused by TCS trim. It gives urts a chance to catch the exception
++                    // and exit the ecall with an error code.
++                    if(0 != mprotect((void *)start, TCS_SIZE, SI_FLAG_R))
+                     {
+-                        continue;
++                        se_rdunlock(&m_rwlock);
++                        return SGX_ERROR_UNEXPECTED;
+                     }
+-
+-                    uint64_t start = (uint64_t)(threads[idx]->get_tcs());
+-                    uint64_t end = start + (1 << SE_PAGE_SHIFT);
+-
+-                    if (get_enclave_creator()->is_EDMM_supported(CEnclave::get_enclave_id()))
++                    if (SGX_SUCCESS != (ret = get_enclave_creator()->trim_range(start, end)))
+                     {
+-                        // Change TCS permission to Read only to let driver not handle the 
+-                        // #PF caused by TCS trim. It gives urts a chance to catch the exception
+-                        // and exit the ecall with an error code.
+-                        if(0 != mprotect((void *)start, TCS_SIZE, SI_FLAG_R))
+-                        {
+-                            se_rdunlock(&m_rwlock);
+-                            return SGX_ERROR_UNEXPECTED;
+-                        }
+-                        if (SGX_SUCCESS != (ret = get_enclave_creator()->trim_range(start, end)))
+-                        {
+-                            se_rdunlock(&m_rwlock);
+-                            return (sgx_status_t)ret;
+-                        }
++                        se_rdunlock(&m_rwlock);
++                        return (sgx_status_t)ret;
+                     }
+-                }*/
++                }
++            }*/
++        }
++
++        if (readiness_call)
++        {
++            m_page_readiness_txn_owner = pthread_self();
++            m_page_readiness_txn_active.store(true, std::memory_order_release);
++            if (readiness_nonempty &&
++                m_page_readiness_backend == PAGE_READINESS_BACKEND_KERNEL)
++            {
++                const uint64_t table_ptr = m_page_readiness_table_installed ? 0 :
++                    (uint64_t)(uintptr_t)m_page_readiness_bytes.data();
++                const uint64_t table_bytes = m_page_readiness_table_installed ? 0 :
++                    (uint64_t)m_page_readiness_bytes.size();
++                const int acquire_error = enclave_pages_acquire(
++                    m_start_addr, readiness_entry->selector, table_ptr, table_bytes);
++                if (acquire_error != 0)
++                {
++                    SE_TRACE(SE_TRACE_WARNING,
++                             "ATField kernel ACQUIRE failed selector=%d errno=%d\n",
++                             proc, acquire_error);
++                    m_page_readiness_txn_active.store(false, std::memory_order_release);
++                    trust_thread->decrease_ref();
++                    se_rdunlock(&m_rwlock);
++                    return readiness_errno_to_status(acquire_error);
++                }
++                m_page_readiness_table_installed = true;
+             }
+ 
+             ret = do_ecall(proc, m_ocall_table, ms, trust_thread);
+-            if(SGX_PTHREAD_EXIT == ret)
+-                //If the ECALL exists by pthread_exit(), then reset the tcs's reference to "0" directly.
++            m_page_readiness_txn_active.store(false, std::memory_order_release);
++
++            int release_error = 0;
++            if (readiness_nonempty &&
++                m_page_readiness_backend == PAGE_READINESS_BACKEND_KERNEL)
++            {
++                release_error = enclave_pages_release(m_start_addr);
++                if (release_error != 0)
++                {
++                    SE_TRACE(SE_TRACE_WARNING,
++                             "ATField kernel RELEASE failed selector=%d errno=%d; BROKEN latched\n",
++                             proc, release_error);
++                    m_page_readiness_broken = true;
++                }
++            }
++
++            if (SGX_PTHREAD_EXIT == ret)
+                 trust_thread->reset_ref();
+             else
+                 trust_thread->decrease_ref();
+-        }
+ 
+-        //release the read/write lock, the only exception is enclave already be removed in ocall
+-        if(AbnormalTermination() || ret != SE_ERROR_READ_LOCK_FAIL)
+-        {
+             se_rdunlock(&m_rwlock);
++            if (release_error != 0)
++                return readiness_errno_to_status(release_error);
++            return error_trts2urts(ret);
+         }
+-        return error_trts2urts(ret);
+-    }
+-    else
+-    {
+-        return SGX_ERROR_ENCLAVE_LOST;
++
++        ret = do_ecall(proc, m_ocall_table, ms, trust_thread);
++        if (SGX_PTHREAD_EXIT == ret)
++            trust_thread->reset_ref();
++        else
++            trust_thread->decrease_ref();
+     }
++
++    //release the read/write lock, the only exception is enclave already be removed in ocall
++    if (AbnormalTermination() || ret != SE_ERROR_READ_LOCK_FAIL)
++        se_rdunlock(&m_rwlock);
++
++    return error_trts2urts(ret);
+ }
+ 
+ int CEnclave::ocall(const unsigned int proc, const sgx_ocall_table_t *ocall_table, void *ms)
+ {
+     int error = SGX_ERROR_UNEXPECTED;
++    bool read_lock_released = false;
+ 
+     if (is_builtin_ocall(proc))
+     {
+-        se_rdunlock(&m_rwlock);
++        if (!m_page_readiness_txn_active.load(std::memory_order_acquire))
++        {
++            se_rdunlock(&m_rwlock);
++            read_lock_released = true;
++        }
+         if ((int)proc == EDMM_ALLOC)
+             error = ocall_emm_alloc(ms);
+         else if ((int)proc == EDMM_MODIFY)
+             error = ocall_emm_modify(ms);
+     }
+-    else 
++    else
+     {
+         //validate the proc is within ocall_table;
+-        if(NULL == ocall_table ||
+-                (proc >= ocall_table->count))
+-        {
++        if (NULL == ocall_table || (proc >= ocall_table->count))
+             return SGX_ERROR_INVALID_FUNCTION;
+-        }
+ 
+         if (m_switchless)
+-        {
+             g_sl_funcs.sl_ocall_fallback_func_ptr(m_switchless);
+-        }
+ 
+-        se_rdunlock(&m_rwlock);
++        if (!m_page_readiness_txn_active.load(std::memory_order_acquire))
++        {
++            se_rdunlock(&m_rwlock);
++            read_lock_released = true;
++        }
+         bridge_fn_t bridge = reinterpret_cast<bridge_fn_t>(ocall_table->ocall[proc]);
+         error = do_ocall(bridge, ms);
+     }
+ 
+-    if (!se_try_rdlock(&m_rwlock))
++    if (read_lock_released)
+     {
+-        //Probablly the enclave has been destroyed, so we can't get the read lock.
+-        error = SE_ERROR_READ_LOCK_FAIL;
+-    }
+-    //We have m_destroyed to determinate if the enclave has been destroyed.
+-    else if(m_destroyed)
+-    {
+-        //Enclave has been destroyed, emulate that we fail to get read lock.
+-        se_rdunlock(&m_rwlock);
+-        error = SE_ERROR_READ_LOCK_FAIL;
++        if (!se_try_rdlock(&m_rwlock))
++        {
++            //Probablly the enclave has been destroyed, so we can't get the read lock.
++            error = SE_ERROR_READ_LOCK_FAIL;
++        }
++        else if (m_destroyed)
++        {
++            //Enclave has been destroyed, emulate that we fail to get read lock.
++            se_rdunlock(&m_rwlock);
++            error = SE_ERROR_READ_LOCK_FAIL;
++        }
+     }
+     return error;
+ }
+@@ -802,6 +1214,13 @@ CEnclave* CEnclavePool::remove_enclave(const sgx_enclave_id_t enclave_id, sgx_st
+         se_mutex_unlock(&m_enclave_mutex);
+         return enclave;
+     }
++    if (enclave->is_readiness_txn_on_current_thread())
++    {
++        status = SGX_ERROR_INVALID_STATE;
++        SE_TRACE(SE_TRACE_WARNING, "rejecting reentrant sgx_destroy_enclave during active readiness ECALL\n");
++        se_mutex_unlock(&m_enclave_mutex);
++        return NULL;
++    }
+ 
+     enclave->destroy();
+     //the ref is not 0, maybe some thread is in sgx_ocall, so we can NOT delete enclave instance.
+diff --git a/psw/urts/enclave.h b/psw/urts/enclave.h
+index 31288661..e6c8d3d9 100644
+--- a/psw/urts/enclave.h
++++ b/psw/urts/enclave.h
+@@ -42,6 +42,23 @@
+ #include "file.h"
+ #include "uncopyable.h"
+ #include "node.h"
++#include "sgx_urts.h"
++#include <atomic>
++#include <mutex>
++#include <vector>
++
++enum page_readiness_backend_t
++{
++    PAGE_READINESS_BACKEND_KERNEL = 0,
++    PAGE_READINESS_BACKEND_USERSPACE = 1
++};
++
++struct ecall_page_readiness_entry_t
++{
++    uint64_t selector;
++    uint64_t first_page;
++    uint64_t page_count;
++};
+ 
+ class CLoader;
+ 
+@@ -65,6 +82,9 @@ public:
+     void mark_zombie()  { m_zombie = true; }
+     bool is_zombie() { return m_zombie; }
+     sgx_status_t initialize(const se_file_t& file, CLoader &ldr, const uint64_t enclave_size, const uint32_t tcs_policy, const uint32_t enclave_version, const uint32_t tcs_min_pool);
++    sgx_status_t set_ecall_page_readiness_table(const sgx_page_readiness_table_t *table);
++    sgx_status_t set_ecall_page_readiness_backend(uint32_t backend);
++    bool is_readiness_txn_on_current_thread() const;
+     void add_thread(tcs_t * const tcs, bool is_unallocated);
+     void add_thread(CTrustThread * const trust_thread);
+     const debug_enclave_info_t* get_debug_info();
+@@ -123,6 +143,20 @@ private:
+     bool                    m_aex_notify;
+     sgx_target_info_t       m_target_info;
+     size_t                  m_dynamic_tcs_list_size;
++    std::atomic<bool>       m_page_readiness_started;
++    bool                    m_page_readiness_table_set;
++    bool                    m_page_readiness_backend_set;
++    uint32_t                m_page_readiness_backend;
++    bool                    m_page_readiness_table_installed;
++    bool                    m_page_readiness_broken;
++    std::atomic<bool>       m_page_readiness_txn_active;
++    pthread_t               m_page_readiness_txn_owner;
++    std::mutex              m_page_readiness_mutex;
++    std::vector<uint8_t>    m_page_readiness_bytes;
++    std::vector<ecall_page_readiness_entry_t> m_page_readiness_entries;
++    std::vector<uint64_t>   m_page_readiness_rvas;
++    std::vector<uint64_t>   m_readable_reg_rvas;
++    std::vector<uint64_t>   m_business_reg_rvas;
+ #ifdef SE_SIM    
+     void                    *m_global_data_sim_ptr;
+ #endif
+diff --git a/psw/urts/linux/isgx_user.h b/psw/urts/linux/isgx_user.h
+index e524ac0f..33e1eef5 100644
+--- a/psw/urts/linux/isgx_user.h
++++ b/psw/urts/linux/isgx_user.h
+@@ -118,6 +118,16 @@ enum sgx_page_flags {
+ #define SGX_IOC_ENCLAVE_REMOVE_PAGES \
+     _IOWR(SGX_MAGIC, 0x07, struct sgx_enclave_remove_pages)
+ 
++struct sgx_enclave_pages_acquire {
++    __u64 selector;
++    __u64 table_ptr;
++    __u64 table_bytes;
++};
++
++#define SGX_IOC_ENCLAVE_PAGES_ACQUIRE \
++    _IOW(SGX_MAGIC, 0x0A, struct sgx_enclave_pages_acquire)
++#define SGX_IOC_ENCLAVE_PAGES_RELEASE \
++    _IO(SGX_MAGIC, 0x0B)
+ 
+ /* Legacy OOT driver support for EDMM */
+ #define SGX_IOC_ENCLAVE_EMODPR \
+diff --git a/psw/urts/linux/urts.lds b/psw/urts/linux/urts.lds
+index 6cfd06d4..b0c0249a 100644
+--- a/psw/urts/linux/urts.lds
++++ b/psw/urts/linux/urts.lds
+@@ -3,6 +3,8 @@
+         sgx_create_enclave;
+         sgx_create_enclave_ex;
+         sgx_destroy_enclave;
++        sgx_set_ecall_page_readiness_table;
++        atfield_sgx_set_ecall_page_readiness_backend;
+         sgx_ecall;
+         sgx_ecall_switchless;
+         sgx_thread_wait_untrusted_event_ocall;
+diff --git a/psw/urts/loader.cpp b/psw/urts/loader.cpp
+index 1f1d2de5..a8b55c22 100644
+--- a/psw/urts/loader.cpp
++++ b/psw/urts/loader.cpp
+@@ -132,6 +132,46 @@ const std::vector<std::pair<tcs_t *, bool>>& CLoader::get_tcs_list() const
+     return m_tcs_list;
+ }
+ 
++const std::vector<uint64_t>& CLoader::get_readable_reg_pages() const
++{
++    return m_readable_reg_pages;
++}
++
++const std::vector<uint64_t>& CLoader::get_business_reg_pages() const
++{
++    return m_business_reg_pages;
++}
++
++int CLoader::record_reg_pages(uint64_t start_rva, uint64_t size, bool readable)
++{
++    if (size == 0)
++        return SGX_SUCCESS;
++    if (size > UINT64_MAX - start_rva)
++        return SGX_ERROR_INVALID_PARAMETER;
++
++    const uint64_t end = start_rva + size;
++    if (end > UINT64_MAX - (SE_PAGE_SIZE - 1))
++        return SGX_ERROR_INVALID_PARAMETER;
++
++    const uint64_t page_end = (end + SE_PAGE_SIZE - 1) & ~((uint64_t)SE_PAGE_SIZE - 1);
++    for (uint64_t page_rva = start_rva & ~((uint64_t)SE_PAGE_SIZE - 1);
++         page_rva < page_end;
++         page_rva += SE_PAGE_SIZE)
++    {
++        try
++        {
++            m_business_reg_pages.push_back(page_rva);
++            if (readable)
++                m_readable_reg_pages.push_back(page_rva);
++        }
++        catch (...)
++        {
++            return SGX_ERROR_OUT_OF_MEMORY;
++        }
++    }
++    return SGX_SUCCESS;
++}
++
+ const secs_t& CLoader::get_secs() const
+ {
+     return m_secs;
+@@ -305,6 +345,16 @@ int CLoader::build_sections(std::vector<uint8_t> *bitmap)
+         }
+ 
+         section_info_t sec_info = { sections[i]->raw_data(), sections[i]->raw_data_size(), sections[i]->get_rva(), sections[i]->virtual_size(), sections[i]->get_si_flags(), bitmap };
++        const si_flags_t section_flags = sections[i]->get_si_flags();
++        if (section_flags & SI_FLAG_REG)
++        {
++            ret = record_reg_pages(
++                sections[i]->get_rva(),
++                sections[i]->virtual_size(),
++                (section_flags & SI_FLAG_R) != 0);
++            if (ret != SGX_SUCCESS)
++                return ret;
++        }
+ 
+         if(SGX_SUCCESS != (ret = build_mem_region(sec_info)))
+             return ret;
+@@ -379,6 +429,20 @@ int CLoader::build_context(const uint64_t start_rva, layout_entry_t *layout)
+     memset(&sinfo, 0, sizeof(sinfo));
+     uint64_t rva = start_rva + layout->rva;
+ 
++    if ((layout->attributes & PAGE_ATTR_EADD) &&
++        (layout->si_flags & SI_FLAG_REG) &&
++        layout->id != LAYOUT_ID_TCS &&
++        layout->id != LAYOUT_ID_SSA &&
++        layout->id != LAYOUT_ID_GUARD &&
++        layout->id != LAYOUT_ID_TCS_DYN &&
++        layout->id != LAYOUT_ID_SSA_DYN)
++    {
++        const uint64_t size = ((uint64_t)layout->page_count) << SE_PAGE_SHIFT;
++        ret = record_reg_pages(rva, size, (layout->si_flags & SI_FLAG_R) != 0);
++        if (ret != SGX_SUCCESS)
++            return ret;
++    }
++
+     assert(IS_PAGE_ALIGNED(rva));
+     se_trace(SE_TRACE_DEBUG, "\t%s\n", __FUNCTION__);
+     se_trace(SE_TRACE_DEBUG, "\tEntry Id     = %4u, %-16s, ", layout->id, layout_id_str[layout->id & ~(GROUP_FLAG)]);
+@@ -863,6 +927,8 @@ bool CLoader::is_ae(const enclave_css_t *enclave_css)
+ 
+ int CLoader::load_enclave(Reserved_FormerlyLaunchToken *reserved, int debug, const metadata_t *metadata, sgx_config_id_t *config_id, sgx_config_svn_t config_svn, le_prd_css_file_t *prd_css_file, sgx_misc_attribute_t *misc_attr)
+ {
++    m_readable_reg_pages.clear();
++    m_business_reg_pages.clear();
+     int ret = SGX_SUCCESS;
+     sgx_misc_attribute_t sgx_misc_attr;
+     memset(&sgx_misc_attr, 0, sizeof(sgx_misc_attribute_t));
+diff --git a/psw/urts/loader.h b/psw/urts/loader.h
+index c767e824..661dfdae 100644
+--- a/psw/urts/loader.h
++++ b/psw/urts/loader.h
+@@ -66,10 +66,13 @@ public:
+     uint64_t get_elrange_size() const;
+     const secs_t& get_secs() const;
+     const std::vector<std::pair<tcs_t *, bool>>& get_tcs_list() const;
++    const std::vector<uint64_t>& get_readable_reg_pages() const;
++    const std::vector<uint64_t>& get_business_reg_pages() const;
+     void* get_symbol_address(const char* const sym);
+     int set_memory_protection();
+ 
+ private:
++    int record_reg_pages(uint64_t start_rva, uint64_t size, bool readable);
+     int build_mem_region(const section_info_t &sec_info);
+     int build_image(Reserved_FormerlyLaunchToken * const reserved, sgx_attributes_t * const secs_attr, sgx_config_id_t *config_id, sgx_config_svn_t config_svn, le_prd_css_file_t *prd_css_file, sgx_misc_attribute_t * const misc_attr);
+     int build_secs(sgx_attributes_t * const secs_attr, sgx_config_id_t *config_id, sgx_config_svn_t config_svn, sgx_misc_attribute_t * const misc_attr);
+@@ -98,6 +101,9 @@ private:
+ 
+     // the TCS list
+     std::vector<std::pair<tcs_t *, bool>> m_tcs_list;
++    // Readable REG pages derived from the signed ELF and enclave layout.
++    std::vector<uint64_t> m_readable_reg_pages;
++    std::vector<uint64_t> m_business_reg_pages;
+     // the enclave creation parameters
+     const metadata_t    *m_metadata;
+     secs_t              m_secs;
+diff --git a/psw/urts/routine.cpp b/psw/urts/routine.cpp
+index ee1f25eb..fc9f03b3 100644
+--- a/psw/urts/routine.cpp
++++ b/psw/urts/routine.cpp
+@@ -74,6 +74,37 @@ sgx_status_t sgx_ecall_switchless(const sgx_enclave_id_t enclave_id, const int p
+     return _sgx_ecall(enclave_id, proc, ocall_table, ms, true);
+ }
+ 
++extern "C"
++sgx_status_t SGXAPI sgx_set_ecall_page_readiness_table(
++    const sgx_enclave_id_t enclave_id,
++    const sgx_page_readiness_table_t *table)
++{
++    if (table == NULL || table->data == NULL)
++        return SGX_ERROR_INVALID_PARAMETER;
++
++    CEnclave *enclave = CEnclavePool::instance()->ref_enclave(enclave_id);
++    if (enclave == NULL)
++        return SGX_ERROR_INVALID_ENCLAVE_ID;
++
++    sgx_status_t result = enclave->set_ecall_page_readiness_table(table);
++    CEnclavePool::instance()->unref_enclave(enclave);
++    return result;
++}
++
++extern "C"
++sgx_status_t SGXAPI atfield_sgx_set_ecall_page_readiness_backend(
++    const sgx_enclave_id_t enclave_id,
++    const uint32_t backend)
++{
++    CEnclave *enclave = CEnclavePool::instance()->ref_enclave(enclave_id);
++    if (enclave == NULL)
++        return SGX_ERROR_INVALID_ENCLAVE_ID;
++
++    sgx_status_t result = enclave->set_ecall_page_readiness_backend(backend);
++    CEnclavePool::instance()->unref_enclave(enclave);
++    return result;
++}
++
+ extern "C"
+ int sgx_ocall(const unsigned int proc, const sgx_ocall_table_t *ocall_table, void *ms, CTrustThread *trust_thread)
+ {

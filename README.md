@@ -3,7 +3,7 @@
 All tables in this document are generated automatically from `experiments/evaluation_results.json` and `witnesses/<sample>/witness_ledger.json` via `python3 tools/generate_report_tables.py`.
 
 - **Frozen Initial Hardware Prototype Tag**: `v0-hardware-prototype-frozen` (`7daae4f82ba5380f1ef96c5c0f2f273e01ab360a`)
-- **Unified Collector (`build/libatfield_native_sgx.so`) SHA-256 across Discovery & Evaluation**: `d83aebab63d55b471e32055865cb3fd6982001d356c1352447879fdb6d5f0644`
+- **Unified Collector (`build/libatfield_native_sgx.so`) SHA-256 across Discovery & Evaluation**: `08f0c81edd6b85aba97eb75ffe578eda1022de35f078d29969d330f9bd88173e`
 - **Default Conservative Candidate**: **Group B (`workset.dynamic_xr.json`)**, which keeps all `RX` code pages as `XR` (`RX = XR`), avoiding unverified `X-only` read-permission stripping.
 - **Scope & Boundary Statement**: Dynamic exploration and hold-out evaluations provide empirical evidence on the executed inputs, histories, and hardware runs; heuristic assistance (depth-4 direct call graph, `+2` heap frontier pages, `-4` stack margin pages) is an empirical aid rather than a formal whole-program upper-bound proof.
 
@@ -46,20 +46,20 @@ All tables in this document are generated automatically from `experiments/evalua
 
 | Sample | Field | Total Attempts | Group A Clean `0`-Rewalk / Clean (`med / max`) | **Group B (`XR` Default) Clean `0`-Rewalk / Clean (`med / max`)** | Group B Interrupt-Contaminated Count (`max` pages) | Group C (`X-only`) Clean `0`-Rewalk / Clean (`med / max`) | Group C Interrupt-Contaminated Count (`max` pages) | Group A -> B -> C `S2` Median TSC Ticks |
 |---|---|---:|---|---|---|---:|---|---|
-| `qe3` | `get_att_key_based_from_seal_key` | 15 | 0/15 (`3 / 5`) | **0/15** (`3 / 3`) | 0 (`max=0p`) | 0/15 (`3 / 3`) | 0 (`max=0p`) | `3,395,492` -> **`441,592`** -> `441,208` |
-| `signal-cds` | `sabd_lookup_hash` | 25 | 17/25 (`0 / 14`) | **25/25** (`0 / 0`) | 0 (`max=0p`) | 25/25 (`0 / 0`) | 0 (`max=0p`) | `1,709,224` -> **`1,222,292`** -> `1,217,054` |
-| `sgxwallet` | `generate_sek_field` | 5 | 0/5 (`11 / 16`) | **0/5** (`1 / 1`) | 0 (`max=0p`) | 0/5 (`1 / 1`) | 0 (`max=0p`) | `5,480,360` -> **`224,786`** -> `184,482` |
-| `sgxwallet` | `set_sek_field` | 5 | 0/5 (`9 / 11`) | **0/5** (`1 / 1`) | 0 (`max=0p`) | 0/5 (`1 / 1`) | 0 (`max=0p`) | `5,045,546` -> **`196,474`** -> `183,238` |
-| `sgxwallet` | `generate_ecdsa_key_field` | 5 | 0/5 (`18 / 21`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `3,204,342` -> **`187,864`** -> `179,720` |
-| `sgxwallet` | `get_public_ecdsa_key_field` | 5 | 0/5 (`15 / 21`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `1,795,258` -> **`99,338`** -> `102,284` |
-| `sgxwallet` | `ecdsa_sign_field` | 50 | 0/50 (`16 / 25`) | **50/50** (`0 / 0`) | 0 (`max=0p`) | 50/50 (`0 / 0`) | 0 (`max=0p`) | `1,643,607` -> **`117,192`** -> `115,066` |
-| `ehsm` | `ehsm_generate_datakey` | 5 | 0/5 (`38 / 67`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `2,336,606` -> **`346,602`** -> `338,800` |
-| `ehsm` | `ehsm_aes_gcm_encrypt` | 20 | 0/20 (`32 / 44`) | **19/20** (`0 / 90`) | 0 (`max=0p`) | 20/20 (`0 / 0`) | 0 (`max=0p`) | `2,335,715` -> **`356,044`** -> `348,678` |
-| `ehsm` | `ehsm_aes_gcm_decrypt` | 40 | 0/40 (`37 / 138`) | **39/39** (`0 / 0`) | 1 (`max=227p`) | 40/40 (`0 / 0`) | 0 (`max=0p`) | `2,348,592` -> **`355,296`** -> `352,464` |
-| `ehsm` | `ehsm_create_aes_key` | 5 | 0/5 (`118 / 136`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `8,025,822` -> **`1,121,448`** -> `993,584` |
+| `qe3` | `get_att_key_based_from_seal_key` | 15 | 0/15 (`3 / 5`) | **0/15** (`3 / 3`) | 0 (`max=0p`) | 0/15 (`3 / 3`) | 0 (`max=0p`) | `3,497,408` -> **`467,300`** -> `444,548` |
+| `signal-cds` | `sabd_lookup_hash` | 25 | 16/25 (`0 / 15`) | **25/25** (`0 / 0`) | 0 (`max=0p`) | 25/25 (`0 / 0`) | 0 (`max=0p`) | `2,046,222` -> **`1,158,104`** -> `1,144,648` |
+| `sgxwallet` | `generate_sek_field` | 5 | 0/5 (`10 / 18`) | **0/5** (`1 / 1`) | 0 (`max=0p`) | 0/5 (`1 / 1`) | 0 (`max=0p`) | `5,777,316` -> **`230,958`** -> `204,376` |
+| `sgxwallet` | `set_sek_field` | 5 | 0/5 (`15 / 20`) | **0/5** (`1 / 1`) | 0 (`max=0p`) | 0/5 (`1 / 1`) | 0 (`max=0p`) | `5,366,162` -> **`202,450`** -> `181,284` |
+| `sgxwallet` | `generate_ecdsa_key_field` | 5 | 0/5 (`16 / 19`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `3,486,754` -> **`198,674`** -> `178,094` |
+| `sgxwallet` | `get_public_ecdsa_key_field` | 5 | 0/5 (`12 / 18`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `1,746,032` -> **`112,604`** -> `108,400` |
+| `sgxwallet` | `ecdsa_sign_field` | 50 | 0/50 (`14 / 28`) | **50/50** (`0 / 0`) | 0 (`max=0p`) | 50/50 (`0 / 0`) | 0 (`max=0p`) | `1,633,450` -> **`122,048`** -> `122,733` |
+| `ehsm` | `ehsm_generate_datakey` | 5 | 0/5 (`36 / 43`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `2,284,632` -> **`341,818`** -> `351,626` |
+| `ehsm` | `ehsm_aes_gcm_encrypt` | 20 | 0/20 (`37 / 44`) | **20/20** (`0 / 0`) | 0 (`max=0p`) | 20/20 (`0 / 0`) | 0 (`max=0p`) | `2,285,279` -> **`349,381`** -> `349,825` |
+| `ehsm` | `ehsm_aes_gcm_decrypt` | 40 | 0/40 (`37 / 137`) | **40/40** (`0 / 0`) | 0 (`max=0p`) | 40/40 (`0 / 0`) | 0 (`max=0p`) | `2,302,016` -> **`352,579`** -> `358,441` |
+| `ehsm` | `ehsm_create_aes_key` | 5 | 0/5 (`128 / 145`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `8,567,852` -> **`1,139,992`** -> `985,118` |
 
 - **Exact Per-Observation Totals Across the 8 Non-`ENCLU` Fields (155 total Field entries across 5 rounds)**:
-  - **Group B (`dynamic_xr`, Default `XR`)**: **154 / 155** clean (`s3_aex=0`) observations, **1 / 155** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **153 / 154** achieved `0` residual page-table A/D re-walks.
+  - **Group B (`dynamic_xr`, Default `XR`)**: **155 / 155** clean (`s3_aex=0`) observations, **0 / 155** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **155 / 155** achieved `0` residual page-table A/D re-walks.
   - **Group C (`dynamic_refined`, `X-only`)**: **155 / 155** clean (`s3_aex=0`) observations, **0 / 155** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **155 / 155** achieved `0` residual page-table A/D re-walks.
 
 ## 4. Production `AEX1` Latency & Memory/Code Size Overhead vs Unprotected Baselines (5 Interleaved Rounds)
@@ -69,10 +69,10 @@ All tables in this document are generated automatically from `experiments/evalua
 
 | Sample | `Raw` Unprotected (ms) | `No-PreTouch` Baseline (ms) | Group A (`all_reg_xr`) (ms) | **Group B (`dynamic_xr` Default)** (ms) | Group C (`dynamic_refined`) (ms) | **Group B Overhead vs `No-PreTouch`** | Group B Speedup vs Group A | Loaded `PT_LOAD` MemSiz (`Raw -> Group B`) | `.atfield_pretouch` + `ReadyTable` Bytes (Group B) |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| `qe3` | 3.00 | 3.00 | 5.49 | **3.27** | 3.25 | **+8.90%** (`+0.27 ms`) | **1.68x** | `2104.7 -> 2116.7 KiB` (**+0.57%**) | `1303 B + 1544 B` |
-| `signal-cds` | 317.73 | 319.93 | 321.35 | **320.60** | 320.57 | **+0.21%** (`+0.67 ms`) | **1.00x** | `140.3 -> 155.8 KiB` (**+11.06%**) | `4568 B + 5072 B` |
-| `sgxwallet` | 34.44 | 33.55 | 43.70 | **34.03** | 33.81 | **+1.42%** (`+0.48 ms`) | **1.28x** | `2722.2 -> 2818.2 KiB` (**+3.52%**) | `4460 B + 6288 B` |
-| `ehsm` | 3.93 | 5.07 | 16.78 | **5.45** | 5.37 | **+7.50%** (`+0.38 ms`) | **3.08x** | `5023.2 -> 5123.3 KiB` (**+1.99%**) | `10230 B + 11720 B` |
+| `qe3` | 1.03 | 1.02 | 1.44 | **0.79** | 0.80 | **+-22.74%** (`+-0.23 ms`) | **1.83x** | `2104.7 -> 2116.7 KiB` (**+0.57%**) | `1303 B + 1544 B` |
+| `signal-cds` | 317.15 | 317.17 | 317.90 | **317.89** | 317.53 | **+0.23%** (`+0.72 ms`) | **1.00x** | `140.3 -> 155.8 KiB` (**+11.06%**) | `4568 B + 5072 B` |
+| `sgxwallet` | 30.48 | 30.99 | 30.38 | **26.97** | 26.93 | **+-12.96%** (`+-4.02 ms`) | **1.13x** | `2722.2 -> 2818.2 KiB` (**+3.52%**) | `4460 B + 6288 B` |
+| `ehsm` | 2.92 | 2.93 | 9.56 | **3.11** | 3.13 | **+6.04%** (`+0.18 ms`) | **3.07x** | `5023.2 -> 5123.3 KiB` (**+1.99%**) | `10230 B + 11720 B` |
 
 ## 5. Clean-Checkout Reproducible Workflow
 

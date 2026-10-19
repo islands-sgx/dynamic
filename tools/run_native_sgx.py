@@ -17,11 +17,12 @@ from workset import ElfFile  # noqa: E402
 DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
 SAMPLE_ROOT = Path("/home/meandssh/islands-sgx/sample")
 INTERPOSE_SO = DYN_ROOT / "build" / "libatfield_native_sgx.so"
+ATFIELD_RUN_BIN = Path("/home/meandssh/islands-sgx/implement/host/runner/atfield-run")
 LD_LIB_PATH = (
     "/nix/store/hg41dqig0qxm7shyi0a0xkw29a14i3js-openssl-3.6.3/lib:"
     "/nix/store/j2kgllgds4w7na8zqv1msi0mpvpjxda8-gcc-15.2.0-lib/lib:"
-    "/nix/store/idzqgxj50m3zd5h39yh5gij3iddzii3a-sgx-psw-2.29.100.1/lib64:"
-    "/nix/store/idzqgxj50m3zd5h39yh5gij3iddzii3a-sgx-psw-2.29.100.1/lib"
+    "/nix/store/a1fx7mb2366qs2i5bd9mci3nis495wcb-sgx-psw-2.29.100.1/lib64:"
+    "/nix/store/a1fx7mb2366qs2i5bd9mci3nis495wcb-sgx-psw-2.29.100.1/lib"
 )
 
 
@@ -105,7 +106,7 @@ def resolve_enclave_path(tdir: Path, mode: str) -> tuple[Path, int]:
         "dynamic_4gate": (tdir / "enclave.dynamic.4gate.aex0.signed.so", 1),
         "dynamic_xr_4gate": (tdir / "enclave.dynamic_xr.4gate.aex0.signed.so", 1),
         "raw_unprotected": (SAMPLE_ROOT / "build" / "real" / tdir.name / "raw" / "enclave.signed.so", 0),
-        "profile_signed": (tdir / "enclave.profile.signed.so", 0),
+        "profile_signed": (SAMPLE_ROOT / "build" / "real" / tdir.name / "anchor" / "enclave.signed.so", 0),
         "all_reg_final": (tdir / "enclave.all_reg.final.signed.so", 0),
         "all_reg_final_aex0": (tdir / "enclave.all_reg.final.aex0.signed.so", 0),
         "dynamic_final": (tdir / "enclave.dynamic.final.signed.so", 0),
@@ -144,11 +145,28 @@ def run_sample(
     if strict_ready_file and not strict_mode:
         strict_mode = "ecall"
 
+    ready_table_map = {
+        "all_reg_final": tdir / "enclave.all_reg.ready.bin",
+        "dynamic_xr_final": tdir / "enclave.dynamic_xr.ready.bin",
+        "dynamic_final": tdir / "enclave.dynamic.ready.bin",
+        
+    }
+    ready_bin = ready_table_map.get(mode)
+    is_pure_prod = (
+        use_4gate == 0
+        and not strict_mode
+        and not strict_ready_file
+        and not intervention
+        and not dump_dir
+        and stop_after_call is None
+        and not stop_after_selector
+        and not stop_before_normal_ecall
+        and mode in ("raw_unprotected", "profile_signed", "all_reg_final", "dynamic_xr_final", "dynamic_final")
+    )
+
     with tempfile.TemporaryDirectory(prefix=f"atfield_run_{sample}_") as work_cwd:
         trace_file = Path(work_cwd) / "trace.jsonl"
-        cmd = [
-            "sudo",
-            "env",
+        env_args = [
             f"LD_PRELOAD={INTERPOSE_SO}",
             f"LD_LIBRARY_PATH={LD_LIB_PATH}",
             f"ATFIELD_ENCLAVE_PATH={encl}",
@@ -160,6 +178,7 @@ def run_sample(
             f"ATFIELD_ENCL_CPU={encl_cpu}",
             f"ATFIELD_WATCH_CPU={watch_cpu}",
             f"ATFIELD_ALLOW_FAST_FORWARD={allow_fast_forward}",
+            f"ATFIELD_PURE_PROD={1 if is_pure_prod else 0}",
             f"ATFIELD_STOP_AFTER_CALL={'' if stop_after_call is None else stop_after_call}",
             f"ATFIELD_STOP_AFTER_SELECTOR={stop_after_selector}",
             f"ATFIELD_STOP_BEFORE_NORMAL_ECALL={stop_before_normal_ecall}",
@@ -167,12 +186,19 @@ def run_sample(
             f"ATFIELD_STRICT_READY_FILE={strict_ready_file}",
             f"ATFIELD_STRICT_MODE={strict_mode}",
             f"ATFIELD_DUMP_DIR={dump_dir}",
-            "setarch",
-            "x86_64",
-            "-R",
-            str(host_bin),
-            *(host_args or []),
         ]
+        if ready_bin and ready_bin.is_file() and is_pure_prod:
+            env_args.append(f"ATFIELD_READY_TABLE={ready_bin}")
+        if is_pure_prod:
+            cmd = [
+                "sudo", "--", str(ATFIELD_RUN_BIN), "--", "/usr/bin/env",
+                *env_args, "setarch", "x86_64", "-R", str(host_bin), *(host_args or [])
+            ]
+        else:
+            cmd = [
+                "sudo", "env",
+                *env_args, "setarch", "x86_64", "-R", str(host_bin), *(host_args or [])
+            ]
         timed_out = False
         try:
             proc = subprocess.run(cmd, cwd=work_cwd, text=True, capture_output=True, timeout=timeout_sec)

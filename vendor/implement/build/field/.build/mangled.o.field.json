@@ -1,0 +1,22 @@
+{
+  "schema": "atfield-fields-v1",
+  "fields": [
+    {
+      "id": "0xedca01bb024177b4",
+      "name": "example::protected_cpp(int)",
+      "function": "_ZN7exampleL13protected_cppEi",
+      "linkage_name": "_ZN7exampleL13protected_cppEi",
+      "demangled_name": "example::protected_cpp(int)",
+      "order": ["0xfedcba9876543210", "1"],
+      "marker_symbol": "__atfield_marker_17134509634992830388",
+      "continuation_symbol": "__atfield_after_marker_17134509634992830388",
+      "body_symbol": "__atfield_body_17134509634992830388",
+      "pretouch_symbol": "__atfield_pretouch_17134509634992830388",
+      "field_enter_symbol": "__atfield_field_enter_17134509634992830388",
+      "normal_close_symbol": "__atfield_normal_close_17134509634992830388",
+      "field_exit_symbol": "__atfield_field_exit_17134509634992830388",
+      "stack_bytes": null
+    }
+  ],
+  "selectors": []
+}

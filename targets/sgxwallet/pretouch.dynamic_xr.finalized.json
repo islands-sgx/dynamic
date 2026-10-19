@@ -4153,10 +4153,12 @@
   ],
   "capacity_q": 90112,
   "code_bytes": 4460,
+  "fields_sha256": "9e51f511f14c1bfae1563bf69d4abd478564ac435244f73251840dd3f5a42b0f",
   "final_elf": "/home/meandssh/islands-sgx/dynamic/targets/sgxwallet/enclave.dynamic_xr.final.so",
   "final_elf_sha256": "d1041eeee5ebf59f04bcb03c34e58e51208a2af309e759338481d88139c27e07",
   "post_start": 2809856,
   "profile_elf": "/home/meandssh/islands-sgx/dynamic/targets/sgxwallet/enclave.profile.so",
   "profile_elf_sha256": "b9eafd7bd2a8b414d15758ce99f6e7016f131803f5cac3b6bfaae28c72830a5e",
-  "schema": "atfield-pretouch-finalized-v1"
+  "schema": "atfield-pretouch-finalized-v1",
+  "workset_sha256": "e22c34721ff5e641a2a41c071eb6620186f4d876b5b43e62aa673b583c8f764c"
 }
