@@ -62,16 +62,17 @@ All tables in this document are generated automatically from `experiments/evalua
   - **Group B (`dynamic_xr`, Default `XR`)**: **155 / 155** clean (`s3_aex=0`) observations, **0 / 155** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **154 / 155** achieved `0` residual page-table A/D re-walks.
   - **Group C (`dynamic_refined`, `X-only`)**: **155 / 155** clean (`s3_aex=0`) observations, **0 / 155** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **155 / 155** achieved `0` residual page-table A/D re-walks.
 
-## 4. Production `AEX1` Signed Final Enclave Latency (Sum of Per-ECALL Wall-Clock Durations per Workflow Round, 5 Interleaved Rounds)
+## 4. Production `AEX1` Latency & Memory/Code Size Overhead vs Unprotected Baselines (5 Interleaved Rounds)
 
-- **Metric Definition**: Sum of individual `sgx_ecall` wall-clock durations (`elapsed_ns`) within one workflow round (excluding enclave creation/destruction). For `sgxwallet`, the 5-round interleaved performance benchmark uses `--requests 5` (`60/60` production runs completed with `rc=0` and `PASS`); the 1005-request long-history run is evaluated in Table 2.
+- **Metric Definition**: Sum of individual `sgx_ecall` wall-clock durations (`elapsed_ns`) within one workflow round (`--requests 5` for `sgxwallet` in the 5-round benchmark; `--requests 1005` evaluated in Table 2).
+- **Two Unprotected Baselines**: `Raw (GCC)` is `sample/build/real/<sample>/raw/enclave.signed.so`; `No-PreTouch (Clang-Anchor)` is `enclave.profile.signed.so` (same compiler & layout as Group A/B/C, with a 1-instruction `jmp` stub in `.atfield_pretouch`).
 
-| Sample | Performance `host_args` | Group A (`all_reg_xr`) Median (`min..max`) ms | **Group B (`dynamic_xr` Default)** Median (`min..max`) ms | Group C (`dynamic_refined`) Median (`min..max`) ms | Group B Speedup vs A | Group C Speedup vs A | `.atfield_pretouch` Bytes (`A -> B -> C`) |
-|---|---|---|---|---|---:|---:|---:|
-| `qe3` | `(default)` | 2.19 (`2.09..2.26`) | **0.86** (`0.85..0.87`) | 0.84 (`0.82..0.85`) | **2.56x** | **2.61x** | `7376 -> 1303 -> 859` |
-| `signal-cds` | `(default)` | 320.06 (`320.02..321.04`) | **318.74** (`318.67..319.17`) | 318.80 (`318.69..319.70`) | **1.00x** | **1.00x** | `9060 -> 4568 -> 4520` |
-| `sgxwallet` | `--requests 5` | 36.11 (`35.56..36.73`) | **26.60** (`26.44..26.68`) | 26.69 (`26.50..27.01`) | **1.36x** | **1.35x** | `80115 -> 4460 -> 3350` |
-| `ehsm` | `(default)` | 15.35 (`13.90..15.67`) | **3.88** (`3.76..3.94`) | 3.85 (`3.78..3.94`) | **3.96x** | **3.98x** | `84112 -> 10230 -> 8766` |
+| Sample | `Raw` Unprotected (ms) | `No-PreTouch` Baseline (ms) | Group A (`all_reg_xr`) (ms) | **Group B (`dynamic_xr` Default)** (ms) | Group C (`dynamic_refined`) (ms) | **Group B Overhead vs `No-PreTouch`** | Group B Speedup vs Group A | Loaded `PT_LOAD` MemSiz (`Raw -> Group B`) | `.atfield_pretouch` + `ReadyTable` Bytes (Group B) |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| `qe3` | 0.74 | 0.74 | 2.19 | **0.86** | 0.84 | **+15.61%** (`+0.12 ms`) | **2.56x** | `2104.7 -> 2116.7 KiB` (**+0.57%**) | `1303 B + 1544 B` |
+| `signal-cds` | 318.20 | 317.74 | 320.06 | **318.74** | 318.80 | **+0.31%** (`+0.99 ms`) | **1.00x** | `140.3 -> 155.8 KiB` (**+11.06%**) | `4568 B + 5072 B` |
+| `sgxwallet` | 31.93 | 26.48 | 36.11 | **26.60** | 26.69 | **+0.45%** (`+0.12 ms`) | **1.36x** | `2722.2 -> 2818.2 KiB` (**+3.52%**) | `4460 B + 6288 B` |
+| `ehsm` | 3.04 | 3.15 | 15.35 | **3.88** | 3.85 | **+23.17%** (`+0.73 ms`) | **3.96x** | `5023.2 -> 5123.3 KiB` (**+1.99%**) | `10230 B + 11720 B` |
 
 ## 5. Clean-Checkout Reproducible Workflow
 

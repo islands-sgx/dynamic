@@ -164,31 +164,40 @@ def main() -> None:
     lines.append(f"  - **Group C (`dynamic_refined`, `X-only`)**: **{non_enclu_c_clean} / {non_enclu_attempts}** clean (`s3_aex=0`) observations, **{non_enclu_c_contam} / {non_enclu_attempts}** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **{non_enclu_c_clean_zero} / {non_enclu_c_clean}** achieved `0` residual page-table A/D re-walks.")
     lines.append("")
 
-    # Table 4: Production AEX1 Per-Round Sum of ECALL Durations
-    lines.append("## 4. Production `AEX1` Signed Final Enclave Latency (Sum of Per-ECALL Wall-Clock Durations per Workflow Round, 5 Interleaved Rounds)")
+    # Table 4: Production AEX1 Per-Round Sum of ECALL Durations & Size Overhead vs Unprotected Baselines
+    lines.append("## 4. Production `AEX1` Latency & Memory/Code Size Overhead vs Unprotected Baselines (5 Interleaved Rounds)")
     lines.append("")
-    lines.append("- **Metric Definition**: Sum of individual `sgx_ecall` wall-clock durations (`elapsed_ns`) within one workflow round (excluding enclave creation/destruction). For `sgxwallet`, the 5-round interleaved performance benchmark uses `--requests 5` (`60/60` production runs completed with `rc=0` and `PASS`); the 1005-request long-history run is evaluated in Table 2.")
+    lines.append("- **Metric Definition**: Sum of individual `sgx_ecall` wall-clock durations (`elapsed_ns`) within one workflow round (`--requests 5` for `sgxwallet` in the 5-round benchmark; `--requests 1005` evaluated in Table 2).")
+    lines.append("- **Two Unprotected Baselines**: `Raw (GCC)` is `sample/build/real/<sample>/raw/enclave.signed.so`; `No-PreTouch (Clang-Anchor)` is `enclave.profile.signed.so` (same compiler & layout as Group A/B/C, with a 1-instruction `jmp` stub in `.atfield_pretouch`).")
     lines.append("")
-    lines.append("| Sample | Performance `host_args` | Group A (`all_reg_xr`) Median (`min..max`) ms | **Group B (`dynamic_xr` Default)** Median (`min..max`) ms | Group C (`dynamic_refined`) Median (`min..max`) ms | Group B Speedup vs A | Group C Speedup vs A | `.atfield_pretouch` Bytes (`A -> B -> C`) |")
-    lines.append("|---|---|---|---|---|---:|---:|---:|")
+    lines.append("| Sample | `Raw` Unprotected (ms) | `No-PreTouch` Baseline (ms) | Group A (`all_reg_xr`) (ms) | **Group B (`dynamic_xr` Default)** (ms) | Group C (`dynamic_refined`) (ms) | **Group B Overhead vs `No-PreTouch`** | Group B Speedup vs Group A | Loaded `PT_LOAD` MemSiz (`Raw -> Group B`) | `.atfield_pretouch` + `ReadyTable` Bytes (Group B) |")
+    lines.append("|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|")
 
     for s in SAMPLES:
         ab = eval_data[s]["three_group_ablation"]
-        pA = ab["production_aex1_per_round_ecall_sum_ns"]["groupA_all_reg_xr"]
-        pB = ab["production_aex1_per_round_ecall_sum_ns"]["groupB_dynamic_xr"]
-        pC = ab["production_aex1_per_round_ecall_sum_ns"]["groupC_dynamic_refined"]
-        cA = ab["code_and_readytable_sizes"]["groupA_all_reg_xr"]["pretouch_code_bytes"]
-        cB = ab["code_and_readytable_sizes"]["groupB_dynamic_xr"]["pretouch_code_bytes"]
-        cC = ab["code_and_readytable_sizes"]["groupC_dynamic_refined"]["pretouch_code_bytes"]
-        mA, minA, maxA = pA["median"] / 1e6, pA["min"] / 1e6, pA["max"] / 1e6
-        mB, minB, maxB = pB["median"] / 1e6, pB["min"] / 1e6, pB["max"] / 1e6
-        mC, minC, maxC = pC["median"] / 1e6, pC["min"] / 1e6, pC["max"] / 1e6
+        pr = ab["production_aex1_per_round_ecall_sum_ns"]
+        pRaw = pr["raw_unprotected"]
+        pNP = pr["profile_no_pretouch"]
+        pA = pr["groupA_all_reg_xr"]
+        pB = pr["groupB_dynamic_xr"]
+        pC = pr["groupC_dynamic_refined"]
+        sz = ab["binary_and_memory_size_comparison"]
+        mRaw = pRaw["median"] / 1e6
+        mNP = pNP["median"] / 1e6
+        mA = pA["median"] / 1e6
+        mB = pB["median"] / 1e6
+        mC = pC["median"] / 1e6
+        ovh_pct = 100.0 * (mB - mNP) / mNP if mNP > 0 else 0.0
         spB = mA / mB if mB > 0 else 1.0
-        spC = mA / mC if mC > 0 else 1.0
-        h_args_str = " ".join(ab["performance_host_args"]) or "(default)"
+        mem_raw_kb = sz["raw_unprotected"]["pt_load_memsz_bytes"] / 1024.0
+        mem_b_kb = sz["groupB_dynamic_xr"]["pt_load_memsz_bytes"] / 1024.0
+        mem_pct = 100.0 * (mem_b_kb - mem_raw_kb) / mem_raw_kb if mem_raw_kb > 0 else 0.0
+        cB = sz["groupB_dynamic_xr"]["pretouch_code_bytes"]
+        rB = sz["groupB_dynamic_xr"]["readytable_bytes"]
         lines.append(
-            f"| `{s}` | `{h_args_str}` | {mA:.2f} (`{minA:.2f}..{maxA:.2f}`) | **{mB:.2f}** (`{minB:.2f}..{maxB:.2f}`) | "
-            f"{mC:.2f} (`{minC:.2f}..{maxC:.2f}`) | **{spB:.2f}x** | **{spC:.2f}x** | `{cA} -> {cB} -> {cC}` |"
+            f"| `{s}` | {mRaw:.2f} | {mNP:.2f} | {mA:.2f} | **{mB:.2f}** | {mC:.2f} | "
+            f"**+{ovh_pct:.2f}%** (`+{mB - mNP:.2f} ms`) | **{spB:.2f}x** | "
+            f"`{mem_raw_kb:.1f} -> {mem_b_kb:.1f} KiB` (**+{mem_pct:.2f}%**) | `{cB} B + {rB} B` |"
         )
 
     lines.append("")

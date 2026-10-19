@@ -104,6 +104,7 @@ def resolve_enclave_path(tdir: Path, mode: str) -> tuple[Path, int]:
         "all_reg_4gate": (tdir / "enclave.all_reg.4gate.aex0.signed.so", 1),
         "dynamic_4gate": (tdir / "enclave.dynamic.4gate.aex0.signed.so", 1),
         "dynamic_xr_4gate": (tdir / "enclave.dynamic_xr.4gate.aex0.signed.so", 1),
+        "raw_unprotected": (SAMPLE_ROOT / "build" / "real" / tdir.name / "raw" / "enclave.signed.so", 0),
         "profile_signed": (tdir / "enclave.profile.signed.so", 0),
         "all_reg_final": (tdir / "enclave.all_reg.final.signed.so", 0),
         "all_reg_final_aex0": (tdir / "enclave.all_reg.final.aex0.signed.so", 0),

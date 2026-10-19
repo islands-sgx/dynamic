@@ -232,6 +232,20 @@
           "median": 840811,
           "mean": 834681.2,
           "max": 845389
+        },
+        "raw_unprotected": {
+          "count": 5,
+          "min": 731933,
+          "median": 739290,
+          "mean": 743449.4,
+          "max": 761005
+        },
+        "profile_no_pretouch": {
+          "count": 5,
+          "min": 724851,
+          "median": 740258,
+          "mean": 742699.2,
+          "max": 768055
         }
       },
       "per_field_4gate_diagnostic_ablation": {
@@ -875,6 +889,32 @@
             "s3_missing_from_s2_pages_max": 0
           }
         }
+      },
+      "binary_and_memory_size_comparison": {
+        "raw_unprotected": {
+          "elf_file_bytes": 2069560,
+          "pt_load_memsz_bytes": 2155250,
+          "pretouch_code_bytes": 0,
+          "readytable_bytes": 0
+        },
+        "groupA_all_reg_xr": {
+          "elf_file_bytes": 2696072,
+          "pt_load_memsz_bytes": 2167538,
+          "pretouch_code_bytes": 7376,
+          "readytable_bytes": 6872
+        },
+        "groupB_dynamic_xr": {
+          "elf_file_bytes": 2696072,
+          "pt_load_memsz_bytes": 2167538,
+          "pretouch_code_bytes": 1303,
+          "readytable_bytes": 1544
+        },
+        "groupC_dynamic_refined": {
+          "elf_file_bytes": 2696072,
+          "pt_load_memsz_bytes": 2167538,
+          "pretouch_code_bytes": 859,
+          "readytable_bytes": 1544
+        }
       }
     },
     "closure_breakdown": {
@@ -1179,6 +1219,20 @@
           "median": 318804296,
           "mean": 318953326,
           "max": 319696451
+        },
+        "raw_unprotected": {
+          "count": 5,
+          "min": 317579199,
+          "median": 318198888,
+          "mean": 318202583.4,
+          "max": 318922332
+        },
+        "profile_no_pretouch": {
+          "count": 5,
+          "min": 317672538,
+          "median": 317742824,
+          "mean": 317789953,
+          "max": 317959007
         }
       },
       "per_field_4gate_diagnostic_ablation": {
@@ -1398,6 +1452,32 @@
             "clean_nonzero_rewalk_events": [],
             "s3_missing_from_s2_pages_max": 0
           }
+        }
+      },
+      "binary_and_memory_size_comparison": {
+        "raw_unprotected": {
+          "elf_file_bytes": 100376,
+          "pt_load_memsz_bytes": 143694,
+          "pretouch_code_bytes": 0,
+          "readytable_bytes": 0
+        },
+        "groupA_all_reg_xr": {
+          "elf_file_bytes": 151264,
+          "pt_load_memsz_bytes": 159582,
+          "pretouch_code_bytes": 9060,
+          "readytable_bytes": 9096
+        },
+        "groupB_dynamic_xr": {
+          "elf_file_bytes": 151264,
+          "pt_load_memsz_bytes": 159582,
+          "pretouch_code_bytes": 4568,
+          "readytable_bytes": 5072
+        },
+        "groupC_dynamic_refined": {
+          "elf_file_bytes": 151264,
+          "pt_load_memsz_bytes": 159582,
+          "pretouch_code_bytes": 4520,
+          "readytable_bytes": 5072
         }
       }
     },
@@ -1770,6 +1850,20 @@
           "median": 26689428,
           "mean": 26735157,
           "max": 27013758
+        },
+        "raw_unprotected": {
+          "count": 5,
+          "min": 31780124,
+          "median": 31926619,
+          "mean": 32020598.8,
+          "max": 32341290
+        },
+        "profile_no_pretouch": {
+          "count": 5,
+          "min": 26367876,
+          "median": 26482657,
+          "mean": 26466746.2,
+          "max": 26606959
         }
       },
       "per_field_4gate_diagnostic_ablation": {
@@ -4158,6 +4252,32 @@
             "s3_missing_from_s2_pages_max": 0
           }
         }
+      },
+      "binary_and_memory_size_comparison": {
+        "raw_unprotected": {
+          "elf_file_bytes": 2669552,
+          "pt_load_memsz_bytes": 2787578,
+          "pretouch_code_bytes": 0,
+          "readytable_bytes": 0
+        },
+        "groupA_all_reg_xr": {
+          "elf_file_bytes": 5158552,
+          "pt_load_memsz_bytes": 2885822,
+          "pretouch_code_bytes": 80115,
+          "readytable_bytes": 71352
+        },
+        "groupB_dynamic_xr": {
+          "elf_file_bytes": 5158552,
+          "pt_load_memsz_bytes": 2885822,
+          "pretouch_code_bytes": 4460,
+          "readytable_bytes": 6288
+        },
+        "groupC_dynamic_refined": {
+          "elf_file_bytes": 5158552,
+          "pt_load_memsz_bytes": 2885822,
+          "pretouch_code_bytes": 3350,
+          "readytable_bytes": 6280
+        }
       }
     },
     "closure_breakdown": {
@@ -4770,6 +4890,20 @@
           "median": 3854740,
           "mean": 3856483.6,
           "max": 3935293
+        },
+        "raw_unprotected": {
+          "count": 5,
+          "min": 2987905,
+          "median": 3042473,
+          "mean": 3079381.6,
+          "max": 3172751
+        },
+        "profile_no_pretouch": {
+          "count": 5,
+          "min": 3113152,
+          "median": 3149103,
+          "mean": 3140303.8,
+          "max": 3164508
         }
       },
       "per_field_4gate_diagnostic_ablation": {
@@ -9206,6 +9340,32 @@
             "clean_nonzero_rewalk_events": [],
             "s3_missing_from_s2_pages_max": 0
           }
+        }
+      },
+      "binary_and_memory_size_comparison": {
+        "raw_unprotected": {
+          "elf_file_bytes": 5055248,
+          "pt_load_memsz_bytes": 5143799,
+          "pretouch_code_bytes": 0,
+          "readytable_bytes": 0
+        },
+        "groupA_all_reg_xr": {
+          "elf_file_bytes": 6823032,
+          "pt_load_memsz_bytes": 5246275,
+          "pretouch_code_bytes": 84112,
+          "readytable_bytes": 75512
+        },
+        "groupB_dynamic_xr": {
+          "elf_file_bytes": 6823032,
+          "pt_load_memsz_bytes": 5246275,
+          "pretouch_code_bytes": 10230,
+          "readytable_bytes": 11720
+        },
+        "groupC_dynamic_refined": {
+          "elf_file_bytes": 6823032,
+          "pt_load_memsz_bytes": 5246275,
+          "pretouch_code_bytes": 8766,
+          "readytable_bytes": 11720
         }
       }
     },
