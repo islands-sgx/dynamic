@@ -1,0 +1,166 @@
+{
+  "all_reg_final_elf": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/enclave.so",
+  "all_reg_pretouch_finalized_json": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/pretouch-finalized.json",
+  "all_reg_pretouch_verified_json": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/pretouch-verified.json",
+  "all_reg_ready_bin": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/ready.bin",
+  "all_reg_ready_json": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/ready.json",
+  "all_reg_signed_elf": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/enclave.signed.so",
+  "all_reg_unstripped_signed_elf": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/enclave.final.signed.unstripped.so",
+  "all_reg_workset_json": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/workset.json",
+  "anchor_host_binary": "/home/meandssh/islands-sgx/sample/build/real/qe3/anchor/host",
+  "c_compiler": "/nix/store/fys2jh0y4iisx69yf73b3z8k048cqx95-llvm-atfield-llc-wrapper-22.1.8/bin/cc",
+  "compile_commands_json": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/compile_commands.json",
+  "cxx_compiler": "/nix/store/fys2jh0y4iisx69yf73b3z8k048cqx95-llvm-atfield-llc-wrapper-22.1.8/bin/c++",
+  "edl_path": "/home/meandssh/islands-sgx/sample/real/qe3/qe3_enclave.edl",
+  "fields_json": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/fields.json",
+  "group": "real",
+  "implement_root": "/nix/store/6vyb98yh62as89qwndd4drgh7baxcw54-atfield-implement-bundle",
+  "manifest_path": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/target_manifest.json",
+  "name": "qe3",
+  "objcopy": "/nix/store/grw38wxqcn2k8bp9gm9b9h28ds3jgb9y-llvm-atfield-llc-22.1.8/bin/llvm-objcopy",
+  "original_config_xml": "/home/meandssh/islands-sgx/sample/real/qe3/Enclave.config.xml",
+  "profile_elf": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/enclave.profile.so",
+  "profile_signed_elf": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/enclave.profile.signed.so",
+  "protect_config_xml": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/Enclave.protect.config.xml",
+  "protect_heap": "0x100000",
+  "protect_host_binary": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/host",
+  "protect_q": 12288,
+  "protect_stack": "0x40000",
+  "psw_library_dir": "/nix/store/a1fx7mb2366qs2i5bd9mci3nis495wcb-sgx-psw-2.29.100.1/lib64",
+  "raw_signed_elf": "/home/meandssh/islands-sgx/sample/build/real/qe3/raw/enclave.signed.so",
+  "scenarios": {
+    "application_family": "qe3",
+    "benchmark_host_args": [],
+    "calibration_host_args": [],
+    "coupled_struct_constraints": [],
+    "domain_assisted_probes": [],
+    "holdout_suite": {
+      "aux_runs": [],
+      "desc": "Disjoint key_id byte positions {3, 11, 19, 27} and masks {0x5a, 0xa5, 0x3c, 0xc3}",
+      "expected_tags": [
+        "schema_xor_p0_byte_3",
+        "schema_xor_p0_byte_11",
+        "schema_xor_p0_byte_19",
+        "schema_xor_p0_byte_27"
+      ],
+      "host_args": [],
+      "intervention": "xor_param:0:0:0:3:90;xor_param:0:0:0:11:165;xor_param:0:0:0:19:60;xor_param:0:0:0:27:195",
+      "min_records": 7
+    },
+    "name": "qe3",
+    "onboarding_metadata": {
+      "added_ported_loc": 0,
+      "configs_label": "1",
+      "host_adapter_loc": 118,
+      "host_entry": "`sample/real/qe3/host.c`",
+      "kernel_special_rules": 0,
+      "preserved_assertions_and_adaptations": "**Local test**: invokes attestation-key derivation across identical vs distinct `key_id` values and asserts public-key determinism and uniqueness (not ported from an upstream test file).",
+      "test_provenance": "**Local functional test written against upstream production code** `QuoteGeneration/quote_wrapper/quote/enclave/qe3.c` (`get_att_key_based_from_seal_key`)"
+    },
+    "predetermined_regression_cases": [
+      {
+        "expected_tags": [
+          "schema_xor_p0_byte_2"
+        ],
+        "host_args": [],
+        "id": "unseen_keyid_xor_b2_m60",
+        "intervention": "xor_param:0:0:0:2:60",
+        "min_rec": 4
+      },
+      {
+        "expected_tags": [
+          "schema_xor_p0_byte_5"
+        ],
+        "host_args": [],
+        "id": "unseen_keyid_xor_b5_m90",
+        "intervention": "xor_param:0:0:0:5:90",
+        "min_rec": 4
+      },
+      {
+        "expected_tags": [
+          "schema_xor_p0_byte_9"
+        ],
+        "host_args": [],
+        "id": "unseen_keyid_xor_b9_m165",
+        "intervention": "xor_param:0:0:0:9:165",
+        "min_rec": 4
+      },
+      {
+        "expected_tags": [
+          "schema_xor_p0_byte_13"
+        ],
+        "host_args": [],
+        "id": "unseen_keyid_xor_b13_m195",
+        "intervention": "xor_param:0:0:0:13:195",
+        "min_rec": 4
+      },
+      {
+        "expected_tags": [
+          "schema_xor_p0_byte_19"
+        ],
+        "host_args": [],
+        "id": "unseen_keyid_xor_b19_m126",
+        "intervention": "xor_param:0:0:0:19:126",
+        "min_rec": 4
+      },
+      {
+        "expected_tags": [
+          "schema_xor_p0_byte_23"
+        ],
+        "host_args": [],
+        "id": "unseen_keyid_xor_b23_m231",
+        "intervention": "xor_param:0:0:0:23:231",
+        "min_rec": 4
+      },
+      {
+        "expected_tags": [
+          "schema_xor_p0_byte_27"
+        ],
+        "host_args": [],
+        "id": "unseen_keyid_xor_b27_m27",
+        "intervention": "xor_param:0:0:0:27:27",
+        "min_rec": 4
+      },
+      {
+        "expected_tags": [
+          "schema_xor_p0_byte_29"
+        ],
+        "host_args": [],
+        "id": "unseen_keyid_xor_b29_m177",
+        "intervention": "xor_param:0:0:0:29:177",
+        "min_rec": 4
+      },
+      {
+        "expected_tags": [
+          "generic_repeat_3_of_3"
+        ],
+        "host_args": [],
+        "id": "unseen_history_rep3",
+        "intervention": "repeat:0:0:3",
+        "min_rec": 6
+      },
+      {
+        "expected_tags": [
+          "generic_repeat_5_of_5"
+        ],
+        "host_args": [],
+        "id": "unseen_history_rep5",
+        "intervention": "repeat:0:0:5",
+        "min_rec": 8
+      }
+    ],
+    "schema": "atfield-sample-scenarios-v1",
+    "seeded_variants": []
+  },
+  "scenarios_json": "/home/meandssh/islands-sgx/sample/real/qe3/scenarios.json",
+  "schema": "atfield-target-manifest-v1",
+  "selectors_json": "/home/meandssh/islands-sgx/sample/real/qe3/selectors.json",
+  "sgx_edger8r": "/nix/store/w9361i2a8728720ll02ypv9nbbfzw5pj-sgx-sdk-2.29.100.1/bin/x64/sgx_edger8r",
+  "sgx_sdk_include": "/nix/store/w9361i2a8728720ll02ypv9nbbfzw5pj-sgx-sdk-2.29.100.1/include",
+  "sgx_sign": "/nix/store/w9361i2a8728720ll02ypv9nbbfzw5pj-sgx-sdk-2.29.100.1/bin/x64/sgx_sign",
+  "signing_key_path": "/home/meandssh/islands-sgx/sample/build/test-signing-key.pem",
+  "source_dir": "/home/meandssh/islands-sgx/sample/real/qe3",
+  "trusted_bridge_dir": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/real/qe3/qe3_enclave_edl_trusted",
+  "untrusted_bridge_c": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/real/qe3/qe3_enclave_edl_untrusted/qe3_enclave_u.c",
+  "untrusted_bridge_dir": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/real/qe3/qe3_enclave_edl_untrusted"
+}

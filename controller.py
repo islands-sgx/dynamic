@@ -26,6 +26,7 @@ from elf_workset import (  # noqa: E402
     write_json,
 )
 from exploration_kernel import ExplorationKernel  # noqa: E402
+from target_manifest import discover_real_target_manifests, load_target_manifest  # noqa: E402
 from generic_explorer import (  # noqa: E402
     AUDIT_OF_LEGACY_HEURISTICS,
     build_scale_bound_v2_spec,
@@ -486,6 +487,32 @@ def explore_and_close_sample(sample: str) -> dict:
     kernel_summary = kernel.run()
     feedback_trace.extend(kernel_summary["feedback_decisions"])
 
+    manifest = load_target_manifest(sample)
+    for dp in manifest.get("scenarios", {}).get("domain_assisted_probes", []):
+        d_res = run_sample(
+            sample,
+            mode="profile_4gate",
+            ipi_mask=7,
+            intervention=dp.get("intervention", ""),
+            stop_after_selector=dp.get("stop_after", ""),
+            stop_before_normal_ecall=dp.get("stop_before", ""),
+            host_args=dp.get("host_args", []),
+            persist_prefix=raw_trace_dir / dp["run_id"],
+        )
+        ingest_run(
+            {
+                "run_id": dp["run_id"],
+                "layer": "layer3_domain_assisted",
+                "subkind": dp["subkind"],
+                "intervention": dp.get("intervention", ""),
+                "allow_nonzero_rc": bool(dp.get("allow_nonzero_rc", False)),
+                "desc": dp["desc"],
+            },
+            d_res,
+            is_baseline_host=False,
+            is_seed_isolated=True,
+        )
+
     # Static ELF inspection & heuristic assist
     syms = profile_elf.symbols()
     objects = [
@@ -724,28 +751,28 @@ def explore_and_close_sample(sample: str) -> dict:
         })
         artifacts[variant_name] = emit_and_sign_variant(tdir, variant_name, w_path, cap_q)
 
-    # For ehsm-opt-1 and ehsm-opt-2, also build and freeze the independent Tier-1 SM4-seeded variant
-    # (`sm4_seeded_xr`) without overwriting `dynamic_xr` (which remains the AES-only seed artifact for Tier-2).
-    if sample in ("ehsm-opt-1", "ehsm-opt-2"):
+    # Build any sample-declared seeded variants from `scenarios.json` (`seeded_variants`)
+    for sv_cfg in manifest.get("scenarios", {}).get("seeded_variants", []):
+        sv_name = sv_cfg["variant_name"]
         from acceptance_validator import validate_run_result
         r_sm4_seed = run_sample(
             sample,
             mode="profile_4gate",
             ipi_mask=7,
-            host_args=["--sm4-check"],
+            host_args=sv_cfg["seed_host_args"],
             allow_fast_forward=0,
-            persist_prefix=raw_trace_dir / "tier1_sm4_seed_collection",
+            persist_prefix=raw_trace_dir / f"tier1_{sv_name}_seed_collection",
         )
         v_sm4_seed = validate_run_result(
             r_sm4_seed,
             expected_returncode=0,
             expected_stdout_substr="PASS",
-            expected_min_records=21,
+            expected_min_records=int(sv_cfg.get("min_records", 18)),
             expected_field_ids=set(field_ids),
             require_ipi_mask=7,
         )
         if v_sm4_seed["status"] != "PASS":
-            raise RuntimeError(f"Tier-1 SM4 seed collection failed validation on {sample}: {v_sm4_seed}")
+            raise RuntimeError(f"Tier-1 {sv_name} seed collection failed validation on {sample}: {v_sm4_seed}")
 
         sm4_obs_pages = {fid: dict(dyn_obs_pages[fid]) for fid in field_ids}
         sm4_bridge_pages = {fid: set(dyn_bridge_pages[fid]) for fid in field_ids}
@@ -837,7 +864,7 @@ def explore_and_close_sample(sample: str) -> dict:
                 "pages": recs_sm4,
             })
 
-        w_sm4_path = tdir / "workset.sm4_seeded_xr.json"
+        w_sm4_path = tdir / f"workset.{sv_name}.json"
         write_json(w_sm4_path, {
             "schema": "atfield-workset-v1",
             "page_size": PAGE,
@@ -851,8 +878,8 @@ def explore_and_close_sample(sample: str) -> dict:
             "selectors": selectors,
             "fields": closed_fields_sm4_xr,
         })
-        artifacts["sm4_seeded_xr"] = emit_and_sign_variant(tdir, "sm4_seeded_xr", w_sm4_path, cap_q)
-        artifacts["sm4_seeded_xr"]["seed_collection_trace_sha256"] = r_sm4_seed["trace_sha256"]
+        artifacts[sv_name] = emit_and_sign_variant(tdir, sv_name, w_sm4_path, cap_q)
+        artifacts[sv_name]["seed_collection_trace_sha256"] = r_sm4_seed["trace_sha256"]
 
     subprocess.run([
         SGX_SIGN, "sign", "-key", SIGN_KEY,
@@ -883,14 +910,15 @@ def explore_and_close_sample(sample: str) -> dict:
 
 
 def main() -> None:
-    samples = sys.argv[1:] or ["qe3", "signal-cds", "sgxwallet", "ehsm", "ehsm-opt-1", "ehsm-opt-2"]
+    all_discovered = [m["name"] for m in discover_real_target_manifests()]
+    samples = [m["name"] for m in discover_real_target_manifests(sys.argv[1:])]
     strat_path = DYN_ROOT / "experiments" / "strategy_comparison.json"
     existing_sha = ""
     if strat_path.is_file():
         existing_sha = json.loads(strat_path.read_text()).get("frozen_kernel_commit_sha", "")
     if not existing_sha:
         existing_sha = subprocess.check_output(["git", "-C", str(DYN_ROOT), "rev-parse", "HEAD"], text=True).strip()
-    if not strat_path.is_file() or not sys.argv[1:] or len(samples) == 6:
+    if not strat_path.is_file() or not sys.argv[1:] or set(samples) == set(all_discovered):
         hw_challenge_res = run_real_hardware_challenge_ablation(max_enclave_budget=68, seeds=(101, 102, 103, 104, 105))
     else:
         hw_challenge_res = json.loads(strat_path.read_text())["real_hardware_challenge_enclaves"]

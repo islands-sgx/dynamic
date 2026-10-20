@@ -21,100 +21,22 @@ from acceptance_validator import (
     validate_run_result,
 )
 from run_native_sgx import run_sample  # noqa: E402
+from target_manifest import discover_real_target_manifests, load_target_manifest  # noqa: E402
 
-SAMPLES = ["qe3", "signal-cds", "sgxwallet", "ehsm", "ehsm-opt-1", "ehsm-opt-2"]
+SAMPLES = [m["name"] for m in discover_real_target_manifests()]
 
-# Hold-out suites:
-# - Uses schema-typed primitives (xor_param, set_scalar, scale_bound_v2, typed_state_probe).
-# - For sgxwallet, ecall 3 (trustedSetSEK) is a CALL_ONCE function; its negative bit-flip test is run in a
-#   dedicated auxiliary hold-out invocation with stop_before_normal_ecall="3:0" so the main 1005-request
-#   hold-out workflow completes all 1005 signatures + SEK reload cleanly with returncode=0 and stdout="PASS".
-HOLDOUT_SUITES = {
-    "qe3": {
-        "expected_tags": {"schema_xor_p0_byte_3", "schema_xor_p0_byte_11", "schema_xor_p0_byte_19", "schema_xor_p0_byte_27"},
-        "intervention": "xor_param:0:0:0:3:90;xor_param:0:0:0:11:165;xor_param:0:0:0:19:60;xor_param:0:0:0:27:195",
-        "host_args": [],
-        "min_records": 7,
-        "aux_runs": [],
-        "desc": "Disjoint key_id byte positions {3, 11, 19, 27} and masks {0x5a, 0xa5, 0x3c, 0xc3}",
-    },
-    "signal-cds": {
-        "expected_tags": {"schema_scale_cnt_384_q_96_m_0", "schema_scale_cnt_3072_q_384_m_1", "schema_scale_cnt_12288_q_512_m_2", "schema_scale_cnt_49152_q_512_m_0", "schema_scale_cnt_131072_q_512_m_1"},
-        "intervention": (
-            "scale_bound_v2:0:0:0:16:384:32:96;"
-            "scale_bound_v2:0:0:1:16:3072:32:384;"
-            "scale_bound_v2:0:0:2:16:12288:32:512;"
-            "scale_bound_v2:0:0:0:16:49152:32:512;"
-            "scale_bound_v2:0:0:1:16:131072:32:512"
-        ),
-        "host_args": [],
-        "min_records": 11,
-        "aux_runs": [],
-        "desc": "Disjoint record scales {384, 3072, 12288, 49152, 131072} and query counts {96, 384, 512}",
-    },
-    "sgxwallet": {
-        "expected_tags": {"schema_xor_p4_byte_0", "schema_scalar_p8_val_37", "schema_xor_p2_byte_7"},
-        "intervention": "xor_param:6:500:4:0:1;xor_param:6:999:4:0:1;set_scalar:6:2:8:37;xor_param:5:0:2:7:127",
-        "host_args": ["--requests", "1005"],
-        "min_records": 1020,
-        "aux_runs": [
-            {
-                "name": "call_once_set_sek_bitflip",
-                "expected_tags": {"schema_xor_p2_byte_45"},
-                "intervention": "xor_param:3:0:2:45:127",
-                "stop_before_normal_ecall": "3:0",
-                "host_args": ["--requests", "1"],
-                "min_records": 10,
-                "expected_stdout_substr": "",
-            }
-        ],
-        "desc": "Full 1005-request host workflow (0 skipped, rc=0, PASS) + disjoint hash/base=37/byte-7 mutations + isolated CALL_ONCE SetSEK byte-45 probe",
-    },
-    "ehsm": {
-        "expected_tags": {"cold_state_replay_ecall_2_after_0_1", "cold_state_replay_ecall_4_after_0_1", "schema_xor_p4_byte_9"},
-        "intervention": "typed_state_probe:2:1:0:1;typed_state_probe:4:1:0:1;xor_param:3:1:4:9:127",
-        "host_args": ["--bytes", "1536", "--requests", "3"],
-        "min_records": 39,
-        "aux_runs": [],
-        "desc": "Original 2-step eHSM (--bytes 1536 --requests 3) + cold-enclave state replay on encrypt & generate_datakey + ciphertext byte-9 bit-flip",
-    },
-    "ehsm-opt-1": {
-        "expected_tags": {"cold_state_replay_ecall_2_after_0_1", "cold_state_replay_ecall_4_after_0_1", "schema_xor_p4_byte_9"},
-        "intervention": "typed_state_probe:2:0:0:1;typed_state_probe:4:0:0:1;xor_param:3:0:4:9:127",
-        "host_args": ["--bytes", "1536", "--requests", "3"],
-        "min_records": 20,
-        "aux_runs": [
-            {
-                "name": "compat_query_and_capacity_matrix",
-                "expected_tags": None,
-                "intervention": "",
-                "stop_before_normal_ecall": "",
-                "host_args": ["--compat-check"],
-                "min_records": 23,
-                "expected_stdout_substr": "PASS",
-            }
-        ],
-        "desc": "Direct-sizing eHSM-opt-1 (--bytes 1536 --requests 3 + --compat-check query/capacity/canary/SM4 matrix) + cold-enclave state replay + byte-9 bit-flip",
-    },
-    "ehsm-opt-2": {
-        "expected_tags": {"cold_state_replay_ecall_2_after_0_1", "cold_state_replay_ecall_4_after_0_1", "schema_xor_p4_byte_9"},
-        "intervention": "typed_state_probe:2:0:0:1;typed_state_probe:4:0:0:1;xor_param:3:0:4:9:127",
-        "host_args": ["--bytes", "1536", "--requests", "3"],
-        "min_records": 20,
-        "aux_runs": [
-            {
-                "name": "compat_query_and_capacity_matrix",
-                "expected_tags": None,
-                "intervention": "",
-                "stop_before_normal_ecall": "",
-                "host_args": ["--compat-check"],
-                "min_records": 23,
-                "expected_stdout_substr": "PASS",
-            }
-        ],
-        "desc": "Eager-OpenSSL-init eHSM-opt-2 (--bytes 1536 --requests 3 + --compat-check query/capacity/canary/SM4 matrix) + cold-enclave state replay + byte-9 bit-flip",
-    },
-}
+
+def get_holdout_suite(sample: str) -> dict:
+    m = load_target_manifest(sample)
+    ho = dict(m.get("scenarios", {}).get("holdout_suite", {}))
+    ho["expected_tags"] = set(ho["expected_tags"]) if ho.get("expected_tags") else None
+    aux_list = []
+    for ax in ho.get("aux_runs", []):
+        ax_copy = dict(ax)
+        ax_copy["expected_tags"] = set(ax_copy["expected_tags"]) if ax_copy.get("expected_tags") else None
+        aux_list.append(ax_copy)
+    ho["aux_runs"] = aux_list
+    return ho
 
 
 def dist_summary(vals: list[int | float]) -> dict:
@@ -181,7 +103,7 @@ def run_xrw_and_aex_calibration(sample: str, tdir: Path, raw_dir: Path) -> dict:
     """
     ws = json.loads((tdir / "workset.dynamic_xr.json").read_text())
     rdy = json.loads((tdir / "enclave.dynamic_xr.ready.json").read_text())
-    h_args = ["--requests", "1"] if sample == "sgxwallet" else []
+    h_args = load_target_manifest(sample).get("scenarios", {}).get("calibration_host_args", [])
     r_base = run_sample(sample, mode="profile_4gate", ipi_mask=7, host_args=h_args)
     first_f_rec = next(rec for rec in r_base["records"] if rec["fields"])
     sel_idx = first_f_rec["ecall_index"]
@@ -375,7 +297,7 @@ def run_xrw_and_aex_calibration(sample: str, tdir: Path, raw_dir: Path) -> dict:
 
 
 def run_tlb_and_fixture_checks(sample: str, raw_dir: Path) -> dict:
-    h_args = ["--requests", "1"] if sample == "sgxwallet" else []
+    h_args = load_target_manifest(sample).get("scenarios", {}).get("calibration_host_args", [])
     r_cold = run_sample(sample, mode="profile_4gate", ipi_mask=7, host_args=h_args, persist_prefix=raw_dir / "tlb_cal_cold_ipi7")
     r_warm = run_sample(sample, mode="profile_4gate", ipi_mask=0, host_args=h_args, persist_prefix=raw_dir / "tlb_cal_warm_ipi0")
     r_uninst = run_sample(sample, mode="dynamic_xr_final_aex0", ipi_mask=0, host_args=h_args, persist_prefix=raw_dir / "fixture_uninst_aex0")
@@ -709,54 +631,13 @@ def run_frozen_workset_generalization_suite(
     Note: Because these 60 cases are a predetermined regression matrix rather than random draws from a
     formally specified input distribution, no binomial probability upper bound is claimed.
     """
-    if sample == "signal-cds":
-        unseen_specs = [
-            {"id": "upstream_cmockery_seed10001_n128", "host_args": ["--upstream-cmockery-test", "--seed", "10001", "--in-jids", "128"], "intervention": "", "min_rec": 95, "expected_tags": {"host_normal"}},
-            {"id": "upstream_cmockery_seed20002_n512", "host_args": ["--upstream-cmockery-test", "--seed", "20002", "--in-jids", "512"], "intervention": "", "min_rec": 95, "expected_tags": {"host_normal"}},
-            {"id": "upstream_cmockery_seed30003_n1024", "host_args": ["--upstream-cmockery-test", "--seed", "30003", "--in-jids", "1024"], "intervention": "", "min_rec": 95, "expected_tags": {"host_normal"}},
-            {"id": "upstream_cmockery_seed40004_n2048", "host_args": ["--upstream-cmockery-test", "--seed", "40004", "--in-jids", "2048"], "intervention": "", "min_rec": 95, "expected_tags": {"host_normal"}},
-            {"id": "upstream_cmockery_seed50005_n4096", "host_args": ["--upstream-cmockery-test", "--seed", "50005", "--in-jids", "4096"], "intervention": "", "min_rec": 95, "expected_tags": {"host_normal"}},
-            {"id": "unseen_grid_r19_q13_req3", "host_args": ["--records", "19", "--queries", "13", "--requests", "3"], "intervention": "", "min_rec": 9, "expected_tags": {"host_normal"}},
-            {"id": "unseen_grid_r63_q37_req4", "host_args": ["--records", "63", "--queries", "37", "--requests", "4"], "intervention": "", "min_rec": 10, "expected_tags": {"host_normal"}},
-            {"id": "unseen_grid_r250_q99_req3", "host_args": ["--records", "250", "--queries", "99", "--requests", "3"], "intervention": "", "min_rec": 9, "expected_tags": {"host_normal"}},
-            {"id": "unseen_grid_r1023_q255_req2", "host_args": ["--records", "1023", "--queries", "255", "--requests", "2"], "intervention": "", "min_rec": 8, "expected_tags": {"host_normal"}},
-            {"id": "unseen_grid_r2047_q511_req2", "host_args": ["--records", "2047", "--queries", "511", "--requests", "2"], "intervention": "", "min_rec": 8, "expected_tags": {"host_normal"}},
-        ]
-    elif sample == "qe3":
-        unseen_specs = [
-            {"id": f"unseen_keyid_xor_b{b}_m{m}", "host_args": [], "intervention": f"xor_param:0:0:0:{b}:{m}", "min_rec": 4, "expected_tags": {f"schema_xor_p0_byte_{b}"}}
-            for b, m in ((2, 0x3C), (5, 0x5A), (9, 0xA5), (13, 0xC3), (19, 0x7E), (23, 0xE7), (27, 0x1B), (29, 0xB1))
-        ] + [
-            {"id": "unseen_history_rep3", "host_args": [], "intervention": "repeat:0:0:3", "min_rec": 6, "expected_tags": {"generic_repeat_3_of_3"}},
-            {"id": "unseen_history_rep5", "host_args": [], "intervention": "repeat:0:0:5", "min_rec": 8, "expected_tags": {"generic_repeat_5_of_5"}},
-        ]
-    elif sample == "sgxwallet":
-        unseen_specs = [
-            {"id": f"unseen_msg_xor_s0_b{b}", "host_args": [], "intervention": f"xor_param:6:0:2:{b}:90", "min_rec": 19, "expected_tags": {f"schema_xor_p2_byte_{b}"}}
-            for b in (3, 7, 11, 19, 23, 29)
-        ] + [
-            {"id": "unseen_sign_history_rep4", "host_args": [], "intervention": "repeat:6:0:4", "min_rec": 22, "expected_tags": {"generic_repeat_4_of_4"}},
-            {"id": "unseen_sign_history_rep8", "host_args": [], "intervention": "repeat:6:0:8", "min_rec": 26, "expected_tags": {"generic_repeat_8_of_8"}},
-            {"id": "unseen_pubkey_history_rep3", "host_args": [], "intervention": "repeat:5:0:3", "min_rec": 21, "expected_tags": {"generic_repeat_3_of_3"}},
-            {"id": "unseen_keygen_history_rep2", "host_args": [], "intervention": "repeat:4:0:2", "min_rec": 20, "expected_tags": {"generic_repeat_2_of_2"}},
-        ]
-    else:
-        base_min = 32 if sample == "ehsm" else 19
-        r3_min = 36 if sample == "ehsm" else 21
-        r4_min = 40 if sample == "ehsm" else 23
-        sseq_enc = 1 if sample == "ehsm" else 0
-        unseen_specs = [
-            {"id": "unseen_compat_or_b1024_r3", "host_args": ["--bytes", "1024", "--requests", "3"] if sample == "ehsm" else ["--compat-check"], "intervention": "", "min_rec": r3_min if sample == "ehsm" else 23, "expected_tags": {"host_normal"}},
-            {"id": "unseen_host_b48_r2", "host_args": ["--bytes", "48", "--requests", "2"], "intervention": "", "min_rec": base_min, "expected_tags": {"host_normal"}},
-            {"id": "unseen_host_b192_r3", "host_args": ["--bytes", "192", "--requests", "3"], "intervention": "", "min_rec": r3_min, "expected_tags": {"host_normal"}},
-            {"id": "unseen_host_b384_r2", "host_args": ["--bytes", "384", "--requests", "2"], "intervention": "", "min_rec": base_min, "expected_tags": {"host_normal"}},
-            {"id": "unseen_host_b768_r3", "host_args": ["--bytes", "768", "--requests", "3"], "intervention": "", "min_rec": r3_min, "expected_tags": {"host_normal"}},
-            {"id": "unseen_host_b1536_r4", "host_args": ["--bytes", "1536", "--requests", "4"], "intervention": "", "min_rec": r4_min, "expected_tags": {"host_normal"}},
-            {"id": "unseen_host_b3072_r2", "host_args": ["--bytes", "3072", "--requests", "2"], "intervention": "", "min_rec": base_min, "expected_tags": {"host_normal"}},
-            {"id": "unseen_aad_xor_b3", "host_args": [], "intervention": f"xor_param:2:{sseq_enc}:2:3:90", "min_rec": base_min + 1, "expected_tags": {"schema_xor_p2_byte_3"}},
-            {"id": "unseen_plain_xor_b15", "host_args": [], "intervention": f"xor_param:2:{sseq_enc}:4:15:165", "min_rec": base_min + 1, "expected_tags": {"schema_xor_p4_byte_15"}},
-            {"id": "unseen_decrypt_rep4", "host_args": [], "intervention": f"repeat:3:{sseq_enc}:4", "min_rec": base_min + 4, "expected_tags": {"generic_repeat_4_of_4"}},
-        ]
+    manifest = load_target_manifest(sample)
+    raw_cases = manifest.get("scenarios", {}).get("predetermined_regression_cases", [])
+    unseen_specs = []
+    for rc in raw_cases:
+        c = dict(rc)
+        c["expected_tags"] = set(c.get("expected_tags", []))
+        unseen_specs.append(c)
 
     meas_valid_cnt = 0
     biz_completed_cnt = 0
@@ -1058,7 +939,7 @@ def evaluate_sample(sample: str) -> dict:
     calibration = run_xrw_and_aex_calibration(sample, tdir, raw_dir)
 
     # Hold-out evaluation on default Group B (dynamic_xr)
-    holdout_cfg = HOLDOUT_SUITES[sample]
+    holdout_cfg = get_holdout_suite(sample)
     res_ho_obs = run_sample(
         sample,
         mode="profile_4gate",
@@ -1234,7 +1115,7 @@ def evaluate_sample(sample: str) -> dict:
 
     # Step 5: Three-Group Ablation across 5 Interleaved Rounds with explicit clean vs interrupt-contaminated separation
     perf_rounds = 5
-    perf_h_args = ["--requests", "5"] if sample == "sgxwallet" else []
+    perf_h_args = load_target_manifest(sample).get("scenarios", {}).get("benchmark_host_args", [])
     groups = ("groupA_all_reg_xr", "groupB_dynamic_xr", "groupC_dynamic_refined")
     gate_ablation = {
         g: {
@@ -1513,7 +1394,7 @@ def evaluate_sample(sample: str) -> dict:
                     expected_fids,
                     closed_target_effects_by_fid,
                 )
-                if sample in ("ehsm-opt-1", "ehsm-opt-2")
+                if load_target_manifest(sample).get("scenarios", {}).get("seeded_variants")
                 else None
             ),
         },

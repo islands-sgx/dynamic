@@ -1,0 +1,163 @@
+{
+  "application_family": "ehsm",
+  "benchmark_host_args": [],
+  "calibration_host_args": [],
+  "coupled_struct_constraints": [],
+  "domain_assisted_probes": [],
+  "holdout_suite": {
+    "aux_runs": [],
+    "desc": "Original 2-step eHSM (--bytes 1536 --requests 3) + cold-enclave state replay on encrypt & generate_datakey + ciphertext byte-9 bit-flip",
+    "expected_tags": [
+      "cold_state_replay_ecall_2_after_0_1",
+      "cold_state_replay_ecall_4_after_0_1",
+      "schema_xor_p4_byte_9"
+    ],
+    "host_args": [
+      "--bytes",
+      "1536",
+      "--requests",
+      "3"
+    ],
+    "intervention": "typed_state_probe:2:1:0:1;typed_state_probe:4:1:0:1;xor_param:3:1:4:9:127",
+    "min_records": 39
+  },
+  "name": "ehsm",
+  "onboarding_metadata": {
+    "added_ported_loc": 0,
+    "configs_label": "ehsm, ehsm-opt-1, ehsm-opt-2",
+    "host_adapter_loc": 312,
+    "host_entry": "`sample/real/ehsm/host.cpp` (default AES-GCM + `--compat-check` + `--sm4-check`)",
+    "kernel_special_rules": 0,
+    "preserved_assertions_and_adaptations": "**Preserved**: `ehsm_create_key` -> `ehsm_encrypt` -> `ehsm_decrypt` -> `ehsm_generate_datakey` -> `ehsm_decrypt_datakey`, ciphertext/AAD tamper rejection, and round-trip plaintext equality. **Explicit adaptations**: extracted standalone C++ host driver from gtest/dkeyserver wrapper.",
+    "test_provenance": "**Selected & adapted workflow** from `core/Test/function_test.cpp` (`test_AES128_GCM`, `test_SM4_CBC`, `GenerateDataKey`, `Decrypt`)"
+  },
+  "predetermined_regression_cases": [
+    {
+      "expected_tags": [
+        "host_normal"
+      ],
+      "host_args": [
+        "--bytes",
+        "1024",
+        "--requests",
+        "3"
+      ],
+      "id": "unseen_compat_or_b1024_r3",
+      "intervention": "",
+      "min_rec": 36
+    },
+    {
+      "expected_tags": [
+        "host_normal"
+      ],
+      "host_args": [
+        "--bytes",
+        "48",
+        "--requests",
+        "2"
+      ],
+      "id": "unseen_host_b48_r2",
+      "intervention": "",
+      "min_rec": 32
+    },
+    {
+      "expected_tags": [
+        "host_normal"
+      ],
+      "host_args": [
+        "--bytes",
+        "192",
+        "--requests",
+        "3"
+      ],
+      "id": "unseen_host_b192_r3",
+      "intervention": "",
+      "min_rec": 36
+    },
+    {
+      "expected_tags": [
+        "host_normal"
+      ],
+      "host_args": [
+        "--bytes",
+        "384",
+        "--requests",
+        "2"
+      ],
+      "id": "unseen_host_b384_r2",
+      "intervention": "",
+      "min_rec": 32
+    },
+    {
+      "expected_tags": [
+        "host_normal"
+      ],
+      "host_args": [
+        "--bytes",
+        "768",
+        "--requests",
+        "3"
+      ],
+      "id": "unseen_host_b768_r3",
+      "intervention": "",
+      "min_rec": 36
+    },
+    {
+      "expected_tags": [
+        "host_normal"
+      ],
+      "host_args": [
+        "--bytes",
+        "1536",
+        "--requests",
+        "4"
+      ],
+      "id": "unseen_host_b1536_r4",
+      "intervention": "",
+      "min_rec": 40
+    },
+    {
+      "expected_tags": [
+        "host_normal"
+      ],
+      "host_args": [
+        "--bytes",
+        "3072",
+        "--requests",
+        "2"
+      ],
+      "id": "unseen_host_b3072_r2",
+      "intervention": "",
+      "min_rec": 32
+    },
+    {
+      "expected_tags": [
+        "schema_xor_p2_byte_3"
+      ],
+      "host_args": [],
+      "id": "unseen_aad_xor_b3",
+      "intervention": "xor_param:2:1:2:3:90",
+      "min_rec": 33
+    },
+    {
+      "expected_tags": [
+        "schema_xor_p4_byte_15"
+      ],
+      "host_args": [],
+      "id": "unseen_plain_xor_b15",
+      "intervention": "xor_param:2:1:4:15:165",
+      "min_rec": 33
+    },
+    {
+      "expected_tags": [
+        "generic_repeat_4_of_4"
+      ],
+      "host_args": [],
+      "id": "unseen_decrypt_rep4",
+      "intervention": "repeat:3:1:4",
+      "min_rec": 36
+    }
+  ],
+  "schema": "atfield-sample-scenarios-v1",
+  "seeded_variants": []
+}

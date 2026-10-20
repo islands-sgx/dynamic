@@ -10,75 +10,56 @@ from pathlib import Path
 
 DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
 SAMPLE_ROOT = Path("/home/meandssh/islands-sgx/sample")
-SGX_SDK_INC = "/nix/store/w9361i2a8728720ll02ypv9nbbfzw5pj-sgx-sdk-2.29.100.1/include"
+SGX_SDK_INC = ""
 
-SAMPLES = {
-    "qe3": {
-        "edl": SAMPLE_ROOT / "real/qe3/qe3_enclave.edl",
-        "u_c": SAMPLE_ROOT / "build/real/qe3/anchor/real/qe3/qe3_enclave_edl_untrusted/qe3_enclave_u.c",
-        "u_dir": SAMPLE_ROOT / "build/real/qe3/anchor/real/qe3/qe3_enclave_edl_untrusted",
-        "inc": [
-            f"-I{SGX_SDK_INC}",
-            f"-I{SAMPLE_ROOT}/real/qe3",
-            "-I/nix/store/xikv7y5qjigjav7l8mjpv7ryrm230jwl-qe3-7ed37274294c5dc47bda4cec601bb727be2875e0/ae/dep/inc/internal",
-            "-I/nix/store/xikv7y5qjigjav7l8mjpv7ryrm230jwl-qe3-7ed37274294c5dc47bda4cec601bb727be2875e0/QuoteGeneration/quote_wrapper/common/inc",
-            "-I/nix/store/xikv7y5qjigjav7l8mjpv7ryrm230jwl-qe3-7ed37274294c5dc47bda4cec601bb727be2875e0/QuoteGeneration/common/inc/internal",
-        ],
-    },
-    "signal-cds": {
-        "edl": SAMPLE_ROOT / "real/signal-cds/sabd_enclave.edl",
-        "u_c": SAMPLE_ROOT / "build/real/signal-cds/anchor/real/signal-cds/signal_cds_enclave_edl_untrusted/sabd_enclave_u.c",
-        "u_dir": SAMPLE_ROOT / "build/real/signal-cds/anchor/real/signal-cds/signal_cds_enclave_edl_untrusted",
-        "inc": [
-            f"-I{SGX_SDK_INC}",
-            f"-I{SAMPLE_ROOT}/real/signal-cds",
-            "-I/nix/store/g0p9ac9flpwhzpgvwhscsd155fninvaa-signal-cds-69d33cfd8634fc3b1eb74b71e94cde77abe1a1c6-clang/enclave/include",
-        ],
-    },
-    "sgxwallet": {
-        "edl": SAMPLE_ROOT / "real/sgxwallet/secure_enclave.edl",
-        "u_c": SAMPLE_ROOT / "build/real/sgxwallet/anchor/real/sgxwallet/sgxwallet_enclave_edl_untrusted/secure_enclave_u.c",
-        "u_dir": SAMPLE_ROOT / "build/real/sgxwallet/anchor/real/sgxwallet/sgxwallet_enclave_edl_untrusted",
-        "inc": [
-            f"-I{SGX_SDK_INC}",
-            f"-I{SAMPLE_ROOT}/real/sgxwallet",
-            "-I/nix/store/gxn26m1yw7cp50myszbf50vhf1q725ls-sgxwallet-c24ad2580570064ce3dbc0a8a16122f67b081b32-clang/secure_enclave",
-        ],
-    },
-    "ehsm": {
-        "edl": SAMPLE_ROOT / "real/ehsm/enclave_hsm.edl",
-        "u_c": SAMPLE_ROOT / "build/real/ehsm/anchor/real/ehsm/ehsm_enclave_edl_untrusted/enclave_hsm_u.c",
-        "u_dir": SAMPLE_ROOT / "build/real/ehsm/anchor/real/ehsm/ehsm_enclave_edl_untrusted",
-        "inc": [
-            f"-I{SGX_SDK_INC}",
-            f"-I{SAMPLE_ROOT}/real/ehsm",
-            "-I/nix/store/my840mbl3rj7gv78bmhbxxi48yznjfvp-ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-clang/include",
-            "-I/nix/store/my840mbl3rj7gv78bmhbxxi48yznjfvp-ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-clang/core/Enclave",
-        ],
-    },
-    "ehsm-opt-1": {
-        "edl": SAMPLE_ROOT / "real/ehsm-opt-1/enclave_hsm.edl",
-        "u_c": SAMPLE_ROOT / "build/real/ehsm-opt-1/anchor/real/ehsm-opt-1/ehsm_opt_1_enclave_edl_untrusted/enclave_hsm_u.c",
-        "u_dir": SAMPLE_ROOT / "build/real/ehsm-opt-1/anchor/real/ehsm-opt-1/ehsm_opt_1_enclave_edl_untrusted",
-        "inc": [
-            f"-I{SGX_SDK_INC}",
-            f"-I{SAMPLE_ROOT}/real/ehsm-opt-1",
-            "-I/nix/store/zd3wnkf5a9rl27ai52kr6ws9k2k80228-ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-opt-1-clang/include",
-            "-I/nix/store/zd3wnkf5a9rl27ai52kr6ws9k2k80228-ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-opt-1-clang/core/Enclave",
-        ],
-    },
-    "ehsm-opt-2": {
-        "edl": SAMPLE_ROOT / "real/ehsm-opt-2/enclave_hsm.edl",
-        "u_c": SAMPLE_ROOT / "build/real/ehsm-opt-2/anchor/real/ehsm-opt-2/ehsm_opt_2_enclave_edl_untrusted/enclave_hsm_u.c",
-        "u_dir": SAMPLE_ROOT / "build/real/ehsm-opt-2/anchor/real/ehsm-opt-2/ehsm_opt_2_enclave_edl_untrusted",
-        "inc": [
-            f"-I{SGX_SDK_INC}",
-            f"-I{SAMPLE_ROOT}/real/ehsm-opt-2",
-            "-I/nix/store/bz93f9hr99lpgdyr032qrsfxyi6zj6qj-ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-opt-2-clang/include",
-            "-I/nix/store/bz93f9hr99lpgdyr032qrsfxyi6zj6qj-ehsm-d87fb4884a32b9ecaecb5e7d45a25482344f21b3-opt-2-clang/core/Enclave",
-        ],
-    },
-}
+import shlex
+import sys
+sys.path.insert(0, str(DYN_ROOT / "tools"))
+from target_manifest import discover_real_target_manifests  # noqa: E402
+
+
+def _build_edl_cfg_from_manifest(manifest: dict) -> dict:
+    u_c = Path(manifest["untrusted_bridge_c"])
+    u_dir = Path(manifest["untrusted_bridge_dir"])
+    sdk_inc = manifest["sgx_sdk_include"]
+    inc_flags = [f"-I{sdk_inc}", f"-I{manifest['source_dir']}"]
+    cc_db_path = Path(manifest.get("compile_commands_json", ""))
+    if cc_db_path.is_file():
+        cc_db = json.loads(cc_db_path.read_text())
+        for entry in cc_db:
+            if Path(entry.get("file", "")).name == u_c.name:
+                toks = shlex.split(entry.get("command", ""))
+                i = 1
+                while i < len(toks):
+                    tk = toks[i]
+                    if tk in ("-I", "-isystem") and i + 1 < len(toks):
+                        fl = f"-I{toks[i + 1]}"
+                        if fl not in inc_flags:
+                            inc_flags.append(fl)
+                        i += 2
+                        continue
+                    if tk.startswith("-I"):
+                        if tk not in inc_flags:
+                            inc_flags.append(tk)
+                    elif tk.startswith("-isystem"):
+                        fl = f"-I{tk[len('-isystem'):]}"
+                        if fl not in inc_flags:
+                            inc_flags.append(fl)
+                    i += 1
+                break
+    return {
+        "edl": Path(manifest["edl_path"]),
+        "u_c": u_c,
+        "u_dir": u_dir,
+        "inc": inc_flags,
+    }
+
+
+SAMPLES: dict[str, dict] = {}
+for _m in discover_real_target_manifests():
+    SAMPLES[_m["name"]] = _build_edl_cfg_from_manifest(_m)
+    SGX_SDK_INC = _m["sgx_sdk_include"]
+
 for _cdir in sorted((DYN_ROOT / "challenges").iterdir()):
     if not _cdir.is_dir():
         continue

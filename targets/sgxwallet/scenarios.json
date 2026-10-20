@@ -1,0 +1,158 @@
+{
+  "application_family": "sgxwallet",
+  "benchmark_host_args": [
+    "--requests",
+    "5"
+  ],
+  "calibration_host_args": [
+    "--requests",
+    "1"
+  ],
+  "coupled_struct_constraints": [],
+  "domain_assisted_probes": [
+    {
+      "allow_nonzero_rc": false,
+      "desc": "Isolated pre-normal probe for CALL_ONCE SetSEK (ecall 3) to reach error-logging pages before g_sek_loaded=1",
+      "host_args": [],
+      "intervention": "xor_param:3:0:2:0:255",
+      "run_id": "layer3_call_once_set_sek_tamper",
+      "stop_after": "",
+      "stop_before": "3:0",
+      "subkind": "call_once_state_guard_probe"
+    }
+  ],
+  "holdout_suite": {
+    "aux_runs": [
+      {
+        "expected_stdout_substr": "",
+        "expected_tags": [
+          "schema_xor_p2_byte_45"
+        ],
+        "host_args": [
+          "--requests",
+          "1"
+        ],
+        "intervention": "xor_param:3:0:2:45:127",
+        "min_records": 10,
+        "name": "call_once_set_sek_bitflip",
+        "stop_before_normal_ecall": "3:0"
+      }
+    ],
+    "desc": "Full 1005-request host workflow (0 skipped, rc=0, PASS) + disjoint hash/base=37/byte-7 mutations + isolated CALL_ONCE SetSEK byte-45 probe",
+    "expected_tags": [
+      "schema_xor_p4_byte_0",
+      "schema_scalar_p8_val_37",
+      "schema_xor_p2_byte_7"
+    ],
+    "host_args": [
+      "--requests",
+      "1005"
+    ],
+    "intervention": "xor_param:6:500:4:0:1;xor_param:6:999:4:0:1;set_scalar:6:2:8:37;xor_param:5:0:2:7:127",
+    "min_records": 1020
+  },
+  "name": "sgxwallet",
+  "onboarding_metadata": {
+    "added_ported_loc": 0,
+    "configs_label": "1",
+    "host_adapter_loc": 264,
+    "host_entry": "`sample/real/sgxwallet/host.cpp`",
+    "kernel_special_rules": 0,
+    "preserved_assertions_and_adaptations": "**Preserved**: SEK provisioning -> ECDSA keygen -> public key extraction -> hash signing -> signature verification -> invalid input rejection -> enclave restart & recovery. **Explicit adaptations**: standalone C++ host driver without JSON-RPC/LevelDB server daemon.",
+    "test_provenance": "**Selected & adapted workflow** from `tests/integration/keys/ECDSAIntegrationTests.cpp`"
+  },
+  "predetermined_regression_cases": [
+    {
+      "expected_tags": [
+        "schema_xor_p2_byte_3"
+      ],
+      "host_args": [],
+      "id": "unseen_msg_xor_s0_b3",
+      "intervention": "xor_param:6:0:2:3:90",
+      "min_rec": 19
+    },
+    {
+      "expected_tags": [
+        "schema_xor_p2_byte_7"
+      ],
+      "host_args": [],
+      "id": "unseen_msg_xor_s0_b7",
+      "intervention": "xor_param:6:0:2:7:90",
+      "min_rec": 19
+    },
+    {
+      "expected_tags": [
+        "schema_xor_p2_byte_11"
+      ],
+      "host_args": [],
+      "id": "unseen_msg_xor_s0_b11",
+      "intervention": "xor_param:6:0:2:11:90",
+      "min_rec": 19
+    },
+    {
+      "expected_tags": [
+        "schema_xor_p2_byte_19"
+      ],
+      "host_args": [],
+      "id": "unseen_msg_xor_s0_b19",
+      "intervention": "xor_param:6:0:2:19:90",
+      "min_rec": 19
+    },
+    {
+      "expected_tags": [
+        "schema_xor_p2_byte_23"
+      ],
+      "host_args": [],
+      "id": "unseen_msg_xor_s0_b23",
+      "intervention": "xor_param:6:0:2:23:90",
+      "min_rec": 19
+    },
+    {
+      "expected_tags": [
+        "schema_xor_p2_byte_29"
+      ],
+      "host_args": [],
+      "id": "unseen_msg_xor_s0_b29",
+      "intervention": "xor_param:6:0:2:29:90",
+      "min_rec": 19
+    },
+    {
+      "expected_tags": [
+        "generic_repeat_4_of_4"
+      ],
+      "host_args": [],
+      "id": "unseen_sign_history_rep4",
+      "intervention": "repeat:6:0:4",
+      "min_rec": 22
+    },
+    {
+      "expected_tags": [
+        "generic_repeat_8_of_8"
+      ],
+      "host_args": [],
+      "id": "unseen_sign_history_rep8",
+      "intervention": "repeat:6:0:8",
+      "min_rec": 26
+    },
+    {
+      "expected_tags": [
+        "generic_repeat_3_of_3"
+      ],
+      "host_args": [],
+      "id": "unseen_pubkey_history_rep3",
+      "intervention": "repeat:5:0:3",
+      "min_rec": 21
+    },
+    {
+      "expected_tags": [
+        "generic_repeat_2_of_2"
+      ],
+      "host_args": [],
+      "id": "unseen_keygen_history_rep2",
+      "intervention": "repeat:4:0:2",
+      "min_rec": 20
+    }
+  ],
+  "schema": "atfield-sample-scenarios-v1",
+  "seeded_variants": []
+}

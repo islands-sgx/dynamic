@@ -1,0 +1,124 @@
+{
+  "application_family": "qe3",
+  "benchmark_host_args": [],
+  "calibration_host_args": [],
+  "coupled_struct_constraints": [],
+  "domain_assisted_probes": [],
+  "holdout_suite": {
+    "aux_runs": [],
+    "desc": "Disjoint key_id byte positions {3, 11, 19, 27} and masks {0x5a, 0xa5, 0x3c, 0xc3}",
+    "expected_tags": [
+      "schema_xor_p0_byte_3",
+      "schema_xor_p0_byte_11",
+      "schema_xor_p0_byte_19",
+      "schema_xor_p0_byte_27"
+    ],
+    "host_args": [],
+    "intervention": "xor_param:0:0:0:3:90;xor_param:0:0:0:11:165;xor_param:0:0:0:19:60;xor_param:0:0:0:27:195",
+    "min_records": 7
+  },
+  "name": "qe3",
+  "onboarding_metadata": {
+    "added_ported_loc": 0,
+    "configs_label": "1",
+    "host_adapter_loc": 118,
+    "host_entry": "`sample/real/qe3/host.c`",
+    "kernel_special_rules": 0,
+    "preserved_assertions_and_adaptations": "**Local test**: invokes attestation-key derivation across identical vs distinct `key_id` values and asserts public-key determinism and uniqueness (not ported from an upstream test file).",
+    "test_provenance": "**Local functional test written against upstream production code** `QuoteGeneration/quote_wrapper/quote/enclave/qe3.c` (`get_att_key_based_from_seal_key`)"
+  },
+  "predetermined_regression_cases": [
+    {
+      "expected_tags": [
+        "schema_xor_p0_byte_2"
+      ],
+      "host_args": [],
+      "id": "unseen_keyid_xor_b2_m60",
+      "intervention": "xor_param:0:0:0:2:60",
+      "min_rec": 4
+    },
+    {
+      "expected_tags": [
+        "schema_xor_p0_byte_5"
+      ],
+      "host_args": [],
+      "id": "unseen_keyid_xor_b5_m90",
+      "intervention": "xor_param:0:0:0:5:90",
+      "min_rec": 4
+    },
+    {
+      "expected_tags": [
+        "schema_xor_p0_byte_9"
+      ],
+      "host_args": [],
+      "id": "unseen_keyid_xor_b9_m165",
+      "intervention": "xor_param:0:0:0:9:165",
+      "min_rec": 4
+    },
+    {
+      "expected_tags": [
+        "schema_xor_p0_byte_13"
+      ],
+      "host_args": [],
+      "id": "unseen_keyid_xor_b13_m195",
+      "intervention": "xor_param:0:0:0:13:195",
+      "min_rec": 4
+    },
+    {
+      "expected_tags": [
+        "schema_xor_p0_byte_19"
+      ],
+      "host_args": [],
+      "id": "unseen_keyid_xor_b19_m126",
+      "intervention": "xor_param:0:0:0:19:126",
+      "min_rec": 4
+    },
+    {
+      "expected_tags": [
+        "schema_xor_p0_byte_23"
+      ],
+      "host_args": [],
+      "id": "unseen_keyid_xor_b23_m231",
+      "intervention": "xor_param:0:0:0:23:231",
+      "min_rec": 4
+    },
+    {
+      "expected_tags": [
+        "schema_xor_p0_byte_27"
+      ],
+      "host_args": [],
+      "id": "unseen_keyid_xor_b27_m27",
+      "intervention": "xor_param:0:0:0:27:27",
+      "min_rec": 4
+    },
+    {
+      "expected_tags": [
+        "schema_xor_p0_byte_29"
+      ],
+      "host_args": [],
+      "id": "unseen_keyid_xor_b29_m177",
+      "intervention": "xor_param:0:0:0:29:177",
+      "min_rec": 4
+    },
+    {
+      "expected_tags": [
+        "generic_repeat_3_of_3"
+      ],
+      "host_args": [],
+      "id": "unseen_history_rep3",
+      "intervention": "repeat:0:0:3",
+      "min_rec": 6
+    },
+    {
+      "expected_tags": [
+        "generic_repeat_5_of_5"
+      ],
+      "host_args": [],
+      "id": "unseen_history_rep5",
+      "intervention": "repeat:0:0:5",
+      "min_rec": 8
+    }
+  ],
+  "schema": "atfield-sample-scenarios-v1",
+  "seeded_variants": []
+}

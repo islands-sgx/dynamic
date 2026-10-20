@@ -109,28 +109,23 @@ def make_schema_spec(sample: str) -> str:
     return ";".join(tokens)
 
 
-def resolve_enclave_path(tdir: Path, mode: str) -> tuple[Path, int]:
-    mapping = {
-        "profile_4gate": (tdir / "enclave.profile.4gate.aex0.signed.so", 1),
-        "all_reg_4gate": (tdir / "enclave.all_reg.4gate.aex0.signed.so", 1),
-        "dynamic_4gate": (tdir / "enclave.dynamic.4gate.aex0.signed.so", 1),
-        "dynamic_xr_4gate": (tdir / "enclave.dynamic_xr.4gate.aex0.signed.so", 1),
-        "raw_unprotected": (SAMPLE_ROOT / "build" / "real" / tdir.name / "raw" / "enclave.signed.so", 0),
-        "profile_signed": (tdir / "enclave.profile.aex0.signed.so", 0),
-        "all_reg_final": (tdir / "enclave.all_reg.final.signed.so", 0),
-        "all_reg_final_aex0": (tdir / "enclave.all_reg.final.aex0.signed.so", 0),
-        "dynamic_final": (tdir / "enclave.dynamic.final.signed.so", 0),
-        "dynamic_final_aex0": (tdir / "enclave.dynamic.final.aex0.signed.so", 0),
-        "dynamic_xr_final": (tdir / "enclave.dynamic_xr.final.signed.so", 0),
-        "dynamic_xr_final_aex0": (tdir / "enclave.dynamic_xr.final.aex0.signed.so", 0),
-        "sm4_seeded_xr_4gate": (tdir / "enclave.sm4_seeded_xr.4gate.aex0.signed.so", 1),
-        "omit_one_4gate": (tdir / "enclave.omit_one.4gate.aex0.signed.so", 1),
-        "sm4_seeded_xr_final": (tdir / "enclave.sm4_seeded_xr.final.signed.so", 0),
-        "sm4_seeded_xr_final_aex0": (tdir / "enclave.sm4_seeded_xr.final.aex0.signed.so", 0),
-    }
-    if mode not in mapping:
-        raise ValueError(f"unknown mode: {mode}")
-    return mapping[mode]
+def resolve_enclave_path(tdir: Path, mode: str, manifest: dict | None = None) -> tuple[Path, int]:
+    if mode == "raw_unprotected":
+        if manifest and manifest.get("raw_signed_elf"):
+            return Path(manifest["raw_signed_elf"]), 0
+        return SAMPLE_ROOT / "build" / "real" / tdir.name / "raw" / "enclave.signed.so", 0
+    if mode == "profile_signed":
+        return tdir / "enclave.profile.aex0.signed.so", 0
+    if mode.endswith("_4gate"):
+        variant = mode[: -len("_4gate")]
+        return tdir / f"enclave.{variant}.4gate.aex0.signed.so", 1
+    if mode.endswith("_final"):
+        variant = mode[: -len("_final")]
+        return tdir / f"enclave.{variant}.final.signed.so", 0
+    if mode.endswith("_final_aex0"):
+        variant = mode[: -len("_final_aex0")]
+        return tdir / f"enclave.{variant}.final.aex0.signed.so", 0
+    raise ValueError(f"unknown mode: {mode}")
 
 
 def run_sample(
@@ -152,20 +147,23 @@ def run_sample(
     timeout_sec: int = 300,
 ) -> dict:
     tdir = DYN_ROOT / "targets" / sample
-    host_bin = (tdir / "host") if (tdir / "host").is_file() else (SAMPLE_ROOT / "build" / "real" / sample / "anchor" / "host")
-    encl, use_4gate = resolve_enclave_path(tdir, mode)
+    manifest = json.loads((tdir / "target_manifest.json").read_text()) if (tdir / "target_manifest.json").is_file() else None
+    if manifest and manifest.get("anchor_host_binary"):
+        host_bin = Path(manifest["anchor_host_binary"])
+    else:
+        host_bin = tdir / "host"
+    encl, use_4gate = resolve_enclave_path(tdir, mode, manifest)
     spec = make_layout_spec(sample, encl)
     schema_spec = make_schema_spec(sample)
     if strict_ready_file and not strict_mode:
         strict_mode = "ecall"
 
-    ready_table_map = {
-        "all_reg_final": tdir / "enclave.all_reg.ready.bin",
-        "dynamic_xr_final": tdir / "enclave.dynamic_xr.ready.bin",
-        "dynamic_final": tdir / "enclave.dynamic.ready.bin",
-        "sm4_seeded_xr_final": tdir / "enclave.sm4_seeded_xr.ready.bin",
-    }
-    ready_bin = ready_table_map.get(mode)
+    ready_bin = None
+    if mode.endswith("_final"):
+        variant = mode[: -len("_final")]
+        cand_ready = tdir / f"enclave.{variant}.ready.bin"
+        if cand_ready.is_file():
+            ready_bin = cand_ready
     is_pure_prod = (
         use_4gate == 0
         and not strict_mode
@@ -174,7 +172,7 @@ def run_sample(
         and stop_after_call is None
         and not stop_after_selector
         and not stop_before_normal_ecall
-        and mode in ("raw_unprotected", "profile_signed", "all_reg_final", "dynamic_xr_final", "dynamic_final", "sm4_seeded_xr_final")
+        and (mode in ("raw_unprotected", "profile_signed") or mode.endswith("_final"))
     )
 
     with tempfile.TemporaryDirectory(prefix=f"atfield_run_{sample}_") as work_cwd:

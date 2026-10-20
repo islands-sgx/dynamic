@@ -1,0 +1,205 @@
+{
+  "all_reg_final_elf": "/home/meandssh/islands-sgx/sample/build/real/ehsm/protect/enclave.so",
+  "all_reg_pretouch_finalized_json": "/home/meandssh/islands-sgx/sample/build/real/ehsm/protect/pretouch-finalized.json",
+  "all_reg_pretouch_verified_json": "/home/meandssh/islands-sgx/sample/build/real/ehsm/protect/pretouch-verified.json",
+  "all_reg_ready_bin": "/home/meandssh/islands-sgx/sample/build/real/ehsm/protect/ready.bin",
+  "all_reg_ready_json": "/home/meandssh/islands-sgx/sample/build/real/ehsm/protect/ready.json",
+  "all_reg_signed_elf": "/home/meandssh/islands-sgx/sample/build/real/ehsm/protect/enclave.signed.so",
+  "all_reg_unstripped_signed_elf": "/home/meandssh/islands-sgx/sample/build/real/ehsm/protect/enclave.final.signed.unstripped.so",
+  "all_reg_workset_json": "/home/meandssh/islands-sgx/sample/build/real/ehsm/protect/workset.json",
+  "anchor_host_binary": "/home/meandssh/islands-sgx/sample/build/real/ehsm/anchor/host",
+  "c_compiler": "/nix/store/fys2jh0y4iisx69yf73b3z8k048cqx95-llvm-atfield-llc-wrapper-22.1.8/bin/cc",
+  "compile_commands_json": "/home/meandssh/islands-sgx/sample/build/real/ehsm/protect/compile_commands.json",
+  "cxx_compiler": "/nix/store/fys2jh0y4iisx69yf73b3z8k048cqx95-llvm-atfield-llc-wrapper-22.1.8/bin/c++",
+  "edl_path": "/home/meandssh/islands-sgx/sample/real/ehsm/enclave_hsm.edl",
+  "fields_json": "/home/meandssh/islands-sgx/sample/build/real/ehsm/protect/fields.json",
+  "group": "real",
+  "implement_root": "/nix/store/6vyb98yh62as89qwndd4drgh7baxcw54-atfield-implement-bundle",
+  "manifest_path": "/home/meandssh/islands-sgx/sample/build/real/ehsm/protect/target_manifest.json",
+  "name": "ehsm",
+  "objcopy": "/nix/store/grw38wxqcn2k8bp9gm9b9h28ds3jgb9y-llvm-atfield-llc-22.1.8/bin/llvm-objcopy",
+  "original_config_xml": "/home/meandssh/islands-sgx/sample/real/ehsm/Enclave.config.xml",
+  "profile_elf": "/home/meandssh/islands-sgx/sample/build/real/ehsm/protect/enclave.profile.so",
+  "profile_signed_elf": "/home/meandssh/islands-sgx/sample/build/real/ehsm/protect/enclave.profile.signed.so",
+  "protect_config_xml": "/home/meandssh/islands-sgx/sample/build/real/ehsm/protect/Enclave.protect.config.xml",
+  "protect_heap": "0x400000",
+  "protect_host_binary": "/home/meandssh/islands-sgx/sample/build/real/ehsm/protect/host",
+  "protect_q": 94208,
+  "protect_stack": "0x40000",
+  "psw_library_dir": "/nix/store/a1fx7mb2366qs2i5bd9mci3nis495wcb-sgx-psw-2.29.100.1/lib64",
+  "raw_signed_elf": "/home/meandssh/islands-sgx/sample/build/real/ehsm/raw/enclave.signed.so",
+  "scenarios": {
+    "application_family": "ehsm",
+    "benchmark_host_args": [],
+    "calibration_host_args": [],
+    "coupled_struct_constraints": [],
+    "domain_assisted_probes": [],
+    "holdout_suite": {
+      "aux_runs": [],
+      "desc": "Original 2-step eHSM (--bytes 1536 --requests 3) + cold-enclave state replay on encrypt & generate_datakey + ciphertext byte-9 bit-flip",
+      "expected_tags": [
+        "cold_state_replay_ecall_2_after_0_1",
+        "cold_state_replay_ecall_4_after_0_1",
+        "schema_xor_p4_byte_9"
+      ],
+      "host_args": [
+        "--bytes",
+        "1536",
+        "--requests",
+        "3"
+      ],
+      "intervention": "typed_state_probe:2:1:0:1;typed_state_probe:4:1:0:1;xor_param:3:1:4:9:127",
+      "min_records": 39
+    },
+    "name": "ehsm",
+    "onboarding_metadata": {
+      "added_ported_loc": 0,
+      "configs_label": "ehsm, ehsm-opt-1, ehsm-opt-2",
+      "host_adapter_loc": 312,
+      "host_entry": "`sample/real/ehsm/host.cpp` (default AES-GCM + `--compat-check` + `--sm4-check`)",
+      "kernel_special_rules": 0,
+      "preserved_assertions_and_adaptations": "**Preserved**: `ehsm_create_key` -> `ehsm_encrypt` -> `ehsm_decrypt` -> `ehsm_generate_datakey` -> `ehsm_decrypt_datakey`, ciphertext/AAD tamper rejection, and round-trip plaintext equality. **Explicit adaptations**: extracted standalone C++ host driver from gtest/dkeyserver wrapper.",
+      "test_provenance": "**Selected & adapted workflow** from `core/Test/function_test.cpp` (`test_AES128_GCM`, `test_SM4_CBC`, `GenerateDataKey`, `Decrypt`)"
+    },
+    "predetermined_regression_cases": [
+      {
+        "expected_tags": [
+          "host_normal"
+        ],
+        "host_args": [
+          "--bytes",
+          "1024",
+          "--requests",
+          "3"
+        ],
+        "id": "unseen_compat_or_b1024_r3",
+        "intervention": "",
+        "min_rec": 36
+      },
+      {
+        "expected_tags": [
+          "host_normal"
+        ],
+        "host_args": [
+          "--bytes",
+          "48",
+          "--requests",
+          "2"
+        ],
+        "id": "unseen_host_b48_r2",
+        "intervention": "",
+        "min_rec": 32
+      },
+      {
+        "expected_tags": [
+          "host_normal"
+        ],
+        "host_args": [
+          "--bytes",
+          "192",
+          "--requests",
+          "3"
+        ],
+        "id": "unseen_host_b192_r3",
+        "intervention": "",
+        "min_rec": 36
+      },
+      {
+        "expected_tags": [
+          "host_normal"
+        ],
+        "host_args": [
+          "--bytes",
+          "384",
+          "--requests",
+          "2"
+        ],
+        "id": "unseen_host_b384_r2",
+        "intervention": "",
+        "min_rec": 32
+      },
+      {
+        "expected_tags": [
+          "host_normal"
+        ],
+        "host_args": [
+          "--bytes",
+          "768",
+          "--requests",
+          "3"
+        ],
+        "id": "unseen_host_b768_r3",
+        "intervention": "",
+        "min_rec": 36
+      },
+      {
+        "expected_tags": [
+          "host_normal"
+        ],
+        "host_args": [
+          "--bytes",
+          "1536",
+          "--requests",
+          "4"
+        ],
+        "id": "unseen_host_b1536_r4",
+        "intervention": "",
+        "min_rec": 40
+      },
+      {
+        "expected_tags": [
+          "host_normal"
+        ],
+        "host_args": [
+          "--bytes",
+          "3072",
+          "--requests",
+          "2"
+        ],
+        "id": "unseen_host_b3072_r2",
+        "intervention": "",
+        "min_rec": 32
+      },
+      {
+        "expected_tags": [
+          "schema_xor_p2_byte_3"
+        ],
+        "host_args": [],
+        "id": "unseen_aad_xor_b3",
+        "intervention": "xor_param:2:1:2:3:90",
+        "min_rec": 33
+      },
+      {
+        "expected_tags": [
+          "schema_xor_p4_byte_15"
+        ],
+        "host_args": [],
+        "id": "unseen_plain_xor_b15",
+        "intervention": "xor_param:2:1:4:15:165",
+        "min_rec": 33
+      },
+      {
+        "expected_tags": [
+          "generic_repeat_4_of_4"
+        ],
+        "host_args": [],
+        "id": "unseen_decrypt_rep4",
+        "intervention": "repeat:3:1:4",
+        "min_rec": 36
+      }
+    ],
+    "schema": "atfield-sample-scenarios-v1",
+    "seeded_variants": []
+  },
+  "scenarios_json": "/home/meandssh/islands-sgx/sample/real/ehsm/scenarios.json",
+  "schema": "atfield-target-manifest-v1",
+  "selectors_json": "/home/meandssh/islands-sgx/sample/real/ehsm/selectors.json",
+  "sgx_edger8r": "/nix/store/w9361i2a8728720ll02ypv9nbbfzw5pj-sgx-sdk-2.29.100.1/bin/x64/sgx_edger8r",
+  "sgx_sdk_include": "/nix/store/w9361i2a8728720ll02ypv9nbbfzw5pj-sgx-sdk-2.29.100.1/include",
+  "sgx_sign": "/nix/store/w9361i2a8728720ll02ypv9nbbfzw5pj-sgx-sdk-2.29.100.1/bin/x64/sgx_sign",
+  "signing_key_path": "/home/meandssh/islands-sgx/sample/build/test-signing-key.pem",
+  "source_dir": "/home/meandssh/islands-sgx/sample/real/ehsm",
+  "trusted_bridge_dir": "/home/meandssh/islands-sgx/sample/build/real/ehsm/protect/real/ehsm/ehsm_enclave_edl_trusted",
+  "untrusted_bridge_c": "/home/meandssh/islands-sgx/sample/build/real/ehsm/protect/real/ehsm/ehsm_enclave_edl_untrusted/enclave_hsm_u.c",
+  "untrusted_bridge_dir": "/home/meandssh/islands-sgx/sample/build/real/ehsm/protect/real/ehsm/ehsm_enclave_edl_untrusted"
+}
