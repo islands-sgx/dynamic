@@ -254,6 +254,28 @@ def main() -> None:
     lines.append("")
 
     lines.append("### 2A-2. Stage 2 Capability Extension: Single-Call Coupled Mutation (`replace_coupled`) on `eHSM` SM4 & Bounded 2-Step Plan Reuse (`valid_prefix_corpus`) on `sqlite`")
+    s2_abl = eval_data.get("_stage2_capability_ablation", {})
+    if s2_abl:
+        lines.append("")
+        lines.append("#### Controlled Priority-3 Ablation Under Identical Seed (`rng_seed=101`), Budget, and Frozen Profile Binaries")
+        lines.append("| Target (`Hold-Out`) | Configuration | Enclaves / ECALLs (`Wall`) | Valid Meas. Rate | Business-Valid Field Rate | First Coupled New Effect (`step / time / +eff`) | First 2-Step Reuse New Effect (`step / time / +eff`) | Observed `S3` (`pages / effs`) | Closed Workset Pages | Hold-Out Omitted (`pages / effs`) & Verdict |")
+        lines.append("|---|---|---:|---:|---:|---|---|---:|---:|---|")
+        for s_ab in ("sqlite", "ehsm-opt-1", "ehsm-opt-2"):
+            if s_ab not in s2_abl:
+                continue
+            ho_lbl = "`--rows 320 --full-tx-suite`" if s_ab == "sqlite" else "`--sm4-check`"
+            for cfg_k in ("1_single_param_only", "2_coupled_single_call", "3_coupled_plus_2step_reuse"):
+                r_ab = s2_abl[s_ab][cfg_k]
+                fc = r_ab.get("first_coupled_new_effect")
+                f2 = r_ab.get("first_2step_reuse_new_effect")
+                fc_str = f"`step={fc['step']}, {fc['elapsed_sec']:.2f}s (+{fc['new_pages_count']}p/+{fc['new_effects_count']}e)`" if fc else "`none`"
+                f2_str = f"`step={f2['step']}, {f2['elapsed_sec']:.2f}s (+{f2['new_pages_count']}p/+{f2['new_effects_count']}e)`" if f2 else "`none`"
+                lines.append(
+                    f"| `{s_ab}` ({ho_lbl}) | **`{cfg_k}`** | `{r_ab['enclave_creations']} / {r_ab['total_ecalls']}` (`{r_ab['wall_clock_sec']:.2f}s`) | "
+                    f"**`{r_ab['valid_measurement_rate']*100:.1f}%`** | **`{r_ab['business_valid_field_rate']*100:.2f}%`** | "
+                    f"{fc_str} | {f2_str} | `{r_ab['confirmed_s3_field_pages']}p / {r_ab['confirmed_s3_field_effects']}e` | "
+                    f"**`{r_ab['closed_workset_pages']}p`** | **`{r_ab['holdout_omitted_pages']}p / {r_ab['holdout_omitted_effects']}e` (`{r_ab['holdout_status']}`)** |"
+                )
     lines.append("")
     lines.append("- **Stage 2A (`replace_coupled` Single-Call Multi-Field/Scalar Replacement)**: Executes a single in-place ECALL after checking all coupled struct-field writes (`f:param:byte_off:width:val`) and scalar updates (`s:param:val`) against the live EDL buffer capacity. We report **three explicit tiers** on `ehsm-opt-1` and `ehsm-opt-2`:")
     lines.append("  - **Tier 2a (`dynamic_xr`, Zero-Constraint Unassisted AES-Only Seed)**: `0` manual struct constraints; fails (`4` and `14` omitted pages) because the compiler cannot infer business enum-to-keyblob-length semantics (`keyspec=31, keybloblen=80, cmk_size=124`) from `uint8_t data[0]` alone.")

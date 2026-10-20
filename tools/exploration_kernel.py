@@ -114,6 +114,7 @@ def build_unified_candidate_queues(
     seed_records: list[dict],
     rng_seed: int = 101,
     coupled_struct_constraints: list[dict] | None = None,
+    enable_coupled_mutation: bool = True,
 ) -> tuple[dict[str, list[dict]], dict]:
     """Build the unified per-family candidate queues from EDL schema and seed L1 trace.
     All scheduling modes (`fixed_round_robin`, `static_priority_no_feedback`, `feedback_guided`)
@@ -210,13 +211,17 @@ def build_unified_candidate_queues(
                 queues["replace_prefix"].append(lst[i])
 
     # Stage 2A: Single-call coupled multi-field/scalar replacement (`replace_coupled`)
-    constraints = coupled_struct_constraints if coupled_struct_constraints is not None else edl_schema.get("coupled_struct_constraints", [])
-    for cc in constraints:
+    constraints = (
+        (coupled_struct_constraints if coupled_struct_constraints is not None else edl_schema.get("coupled_struct_constraints", []))
+        if enable_coupled_mutation
+        else []
+    )
+    for cc in reversed(constraints):
         c_eidx = int(cc["ecall_index"])
         c_sseq = int(cc.get("selector_seq", 0))
         c_ops = "+".join(cc["coupled_ops"])
         cid = cc.get("constraint_id", f"e{c_eidx}_s{c_sseq}")
-        queues["replace_prefix"].append({
+        queues["replace_prefix"].insert(0, {
             "family": "replace_prefix",
             "subkind": "coupled_multi_field_replacement",
             "ecall_index": c_eidx,
@@ -347,6 +352,24 @@ def build_unified_candidate_queues(
 
         if sseq == 0:
             control_scalars = [(spidx, sp) for spidx, sp in scalar_params if sp.get("ms_offset") not in bound_offs]
+            if enable_coupled_mutation and len(control_scalars) >= 2 and not in_ptr_params:
+                # Generic ABI-derived single-call coupled multi-scalar replacement (0 manual config)
+                (p_a_idx, p_a), (p_b_idx, p_b) = control_scalars[-2], control_scalars[-1]
+                for v_a, v_b in ((1, 1), (2, 1), (1, 2), (2, 2)):
+                    j_list.append({
+                        "family": "joint",
+                        "subkind": "coupled_multi_field_replacement",
+                        "ecall_index": idx,
+                        "selector_seq": sseq,
+                        "param_index": p_a_idx,
+                        "scalar_val": v_a,
+                        "spec": f"replace_coupled:{idx}:{sseq}:s:{p_a_idx}:{v_a}+s:{p_b_idx}:{v_b}",
+                        "stop_after": f"{idx}:{sseq}",
+                        "stop_before": "",
+                        "allow_nonzero_rc": True,
+                        "tag": f"replace_coupled_e{idx}_s{sseq}_p{p_a_idx}_{v_a}_p{p_b_idx}_{v_b}",
+                        "desc": f"Generic ABI coupled scalar replacement {ec['name']}@{sseq}: {p_a['name']}={v_a} & {p_b['name']}={v_b}",
+                    })
             for spidx, sp in (control_scalars or scalar_params[:1]):
                 for ppidx, pp in in_ptr_params[:1]:
                     jvals = [1, 2, 3, 4, 8, 16]
@@ -461,6 +484,9 @@ class ExplorationKernel:
         rng_seed: int = 101,
         max_enclave_creations: int | None = None,
         max_total_ecalls: int | None = None,
+        coupled_struct_constraints: list[dict] | None = None,
+        enable_coupled_mutation: bool = True,
+        enable_two_step_reuse: bool = True,
     ) -> None:
         if mode not in ("fixed_round_robin", "static_priority_no_feedback", "feedback_guided"):
             raise ValueError(f"Unsupported ExplorationKernel mode: {mode}")
@@ -472,6 +498,9 @@ class ExplorationKernel:
         self.rng_seed = rng_seed
         self.max_enclave_creations = max_enclave_creations
         self.max_total_ecalls = max_total_ecalls
+        self.coupled_struct_constraints = coupled_struct_constraints
+        self.enable_coupled_mutation = enable_coupled_mutation
+        self.enable_two_step_reuse = enable_two_step_reuse
 
         self.ecalls_by_idx = {e["ecall_index"]: e for e in edl_schema["ecalls"]}
         self.field_selectors = {s["ecall_index"] for s in selectors if s["reachable_fields"]}
@@ -498,13 +527,17 @@ class ExplorationKernel:
         self.stagnant_history_selectors: dict[int, int] = {}
         self.slot_zero_gain_streak: dict[tuple, int] = {}
 
-        # Cost accounting
+        # Cost & effectiveness accounting
+        self._t0_monotonic = 0.0
         self.enclave_creations = 0
         self.total_ecalls = 0
         self.valid_field_ecalls = 0
+        self.business_valid_field_runs = 0
         self.expected_s0_rejections = 0
         self.non_field_setup_ecalls = 0
         self.measurement_invalid_runs = 0
+        self.first_coupled_new_effect: dict | None = None
+        self.first_2step_reuse_new_effect: dict | None = None
         self.stop_reason = "candidates_exhausted"
 
     def _can_continue(self) -> bool:
@@ -610,8 +643,31 @@ class ExplorationKernel:
                 else:
                     self.non_field_setup_ecalls += 1
 
+        if any_valid_field_return:
+            self.business_valid_field_runs += 1
         new_concrete_field_effects = run_s3_field_effects - self.cumulative_s3_field_effects
         new_concrete_field_pages = run_s3_field_pages - self.cumulative_s3_field_pages
+        if len(new_concrete_field_effects) > 0:
+            elapsed_now = round(time.monotonic() - self._t0_monotonic, 4) if self._t0_monotonic > 0 else 0.0
+            sk = plan.get("subkind", "")
+            if sk == "coupled_multi_field_replacement" and self.first_coupled_new_effect is None:
+                self.first_coupled_new_effect = {
+                    "step": self.enclave_creations,
+                    "elapsed_sec": elapsed_now,
+                    "tag": plan.get("tag", ""),
+                    "spec": plan.get("spec", ""),
+                    "new_effects_count": len(new_concrete_field_effects),
+                    "new_pages_count": len(new_concrete_field_pages),
+                }
+            elif sk == "reused_prefix_2step_composition" and self.first_2step_reuse_new_effect is None:
+                self.first_2step_reuse_new_effect = {
+                    "step": self.enclave_creations,
+                    "elapsed_sec": elapsed_now,
+                    "tag": plan.get("tag", ""),
+                    "spec": plan.get("spec", ""),
+                    "new_effects_count": len(new_concrete_field_effects),
+                    "new_pages_count": len(new_concrete_field_pages),
+                }
         self.cumulative_s3_field_effects |= run_s3_field_effects
         self.cumulative_s3_field_pages |= run_s3_field_pages
         self.cumulative_s3_effects |= run_s3_effects
@@ -834,7 +890,8 @@ class ExplorationKernel:
                 })
 
             if (
-                fam in ("replace_prefix", "scale")
+                self.enable_two_step_reuse
+                and fam in ("replace_prefix", "scale")
                 and delta.get("any_valid_field_return", False)
                 and not plan.get("stop_before")
                 and plan.get("subkind") != "reused_prefix_2step_composition"
@@ -850,14 +907,14 @@ class ExplorationKernel:
                         p for p in self.productive_plans
                         if p.get("family") == "boundary"
                         and not p.get("stop_before")
-                        and p.get("spec", "").startswith("replace_scalar:")
+                        and (p.get("spec", "").startswith("replace_scalar:") or p.get("spec", "").startswith("replace_coupled:"))
                         and p.get("ecall_index") != eidx
                     ]
                     rem_downs = sorted(
                         [
                             dc for dc in (list(queues.get("boundary", [])) + list(self.secondary_branch_queue))
                             if not dc.get("stop_before")
-                            and dc.get("spec", "").startswith("replace_scalar:")
+                            and (dc.get("spec", "").startswith("replace_scalar:") or dc.get("spec", "").startswith("replace_coupled:"))
                             and dc.get("ecall_index") != eidx
                         ],
                         key=lambda dc: (dc.get("selector_seq", 0), dc.get("scalar_val", 999), dc.get("param_index", 0)),
@@ -866,9 +923,10 @@ class ExplorationKernel:
                         _spawn_2step_pair(prod_entry, dc)
 
             elif (
-                fam == "boundary"
+                self.enable_two_step_reuse
+                and fam in ("boundary", "joint")
                 and not plan.get("stop_before")
-                and plan.get("spec", "").startswith("replace_scalar:")
+                and (plan.get("spec", "").startswith("replace_scalar:") or plan.get("spec", "").startswith("replace_coupled:"))
             ):
                 for pref in self.valid_prefix_corpus:
                     if pref["ecall_index"] != eidx:
@@ -914,6 +972,7 @@ class ExplorationKernel:
 
     def run(self) -> dict:
         t0 = time.monotonic()
+        self._t0_monotonic = t0
         seed_plan = {
             "run_id": "layer0_and_layer1_unmodified_host",
             "layer": "layer1_full_host",
@@ -932,6 +991,8 @@ class ExplorationKernel:
             self.selectors,
             res0.get("records") or [],
             rng_seed=self.rng_seed,
+            coupled_struct_constraints=self.coupled_struct_constraints,
+            enable_coupled_mutation=self.enable_coupled_mutation,
         )
         spawned_tags: set[str] = {
             cand["tag"] for q in queues.values() for cand in q
@@ -1046,8 +1107,14 @@ class ExplorationKernel:
             "stop_reason": self.stop_reason,
             "wall_clock_sec": round(time.monotonic() - t0, 3),
             "enclave_creations": self.enclave_creations,
+            "valid_measurement_runs": self.enclave_creations - self.measurement_invalid_runs,
+            "valid_measurement_rate": round((self.enclave_creations - self.measurement_invalid_runs) / max(1, self.enclave_creations), 4),
+            "business_valid_field_runs": self.business_valid_field_runs,
+            "business_valid_field_rate": round(self.business_valid_field_runs / max(1, self.enclave_creations), 4),
             "total_ecalls_executed": self.total_ecalls,
             "valid_field_entering_ecalls": self.valid_field_ecalls,
+            "first_coupled_new_effect": self.first_coupled_new_effect,
+            "first_2step_reuse_new_effect": self.first_2step_reuse_new_effect,
             "expected_s0_rejections": self.expected_s0_rejections,
             "non_field_setup_ecalls": self.non_field_setup_ecalls,
             "measurement_invalid_runs": self.measurement_invalid_runs,

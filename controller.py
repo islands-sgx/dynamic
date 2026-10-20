@@ -10,7 +10,6 @@ import sys
 from pathlib import Path
 
 DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
-IMPL_BUNDLE = Path("/nix/store/6vyb98yh62as89qwndd4drgh7baxcw54-atfield-implement-bundle")
 sys.path.insert(0, str(DYN_ROOT / "tools"))
 
 from elf_workset import (  # noqa: E402
@@ -39,11 +38,8 @@ from generic_explorer import (  # noqa: E402
 )
 from run_native_sgx import INTERPOSE_SO, run_sample, sha256_file  # noqa: E402
 
-LLVM_OBJDUMP = "/nix/store/grw38wxqcn2k8bp9gm9b9h28ds3jgb9y-llvm-atfield-llc-22.1.8/bin/llvm-objdump"
-SGX_SIGN = "/nix/store/w9361i2a8728720ll02ypv9nbbfzw5pj-sgx-sdk-2.29.100.1/bin/x64/sgx_sign"
-SIGN_KEY = "/home/meandssh/islands-sgx/sample/build/test-signing-key.pem"
-PRETOUCH_TOOL = IMPL_BUNDLE / "build" / "pretouch" / "pretouch.ts"
-READINESS_TOOL = IMPL_BUNDLE / "build" / "readiness" / "readiness.ts"
+import shutil as _shutil
+LLVM_OBJDUMP = _shutil.which("llvm-objdump") or _shutil.which("objdump") or "/usr/bin/objdump"
 PATCH_4GATE_TOOL = DYN_ROOT / "tools" / "patch_4gate.py"
 
 
