@@ -73,8 +73,9 @@ def main() -> None:
     lines.append("  - `C7`: Authenticated opaque object producer-consumer chain using Intel SGX SDK `sgx_rijndael128_cmac_msg` (128-bit AES-CMAC under per-boot `sgx_read_rand` key);")
     lines.append("  - `C8`: Multi-Field + `> 4`-page (`6..8` pages) heap object where seed calls only touch page 0 (head) and delayed operations touch the tail page (`offset 5..7 * 4096`).")
     lines.append(f"- **Dataset Splits (`dev` / `post_revision_regression` / `frozen_holdout_variants`)**: `challenge-bench` and `challenge-bench-perm` form the development set (`dev`); `challenge-exam-a` and `challenge-exam-b` are classified as `post_revision_regression`; `challenge-exam-c` and `challenge-exam-d` are held-out parameter/layout/order variants (`frozen_holdout_variants`) evaluated on the frozen exploration kernel (`{frozen_sha}`) across the same 8 structural mechanism classes (`C1..C8`).")
+    lines.append("- **Post-Hoc Replay-Confirmed Discovery Curves & `68 / 128 / 256` Budget Ladder**: Hardware replay confirmations execute after the exploration loop and are attributed back to the initial discovery step (`Post-Hoc Replay-Confirmed Curves`); confirmation enclave/ECALL/time costs are reported separately in `(+Conf = Total)`. Every `(enclave, mode, seed)` is evaluated across the **`68 -> 128 -> 256` Enclave Budget Ladder** so that any challenge missed at `B = 68` is only attributed to budget (`verified_recovered_at_budget_128` / `verified_recovered_at_budget_256`) if continuing the remaining queue actually executes the exact candidate (`matches_exact_challenge_candidate`) and confirms the challenge page on hardware.")
     lines.append("")
-    lines.append("| Enclave (`Split`) | Mode | Expl. Enclaves (`+Conf = Total`) | Mean Expl. ECALLs (`+Conf = Total`) | Mean Wall-Clock (`Expl / Total`) | Confirmed Curves (`Encl @20/40/68` ; `ECALL @250/500/750` ; `Time @1.5/3.0/4.5s`) | Per-Seed `Obs/Conf` (`101..105`) | **Mean `Obs / Conf` (`min..max`)** | **Mean Ref Hold-Out Missed (`Field-Eff / Field-Page`)** | **Missed Attribution (`5` Seeds)** |")
+    lines.append("| Enclave (`Split`) | Mode | Expl. Enclaves `@68` (`+Conf = Total`) | Mean Expl. ECALLs `@68` (`+Conf = Total`) | Mean Wall `@68` (`Expl / Total`) | Post-Hoc Confirmed Curves `@68` (`Encl @20/40/68` ; `ECALL @250/500/750` ; `Time @1.5/3.0/4.5s`) | Per-Seed `Obs/Conf` `@68` (`101..105`) | **Confirmed Ladder (`@68 -> @128 -> @256`)** | **Ref Hold-Out Missed (`@68 -> @128 -> @256` Eff)** | **Empirical Attribution of `@68` Misses (`5` Seeds)** |")
     lines.append("|---|---|---:|---:|---:|---|---|---|---|---|")
     hw_ch = strat_data["real_hardware_challenge_enclaves"]
     for cname in hw_ch:
@@ -86,7 +87,7 @@ def main() -> None:
         lines.append(
             f"| `{cname}` (`{sp}`) | **`S0` (Seed Only)** | `1 (+0 = 1)` | `{s0['total_ecalls_executed']:.0f} (+0 = {s0['total_ecalls_executed']:.0f})` | "
             f"`{s0['wall_clock_sec']:.2f}s / {s0['wall_clock_sec']:.2f}s` | `0.0/0.0/{s0['solved_count']:.1f}` | `all: {s0['solved_count']}/{s0['solved_count']}` | "
-            f"**{s0['solved_count']:.2f} / {s0['solved_count']:.2f}** | **{s0_feff:.1f}e / {s0_fpg:.1f}p** | `seed_only_baseline` |"
+            f"**{s0['solved_count']:.2f} -> {s0['solved_count']:.2f} -> {s0['solved_count']:.2f}** | **{s0_feff:.1f}e** (`{s0_fpg:.1f}p`) | `seed_only_baseline` |"
         )
         for mkey in ("fixed_round_robin", "static_priority_no_feedback", "feedback_guided"):
             if mkey not in ct["modes"]:
@@ -108,18 +109,54 @@ def main() -> None:
             tot_ec = ms.get("mean_total_ecalls_with_confirmations", exp_ec)
             exp_w = ms.get("mean_exploration_wall_clock_sec", ms["mean_wall_clock_sec"])
             tot_w = ms.get("mean_total_wall_clock_sec_with_confirmations", exp_w)
-            obs_m = ms.get("observed_mean", ms["solved_mean"])
             conf_m = ms.get("confirmed_mean", ms["solved_mean"])
             m_feff = ms.get("mean_holdout_missed_field_effects", ms["mean_holdout_missed_pages"])
             m_fpg = ms.get("mean_holdout_missed_field_pages", ms["mean_holdout_missed_pages"])
+            bl = ms.get("budget_ladder_summary", {})
+            c128 = bl.get("at_128_enclaves", {}).get("confirmed_mean", conf_m)
+            c256 = bl.get("at_256_enclaves", {}).get("confirmed_mean", c128)
+            e128 = bl.get("at_128_enclaves", {}).get("mean_holdout_missed_field_effects", m_feff)
+            e256 = bl.get("at_256_enclaves", {}).get("mean_holdout_missed_field_effects", e128)
+            ladder_str = f"**{conf_m:.2f} -> {c128:.2f} -> {c256:.2f}**"
+            eff_ladder_str = f"**{m_feff:.2f}e -> {e128:.2f}e -> {e256:.2f}e** (`@68:{m_fpg:.2f}p`)"
             att = ms.get("missed_attribution_summary", {})
             nonzero_att = [f"{k}={v}" for k, v in att.items() if v > 0]
             att_str = f"`{', '.join(nonzero_att)}`" if nonzero_att else "`0 missed`"
             lines.append(
                 f"| `{cname}` (`{sp}`) | **`{mkey}`** | `{eb} (+{tot_e - eb:.1f} = {tot_e:.1f})` | "
                 f"`{exp_ec:.1f} (+{tot_ec - exp_ec:.1f} = {tot_ec:.1f})` | `{exp_w:.2f}s / {tot_w:.2f}s` | "
-                f"{curve_str} | `{seed_str}` | **{obs_m:.2f} / {conf_m:.2f}** (`{ms['solved_min']}..{ms['solved_max']}`) | "
-                f"**{m_feff:.2f}e / {m_fpg:.2f}p** | {att_str} |"
+                f"{curve_str} | `{seed_str}` | {ladder_str} | "
+                f"{eff_ladder_str} | {att_str} |"
+            )
+    lines.append("")
+
+    lines.append("#### `68 / 128 / 256` Enclave Budget Ladder: Cost, Confirmed Recovery, & Structural Bottleneck Analysis")
+    lines.append("- **Why `@68` Misses Recover by `@128` on `C1..C8`, whereas `eHSM` SM4 Tier-2 Cannot Be Solved by More Budget**: The unified candidate pool for `C1..C8` contains `132..146` initial candidates plus `~1..8` feedback-spawned follow-ups (`133..147` total steps to exhaustion). At `B = 68`, `65..79` candidates remain unpopped in the queues; continuing execution to `B = 128` (and `B = 256` queue exhaustion) executes those exact remaining candidates (`exact_candidate_in_queue_at_68 == True` verified via `matches_exact_challenge_candidate`) and confirms `8.00 / 8` across all modes and seeds (`586` confirmed witnesses at `@68`, and `720 / 720` total confirmed witnesses by `@128` and `@256` in `strategy_comparison.json`). By contrast, `eHSM` SM4 Tier-2 (`enclave_create_key` requiring simultaneous coupled updates to `metadata.keyspec=20`, `keybloblen=64`, and outer `cmk_size=80` inside `ehsm_keyblob_t`) lies outside the single-parameter candidate domain and remains `FAIL` (`4` and `14` uncovered effects) regardless of budget until multi-field struct-coupled producer synthesis or an SM4 seed (Tier 1) is provided.")
+    lines.append("")
+    lines.append("| Enclave (`Split`) | Mode | `@68` (`Encl / ECALLs / Wall -> Conf`) | `@128` (`Encl / ECALLs / Wall -> Conf`) | `@256 (Exhaustion)` (`Encl / ECALLs / Wall -> Conf`) | Sample Empirically Verified Recovery (`69..128`: `Challenge: step, queue, exact spec`) |")
+    lines.append("|---|---|---|---|---|---|")
+    for cname in hw_ch:
+        ct = hw_ch[cname]
+        sp = ct["split"]
+        for mkey in ("fixed_round_robin", "static_priority_no_feedback", "feedback_guided"):
+            ms = ct["modes"][mkey]
+            bl = ms["budget_ladder_summary"]
+            b68 = bl["at_68_enclaves"]
+            b128 = bl["at_128_enclaves"]
+            b256 = bl["at_256_enclaves"]
+            sample_rec = "none (`8.00/8` at `@68`)"
+            for sr in ms["seed_runs"]:
+                det = sr.get("missed_attribution_details", {})
+                if det:
+                    mc0, d0 = sorted(det.items())[0]
+                    sample_rec = f"`seed={sr['seed']} {mc0}: step={d0.get('recovered_at_step')} ({d0.get('source_queue')}) {d0.get('recovered_by_spec')}`"
+                    break
+            lines.append(
+                f"| `{cname}` (`{sp}`) | **`{mkey}`** | "
+                f"`{b68['mean_exploration_enclaves']:.0f} / {b68['mean_exploration_ecalls']:.1f} / {b68['mean_exploration_wall_clock_sec']:.2f}s` -> **{b68['confirmed_mean']:.2f}/8** | "
+                f"`{b128['mean_exploration_enclaves']:.0f} / {b128['mean_exploration_ecalls']:.1f} / {b128['mean_exploration_wall_clock_sec']:.2f}s` -> **{b128['confirmed_mean']:.2f}/8** | "
+                f"`{b256['mean_exploration_enclaves']:.1f} / {b256['mean_exploration_ecalls']:.1f} / {b256['mean_exploration_wall_clock_sec']:.2f}s` -> **{b256['confirmed_mean']:.2f}/8** | "
+                f"{sample_rec} |"
             )
     lines.append("")
 
@@ -235,44 +272,61 @@ def main() -> None:
                 f"| `{s_sm4}` | **Tier 2 (`dynamic_xr` AES-only)** | {aes_h_str} (AES-256 seed only) | **`{v2['status']}`** (`{len(uncov2)}` uncovered) | N/A (coverage failed) | N/A (coverage failed) | **`{v2['status']}`**: Catches **{len(uncov2)} uncovered SM4 effects** (`{', '.join(uncov2[:3])}...`); requires coupled 3-field struct change (`keyspec=20, keybloblen=64, cmk_size=80`) |"
             )
     lines.append("")
-    lines.append("### 2B. Frozen-Workset Generalization on Unseen Input/History Workflows & Statistical Upper Bound")
-    lines.append("- **Methodology**: After freezing `workset.dynamic_xr.json` and the signed enclaves, each of the 4 real applications (6 configurations) is evaluated on `10` independent multi-step workflows (`60` independent workflows total) varying input lengths, payload contents, and call-history depths that were not used during workset construction (including `5` unseen `(seed, in_jids)` runs of the ported 6-case upstream `signal-cds` Cmockery suite `enclave/src/sabd-enclave-test.c`, each executing `95` ECALLs).")
-    lines.append("- **Primary Metric & Binomial Upper Bound**: We report the **Workflow Omission Rate** (`workflows_with_any_omission / total_workflows`) and the exact one-sided 95% Clopper-Pearson binomial confidence upper bound $p_{\text{upper}, 0.95} = 1 - 0.05^{1/N}$ for the tested input/history distribution ($25.89%$ per configuration at $N=10$, and **$4.87%$ pooled across all $N=60$ independent workflows** with `0` omissions; reaching $0.1%$ or $0.01%$ on a fixed distribution requires $N=3,000$ or $N=30,000$ independent workflows). Because random sampling from a base distribution does not bound out-of-distribution or secret/struct-coupled branches, targeted counterexample workflows (`--sm4-check` on AES-only `ehsm-opt-1/2`) are reported separately above (`100%` omission rate: `4` and `14` uncovered effects).")
+    lines.append("### 2B. Predetermined 60-Case End-to-End Regression Matrix (`4` Separate Verdicts per Case; No Binomial Probability Claim)")
+    lines.append("- **Methodology & Scope**: After freezing `workset.dynamic_xr.json` and the signed production enclaves, each of the 4 real applications (6 configurations) is evaluated against `10` predetermined test cases (`60` cases total) covering varied payload lengths, byte perturbations, repeat depths, and the 6 adapted upstream `signal-cds` test cases (`95` ECALLs/run). Because these 60 cases are a predetermined regression matrix rather than random draws from a formally defined input distribution, we report exact observed pass/omission counts across **four separate acceptance dimensions** without claiming a binomial probability upper bound:")
+    lines.append("  1. **Measurement Valid (`ipi=7`)**: Passes unified `is_valid_measurement_run()` (`s3_active_aex_count` present, well-formed `A/D` items, `ipi_aex_verified_mask == 7`, `fast_forwarded_prior == 0`, `measurement_invalid == 0`);")
+    lines.append("  2. **Business Workflow Completed**: Enforces `min_rec` minimum ECALL count, verifies all target `expected_fids` were entered (`field_entries > 0`), verifies the expected intervention tags were applied, and checks `returncode == 0` with business `PASS`;")
+    lines.append("  3. **Workset Coverage Zero-Omission**: Requires `Measurement Valid` and `Business Workflow Completed` and verifies `0` uncovered `(field_id, page_rva, effect)` tuples against `workset.dynamic_xr.json`;")
+    lines.append("  4. **Frozen Protected `AEX1` Enclave Completed**: Runs the identical case on `enclave.dynamic_xr.final.signed.so` + `enclave.dynamic_xr.ready.bin` (`AEX-Notify=1`, `ATFIELD_REQUIRE_READINESS=1`) and verifies `returncode == 0`, business `PASS`, exact `ecall_index` sequence parity with the 4-Gate profiling run, and verified `enclave_pages_acquire/release` calls.")
     lines.append("")
-    lines.append("| Configuration | Unseen Workflows (`N`) | Total ECALLs / Field Entries | Workflows with Any Omission (`Rate`) | Worst-Case Omitted (`Pages / Effects`) | **95% Binomial Upper Bound (`p_upper`)** |")
-    lines.append("|---|---:|---:|---:|---:|---:|")
+    lines.append("| Configuration | Predetermined Cases | Total ECALLs / Field Entries | `1. Measurement Valid` | `2. Business Workflow Completed` | `3. Workset Coverage Zero-Omission` (`Worst Omitted`) | `4. Frozen Protected AEX1 Completed` (`0x1006 Retries`) |")
+    lines.append("|---|---:|---:|---:|---:|---:|---:|")
     tot_wf_all = 0
     tot_ec_all = 0
     tot_fe_all = 0
-    tot_om_all = 0
+    tot_m_ok = 0
+    tot_b_ok = 0
+    tot_c_ok = 0
+    tot_p_ok = 0
+    tot_ret = 0
     for s in SAMPLES:
         ug = eval_data[s]["independent_holdout_evaluation"].get("unseen_input_history_generalization")
         if not ug:
             continue
-        tot_wf_all += ug["independent_workflows_evaluated"]
+        n_c = ug.get("predetermined_cases_count", ug.get("independent_workflows_evaluated", 10))
+        m_ok = ug.get("measurement_valid_count", n_c)
+        b_ok = ug.get("business_workflow_completed_count", n_c)
+        c_ok = ug.get("workset_coverage_zero_omission_count", n_c - ug.get("workflows_with_any_omission", 0))
+        p_ok = ug.get("frozen_protected_enclave_completed_count", n_c)
+        p_ret = ug.get("protected_aex1_0x1006_retries", 0)
+        tot_wf_all += n_c
         tot_ec_all += ug["total_ecalls_evaluated"]
         tot_fe_all += ug["total_field_entries_evaluated"]
-        tot_om_all += ug["workflows_with_any_omission"]
+        tot_m_ok += m_ok
+        tot_b_ok += b_ok
+        tot_c_ok += c_ok
+        tot_p_ok += p_ok
+        tot_ret += p_ret
         lines.append(
-            f"| `{s}` | `{ug['independent_workflows_evaluated']}` | `{ug['total_ecalls_evaluated']} / {ug['total_field_entries_evaluated']}` | "
-            f"`{ug['workflows_with_any_omission']} / {ug['independent_workflows_evaluated']} ({ug['workflow_omission_rate'] * 100:.1f}%)` | "
-            f"`{ug['worst_case_omitted_pages_per_workflow']}p / {ug['worst_case_omitted_effects_per_workflow']}e` | "
-            f"**`{ug['clopper_pearson_95_upper_bound_on_tested_distribution'] * 100:.2f}%`** |"
+            f"| `{s}` | `{n_c}` | `{ug['total_ecalls_evaluated']} / {ug['total_field_entries_evaluated']}` | "
+            f"**`{m_ok} / {n_c}`** | **`{b_ok} / {n_c}`** | "
+            f"**`{c_ok} / {n_c}`** (`{ug['worst_case_omitted_pages_per_workflow']}p / {ug['worst_case_omitted_effects_per_workflow']}e`) | "
+            f"**`{p_ok} / {n_c}`** (`{p_ret}` retries) |"
         )
     if tot_wf_all > 0:
-        pooled_p = 1.0 - (0.05 ** (1.0 / tot_wf_all)) if tot_om_all == 0 else 1.0
         lines.append(
-            f"| **Pooled (`4` Apps / `6` Configs)** | **`{tot_wf_all}`** | **`{tot_ec_all} / {tot_fe_all}`** | "
-            f"**`{tot_om_all} / {tot_wf_all} ({tot_om_all / tot_wf_all * 100:.1f}%)`** | **`0p / 0e`** | **`{pooled_p * 100:.2f}%`** |"
+            f"| **Total (`4` Apps / `6` Configs)** | **`{tot_wf_all}`** | **`{tot_ec_all} / {tot_fe_all}`** | "
+            f"**`{tot_m_ok} / {tot_wf_all}`** | **`{tot_b_ok} / {tot_wf_all}`** | "
+            f"**`{tot_c_ok} / {tot_wf_all}`** (`0p / 0e`) | **`{tot_p_ok} / {tot_wf_all}`** (`{tot_ret}` retries) |"
         )
     lines.append("")
-    lines.append("### 2C. Upstream Test Porting & Onboarding Cost Accounting (`4` Real Applications, `6` Configurations)")
-    lines.append("| Application (`Configs`) | Upstream Test Reference | Ported Host Entry / Flag | Preserved Upstream Assertions & Call Dependencies | Host Adapter LOC (`New Ported LOC`) | Explorer / Kernel Special-Case Rules |")
+    lines.append("### 2C. Upstream Test Adaptation & Onboarding Cost Accounting (`4` Real Applications, `6` Configurations)")
+    lines.append("| Application (`Configs`) | Test Provenance & Upstream Reference | Host Entry / Flag | Preserved Assertions & Explicit Adaptation Differences | Host Adapter LOC (`Added LOC`) | Explorer / Kernel Special-Case Rules |")
     lines.append("|---|---|---|---|---:|---:|")
-    lines.append("| `signal-cds` (`1`) | `enclave/src/sabd-enclave-test.c` (`setup_sabd_lookup_test`, `test_sabd_lookup_batch_too_large`, `test_sabd_lookup_many_duplicates`, `test_sabd_lookup_small_{all_in,no_in,random}`, `test_sabd_lookup_large`) | `sample/real/signal-cds/host.c` (`--upstream-cmockery-test --seed S --in-jids N`, `95` ECALLs/run) | `drand48_data`/`mrand48_r` 64-bit JID generation, `(1<<14)+1` `SGX_ERROR_INVALID_PARAMETER` check, `!!result[i]` normalization, and exact `memcmp` across `0..32`, `0..25`, and `2048`-query batches | `358` (`+122` for upstream Cmockery suite) | **`0`** |")
-    lines.append("| `ehsm` (`ehsm`, `ehsm-opt-1`, `ehsm-opt-2`) | `core/Test/function_test.cpp` (`test_AES128_GCM`, `test_SM4_CBC`, `GenerateDataKey`, `Decrypt`) | `sample/real/ehsm/host.cpp` (default AES-GCM + `--compat-check` + `--sm4-check`) | `ehsm_create_key` -> `ehsm_encrypt` -> `ehsm_decrypt` -> `ehsm_generate_datakey` -> `ehsm_decrypt_datakey`, ciphertext/AAD tamper rejection, and round-trip plaintext equality | `312` (`+0` kernel rules) | **`0`** |")
-    lines.append("| `sgxwallet` (`1`) | `tests/integration/keys/ECDSAIntegrationTests.cpp` | `sample/real/sgxwallet/host.cpp` | SEK provisioning -> ECDSA keygen -> public key extraction -> hash signing -> signature verification -> invalid input rejection -> enclave restart & recovery | `264` (`+0` kernel rules) | **`0`** |")
-    lines.append("| `qe3` (`1`) | `QuoteGeneration/quote_wrapper/quote/enclave/qe3.c` (`get_att_key_and_qe_auth_data`) | `sample/real/qe3/host.c` | Repeated attestation key derivation for identical vs distinct `key_id` inputs and public-key determinism/uniqueness assertions | `118` (`+0` kernel rules) | **`0`** |")
+    lines.append("| `signal-cds` (`1`) | **Selected & adapted 6 upstream Cmockery tests** from `enclave/src/sabd-enclave-test.c` (`setup_sabd_lookup_test`, `test_sabd_lookup_batch_too_large`, `test_sabd_lookup_many_duplicates`, `test_sabd_lookup_small_{all_in,no_in,random}`, `test_sabd_lookup_large`) | `targets/signal-cds/host.c` (`--upstream-cmockery-test --seed S --in-jids N`, `95` ECALLs/run) | **Preserved**: `(1<<14)+1` `SGX_ERROR_INVALID_PARAMETER` check, `!!result[i]` normalization, even-index duplication, and `memcmp` across `0..32`, `0..25`, and `2048`-query batches. **Explicit adaptations**: (1) replaced Cmockery mock macros with real `ecall_lookup_hash` calls; (2) avoided reserved miss sentinel `jid <= 1` when generating `test_in_jids` via `mrand48_r`; (3) parameterized `in_jid_count` (`128..4096` vs static `1,000,000`). | `358` (`+122` for adapted suite) | **`0`** |")
+    lines.append("| `ehsm` (`ehsm`, `ehsm-opt-1`, `ehsm-opt-2`) | **Selected & adapted workflow** from `core/Test/function_test.cpp` (`test_AES128_GCM`, `test_SM4_CBC`, `GenerateDataKey`, `Decrypt`) | `sample/real/ehsm/host.cpp` (default AES-GCM + `--compat-check` + `--sm4-check`) | **Preserved**: `ehsm_create_key` -> `ehsm_encrypt` -> `ehsm_decrypt` -> `ehsm_generate_datakey` -> `ehsm_decrypt_datakey`, ciphertext/AAD tamper rejection, and round-trip plaintext equality. **Explicit adaptations**: extracted standalone C++ host driver from gtest/dkeyserver wrapper. | `312` (`+0` kernel rules) | **`0`** |")
+    lines.append("| `sgxwallet` (`1`) | **Selected & adapted workflow** from `tests/integration/keys/ECDSAIntegrationTests.cpp` | `sample/real/sgxwallet/host.cpp` | **Preserved**: SEK provisioning -> ECDSA keygen -> public key extraction -> hash signing -> signature verification -> invalid input rejection -> enclave restart & recovery. **Explicit adaptations**: standalone C++ host driver without JSON-RPC/LevelDB server daemon. | `264` (`+0` kernel rules) | **`0`** |")
+    lines.append("| `qe3` (`1`) | **Local functional test written against upstream production code** `QuoteGeneration/quote_wrapper/quote/enclave/qe3.c` (`get_att_key_based_from_seal_key`) | `sample/real/qe3/host.c` | **Local test**: invokes attestation-key derivation across identical vs distinct `key_id` values and asserts public-key determinism and uniqueness (not ported from an upstream test file). | `118` (`+0` kernel rules) | **`0`** |")
     lines.append("")
 
     # Table 3: Per-Observation 3-Group Ablation
@@ -447,7 +501,7 @@ def main() -> None:
     lines.append(f"| `challenge-exam-a` & `challenge-exam-b` (`post_revision_regression`, 5 seeds, 3 modes) | Evaluated as post-revision regression: `feedback_guided` achieves `{ea_fg:.2f}/8` and `{eb_fg:.2f}/8` confirmed vs `{hw_ch['challenge-exam-a']['modes']['static_priority_no_feedback']['confirmed_mean']:.2f}`–`{hw_ch['challenge-exam-b']['modes']['static_priority_no_feedback']['confirmed_mean']:.2f}/8` for `static_priority_no_feedback` and `{hw_ch['challenge-exam-a']['modes']['fixed_round_robin']['confirmed_mean']:.2f}`–`{hw_ch['challenge-exam-b']['modes']['fixed_round_robin']['confirmed_mean']:.2f}/8` for `fixed_round_robin`. | Section 1A & `strategy_comparison.json` |")
     lines.append(f"| `challenge-exam-c` & `challenge-exam-d` (`frozen_holdout_variants`, 5 seeds, 3 modes, frozen kernel `{frozen_sha[:7]}`) | Evaluated on the frozen exploration kernel (`{frozen_sha}`): `feedback_guided` achieves `{ec_fg:.2f}/8` (`0.0` missed Field-effects) on `exam-c` and `{ed_fg:.2f}/8` on `exam-d`, outperforming `static_priority_no_feedback` (`{hw_ch['challenge-exam-c']['modes']['static_priority_no_feedback']['confirmed_mean']:.2f}/8`, `{hw_ch['challenge-exam-d']['modes']['static_priority_no_feedback']['confirmed_mean']:.2f}/8`) and `fixed_round_robin` (`{hw_ch['challenge-exam-c']['modes']['fixed_round_robin']['confirmed_mean']:.2f}/8`, `{hw_ch['challenge-exam-d']['modes']['fixed_round_robin']['confirmed_mean']:.2f}/8`). | Section 1A & `strategy_comparison.json` |")
     lines.append("| `calibration-fixture` (`7`-case hardware measurement calibration) | Verifies `0 / 36` (`0.00%`) measurement omission rate across `S0/S1`-then-`S3` pre-access, `2` repeated Field entries per ECALL, `5` dirty pages on a temporary deep stack frame (`gateB_rsp == gateD_rsp`), deliberate 1-page omission detection, and active permission retraction (`AEX0` healed + `AEX1` `0x1006`). | Section 2A & `evaluation_results.json` |")
-    lines.append("| `signal-cds` Upstream Cmockery Port & `60`-Workflow Unseen Generalization | Ports `6` upstream Cmockery test functions from `enclave/src/sabd-enclave-test.c` (`95` ECALLs/run) and evaluates `60` independent unseen workflows across all 4 applications / 6 configurations (`0 / 60` workflow omission rate, `4.87%` pooled 95% Clopper-Pearson upper bound on tested distribution). | Sections 2B, 2C & `evaluation_results.json` |")
+    lines.append("| `signal-cds` Adapted Upstream Cmockery Tests & `60`-Case Predetermined End-to-End Regression Matrix | Selects and adapts `6` upstream Cmockery tests from `enclave/src/sabd-enclave-test.c` (`95` ECALLs/run) and evaluates `60` predetermined regression cases across all 4 applications / 6 configurations on four separate verdicts (`60/60` measurement valid, `60/60` business completed, `60/60` zero workset omissions, `60/60` frozen protected `AEX1` completed). | Sections 2B, 2C & `evaluation_results.json` |")
     lines.append("| `qe3`, `signal-cds`, `sgxwallet`, `ehsm` (`opt-1/2`) Migration | The exact same frozen `ExplorationKernel` closes all 4 real applications (6 configurations) (`5/5` production acceptance, `295/295` clean `0`-rewalk observations in Group B). | Sections 1B, 2, 3, 4 |")
     lines.append("| `ehsm-opt-1/2` Two-Tier SM4 Accounting | Tier 1 builds independent `sm4_seeded_xr` workset, `ReadyTable`, and signed `4gate`/`AEX1` enclaves and verifies fresh hold-out coverage (`PASS`), `0-rewalk` (`PASS`), and `AEX1` production execution (`PASS`); Tier 2 catches the exact `4` / `14` uncovered SM4 effects when only AES-256 is seeded (`FAIL`). | Section 2 (`sm4_two_tier_accounting`) |")
     lines.append("")

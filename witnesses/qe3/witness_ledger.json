@@ -2,19 +2,19 @@
   "artifacts": {
     "dynamic": {
       "final_elf_sha256": "d1dc9df2e959068f1904420d475eb4eba90d4de2f5cdf03fc46d694ee034c22e",
-      "gate_aex0_sha256": "9405ee19a627bafc56bc3fbc6ee06831381a791a52c747452900d33c9c1a2a9d",
+      "gate_aex0_sha256": "55df48b3e9088d028130574ce6c5594dc254c13e2a8e2660df9fcb9e4f580184",
       "ready_bin_sha256": "61f41d7bc086fabf2c6c9902110247aa91e19b70894ee5981a1ee132cceebb00",
-      "signed_aex0_sha256": "dfc2caa8ad4a174c5008685829d9e84f3b6124a92a5791e708aee9239ccc92ac",
-      "signed_aex1_sha256": "4c9dd25ce68763e0eb1896386a0dcd4cef44fa2dbb25543df153e06e9b0b05dc",
+      "signed_aex0_sha256": "e6e837646766086a296a2ad7605f40af1f8f686b9858ce8b38848a4257b77d86",
+      "signed_aex1_sha256": "eda9ed1005e1ba565994b3706860f0cd5a26d7b70e30249e9bcd38218f9bddbc",
       "variant": "dynamic",
       "workset_sha256": "06b8671052d897fefb5703350a5b7e1fd764625dd0b57162b57ceee054d58769"
     },
     "dynamic_xr": {
       "final_elf_sha256": "b6ecc6509dcb2e8168130354a0c62266a1d38f1d0c43578dbc1702b09301c15e",
-      "gate_aex0_sha256": "7a3839abdb9aef9de9000bcf2f69eb066ed220c93b461e6ac0a991df508b8fec",
+      "gate_aex0_sha256": "983c6e65e79617bd85af4e6028a1235fd8ee8a4637b005ef0d927adce500c567",
       "ready_bin_sha256": "61f41d7bc086fabf2c6c9902110247aa91e19b70894ee5981a1ee132cceebb00",
-      "signed_aex0_sha256": "29ade8be0a67e3ec08a525dcce1937ba62036d10ba164824e419d54cdd833c40",
-      "signed_aex1_sha256": "69759959a2e5a63a022d5978493b60e52eea8ea5f09796d76a11f37a93cfc9ac",
+      "signed_aex0_sha256": "fed947c6677444306fd1f852c53da199e26f5378f5cb5629f7709e2163d7639c",
+      "signed_aex1_sha256": "26c2540e4b66bad43533c641ee38ee75aca7cc4cd3de83c9c7db75d8fa7d6bdc",
       "variant": "dynamic_xr",
       "workset_sha256": "33b141e7952384776f21612db4c93587b063a313f1d09ce0f1cc1e4a9c20eaee"
     }
@@ -119,6 +119,8 @@
   "kernel_mode": "feedback_guided",
   "kernel_stop_reason": "candidates_exhausted",
   "profile_elf_sha256": "5c0f4038289badf9866c3e39bb90b375c2be78bc1e8960ee1852ef7315a3b9b5",
+  "rejected_invalid_runs": [],
+  "rejected_invalid_runs_count": 0,
   "runs": [
     {
       "description": "Unmodified host binary full execution (Layer 0 + Layer 1)",
@@ -131,7 +133,7 @@
       "run_id": "layer0_and_layer1_unmodified_host",
       "subkind": "unmodified_host_full_trace",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer0_and_layer1_unmodified_host.jsonl",
-      "trace_sha256": "6c867f0167bb07474d1c67fad78029c5dde7bf07c52ba144a00b81312c95bfeb"
+      "trace_sha256": "f03730a9d26e91cfcd5aa63ebc63c0a104b19435cd3bff4f03b7b5a579f77eec"
     },
     {
       "description": "Cross-buffer slice relation ecall_get_attestation_key@0: public_key := key_id+4",
@@ -144,7 +146,7 @@
       "run_id": "layer2_slice_rel_e0_s0_p0_p1_off4",
       "subkind": "cross_buffer_slice_relation",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_slice_rel_e0_s0_p0_p1_off4.jsonl",
-      "trace_sha256": "59952824bb8132b411636fff96d9cbd8189b17293111d44e6a32c24ce774f511"
+      "trace_sha256": "71c3cbebe40af2b1d0ba31edc3a3a0863931746119120f48fbcc86b70c1c040d"
     },
     {
       "description": "History accumulation (depth=24) on ecall_get_attestation_key@0",
@@ -157,7 +159,7 @@
       "run_id": "layer2_history_e0_s0_n24",
       "subkind": "quadrupling_history_scan",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_history_e0_s0_n24.jsonl",
-      "trace_sha256": "dc8aa9dc2887d6102c1da1bc7d4f11dfc007ba643425118eeb67269114d59b22"
+      "trace_sha256": "35ed5529c771736ee9d63f9752c26c1aa705822c2ab4978e9230d6862b33e6d3"
     },
     {
       "description": "History accumulation (depth=64) on ecall_get_attestation_key@0",
@@ -170,7 +172,7 @@
       "run_id": "layer2_history_e0_s0_n64",
       "subkind": "quadrupling_history_scan",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_history_e0_s0_n64.jsonl",
-      "trace_sha256": "947a4d621317c30fa1b8c9c177d7b3b14ffaf3be26f4d631968039cc41ab7d95"
+      "trace_sha256": "50671a4c43ca31a75c037456f455ae807cd51e4e077a5b8ad289f65fd637388c"
     },
     {
       "description": "Cross-buffer slice relation ecall_get_attestation_key@0: public_key := key_id+8",
@@ -183,7 +185,7 @@
       "run_id": "layer2_slice_rel_e0_s0_p0_p1_off8",
       "subkind": "cross_buffer_slice_relation",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_slice_rel_e0_s0_p0_p1_off8.jsonl",
-      "trace_sha256": "1d2fd2408cbd5e5b8dbf039737085616e66f2d2fc504489ed16a243a087b9175"
+      "trace_sha256": "cff2847ae33d155d4d943c2f43d43f8fc38f5d588c29332c05fa481de77165e2"
     },
     {
       "description": "History accumulation (depth=256) on ecall_get_attestation_key@0",
@@ -196,7 +198,7 @@
       "run_id": "layer2_history_e0_s0_n256",
       "subkind": "quadrupling_history_scan",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_history_e0_s0_n256.jsonl",
-      "trace_sha256": "fa539fec4b40e55aab011b784cf36242b9121907cf9fec420c1cd63994fa9a09"
+      "trace_sha256": "a04d2cd6cc0974ffa1be510bfe58e254c3ae47040ddf37f9f194e0c801be4824"
     },
     {
       "description": "History accumulation (depth=1024) on ecall_get_attestation_key@0",
@@ -209,7 +211,7 @@
       "run_id": "layer2_history_e0_s0_n1024",
       "subkind": "quadrupling_history_scan",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_history_e0_s0_n1024.jsonl",
-      "trace_sha256": "4047e6a9a28ff9273c0b704cf1e02c42338442ebfe3e6b6ffd566959e33f0811"
+      "trace_sha256": "41ae8d3889866eab85d6aeff82653f00e7e69eef8e2f2dae4a351eacb4c0d803"
     },
     {
       "description": "Bounded XOR ecall_get_attestation_key@0.key_id[0] ^= 0xff",
@@ -222,7 +224,7 @@
       "run_id": "layer2_xor_e0_s0_p0_b0",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_xor_e0_s0_p0_b0.jsonl",
-      "trace_sha256": "ac8dd1c31f64f169fdfd7dfb23edec5a7f81894c78286c0b5545cc98c852b68b"
+      "trace_sha256": "5e2a5022c10de75e4d666692453219c83dfcd9ee59d4ca60b7c89044f43ef99e"
     },
     {
       "description": "Bounded XOR ecall_get_attestation_key@1.key_id[0] ^= 0xff",
@@ -235,7 +237,7 @@
       "run_id": "layer2_xor_e0_s1_p0_b0",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_xor_e0_s1_p0_b0.jsonl",
-      "trace_sha256": "74e155e30930929dcd5dd88f65094670d2aa9a76918589d6fd4083fda9ce372f"
+      "trace_sha256": "cba0345fa0fd4ddcc924abf3fd03e6dcc89672c56f0fb5fa3748294cfbfc2149"
     },
     {
       "description": "Bounded XOR ecall_get_attestation_key@2.key_id[0] ^= 0xff",
@@ -248,7 +250,7 @@
       "run_id": "layer2_xor_e0_s2_p0_b0",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_xor_e0_s2_p0_b0.jsonl",
-      "trace_sha256": "4f04e44cad05bc16a17c058761fdc35e3bbf615785bd6cac4eae46921c7d1abc"
+      "trace_sha256": "150983d48f229b71dee46bb064bcdad0dd7044179ef3110cca035ac3cf04c34f"
     },
     {
       "description": "Bounded XOR ecall_get_attestation_key@0.key_id[1] ^= 0xaa",
@@ -261,7 +263,7 @@
       "run_id": "layer2_xor_e0_s0_p0_b1",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_xor_e0_s0_p0_b1.jsonl",
-      "trace_sha256": "36feef04ae18189758e8492dc8b5205369ec614bd6587ee0037e0ae945b6e54b"
+      "trace_sha256": "292fbf2b99056746cd35ceceb2a648385483884d910027b169e6d7257823500e"
     },
     {
       "description": "Bounded XOR ecall_get_attestation_key@1.key_id[1] ^= 0xaa",
@@ -274,7 +276,7 @@
       "run_id": "layer2_xor_e0_s1_p0_b1",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_xor_e0_s1_p0_b1.jsonl",
-      "trace_sha256": "3165ed63d54ec43723e0ee7c0711744649af6ad779e9972eec93c6e3661d6337"
+      "trace_sha256": "f10a8be4fb848c2c554b4a9c7a234e1f8d3e6b5af8ceb4ec056bec7c23b92d32"
     },
     {
       "description": "Bounded XOR ecall_get_attestation_key@2.key_id[1] ^= 0xaa",
@@ -287,7 +289,7 @@
       "run_id": "layer2_xor_e0_s2_p0_b1",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_xor_e0_s2_p0_b1.jsonl",
-      "trace_sha256": "cd7761fe04b39950bd0e4f0c26dea896438395ba03642b08761cab623c36b218"
+      "trace_sha256": "817e36631ac5a4c54c35ad2a01743bbcebf6f68af25eece0433a6c3be8cb1791"
     },
     {
       "description": "Bounded XOR ecall_get_attestation_key@0.key_id[15] ^= 0xaa",
@@ -300,7 +302,7 @@
       "run_id": "layer2_xor_e0_s0_p0_b15",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_xor_e0_s0_p0_b15.jsonl",
-      "trace_sha256": "971dcff7ae51ae935c1eac650153a7ef50eac97082fb18d4d9f32135128194fb"
+      "trace_sha256": "f479411840fc215ca067371155734d27c060853a4b9e78fe6f7ca27638039409"
     },
     {
       "description": "Bounded XOR ecall_get_attestation_key@1.key_id[15] ^= 0xaa",
@@ -313,7 +315,7 @@
       "run_id": "layer2_xor_e0_s1_p0_b15",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_xor_e0_s1_p0_b15.jsonl",
-      "trace_sha256": "a70576c01e18c70fd0c7d98c555407a684c37e991706ab588bf04ea992963400"
+      "trace_sha256": "9eef1b4be0aad95f5afcfaa8e9cac0c6d4b6e117e6604c361aa4ded9b8473f86"
     },
     {
       "description": "Bounded XOR ecall_get_attestation_key@2.key_id[15] ^= 0xaa",
@@ -326,7 +328,7 @@
       "run_id": "layer2_xor_e0_s2_p0_b15",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_xor_e0_s2_p0_b15.jsonl",
-      "trace_sha256": "ec3f3b0ac87961642a7135774d9f679e037252b7b050fbc8c13d5cdfafc5834b"
+      "trace_sha256": "a761f23bf76df6f2121d33ceef71d33d9885b7a5fc9f719f5ff00c74cec845da"
     },
     {
       "description": "Bounded XOR ecall_get_attestation_key@0.key_id[16] ^= 0xaa",
@@ -339,7 +341,7 @@
       "run_id": "layer2_xor_e0_s0_p0_b16",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_xor_e0_s0_p0_b16.jsonl",
-      "trace_sha256": "00f177e8ec792e13c8ae716b740042a060a0b9ef005878c11e661281ce9c8364"
+      "trace_sha256": "0c9e952cc86cfbc2e489942651c571c71e5acd469f82067ab1157072f708ee83"
     },
     {
       "description": "Bounded XOR ecall_get_attestation_key@1.key_id[16] ^= 0xaa",
@@ -352,7 +354,7 @@
       "run_id": "layer2_xor_e0_s1_p0_b16",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_xor_e0_s1_p0_b16.jsonl",
-      "trace_sha256": "d1c2362b6a9aa916252fd7bc54f1aa82dbfa8dcd4caeb929a82fbd0c9ee32c06"
+      "trace_sha256": "744b7333df31358c3492d395e2077379f6272de52e7ba56dcacd04674a741bd6"
     },
     {
       "description": "Bounded XOR ecall_get_attestation_key@2.key_id[16] ^= 0xaa",
@@ -365,7 +367,7 @@
       "run_id": "layer2_xor_e0_s2_p0_b16",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_xor_e0_s2_p0_b16.jsonl",
-      "trace_sha256": "23f86749ebf483e4201c16a2f00abe6dbd3cb36eede99d2c4c9682fb88349338"
+      "trace_sha256": "6cd65404d9b3359f4ecea01a044ceb56a1098c3f40916832a4ff68d599d28a46"
     },
     {
       "description": "Bounded XOR ecall_get_attestation_key@0.key_id[31] ^= 0xaa",
@@ -378,7 +380,7 @@
       "run_id": "layer2_xor_e0_s0_p0_b31",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_xor_e0_s0_p0_b31.jsonl",
-      "trace_sha256": "ec3346ca434bc1a3915b8c126be7a8428cfff78483bf2d9c3ac5487fc1688fe2"
+      "trace_sha256": "7a131c67523e861e397a064b03711f0539db005aea5087fdb9dfe005bbebd934"
     },
     {
       "description": "Bounded XOR ecall_get_attestation_key@1.key_id[31] ^= 0xaa",
@@ -391,7 +393,7 @@
       "run_id": "layer2_xor_e0_s1_p0_b31",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_xor_e0_s1_p0_b31.jsonl",
-      "trace_sha256": "68e95e5edddeee84260a3196d2d36b0bb7570435be76577088be7743c78ffa33"
+      "trace_sha256": "bdb64bfb14b8afd5428c8273712a0970744d77a7901e03a6f7c0d0e6709edb2b"
     },
     {
       "description": "Bounded XOR ecall_get_attestation_key@2.key_id[31] ^= 0xaa",
@@ -404,7 +406,7 @@
       "run_id": "layer2_xor_e0_s2_p0_b31",
       "subkind": "isolated_single_mutation_replay",
       "trace_jsonl": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer2_xor_e0_s2_p0_b31.jsonl",
-      "trace_sha256": "8e2c4f2fc89966e359bda6d0c5e682582eb57fefd400f55d1f5ef296edd8379e"
+      "trace_sha256": "879e0bfa995f502430d0349088432a71ceb29ab7fac7add0090ccf0f808ff862"
     }
   ],
   "sample": "qe3",
@@ -412,6 +414,7 @@
   "unexplored_frontier": {
     "all_generated_specs_count": 21,
     "failed_repeat_selectors": {},
+    "frontier_snapshots_by_step": {},
     "observed_field_positions": {
       "0": [
         0,
@@ -849,8 +852,8 @@
       "total_field_obs_effects": 77,
       "total_field_obs_pages": 69,
       "trace_file": "/home/meandssh/islands-sgx/dynamic/experiments/raw_traces/qe3/layer0_and_layer1_unmodified_host.jsonl",
-      "trace_sha256": "6c867f0167bb07474d1c67fad78029c5dde7bf07c52ba144a00b81312c95bfeb",
-      "tsc_s3": 4273948,
+      "trace_sha256": "f03730a9d26e91cfcd5aa63ebc63c0a104b19435cd3bff4f03b7b5a579f77eec",
+      "tsc_s3": 3107212,
       "witness_id": "qe3_layer0_and_layer1_unmodified_host_seq0_ec70f8"
     }
   ]

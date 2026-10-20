@@ -11,6 +11,8 @@ DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
 sys.path.insert(0, str(DYN_ROOT / "tools"))
 
 from acceptance_validator import (
+    evaluate_regression_workflow_case,
+    extract_valid_s3_effects,
     is_valid_measurement_run,  # noqa: E402
     sha256_path,
     validate_diagnostic_4gate_run,
@@ -696,58 +698,71 @@ def run_frozen_workset_generalization_suite(
     ready_sel_set: set[int],
 ) -> dict:
     """Evaluate the FROZEN Group B workset (`workset.dynamic_xr.json` & `enclave.dynamic_xr.final.signed.so`)
-    across 10 independent unseen multi-step workflows per configuration varying input lengths, contents,
-    and valid call histories (including the ported 6-case upstream `sabd-enclave-test.c` Cmockery suite
-    on `signal-cds`).
+    across 10 predetermined end-to-end regression cases per configuration (60 cases total across the
+    4 applications / 6 configurations).
+    Each case is evaluated on BOTH `profile_4gate` (coverage) and `dynamic_xr_final` (frozen protected
+    production enclave with `AEX-Notify=1` and `ReadyTable v3`) and reports FOUR separate verdicts:
+      1. `measurement_valid_count`
+      2. `business_workflow_completed_count` (enforcing `min_rec`, `expected_fids`, `expected_tags`, `rc==0`, `PASS`)
+      3. `workset_coverage_zero_omission_count`
+      4. `frozen_protected_enclave_completed_count` (plus `protected_aex1_0x1006_retries`)
+    Note: Because these 60 cases are a predetermined regression matrix rather than random draws from a
+    formally specified input distribution, no binomial probability upper bound is claimed.
     """
     if sample == "signal-cds":
         unseen_specs = [
-            {"id": "upstream_cmockery_seed10001_n128", "host_args": ["--upstream-cmockery-test", "--seed", "10001", "--in-jids", "128"], "intervention": "", "min_rec": 95},
-            {"id": "upstream_cmockery_seed20002_n512", "host_args": ["--upstream-cmockery-test", "--seed", "20002", "--in-jids", "512"], "intervention": "", "min_rec": 95},
-            {"id": "upstream_cmockery_seed30003_n1024", "host_args": ["--upstream-cmockery-test", "--seed", "30003", "--in-jids", "1024"], "intervention": "", "min_rec": 95},
-            {"id": "upstream_cmockery_seed40004_n2048", "host_args": ["--upstream-cmockery-test", "--seed", "40004", "--in-jids", "2048"], "intervention": "", "min_rec": 95},
-            {"id": "upstream_cmockery_seed50005_n4096", "host_args": ["--upstream-cmockery-test", "--seed", "50005", "--in-jids", "4096"], "intervention": "", "min_rec": 95},
-            {"id": "unseen_grid_r19_q13_req3", "host_args": ["--records", "19", "--queries", "13", "--requests", "3"], "intervention": "", "min_rec": 9},
-            {"id": "unseen_grid_r63_q37_req4", "host_args": ["--records", "63", "--queries", "37", "--requests", "4"], "intervention": "", "min_rec": 10},
-            {"id": "unseen_grid_r250_q99_req3", "host_args": ["--records", "250", "--queries", "99", "--requests", "3"], "intervention": "", "min_rec": 9},
-            {"id": "unseen_grid_r1023_q255_req2", "host_args": ["--records", "1023", "--queries", "255", "--requests", "2"], "intervention": "", "min_rec": 8},
-            {"id": "unseen_grid_r2047_q511_req2", "host_args": ["--records", "2047", "--queries", "511", "--requests", "2"], "intervention": "", "min_rec": 8},
+            {"id": "upstream_cmockery_seed10001_n128", "host_args": ["--upstream-cmockery-test", "--seed", "10001", "--in-jids", "128"], "intervention": "", "min_rec": 95, "expected_tags": {"host_normal"}},
+            {"id": "upstream_cmockery_seed20002_n512", "host_args": ["--upstream-cmockery-test", "--seed", "20002", "--in-jids", "512"], "intervention": "", "min_rec": 95, "expected_tags": {"host_normal"}},
+            {"id": "upstream_cmockery_seed30003_n1024", "host_args": ["--upstream-cmockery-test", "--seed", "30003", "--in-jids", "1024"], "intervention": "", "min_rec": 95, "expected_tags": {"host_normal"}},
+            {"id": "upstream_cmockery_seed40004_n2048", "host_args": ["--upstream-cmockery-test", "--seed", "40004", "--in-jids", "2048"], "intervention": "", "min_rec": 95, "expected_tags": {"host_normal"}},
+            {"id": "upstream_cmockery_seed50005_n4096", "host_args": ["--upstream-cmockery-test", "--seed", "50005", "--in-jids", "4096"], "intervention": "", "min_rec": 95, "expected_tags": {"host_normal"}},
+            {"id": "unseen_grid_r19_q13_req3", "host_args": ["--records", "19", "--queries", "13", "--requests", "3"], "intervention": "", "min_rec": 9, "expected_tags": {"host_normal"}},
+            {"id": "unseen_grid_r63_q37_req4", "host_args": ["--records", "63", "--queries", "37", "--requests", "4"], "intervention": "", "min_rec": 10, "expected_tags": {"host_normal"}},
+            {"id": "unseen_grid_r250_q99_req3", "host_args": ["--records", "250", "--queries", "99", "--requests", "3"], "intervention": "", "min_rec": 9, "expected_tags": {"host_normal"}},
+            {"id": "unseen_grid_r1023_q255_req2", "host_args": ["--records", "1023", "--queries", "255", "--requests", "2"], "intervention": "", "min_rec": 8, "expected_tags": {"host_normal"}},
+            {"id": "unseen_grid_r2047_q511_req2", "host_args": ["--records", "2047", "--queries", "511", "--requests", "2"], "intervention": "", "min_rec": 8, "expected_tags": {"host_normal"}},
         ]
     elif sample == "qe3":
         unseen_specs = [
-            {"id": f"unseen_keyid_xor_b{b}_m{m}", "host_args": [], "intervention": f"xor_param:0:0:0:{b}:{m}", "min_rec": 3}
+            {"id": f"unseen_keyid_xor_b{b}_m{m}", "host_args": [], "intervention": f"xor_param:0:0:0:{b}:{m}", "min_rec": 4, "expected_tags": {f"schema_xor_p0_byte_{b}"}}
             for b, m in ((2, 0x3C), (5, 0x5A), (9, 0xA5), (13, 0xC3), (19, 0x7E), (23, 0xE7), (27, 0x1B), (29, 0xB1))
         ] + [
-            {"id": "unseen_history_rep3", "host_args": [], "intervention": "repeat:0:0:3", "min_rec": 5},
-            {"id": "unseen_history_rep5", "host_args": [], "intervention": "repeat:0:0:5", "min_rec": 7},
+            {"id": "unseen_history_rep3", "host_args": [], "intervention": "repeat:0:0:3", "min_rec": 6, "expected_tags": {"generic_repeat_3_of_3"}},
+            {"id": "unseen_history_rep5", "host_args": [], "intervention": "repeat:0:0:5", "min_rec": 8, "expected_tags": {"generic_repeat_5_of_5"}},
         ]
     elif sample == "sgxwallet":
         unseen_specs = [
-            {"id": f"unseen_msg_xor_s0_b{b}", "host_args": [], "intervention": f"xor_param:6:0:2:{b}:90", "min_rec": 18}
+            {"id": f"unseen_msg_xor_s0_b{b}", "host_args": [], "intervention": f"xor_param:6:0:2:{b}:90", "min_rec": 19, "expected_tags": {f"schema_xor_p2_byte_{b}"}}
             for b in (3, 7, 11, 19, 23, 29)
         ] + [
-            {"id": "unseen_sign_history_rep4", "host_args": [], "intervention": "repeat:6:0:4", "min_rec": 21},
-            {"id": "unseen_sign_history_rep8", "host_args": [], "intervention": "repeat:6:0:8", "min_rec": 25},
-            {"id": "unseen_pubkey_history_rep3", "host_args": [], "intervention": "repeat:5:0:3", "min_rec": 20},
-            {"id": "unseen_keygen_history_rep2", "host_args": [], "intervention": "repeat:4:0:2", "min_rec": 19},
+            {"id": "unseen_sign_history_rep4", "host_args": [], "intervention": "repeat:6:0:4", "min_rec": 22, "expected_tags": {"generic_repeat_4_of_4"}},
+            {"id": "unseen_sign_history_rep8", "host_args": [], "intervention": "repeat:6:0:8", "min_rec": 26, "expected_tags": {"generic_repeat_8_of_8"}},
+            {"id": "unseen_pubkey_history_rep3", "host_args": [], "intervention": "repeat:5:0:3", "min_rec": 21, "expected_tags": {"generic_repeat_3_of_3"}},
+            {"id": "unseen_keygen_history_rep2", "host_args": [], "intervention": "repeat:4:0:2", "min_rec": 20, "expected_tags": {"generic_repeat_2_of_2"}},
         ]
     else:
         base_min = 32 if sample == "ehsm" else 19
+        r3_min = 36 if sample == "ehsm" else 21
+        r4_min = 40 if sample == "ehsm" else 23
         sseq_enc = 1 if sample == "ehsm" else 0
         unseen_specs = [
-            {"id": "unseen_compat_or_b1024_r3", "host_args": ["--bytes", "1024", "--requests", "3"] if sample == "ehsm" else ["--compat-check"], "intervention": "", "min_rec": 24},
-            {"id": "unseen_host_b48_r2", "host_args": ["--bytes", "48", "--requests", "2"], "intervention": "", "min_rec": base_min},
-            {"id": "unseen_host_b192_r3", "host_args": ["--bytes", "192", "--requests", "3"], "intervention": "", "min_rec": base_min},
-            {"id": "unseen_host_b384_r2", "host_args": ["--bytes", "384", "--requests", "2"], "intervention": "", "min_rec": base_min},
-            {"id": "unseen_host_b768_r3", "host_args": ["--bytes", "768", "--requests", "3"], "intervention": "", "min_rec": base_min},
-            {"id": "unseen_host_b1536_r4", "host_args": ["--bytes", "1536", "--requests", "4"], "intervention": "", "min_rec": base_min},
-            {"id": "unseen_host_b3072_r2", "host_args": ["--bytes", "3072", "--requests", "2"], "intervention": "", "min_rec": base_min},
-            {"id": "unseen_aad_xor_b3", "host_args": [], "intervention": f"xor_param:2:{sseq_enc}:2:3:90", "min_rec": base_min + 1},
-            {"id": "unseen_plain_xor_b15", "host_args": [], "intervention": f"xor_param:2:{sseq_enc}:4:15:165", "min_rec": base_min + 1},
-            {"id": "unseen_decrypt_rep4", "host_args": [], "intervention": f"repeat:3:{sseq_enc}:4", "min_rec": base_min + 3},
+            {"id": "unseen_compat_or_b1024_r3", "host_args": ["--bytes", "1024", "--requests", "3"] if sample == "ehsm" else ["--compat-check"], "intervention": "", "min_rec": r3_min if sample == "ehsm" else 23, "expected_tags": {"host_normal"}},
+            {"id": "unseen_host_b48_r2", "host_args": ["--bytes", "48", "--requests", "2"], "intervention": "", "min_rec": base_min, "expected_tags": {"host_normal"}},
+            {"id": "unseen_host_b192_r3", "host_args": ["--bytes", "192", "--requests", "3"], "intervention": "", "min_rec": r3_min, "expected_tags": {"host_normal"}},
+            {"id": "unseen_host_b384_r2", "host_args": ["--bytes", "384", "--requests", "2"], "intervention": "", "min_rec": base_min, "expected_tags": {"host_normal"}},
+            {"id": "unseen_host_b768_r3", "host_args": ["--bytes", "768", "--requests", "3"], "intervention": "", "min_rec": r3_min, "expected_tags": {"host_normal"}},
+            {"id": "unseen_host_b1536_r4", "host_args": ["--bytes", "1536", "--requests", "4"], "intervention": "", "min_rec": r4_min, "expected_tags": {"host_normal"}},
+            {"id": "unseen_host_b3072_r2", "host_args": ["--bytes", "3072", "--requests", "2"], "intervention": "", "min_rec": base_min, "expected_tags": {"host_normal"}},
+            {"id": "unseen_aad_xor_b3", "host_args": [], "intervention": f"xor_param:2:{sseq_enc}:2:3:90", "min_rec": base_min + 1, "expected_tags": {"schema_xor_p2_byte_3"}},
+            {"id": "unseen_plain_xor_b15", "host_args": [], "intervention": f"xor_param:2:{sseq_enc}:4:15:165", "min_rec": base_min + 1, "expected_tags": {"schema_xor_p4_byte_15"}},
+            {"id": "unseen_decrypt_rep4", "host_args": [], "intervention": f"repeat:3:{sseq_enc}:4", "min_rec": base_min + 4, "expected_tags": {"generic_repeat_4_of_4"}},
         ]
 
-    workflows_with_omission = 0
+    meas_valid_cnt = 0
+    biz_completed_cnt = 0
+    cov_zero_omission_cnt = 0
+    prod_completed_cnt = 0
+    prod_aex_retries = 0
     max_omitted_pages = 0
     max_omitted_effects = 0
     total_ecalls_evaluated = 0
@@ -755,7 +770,7 @@ def run_frozen_workset_generalization_suite(
     workflow_details = []
 
     for idx_w, wsp in enumerate(unseen_specs):
-        rw = run_sample(
+        rw_cov = run_sample(
             sample,
             mode="profile_4gate",
             ipi_mask=7,
@@ -764,52 +779,59 @@ def run_frozen_workset_generalization_suite(
             allow_fast_forward=0,
             persist_prefix=raw_dir / f"holdout_unseen_wf_{idx_w:02d}_{wsp['id']}",
         )
-        ok_m, m_reasons = is_valid_measurement_run(rw, allow_nonzero_rc=True, require_ipi_mask=7, require_nonempty_s3=True)
-        if not ok_m:
-            raise RuntimeError(f"Unseen workflow {wsp['id']} on {sample} failed measurement admission: {m_reasons}")
+        rw_prod = {}
+        for att in range(4):
+            sfx = "" if att == 0 else f"_retry{att}"
+            rw_prod = run_sample(
+                sample,
+                mode="dynamic_xr_final",
+                ipi_mask=0,
+                intervention=wsp["intervention"],
+                host_args=wsp["host_args"],
+                allow_fast_forward=0,
+                persist_prefix=raw_dir / f"holdout_unseen_wf_{idx_w:02d}_{wsp['id']}_prod_aex1{sfx}",
+            )
+            if not any(r.get("sgx_status") == 0x1006 for r in rw_prod.get("records", [])):
+                break
+            prod_aex_retries += 1
 
-        omitted_pages_wf: set[tuple[str, int]] = set()
-        omitted_effects_wf: set[tuple[str, int, str]] = set()
-        wf_fentries = 0
-        for rec in rw["records"]:
-            for fo in rec["fields"]:
-                wf_fentries += 1
-                fid = fo["field_id"]
-                allowed = closed_target_effects_by_fid.get(fid, set())
-                for it in fo["s3"]:
-                    rva = int(it["rva"], 16)
-                    ad = it["ad"]
-                    if (rva, "A") not in allowed:
-                        omitted_pages_wf.add((fid, rva))
-                        omitted_effects_wf.add((fid, rva, "A"))
-                    if ad == "D" and (rva, "D") not in allowed:
-                        omitted_pages_wf.add((fid, rva))
-                        omitted_effects_wf.add((fid, rva, "D"))
+        case_res = evaluate_regression_workflow_case(
+            wsp,
+            rw_cov,
+            rw_prod,
+            expected_fids=expected_fids,
+            closed_target_effects_by_fid=closed_target_effects_by_fid,
+            ready_sel_set=ready_sel_set,
+        )
+        if not (
+            case_res["measurement_valid"]
+            and case_res["business_workflow_completed"]
+            and case_res["workset_coverage_zero_omission"]
+            and case_res["frozen_protected_enclave_completed"]
+        ):
+            raise RuntimeError(f"Predetermined regression workflow {wsp['id']} on {sample} failed 4-verdict check: {case_res}")
 
-        total_ecalls_evaluated += len(rw["records"])
-        total_field_entries += wf_fentries
-        if omitted_effects_wf:
-            workflows_with_omission += 1
-        max_omitted_pages = max(max_omitted_pages, len(omitted_pages_wf))
-        max_omitted_effects = max(max_omitted_effects, len(omitted_effects_wf))
-        workflow_details.append({
-            "workflow_id": wsp["id"],
-            "ecalls": len(rw["records"]),
-            "field_entries": wf_fentries,
-            "omitted_pages_count": len(omitted_pages_wf),
-            "omitted_effects_count": len(omitted_effects_wf),
-            "trace_sha256": rw["trace_sha256"],
-        })
+        meas_valid_cnt += int(case_res["measurement_valid"])
+        biz_completed_cnt += int(case_res["business_workflow_completed"])
+        cov_zero_omission_cnt += int(case_res["workset_coverage_zero_omission"])
+        prod_completed_cnt += int(case_res["frozen_protected_enclave_completed"])
+        total_ecalls_evaluated += case_res["ecalls"]
+        total_field_entries += case_res["field_entries"]
+        max_omitted_pages = max(max_omitted_pages, case_res["omitted_pages_count"] or 0)
+        max_omitted_effects = max(max_omitted_effects, case_res["omitted_effects_count"] or 0)
+        workflow_details.append(case_res)
 
     n_wf = len(unseen_specs)
-    p_upper_95 = round(1.0 - (0.05 ** (1.0 / n_wf)), 4) if workflows_with_omission == 0 else 1.0
     return {
-        "independent_workflows_evaluated": n_wf,
+        "predetermined_cases_count": n_wf,
+        "measurement_valid_count": meas_valid_cnt,
+        "business_workflow_completed_count": biz_completed_cnt,
+        "workset_coverage_zero_omission_count": cov_zero_omission_cnt,
+        "frozen_protected_enclave_completed_count": prod_completed_cnt,
+        "protected_aex1_0x1006_retries": prod_aex_retries,
         "total_ecalls_evaluated": total_ecalls_evaluated,
         "total_field_entries_evaluated": total_field_entries,
-        "workflows_with_any_omission": workflows_with_omission,
-        "workflow_omission_rate": round(workflows_with_omission / n_wf, 4),
-        "clopper_pearson_95_upper_bound_on_tested_distribution": p_upper_95,
+        "workflows_with_any_omission": n_wf - cov_zero_omission_cnt,
         "worst_case_omitted_pages_per_workflow": max_omitted_pages,
         "worst_case_omitted_effects_per_workflow": max_omitted_effects,
         "workflows": workflow_details,

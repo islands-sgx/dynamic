@@ -21,7 +21,7 @@ import random
 import time
 from typing import Callable
 
-from acceptance_validator import is_valid_measurement_run
+from acceptance_validator import extract_valid_s3_effects, is_valid_measurement_run
 from generic_explorer import (
     build_scale_bound_v2_spec,
     get_scalable_bound_offsets,
@@ -67,16 +67,11 @@ def extract_concrete_record_feedback(rec: dict) -> dict:
         stack_win_lo = max(0, min(gb, gd) - 16 * 4096) if (gb and gd) else 0
         stack_win_hi = rsp_anchor + 4 * 4096 if rsp_anchor else 0
         f_stack_rvas: set[int] = set()
-        for item in fobs.get("s3", []):
-            rva = int(item["rva"], 16)
-            ad = item["ad"]
+        for rva, eff in extract_valid_s3_effects(fobs):
             s3_field_pages.add((fid, rva))
             s3_rva_pages.add(rva)
-            s3_field_effects.add((fid, rva, "A"))
-            s3_rva_effects.add((rva, "A"))
-            if ad == "D":
-                s3_field_effects.add((fid, rva, "D"))
-                s3_rva_effects.add((rva, "D"))
+            s3_field_effects.add((fid, rva, eff))
+            s3_rva_effects.add((rva, eff))
             if rsp_anchor and stack_win_lo <= rva <= stack_win_hi:
                 f_stack_rvas.add(rva)
         observed_stack_pages = max(observed_stack_pages, len(f_stack_rvas))
@@ -502,10 +497,13 @@ class ExplorationKernel:
         res = self.runner_fn(plan)
         recs = res.get("records") or []
         self.total_ecalls += len(recs)
+        req_ipi = (4 if plan.get("family") == "history" else 7) if "ipi_mask" in res else None
         valid_meas, meas_reasons = is_valid_measurement_run(
             res,
             allow_nonzero_rc=bool(plan.get("allow_nonzero_rc", False) or plan.get("family", "seed") != "seed"),
+            require_ipi_mask=req_ipi,
             require_nonempty_s3=True,
+            require_aex_counter=True,
         )
         if not valid_meas:
             self.measurement_invalid_runs += 1
@@ -526,6 +524,7 @@ class ExplorationKernel:
                 "tag": plan.get("tag", "seed"),
                 "family": plan.get("family", "seed"),
                 "spec": plan.get("spec", ""),
+                "source_queue": plan.get("_source_queue", "seed"),
                 "measurement_invalid": True,
                 "invalid_reasons": meas_reasons,
                 "new_effects_count": 0,
@@ -609,6 +608,8 @@ class ExplorationKernel:
             "tag": plan.get("tag", "seed"),
             "family": plan.get("family", "seed"),
             "spec": plan.get("spec", ""),
+            "source_queue": plan.get("_source_queue", "seed"),
+            "measurement_invalid": False,
             "new_effects_count": len(new_concrete_field_effects),
             "new_state_keys": new_state_keys,
             "target_new_state_keys": target_new_state_keys,
@@ -836,20 +837,31 @@ class ExplorationKernel:
             cand["spec"] for q in queues.values() for cand in q if cand.get("spec")
         }
 
+        frontier_snapshots_by_step: dict[int, list[str]] = {}
+
+        def snapshot_remaining_specs() -> list[str]:
+            return (
+                [c["spec"] for c in self.follow_up_queue if c.get("spec")]
+                + [c["spec"] for q in queues.values() for c in q if c.get("spec")]
+                + [c["spec"] for c in self.secondary_branch_queue if c.get("spec")]
+                + [c["spec"] for c in self.low_priority_queue if c.get("spec")]
+            )
+
         fam_idx = 0
         turn = 0
         while self._can_continue():
             if self.mode == "feedback_guided" and self.follow_up_queue:
                 cand = self.follow_up_queue.pop(0)
+                cand["_source_queue"] = "follow_up_queue"
             elif self.mode == "feedback_guided" and self.secondary_branch_queue and turn > 0 and turn % 16 == 0:
-                # Periodic anti-starvation turn for secondary branches on already-hit parameter slots
                 cand = self.secondary_branch_queue.pop(0)
+                cand["_source_queue"] = "secondary_branch_queue_periodic"
             elif self.mode == "feedback_guided" and self.low_priority_queue and turn > 0 and turn % 28 == 14:
-                # Periodic anti-starvation budget share for low_priority_queue
                 cand = self.low_priority_queue.pop(0)
+                cand["_source_queue"] = "low_priority_queue_periodic"
             elif self.mode in ("feedback_guided", "static_priority_no_feedback") and queues.get("content") and turn > 0 and turn % 36 == 26:
-                # Periodic anti-starvation budget share for content mutations
                 cand = queues["content"].pop(0)
+                cand["_source_queue"] = "content_periodic"
             elif self.mode in ("feedback_guided", "static_priority_no_feedback"):
                 structural_fams = [f for f in ("replace_prefix", "scale", "joint", "slice_rel", "boundary", "history") if queues.get(f)]
                 if structural_fams:
@@ -859,12 +871,16 @@ class ExplorationKernel:
                         fam = structural_fams[fam_idx % len(structural_fams)]
                         fam_idx += 1
                     cand = queues[fam].pop(0)
+                    cand["_source_queue"] = f"primary_{fam}"
                 elif self.secondary_branch_queue:
                     cand = self.secondary_branch_queue.pop(0)
+                    cand["_source_queue"] = "secondary_branch_queue_drain"
                 elif self.low_priority_queue:
                     cand = self.low_priority_queue.pop(0)
+                    cand["_source_queue"] = "low_priority_queue_drain"
                 elif queues.get("content"):
                     cand = queues["content"].pop(0)
+                    cand["_source_queue"] = "content_drain"
                 else:
                     self.stop_reason = "candidates_exhausted"
                     break
@@ -873,8 +889,10 @@ class ExplorationKernel:
                 if not avail_fams:
                     if self.secondary_branch_queue:
                         cand = self.secondary_branch_queue.pop(0)
+                        cand["_source_queue"] = "secondary_branch_queue_drain"
                     elif self.low_priority_queue:
                         cand = self.low_priority_queue.pop(0)
+                        cand["_source_queue"] = "low_priority_queue_drain"
                     else:
                         self.stop_reason = "candidates_exhausted"
                         break
@@ -882,6 +900,7 @@ class ExplorationKernel:
                     fam = avail_fams[fam_idx % len(avail_fams)]
                     fam_idx += 1
                     cand = queues[fam].pop(0)
+                    cand["_source_queue"] = f"round_robin_{fam}"
 
             turn += 1
             plan = {
@@ -892,6 +911,8 @@ class ExplorationKernel:
             _, delta = self._execute_plan(plan)
             if self.mode == "feedback_guided":
                 self._update_feedback_and_spawn(plan, delta, queues, spawned_tags)
+            if self.enclave_creations in (68, 128, 256):
+                frontier_snapshots_by_step[self.enclave_creations] = snapshot_remaining_specs()
 
         remaining_by_family = {f: len(q) for f, q in queues.items() if q}
         all_deferred = self.secondary_branch_queue + self.low_priority_queue
@@ -944,6 +965,7 @@ class ExplorationKernel:
                 "remaining_low_priority_tags": [c["tag"] for c in all_deferred],
                 "remaining_followup_candidates": len(self.follow_up_queue),
                 "remaining_specs": remaining_specs,
+                "frontier_snapshots_by_step": frontier_snapshots_by_step,
                 "all_generated_specs_count": len(all_generated_specs),
                 "unexplored_history_depths": unexplored_hist,
                 "total_unexplored_candidates": (

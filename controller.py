@@ -269,6 +269,7 @@ def explore_and_close_sample(sample: str) -> dict:
     ecall_stats: dict[int, dict] = {}
     witness_ledger = []
     run_summaries = []
+    rejected_invalid_runs = []
     feedback_trace = []
 
     def ingest_run(plan: dict, res: dict, is_baseline_host: bool = False, is_seed_isolated: bool = False) -> int:
@@ -279,11 +280,25 @@ def explore_and_close_sample(sample: str) -> dict:
         ok_m, m_reasons = is_valid_measurement_run(
             res,
             allow_nonzero_rc=(not is_baseline_host or bool(plan.get("allow_nonzero_rc", False))),
+            require_ipi_mask=res.get("ipi_mask", 7),
             require_nonempty_s3=True,
+            require_aex_counter=True,
         )
         if not ok_m:
             if is_baseline_host:
                 raise RuntimeError(f"Baseline discovery run {plan['run_id']} on {sample} failed measurement admission: {m_reasons}")
+            rejected_invalid_runs.append({
+                "run_id": plan["run_id"],
+                "layer": plan["layer"],
+                "subkind": plan["subkind"],
+                "intervention": plan.get("intervention", ""),
+                "description": plan["desc"],
+                "trace_jsonl": str((raw_trace_dir / plan["run_id"]).with_suffix(".jsonl")),
+                "trace_sha256": res["trace_sha256"],
+                "returncode": res["returncode"],
+                "records_collected": len(res["records"]),
+                "invalid_reasons": m_reasons,
+            })
             return 0
 
         run_new_effects = 0
@@ -858,6 +873,8 @@ def explore_and_close_sample(sample: str) -> dict:
         "feedback_trace": feedback_trace,
         "ecall_statistics": ecall_stats,
         "runs": run_summaries,
+        "rejected_invalid_runs_count": len(rejected_invalid_runs),
+        "rejected_invalid_runs": rejected_invalid_runs,
         "closure_breakdown": closure_breakdown,
         "witnesses": witness_ledger,
     }
@@ -873,7 +890,7 @@ def main() -> None:
         existing_sha = json.loads(strat_path.read_text()).get("frozen_kernel_commit_sha", "")
     if not existing_sha:
         existing_sha = subprocess.check_output(["git", "-C", str(DYN_ROOT), "rev-parse", "HEAD"], text=True).strip()
-    if not strat_path.is_file() or not sys.argv[1:] or set(sys.argv[1:]) == set(SAMPLES):
+    if not strat_path.is_file() or not sys.argv[1:] or len(samples) == 6:
         hw_challenge_res = run_real_hardware_challenge_ablation(max_enclave_budget=68, seeds=(101, 102, 103, 104, 105))
     else:
         hw_challenge_res = json.loads(strat_path.read_text())["real_hardware_challenge_enclaves"]

@@ -170,7 +170,6 @@ def run_sample(
         use_4gate == 0
         and not strict_mode
         and not strict_ready_file
-        and not intervention
         and not dump_dir
         and stop_after_call is None
         and not stop_after_selector

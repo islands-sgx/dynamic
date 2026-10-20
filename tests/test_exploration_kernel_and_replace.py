@@ -44,10 +44,10 @@ class TestExplorationKernelAndReplace(unittest.TestCase):
                         "measurement_invalid": False,
                         "records": [
                             {"call_seq": 0, "ecall_index": 0, "selector_seq": 0, "sgx_status": 0, "ms_retval": 0, "fields": []},
-                            {"call_seq": 1, "ecall_index": 1, "selector_seq": 0, "sgx_status": 0, "ms_retval": 0, "fields": [{"field_id": "0x1111", "s3": [{"rva": "0x12000", "ad": "D"}]}]},
-                            {"call_seq": 2, "ecall_index": 2, "selector_seq": 0, "sgx_status": 0, "ms_retval": 0, "fields": [{"field_id": "0x2222", "s3": [{"rva": "0x13000", "ad": "D"}]}]},
-                            {"call_seq": 3, "ecall_index": 3, "selector_seq": 0, "sgx_status": 0, "ms_retval": 0, "fields": [{"field_id": "0x3333", "s3": [{"rva": "0x14000", "ad": "D"}]}]},
-                            {"call_seq": 4, "ecall_index": 4, "selector_seq": 0, "sgx_status": 0, "ms_retval": 0, "fields": [{"field_id": "0x4444", "s3": [{"rva": "0x15000", "ad": "D"}]}]},
+                            {"call_seq": 1, "ecall_index": 1, "selector_seq": 0, "sgx_status": 0, "ms_retval": 0, "fields": [{"field_id": "0x1111", "ipi_aex_verified_mask": 7, "heap_walk_truncated": 0, "heap_pread_failures": 0, "s3_active_aex_count": 0, "s3": [{"rva": "0x12000", "ad": "D"}]}]},
+                            {"call_seq": 2, "ecall_index": 2, "selector_seq": 0, "sgx_status": 0, "ms_retval": 0, "fields": [{"field_id": "0x2222", "ipi_aex_verified_mask": 7, "heap_walk_truncated": 0, "heap_pread_failures": 0, "s3_active_aex_count": 0, "s3": [{"rva": "0x13000", "ad": "D"}]}]},
+                            {"call_seq": 3, "ecall_index": 3, "selector_seq": 0, "sgx_status": 0, "ms_retval": 0, "fields": [{"field_id": "0x3333", "ipi_aex_verified_mask": 7, "heap_walk_truncated": 0, "heap_pread_failures": 0, "s3_active_aex_count": 0, "s3": [{"rva": "0x14000", "ad": "D"}]}]},
+                            {"call_seq": 4, "ecall_index": 4, "selector_seq": 0, "sgx_status": 0, "ms_retval": 0, "fields": [{"field_id": "0x4444", "ipi_aex_verified_mask": 7, "heap_walk_truncated": 0, "heap_pread_failures": 0, "s3_active_aex_count": 0, "s3": [{"rva": "0x15000", "ad": "D"}]}]},
                         ],
                     }
                 eidx = plan.get("ecall_index", 2)
@@ -67,7 +67,7 @@ class TestExplorationKernelAndReplace(unittest.TestCase):
                             "tag": plan.get("tag", "probe"),
                             "sgx_status": 0,
                             "ms_retval": 0,
-                            "fields": [{"field_id": fid, "s3": [{"rva": base_rva, "ad": "D"}, *extra_page]}],
+                            "fields": [{"field_id": fid, "ipi_aex_verified_mask": 7, "heap_walk_truncated": 0, "heap_pread_failures": 0, "s3_active_aex_count": 0, "s3": [{"rva": base_rva, "ad": "D"}, *extra_page]}],
                         }
                     ],
                 }
@@ -133,6 +133,10 @@ class TestExplorationKernelAndReplace(unittest.TestCase):
                             "ms_retval": 0,
                             "fields": [{
                                 "field_id": "0x1111",
+                                "ipi_aex_verified_mask": 7,
+                                "heap_walk_truncated": 0,
+                                "heap_pread_failures": 0,
+                                "s3_active_aex_count": 0,
                                 "gateB_rsp_rva": "0x40000",
                                 "gateD_rsp_rva": "0x3f000",
                                 "s3": [{"rva": "0x12000", "ad": "D"}],
@@ -155,6 +159,10 @@ class TestExplorationKernelAndReplace(unittest.TestCase):
                         "ms_retval": 0,
                         "fields": [{
                             "field_id": "0x1111",
+                            "ipi_aex_verified_mask": 7,
+                            "heap_walk_truncated": 0,
+                            "heap_pread_failures": 0,
+                            "s3_active_aex_count": 0,
                             "gateB_rsp_rva": "0x40000",
                             "gateD_rsp_rva": rsp_d,
                             "s3": [{"rva": "0x12000", "ad": "D"}],
@@ -211,7 +219,7 @@ class TestExplorationKernelAndReplace(unittest.TestCase):
                         "selector_seq": 0,
                         "sgx_status": 0,
                         "ms_retval": 0,
-                        "fields": [{"field_id": "0x1111", "s3": s3}],
+                        "fields": [{"field_id": "0x1111", "ipi_aex_verified_mask": 7, "heap_walk_truncated": 0, "heap_pread_failures": 0, "s3_active_aex_count": 0, "s3": s3}],
                     }
                 ],
             }
@@ -245,21 +253,21 @@ class TestExplorationKernelAndReplace(unittest.TestCase):
             "selector_seq": 0,
             "sgx_status": 0,
             "ms_retval": 0,
-            "fields": [{"field_id": "0xaaaa", "s3": [{"rva": "0x12000", "ad": "A"}]}],
+            "fields": [{"field_id": "0xaaaa", "ipi_aex_verified_mask": 7, "heap_walk_truncated": 0, "heap_pread_failures": 0, "s3_active_aex_count": 0, "s3": [{"rva": "0x12000", "ad": "A"}]}],
         }
         r_sseq2 = {
             "ecall_index": 3,
             "selector_seq": 2,
             "sgx_status": 0,
             "ms_retval": 0,
-            "fields": [{"field_id": "0xaaaa", "s3": [{"rva": "0x12000", "ad": "A"}]}],
+            "fields": [{"field_id": "0xaaaa", "ipi_aex_verified_mask": 7, "heap_walk_truncated": 0, "heap_pread_failures": 0, "s3_active_aex_count": 0, "s3": [{"rva": "0x12000", "ad": "A"}]}],
         }
         r_other_field = {
             "ecall_index": 5,
             "selector_seq": 0,
             "sgx_status": 0,
             "ms_retval": 0,
-            "fields": [{"field_id": "0xbbbb", "s3": [{"rva": "0x12000", "ad": "A"}]}],
+            "fields": [{"field_id": "0xbbbb", "ipi_aex_verified_mask": 7, "heap_walk_truncated": 0, "heap_pread_failures": 0, "s3_active_aex_count": 0, "s3": [{"rva": "0x12000", "ad": "A"}]}],
         }
         fb0 = extract_concrete_record_feedback(r_sseq0)
         fb2 = extract_concrete_record_feedback(r_sseq2)
@@ -359,7 +367,7 @@ class TestExplorationKernelAndReplace(unittest.TestCase):
                             "ipi_flush_failures": 0,
                             "mutation_oob_rejected": 0,
                             "ms_retval": 0,
-                            "fields": [{"field_id": "0x1111", "s3": [{"rva": "0x12000", "ad": "D"}]}],
+                            "fields": [{"field_id": "0x1111", "ipi_aex_verified_mask": 7, "heap_walk_truncated": 0, "heap_pread_failures": 0, "s3_active_aex_count": 0, "s3": [{"rva": "0x12000", "ad": "D"}]}],
                         }
                     ],
                 }
@@ -376,7 +384,7 @@ class TestExplorationKernelAndReplace(unittest.TestCase):
                         "measurement_invalid": 1,
                         "invalid_reason": "mock_crash",
                         "ms_retval": 0,
-                        "fields": [{"field_id": "0x1111", "s3": [{"rva": "0xdead000", "ad": "D"}]}],
+                        "fields": [{"field_id": "0x1111", "ipi_aex_verified_mask": 7, "heap_walk_truncated": 0, "heap_pread_failures": 0, "s3_active_aex_count": 0, "s3": [{"rva": "0xdead000", "ad": "D"}]}],
                     }
                 ],
             }

@@ -10,6 +10,8 @@ DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
 sys.path.insert(0, str(DYN_ROOT / "tools"))
 
 from acceptance_validator import (  # noqa: E402
+    evaluate_regression_workflow_case,
+    extract_valid_s3_effects,
     is_valid_measurement_run,
     validate_challenge_ground_truth_and_holdout,
     validate_diagnostic_4gate_run,
@@ -350,6 +352,94 @@ class TestAcceptanceValidator(unittest.TestCase):
         ok3, _, r3 = validate_challenge_ground_truth_and_holdout(gt_syms, decl, fmap, ho_no_d)
         self.assertFalse(ok3)
         self.assertTrue(any("MISSING_DECLARED_GT_EFFECT_C1" in x for x in r3))
+
+
+    def test_24_failed_setup_zero_fields_not_counted_as_zero_omission_workflow(self) -> None:
+        """Regression test for predetermined workflow evaluation:
+        When a workflow returns rc=2, stdout='FAIL: setup', and only an init record with 0 Field entries,
+        `evaluate_regression_workflow_case` must mark `business_workflow_completed=False`,
+        `workset_coverage_zero_omission=False` (omitted_pages_count=None), and
+        `frozen_protected_enclave_completed=False` — NEVER counting it as a zero-omission workflow!
+        """
+        wsp = {"id": "broken_setup_case", "min_rec": 5}
+        rw_cov = {
+            "sample": "mock",
+            "returncode": 2,
+            "timed_out": False,
+            "measurement_invalid": False,
+            "stdout": "FAIL: setup",
+            "ipi_mask": 7,
+            "records": [
+                {
+                    "call_seq": 0,
+                    "ecall_index": 0,
+                    "tag": "host_normal",
+                    "sgx_status": 0,
+                    "measurement_invalid": 0,
+                    "syscall_errors": 0,
+                    "ipi_flush_failures": 0,
+                    "fast_forwarded_prior": 0,
+                    "mutation_oob_rejected": 0,
+                    "strict_mode": 0,
+                    "strict_non_ready_fault_count": 0,
+                    "fields": [],
+                }
+            ],
+        }
+        res = evaluate_regression_workflow_case(
+            wsp,
+            rw_cov,
+            None,
+            expected_fids={"0x1111111111111111"},
+            closed_target_effects_by_fid={"0x1111111111111111": {(0x1000, "A")}},
+            ready_sel_set={0},
+        )
+        self.assertFalse(res["business_workflow_completed"])
+        self.assertFalse(res["workset_coverage_zero_omission"])
+        self.assertIsNone(res["omitted_pages_count"])
+        self.assertFalse(res["frozen_protected_enclave_completed"])
+        self.assertTrue(any("UNEXPECTED_RETURNCODE_2_EXPECTED_0" in x for x in res["business_reasons"]))
+        self.assertTrue(any("NEGATIVE_STDOUT_MARKER" in x for x in res["business_reasons"]))
+        self.assertTrue(any("TRUNCATED_TRACE" in x for x in res["business_reasons"]))
+        self.assertTrue(any("MISSING_REQUIRED_FIELDS" in x for x in res["business_reasons"]))
+
+    def test_25_is_valid_measurement_run_rejects_missing_aex_broken_ad_fast_forward_and_wrong_ipi(self) -> None:
+        """Verify unified underlying check `is_valid_measurement_run` rejects:
+        1) Missing `s3_active_aex_count`,
+        2) Illegal `ad='BROKEN'` (and `extract_valid_s3_effects` raises ValueError),
+        3) `fast_forwarded_prior > 0`,
+        4) Mismatched `ipi_aex_verified_mask` (`4` vs `7`).
+        """
+        # 1. Missing s3_active_aex_count
+        r1 = make_valid_mock_run()
+        del r1["records"][0]["fields"][0]["s3_active_aex_count"]
+        ok1, rs1 = is_valid_measurement_run(r1, require_ipi_mask=7)
+        self.assertFalse(ok1)
+        self.assertTrue(any("MISSING_S3_ACTIVE_AEX_COUNT" in x for x in rs1))
+
+        # 2. Illegal ad='BROKEN'
+        r2 = make_valid_mock_run()
+        r2["records"][0]["fields"][0]["s3"][0]["ad"] = "BROKEN"
+        ok2, rs2 = is_valid_measurement_run(r2, require_ipi_mask=7)
+        self.assertFalse(ok2)
+        self.assertTrue(any("MALFORMED_S3_ITEM" in x for x in rs2))
+        with self.assertRaises(ValueError):
+            extract_valid_s3_effects(r2["records"][0]["fields"][0])
+
+        # 3. fast_forwarded_prior > 0
+        r3 = make_valid_mock_run()
+        r3["records"][0]["fast_forwarded_prior"] = 1
+        ok3, rs3 = is_valid_measurement_run(r3, require_ipi_mask=7)
+        self.assertFalse(ok3)
+        self.assertIn("RECORD_0_FAST_FORWARD_SKIPPED", rs3)
+
+        # 4. Mismatched ipi_aex_verified_mask (4 vs requested 7, and 7 vs requested 4)
+        r4 = make_valid_mock_run()
+        ok4_7, _ = is_valid_measurement_run(r4, require_ipi_mask=7)
+        self.assertTrue(ok4_7)
+        ok4_4, rs4 = is_valid_measurement_run(r4, require_ipi_mask=4)
+        self.assertFalse(ok4_4)
+        self.assertTrue(any("IPI_MASK_7_NE_4" in x for x in rs4))
 
 
 if __name__ == "__main__":

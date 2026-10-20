@@ -73,15 +73,34 @@ def check_business_pass_stdout(stdout: str, expected_stdout_substr: str) -> tupl
     return True, ""
 
 
+def extract_valid_s3_effects(fobs: dict) -> set[tuple[int, str]]:
+    """Extract `(rva, effect)` tuples from `fobs['s3']`, strictly rejecting any `ad` not in `('A', 'D')`."""
+    s3_list = fobs.get("s3")
+    if not isinstance(s3_list, list):
+        raise ValueError("fobs['s3'] must be a list")
+    effs: set[tuple[int, str]] = set()
+    for item in s3_list:
+        if not isinstance(item, dict) or "rva" not in item:
+            raise ValueError(f"Malformed S3 item: {item!r}")
+        ad = item.get("ad")
+        if ad not in ("A", "D"):
+            raise ValueError(f"Illegal S3 effect ad={ad!r} (must be 'A' or 'D')")
+        rva = int(item["rva"], 16)
+        effs.add((rva, "A"))
+        if ad == "D":
+            effs.add((rva, "D"))
+    return effs
+
+
 def validate_field_observation_dict(
     fobs: dict,
     *,
     rec_idx: int = 0,
     require_ipi_mask: int | None = None,
     require_nonempty_s3: bool = False,
-    require_aex_counter: bool = False,
+    require_aex_counter: bool = True,
 ) -> list[str]:
-    """Validate that a Field observation entry contains all required keys and well-formed S3 items."""
+    """Single authoritative validator for a Field observation dict (`fobs`)."""
     errs: list[str] = []
     if not isinstance(fobs, dict):
         return [f"RECORD_{rec_idx}_FIELD_NOT_DICT"]
@@ -100,7 +119,7 @@ def validate_field_observation_dict(
         errs.append(f"RECORD_{rec_idx}_FIELD_{fid}_EMPTY_S3_OBSERVATION")
     for item in s3_list:
         if not isinstance(item, dict) or "rva" not in item or item.get("ad") not in ("A", "D"):
-            errs.append(f"RECORD_{rec_idx}_FIELD_{fid}_MALFORMED_S3_ITEM")
+            errs.append(f"RECORD_{rec_idx}_FIELD_{fid}_MALFORMED_S3_ITEM:{item!r}")
             break
     if require_aex_counter:
         if "s3_active_aex_count" not in fobs or not isinstance(fobs.get("s3_active_aex_count"), int):
@@ -122,11 +141,16 @@ def is_valid_measurement_run(
     allow_nonzero_rc: bool = False,
     require_ipi_mask: int | None = None,
     require_nonempty_s3: bool = True,
+    require_aex_counter: bool = True,
 ) -> tuple[bool, list[str]]:
-    """Unified evidence admission gate shared by exploration feedback, reference hold-out,
-    witness confirmation, and workset merging.
-    Rejects any run with `measurement_invalid`, timeout, signal crash (`rc < 0`), unexpected
-    nonzero exit code, transport error (`sgx_status != 0`), OOB rejection, or malformed/empty S3.
+    """Unified underlying measurement admission gate shared across:
+      - ExplorationKernel feedback & discovery
+      - Reference hold-out & witness confirmation replay
+      - Workset merging (`controller.py`)
+      - Predetermined regression matrix evaluation
+    Delegates Field validation directly to `validate_field_observation_dict` so missing
+    `s3_active_aex_count`, illegal `ad="BROKEN"`, `fast_forwarded_prior > 0`, and mismatched
+    `ipi_aex_verified_mask` (e.g. `4` for history vs `7` for normal profiling) are uniformly rejected.
     """
     reasons: list[str] = []
     if not isinstance(run_res, dict):
@@ -145,6 +169,8 @@ def is_valid_measurement_run(
         reasons.append("EMPTY_TRACE")
         return False, reasons
 
+    eff_ipi_mask = require_ipi_mask if require_ipi_mask is not None else run_res.get("ipi_mask")
+
     for idx, rec in enumerate(records):
         if not isinstance(rec, dict):
             reasons.append(f"RECORD_{idx}_NOT_DICT")
@@ -157,6 +183,8 @@ def is_valid_measurement_run(
             reasons.append(f"RECORD_{idx}_SYSCALL_ERRORS_{rec.get('syscall_errors')}")
         if rec.get("ipi_flush_failures", 0) > 0:
             reasons.append(f"RECORD_{idx}_IPI_FLUSH_FAILURES_{rec.get('ipi_flush_failures')}")
+        if rec.get("fast_forwarded_prior", 0) > 0:
+            reasons.append(f"RECORD_{idx}_FAST_FORWARD_SKIPPED")
         if rec.get("mutation_oob_rejected", 0) > 0:
             reasons.append(f"RECORD_{idx}_MUTATION_OOB_REJECTED")
         fields_list = rec.get("fields")
@@ -164,17 +192,14 @@ def is_valid_measurement_run(
             reasons.append(f"RECORD_{idx}_FIELDS_NOT_LIST")
             continue
         for fobs in fields_list:
-            if not isinstance(fobs, dict) or "s3" not in fobs or not isinstance(fobs.get("s3"), list):
-                reasons.append(f"RECORD_{idx}_FIELD_MISSING_S3")
-                continue
-            if require_nonempty_s3 and len(fobs["s3"]) == 0:
-                reasons.append(f"RECORD_{idx}_FIELD_{fobs.get('field_id', '')}_EMPTY_S3")
-            if fobs.get("heap_walk_truncated", 0) != 0:
-                reasons.append(f"RECORD_{idx}_FIELD_HEAP_WALK_TRUNCATED")
-            if fobs.get("heap_pread_failures", 0) != 0:
-                reasons.append(f"RECORD_{idx}_FIELD_HEAP_PREAD_FAILURES")
-            if require_ipi_mask is not None and fobs.get("ipi_aex_verified_mask") != require_ipi_mask:
-                reasons.append(f"RECORD_{idx}_FIELD_IPI_MASK_MISMATCH")
+            f_errs = validate_field_observation_dict(
+                fobs,
+                rec_idx=idx,
+                require_ipi_mask=eff_ipi_mask,
+                require_nonempty_s3=require_nonempty_s3,
+                require_aex_counter=require_aex_counter,
+            )
+            reasons.extend(f_errs)
 
     return len(reasons) == 0, reasons
 
@@ -188,8 +213,7 @@ def validate_challenge_ground_truth_and_holdout(
     """Verify that:
     1. All 8 challenge symbols `C1..C8` exist in the ELF (`gt_syms`);
     2. All 8 challenges `C1..C8` are declared in `declared_gt` with valid `field_function` and `effects`;
-    3. Every declared `(field_id, rva, effect)` tuple is actually observed in `holdout_field_effects`
-       (never inferring expected Field or write effect D backward from potentially incomplete observations!).
+    3. Every declared `(field_id, rva, effect)` tuple is actually observed in `holdout_field_effects`.
     """
     reasons: list[str] = []
     if set(gt_syms.keys()) != EXPECTED_CHALLENGE_KEYS:
@@ -227,7 +251,7 @@ def validate_challenge_ground_truth_and_holdout(
 def validate_run_result(
     run_res: dict,
     *,
-    expected_returncode: int = 0,
+    expected_returncode: int | None = 0,
     expected_stdout_substr: str = "PASS",
     expected_min_records: int = 1,
     expected_field_ids: set[str] | None = None,
@@ -238,14 +262,13 @@ def validate_run_result(
     require_zero_strict_faults: bool = False,
     allow_nonzero_sgx_status: bool = False,
     require_nonempty_s3: bool | None = None,
-    require_aex_counter: bool = False,
+    require_aex_counter: bool = True,
 ) -> dict:
     """Return {'status': 'PASS'|'FAIL'|'INVALID'|'TIMEOUT', 'reasons': [...]}."""
     reasons: list[str] = []
     status = "PASS"
 
     if require_nonempty_s3 is None:
-        # In profiling/coverage mode (ipi_mask=7 or workset coverage check), S3 must never be empty!
         require_nonempty_s3 = (require_ipi_mask == 7 or closed_workset_effects is not None)
 
     def fail(code: str, kind: str = "FAIL") -> None:
@@ -260,11 +283,10 @@ def validate_run_result(
         fail("PROCESS_TIMED_OUT", "TIMEOUT")
 
     rc = run_res.get("returncode")
-    if rc != expected_returncode:
-        if rc is not None and rc < 0:
-            fail(f"SIGNAL_EXIT_{rc}", "FAIL")
-        else:
-            fail(f"UNEXPECTED_RETURNCODE_{rc}_EXPECTED_{expected_returncode}", "FAIL")
+    if rc is None or rc < 0:
+        fail(f"SIGNAL_EXIT_{rc}", "FAIL")
+    elif expected_returncode is not None and rc != expected_returncode:
+        fail(f"UNEXPECTED_RETURNCODE_{rc}_EXPECTED_{expected_returncode}", "FAIL")
 
     records = run_res.get("records") or []
     if len(records) == 0:
@@ -335,13 +357,12 @@ def validate_run_result(
                     fail(f"UNKNOWN_FIELD_NOT_IN_WORKSET:{fid}", "INVALID")
                 else:
                     allowed = closed_workset_effects[fid]
-                    for item in fobs.get("s3", []):
-                        rva = int(item["rva"], 16)
-                        ad = item["ad"]
-                        if (rva, "A") not in allowed:
-                            fail(f"UNCOVERED_PAGE_{hex(rva)}_IN_{fid}", "FAIL")
-                        if ad == "D" and (rva, "D") not in allowed:
-                            fail(f"UNCOVERED_WRITE_EFFECT_D_ON_{hex(rva)}_IN_{fid}", "FAIL")
+                    for rva, eff in sorted(extract_valid_s3_effects(fobs)):
+                        if (rva, eff) not in allowed:
+                            if eff == "A":
+                                fail(f"UNCOVERED_PAGE_{hex(rva)}_IN_{fid}", "FAIL")
+                            else:
+                                fail(f"UNCOVERED_WRITE_EFFECT_D_ON_{hex(rva)}_IN_{fid}", "FAIL")
 
     if require_strict_mode is not None and strict_enforced_records == 0:
         fail("STRICT_MODE_NEVER_ENFORCED_ON_ANY_FIELD_CALL", "INVALID")
@@ -362,6 +383,107 @@ def validate_run_result(
     return {"status": status, "reasons": reasons}
 
 
+def evaluate_regression_workflow_case(
+    wsp: dict,
+    rw_cov: dict,
+    rw_prod: dict | None,
+    *,
+    expected_fids: set[str],
+    closed_target_effects_by_fid: dict[str, set[tuple[int, str]]],
+    ready_sel_set: set[int],
+) -> dict:
+    """Evaluate one predetermined end-to-end regression workflow case and report FOUR separate
+    verdicts (never conflating them into a single PASS, and never counting a failed/incomplete
+    workflow with 0 Field entries as 'zero omissions'):
+      1. `measurement_valid`: Underlying 4-Gate measurement validity (`is_valid_measurement_run` with `ipi_mask=7`);
+      2. `business_workflow_completed`: Enforces `min_rec`, `expected_fids` (all target Fields entered),
+         `expected_tags` (intervention actually applied), `expected_rc` (`0` unless business rejection is expected
+         and verified), and `expected_stdout_substr` (`PASS`);
+      3. `workset_coverage_zero_omission`: Requires `measurement_valid` AND `business_workflow_completed` AND
+         `0` uncovered `(field_id, page_rva, effect)` tuples against the frozen `workset.dynamic_xr.json`;
+      4. `frozen_protected_enclave_completed`: Requires the frozen production artifact (`dynamic_xr_final` with
+         `AEX-Notify=1` and `ReadyTable v3`) to complete the identical workflow with exact ECALL sequence parity,
+         verified `enclave_pages_acquire/release`, and matching return/stdout expectations.
+    """
+    allow_nz = bool(wsp.get("allow_nonzero_rc", False))
+    exp_rc = None if allow_nz else wsp.get("expected_rc", 0)
+    exp_stdout = wsp.get("expected_stdout_substr", "" if allow_nz else "PASS")
+    exp_fids = set(wsp.get("expected_fids", expected_fids))
+    exp_tags = set(wsp["expected_tags"]) if wsp.get("expected_tags") else None
+    min_rec = int(wsp.get("min_rec", 1))
+
+    meas_ok, meas_reasons = is_valid_measurement_run(
+        rw_cov,
+        allow_nonzero_rc=allow_nz,
+        require_ipi_mask=7,
+        require_nonempty_s3=True,
+        require_aex_counter=True,
+    )
+
+    val_biz = validate_run_result(
+        rw_cov,
+        expected_returncode=exp_rc,
+        expected_stdout_substr=exp_stdout,
+        expected_min_records=min_rec,
+        expected_field_ids=exp_fids,
+        expected_tags=exp_tags,
+        require_ipi_mask=7,
+        require_nonempty_s3=True,
+        require_aex_counter=True,
+    )
+
+    omitted_pages_wf: set[tuple[str, int]] = set()
+    omitted_effects_wf: set[tuple[str, int, str]] = set()
+    wf_fentries = 0
+    if meas_ok:
+        for rec in rw_cov.get("records", []):
+            for fo in rec.get("fields", []):
+                wf_fentries += 1
+                fid = fo["field_id"]
+                allowed = closed_target_effects_by_fid.get(fid, set())
+                for rva, eff in extract_valid_s3_effects(fo):
+                    if (rva, eff) not in allowed:
+                        omitted_pages_wf.add((fid, rva))
+                        omitted_effects_wf.add((fid, rva, eff))
+
+    biz_ok = bool(meas_ok and val_biz["status"] == "PASS" and wf_fentries > 0 and len(exp_fids) > 0)
+    cov_ok = bool(meas_ok and biz_ok and len(omitted_effects_wf) == 0)
+
+    prod_ok = False
+    prod_reasons: list[str] = []
+    if rw_prod is not None and biz_ok:
+        val_prod = validate_production_run_result(
+            rw_prod,
+            expected_returncode=exp_rc,
+            expected_stdout_substr=exp_stdout,
+            expected_ecall_seq=[r["ecall_index"] for r in rw_cov.get("records", [])],
+            expected_tags=exp_tags,
+            ready_sel_set=ready_sel_set,
+            require_readiness=True,
+        )
+        prod_ok = (val_prod["status"] == "PASS")
+        prod_reasons = val_prod["reasons"]
+    else:
+        prod_reasons = ["NOT_RUN_OR_BIZ_INCOMPLETE"]
+
+    return {
+        "workflow_id": wsp.get("id", ""),
+        "ecalls": len(rw_cov.get("records", [])),
+        "field_entries": wf_fentries,
+        "measurement_valid": meas_ok,
+        "measurement_reasons": meas_reasons,
+        "business_workflow_completed": biz_ok,
+        "business_reasons": val_biz["reasons"],
+        "workset_coverage_zero_omission": cov_ok,
+        "omitted_pages_count": len(omitted_pages_wf) if biz_ok else None,
+        "omitted_effects_count": len(omitted_effects_wf) if biz_ok else None,
+        "frozen_protected_enclave_completed": prod_ok,
+        "protected_reasons": prod_reasons,
+        "coverage_trace_sha256": rw_cov.get("trace_sha256", ""),
+        "protected_trace_sha256": rw_prod.get("trace_sha256", "") if rw_prod else "",
+    }
+
+
 def validate_diagnostic_4gate_run(
     run_res: dict,
     *,
@@ -371,10 +493,7 @@ def validate_diagnostic_4gate_run(
     require_ipi_mask: int = 3,
     require_clean_observation_per_field: bool = False,
 ) -> dict:
-    """Strict validator for 4-Gate diagnostic runs before their statistics or reference call_seq are used.
-    Requires explicit `s3` and `s3_active_aex_count` on every Field observation, and rejects runs where
-    all observations are interrupt-contaminated (`NO_CLEAN_OBSERVATIONS_ALL_CONTAMINATED`).
-    """
+    """Strict validator for 4-Gate diagnostic runs before their statistics or reference call_seq are used."""
     base = validate_run_result(
         run_res,
         expected_returncode=0,
@@ -430,18 +549,22 @@ def validate_diagnostic_4gate_run(
 def validate_production_run_result(
     run_res: dict,
     *,
-    expected_stdout_substr: str,
+    expected_returncode: int | None = 0,
+    expected_stdout_substr: str = "PASS",
     expected_ecall_seq: list[int],
+    expected_tags: set[str] | None = None,
     ready_sel_set: set[int] | None = None,
     require_readiness: bool = False,
 ) -> dict:
     """Strict non-bypassable validator for production benchmark runs (Raw, No-PreTouch, Group A/B/C)."""
     base = validate_run_result(
         run_res,
-        expected_returncode=0,
+        expected_returncode=expected_returncode,
         expected_stdout_substr=expected_stdout_substr,
         expected_min_records=len(expected_ecall_seq),
+        expected_tags=expected_tags,
         require_nonempty_s3=False,
+        require_aex_counter=False,
     )
     reasons = list(base["reasons"])
     status = base["status"]
