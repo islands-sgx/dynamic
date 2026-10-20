@@ -1,0 +1,63 @@
+{
+  "fields": [
+    {
+      "enter_call_rva": 898615,
+      "exit_call_rva": 898647,
+      "field_id": "0x14f44918d7091b2f",
+      "function": "_Z20ehsm_aes_gcm_encryptP11ehsm_data_tP14ehsm_keyblob_tS0_S0_",
+      "gate_a_rva": 5259264,
+      "gate_b_rva": 5259419,
+      "gate_c_rva": 5259598,
+      "gate_d_rva": 5259789,
+      "marker_rva": 898620,
+      "pretouch_jmp_rva": 5170683,
+      "pretouch_rva": 5169152
+    },
+    {
+      "enter_call_rva": 898744,
+      "exit_call_rva": 899176,
+      "field_id": "0x5b139ee2956d5e69",
+      "function": "_Z20ehsm_aes_gcm_decryptP11ehsm_data_tP14ehsm_keyblob_tS0_S0_",
+      "gate_a_rva": 5259959,
+      "gate_b_rva": 5260114,
+      "gate_c_rva": 5260293,
+      "gate_d_rva": 5260484,
+      "marker_rva": 898749,
+      "pretouch_jmp_rva": 5172269,
+      "pretouch_rva": 5170688
+    },
+    {
+      "enter_call_rva": 896318,
+      "exit_call_rva": 896461,
+      "field_id": "0xcb2c56be4aa8b6df",
+      "function": "_Z19ehsm_create_aes_keyP14ehsm_keyblob_t",
+      "gate_a_rva": 5260654,
+      "gate_b_rva": 5260809,
+      "gate_c_rva": 5260988,
+      "gate_d_rva": 5261179,
+      "marker_rva": 896323,
+      "pretouch_jmp_rva": 5173764,
+      "pretouch_rva": 5172274
+    },
+    {
+      "enter_call_rva": 895588,
+      "exit_call_rva": 895782,
+      "field_id": "0x61a6007dac8ab670",
+      "function": "_ZL21ehsm_generate_datakeyP14ehsm_keyblob_tP11ehsm_data_tS2_S2_",
+      "gate_a_rva": 5261349,
+      "gate_b_rva": 5261504,
+      "gate_c_rva": 5261683,
+      "gate_d_rva": 5261874,
+      "marker_rva": 895593,
+      "pretouch_jmp_rva": 5175394,
+      "pretouch_rva": 5173769
+    }
+  ],
+  "gate_bytes_used": 2780,
+  "gate_helper_page_rva": 5259264,
+  "input_elf": "/home/meandssh/islands-sgx/dynamic/targets/ehsm-opt-2/enclave.coupled_assisted_xr.final.so",
+  "input_elf_sha256": "826be62583fc326ff984b82e047a968dcb6ffb2a6b268806be83855faca23f44",
+  "output_elf": "/home/meandssh/islands-sgx/dynamic/targets/ehsm-opt-2/enclave.coupled_assisted_xr.4gate.so",
+  "output_elf_sha256": "ea5582721ac6009ac93fc98359c5bc29259115fb1cf04e3353c36f15f1d0b1c2",
+  "schema": "atfield-4gate-patch-v1"
+}

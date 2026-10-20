@@ -1,7 +1,7 @@
 {
   "sample": "qe3",
   "edl_path": "/home/meandssh/islands-sgx/sample/real/qe3/qe3_enclave.edl",
-  "u_c_path": "/home/meandssh/islands-sgx/sample/build/real/qe3/anchor/real/qe3/qe3_enclave_edl_untrusted/qe3_enclave_u.c",
+  "u_c_path": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/real/qe3/qe3_enclave_edl_untrusted/qe3_enclave_u.c",
   "ecalls": [
     {
       "ecall_index": 0,

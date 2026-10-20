@@ -1,0 +1,470 @@
+{
+  "sample": "sqlite",
+  "edl_path": "/home/meandssh/islands-sgx/sample/real/sqlite/sqlite_enclave.edl",
+  "u_c_path": "/home/meandssh/islands-sgx/sample/build/real/sqlite/protect/real/sqlite/sqlite_enclave_edl_untrusted/sqlite_enclave_u.c",
+  "ecalls": [
+    {
+      "ecall_index": 0,
+      "name": "ecall_db_open",
+      "return_type": "sgx_status_t",
+      "params": [
+        {
+          "name": "page_mode",
+          "type": "int",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "int page_mode",
+          "ms_offset": 4,
+          "ms_size": 4,
+          "elem_size": 4,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "out_db_id",
+          "type": "int *",
+          "attributes": [
+            "out"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "int *out_db_id",
+          "ms_offset": 8,
+          "ms_size": 8,
+          "elem_size": 4,
+          "direction": "out",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "count",
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": 1,
+          "param_replay_supported": true,
+          "static_byte_len": 4
+        }
+      ],
+      "ms_layout": {
+        "size": 16,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4,
+            "elem_size": 4,
+            "type": "sgx_status_t"
+          },
+          "ms_page_mode": {
+            "offset": 4,
+            "size": 4,
+            "elem_size": 4,
+            "type": "int"
+          },
+          "ms_out_db_id": {
+            "offset": 8,
+            "size": 8,
+            "elem_size": 4,
+            "type": "int*"
+          }
+        },
+        "param_consts": {}
+      },
+      "has_retval": true,
+      "retval_offset": 0,
+      "retval_size": 4,
+      "replay_supported": true
+    },
+    {
+      "ecall_index": 1,
+      "name": "ecall_db_exec_batch",
+      "return_type": "sgx_status_t",
+      "params": [
+        {
+          "name": "db_id",
+          "type": "int",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "int db_id",
+          "ms_offset": 4,
+          "ms_size": 4,
+          "elem_size": 4,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "op_mode",
+          "type": "int",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "int op_mode",
+          "ms_offset": 8,
+          "ms_size": 4,
+          "elem_size": 4,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "row_ids",
+          "type": "const int *",
+          "attributes": [
+            "in",
+            "count=row_count"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "const int *row_ids",
+          "ms_offset": 16,
+          "ms_size": 8,
+          "elem_size": 4,
+          "direction": "in",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "count",
+          "bound_param": "row_count",
+          "bound_ms_offset": 32,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "row_vals",
+          "type": "const int *",
+          "attributes": [
+            "in",
+            "count=row_count"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "const int *row_vals",
+          "ms_offset": 24,
+          "ms_size": 8,
+          "elem_size": 4,
+          "direction": "in",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "count",
+          "bound_param": "row_count",
+          "bound_ms_offset": 32,
+          "bound_ms_size": 8,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "row_count",
+          "type": "size_t",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "size_t row_count",
+          "ms_offset": 32,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "out_affected",
+          "type": "int *",
+          "attributes": [
+            "out"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "int *out_affected",
+          "ms_offset": 40,
+          "ms_size": 8,
+          "elem_size": 4,
+          "direction": "out",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "count",
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": 1,
+          "param_replay_supported": true,
+          "static_byte_len": 4
+        }
+      ],
+      "ms_layout": {
+        "size": 48,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4,
+            "elem_size": 4,
+            "type": "sgx_status_t"
+          },
+          "ms_db_id": {
+            "offset": 4,
+            "size": 4,
+            "elem_size": 4,
+            "type": "int"
+          },
+          "ms_op_mode": {
+            "offset": 8,
+            "size": 4,
+            "elem_size": 4,
+            "type": "int"
+          },
+          "ms_row_ids": {
+            "offset": 16,
+            "size": 8,
+            "elem_size": 4,
+            "type": "const int*"
+          },
+          "ms_row_vals": {
+            "offset": 24,
+            "size": 8,
+            "elem_size": 4,
+            "type": "const int*"
+          },
+          "ms_row_count": {
+            "offset": 32,
+            "size": 8,
+            "elem_size": 8,
+            "type": "size_t"
+          },
+          "ms_out_affected": {
+            "offset": 40,
+            "size": 8,
+            "elem_size": 4,
+            "type": "int*"
+          }
+        },
+        "param_consts": {}
+      },
+      "has_retval": true,
+      "retval_offset": 0,
+      "retval_size": 4,
+      "replay_supported": true
+    },
+    {
+      "ecall_index": 2,
+      "name": "ecall_db_query_stats",
+      "return_type": "sgx_status_t",
+      "params": [
+        {
+          "name": "db_id",
+          "type": "int",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "int db_id",
+          "ms_offset": 4,
+          "ms_size": 4,
+          "elem_size": 4,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "query_mode",
+          "type": "int",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "int query_mode",
+          "ms_offset": 8,
+          "ms_size": 4,
+          "elem_size": 4,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "filter_grp",
+          "type": "int",
+          "attributes": [],
+          "is_pointer": false,
+          "ptr_depth": 0,
+          "decl": "int filter_grp",
+          "ms_offset": 12,
+          "ms_size": 4,
+          "elem_size": 4,
+          "direction": "val",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": null,
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": null,
+          "param_replay_supported": true,
+          "static_byte_len": null
+        },
+        {
+          "name": "out_count",
+          "type": "int *",
+          "attributes": [
+            "out"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "int *out_count",
+          "ms_offset": 16,
+          "ms_size": 8,
+          "elem_size": 4,
+          "direction": "out",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "count",
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": 1,
+          "param_replay_supported": true,
+          "static_byte_len": 4
+        },
+        {
+          "name": "out_sum",
+          "type": "long *",
+          "attributes": [
+            "out"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "long *out_sum",
+          "ms_offset": 24,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "count",
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": 1,
+          "param_replay_supported": true,
+          "static_byte_len": 8
+        },
+        {
+          "name": "out_metric",
+          "type": "long *",
+          "attributes": [
+            "out"
+          ],
+          "is_pointer": true,
+          "ptr_depth": 1,
+          "decl": "long *out_metric",
+          "ms_offset": 32,
+          "ms_size": 8,
+          "elem_size": 8,
+          "direction": "out",
+          "is_string": false,
+          "is_user_check": false,
+          "bound_kind": "count",
+          "bound_param": null,
+          "bound_ms_offset": null,
+          "bound_ms_size": null,
+          "static_count": 1,
+          "param_replay_supported": true,
+          "static_byte_len": 8
+        }
+      ],
+      "ms_layout": {
+        "size": 40,
+        "fields": {
+          "ms_retval": {
+            "offset": 0,
+            "size": 4,
+            "elem_size": 4,
+            "type": "sgx_status_t"
+          },
+          "ms_db_id": {
+            "offset": 4,
+            "size": 4,
+            "elem_size": 4,
+            "type": "int"
+          },
+          "ms_query_mode": {
+            "offset": 8,
+            "size": 4,
+            "elem_size": 4,
+            "type": "int"
+          },
+          "ms_filter_grp": {
+            "offset": 12,
+            "size": 4,
+            "elem_size": 4,
+            "type": "int"
+          },
+          "ms_out_count": {
+            "offset": 16,
+            "size": 8,
+            "elem_size": 4,
+            "type": "int*"
+          },
+          "ms_out_sum": {
+            "offset": 24,
+            "size": 8,
+            "elem_size": 8,
+            "type": "long int*"
+          },
+          "ms_out_metric": {
+            "offset": 32,
+            "size": 8,
+            "elem_size": 8,
+            "type": "long int*"
+          }
+        },
+        "param_consts": {}
+      },
+      "has_retval": true,
+      "retval_offset": 0,
+      "retval_size": 4,
+      "replay_supported": true
+    }
+  ]
+}

@@ -22,7 +22,7 @@ DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
 sys.path.insert(0, str(DYN_ROOT / "tools"))
 
 from elf_workset import normalized_fields, resolve_selectors  # noqa: E402
-from exploration_kernel import ExplorationKernel, extract_concrete_record_feedback  # noqa: E402
+from exploration_kernel import ExplorationKernel, build_unified_candidate_queues, extract_concrete_record_feedback  # noqa: E402
 from run_native_sgx import run_sample  # noqa: E402
 
 
@@ -406,6 +406,152 @@ class TestExplorationKernelAndReplace(unittest.TestCase):
         self.assertEqual(ksum["confirmed_s3_effects"], 2)
         self.assertEqual(len(ksum["productive_plans"]), 0)
         self.assertTrue(all(d["decision"].startswith("measurement_invalid_ignored:") for d in ksum["feedback_decisions"]))
+
+
+
+    def test_04_replace_coupled_single_call_and_2step_plan_reuse(self) -> None:
+        """Verify Stage 2A (coupled_struct_constraints -> replace_coupled) and Stage 2B
+        (valid_prefix_corpus -> 2-step composed replay plan `P1;P2`) in ExplorationKernel.
+        """
+        tdir = DYN_ROOT / "targets" / "ehsm-opt-1"
+        edl_schema_with_coupled = json.loads((tdir / "edl_schema.json").read_text())
+        edl_schema_with_coupled["coupled_struct_constraints"] = [
+            {
+                "constraint_id": "test_coupled_producer",
+                "ecall_index": 1,
+                "selector_seq": 0,
+                "coupled_ops": ["f:0:0:4:31", "f:0:40:4:80", "s:1:124"],
+                "description": "Test coupled producer constraint",
+            }
+        ]
+        fields = normalized_fields(tdir / "fields.json")
+        selectors = resolve_selectors(tdir / "selectors.json", fields, Path(edl_schema_with_coupled["edl_path"]))
+        queues, _ = build_unified_candidate_queues(
+            edl_schema_with_coupled,
+            selectors,
+            [{"call_seq": 0, "ecall_index": 1, "selector_seq": 0, "fields": []}],
+            rng_seed=101,
+        )
+        coupled_specs = [c["spec"] for c in queues["replace_prefix"] if c.get("subkind") == "coupled_multi_field_replacement"]
+        self.assertIn("replace_coupled:1:0:f:0:0:4:31+f:0:40:4:80+s:1:124", coupled_specs)
+
+        # Now run ExplorationKernel on a mock 2-Field stateful workflow where:
+        # - Field 0 (ecall 1) is a scalable state-populating Field (`scale_bound_v2`)
+        # - Field 1 (ecall 2) is a query Field whose mode=2 only touches page 0x99000 IF ecall 1 was scaled in the same enclave run!
+        two_field_schema = {
+            "sample": "mock_two_field",
+            "ecalls": [
+                {
+                    "ecall_index": 1,
+                    "name": "ecall_populate",
+                    "has_retval": True,
+                    "replay_supported": True,
+                    "ms_layout": {"size": 24},
+                    "params": [
+                        {"name": "rows", "direction": "in", "is_pointer": True, "ms_offset": 8, "ms_size": 8, "elem_size": 4, "bound_kind": "count", "bound_ms_offset": 16, "bound_ms_size": 8, "param_replay_supported": True},
+                        {"name": "count", "direction": "val", "is_pointer": False, "ms_offset": 16, "ms_size": 8, "elem_size": 8, "param_replay_supported": True},
+                    ],
+                },
+                {
+                    "ecall_index": 2,
+                    "name": "ecall_query",
+                    "has_retval": True,
+                    "replay_supported": True,
+                    "ms_layout": {"size": 16},
+                    "params": [
+                        {"name": "qmode", "direction": "val", "is_pointer": False, "ms_offset": 8, "ms_size": 4, "elem_size": 4, "param_replay_supported": True},
+                    ],
+                },
+            ],
+        }
+        two_field_selectors = [
+            {"ecall_index": 1, "name": "ecall_populate", "reachable_fields": ["0x1111"]},
+            {"ecall_index": 2, "name": "ecall_query", "reachable_fields": ["0x2222"]},
+        ]
+
+        def mock_2field_runner(plan: dict) -> dict:
+            spec = plan.get("spec", "")
+            scaled = "scale_bound_v2:1:0:" in spec
+            qmode2 = "replace_scalar:2:0:0:2" in spec
+            f1_s3 = [{"rva": "0x10000", "ad": "A"}]
+            if scaled:
+                f1_s3.append({"rva": "0x20000", "ad": "D"})
+            f2_s3 = [{"rva": "0x30000", "ad": "A"}]
+            if scaled and qmode2:
+                # Multi-step state dependency: only reached when BOTH scale on ecall 1 AND qmode=2 on ecall 2 run in the same instance!
+                f2_s3.append({"rva": "0x99000", "ad": "D"})
+            elif qmode2:
+                f2_s3.append({"rva": "0x31000", "ad": "A"})
+            return {
+                "returncode": 0,
+                "ipi_mask": 7,
+                "records": [
+                    {
+                        "ecall_index": 1,
+                        "selector_seq": 0,
+                        "tag": "scale" if scaled else "host_normal",
+                        "sgx_status": 0,
+                        "ms_retval": 0,
+                        "measurement_invalid": 0,
+                        "syscall_errors": 0,
+                        "ipi_flush_failures": 0,
+                        "mutation_oob_rejected": 0,
+                        "fast_forwarded_prior": 0,
+                        "fields": [{
+                            "field_id": "0x1111",
+                            "ipi_aex_verified_mask": 7,
+                            "s3_active_aex_count": 2,
+                            "heap_lo_rva": "0x50000",
+                            "heap_hi_rva": "0x58000" if scaled else "0x51000",
+                            "s0": [{"rva": "0x1000", "ad": "A"}],
+                            "s1": [],
+                            "s2": [],
+                            "s3": f1_s3,
+                            "s3_pretouch_seg": [],
+                            "heap_walk_truncated": 0,
+                            "heap_pread_failures": 0,
+                        }],
+                    },
+                    {
+                        "ecall_index": 2,
+                        "selector_seq": 0,
+                        "tag": "replace_scalar_p0_val_2" if qmode2 else "host_normal",
+                        "sgx_status": 0,
+                        "ms_retval": 0,
+                        "measurement_invalid": 0,
+                        "syscall_errors": 0,
+                        "ipi_flush_failures": 0,
+                        "mutation_oob_rejected": 0,
+                        "fast_forwarded_prior": 0,
+                        "fields": [{
+                            "field_id": "0x2222",
+                            "ipi_aex_verified_mask": 7,
+                            "s3_active_aex_count": 2,
+                            "heap_lo_rva": "0x50000",
+                            "heap_hi_rva": "0x58000" if (scaled and qmode2) else "0x51000",
+                            "s0": [{"rva": "0x1000", "ad": "A"}],
+                            "s1": [],
+                            "s2": [],
+                            "s3": f2_s3,
+                            "s3_pretouch_seg": [],
+                            "heap_walk_truncated": 0,
+                            "heap_pread_failures": 0,
+                        }],
+                    },
+                ],
+            }
+
+        kernel = ExplorationKernel(
+            sample="mock_two_field",
+            edl_schema=two_field_schema,
+            selectors=two_field_selectors,
+            runner_fn=mock_2field_runner,
+            mode="feedback_guided",
+            rng_seed=101,
+        )
+        summary = kernel.run()
+        self.assertTrue(len(summary["valid_prefix_corpus"]) >= 1)
+        self.assertIn(("0x2222", 0x99000, "D"), kernel.cumulative_s3_field_effects)
 
 
 if __name__ == "__main__":

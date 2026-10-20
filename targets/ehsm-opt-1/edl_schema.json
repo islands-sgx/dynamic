@@ -1,7 +1,7 @@
 {
   "sample": "ehsm-opt-1",
   "edl_path": "/home/meandssh/islands-sgx/sample/real/ehsm-opt-1/enclave_hsm.edl",
-  "u_c_path": "/home/meandssh/islands-sgx/sample/build/real/ehsm-opt-1/anchor/real/ehsm-opt-1/ehsm_opt_1_enclave_edl_untrusted/enclave_hsm_u.c",
+  "u_c_path": "/home/meandssh/islands-sgx/sample/build/real/ehsm-opt-1/protect/real/ehsm-opt-1/ehsm_opt_1_enclave_edl_untrusted/enclave_hsm_u.c",
   "ecalls": [
     {
       "ecall_index": 0,

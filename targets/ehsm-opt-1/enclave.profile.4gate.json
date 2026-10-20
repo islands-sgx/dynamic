@@ -1,54 +1,54 @@
 {
   "fields": [
     {
-      "enter_call_rva": 895108,
-      "exit_call_rva": 895302,
+      "enter_call_rva": 895444,
+      "exit_call_rva": 895638,
       "field_id": "0x2c6ee760c60f6016",
       "function": "_ZL21ehsm_generate_datakeyP14ehsm_keyblob_tP11ehsm_data_tS2_S2_",
       "gate_a_rva": 5259264,
       "gate_b_rva": 5259419,
       "gate_c_rva": 5259598,
       "gate_d_rva": 5259789,
-      "marker_rva": 895113,
+      "marker_rva": 895449,
       "pretouch_jmp_rva": 5169152,
       "pretouch_rva": 5169152
     },
     {
-      "enter_call_rva": 897991,
-      "exit_call_rva": 898023,
+      "enter_call_rva": 898471,
+      "exit_call_rva": 898503,
       "field_id": "0x816b2c1d4427550e",
       "function": "_Z20ehsm_aes_gcm_encryptP11ehsm_data_tP14ehsm_keyblob_tS0_S0_",
       "gate_a_rva": 5259959,
       "gate_b_rva": 5260114,
       "gate_c_rva": 5260293,
       "gate_d_rva": 5260484,
-      "marker_rva": 897996,
+      "marker_rva": 898476,
       "pretouch_jmp_rva": 5169157,
       "pretouch_rva": 5169157
     },
     {
-      "enter_call_rva": 898104,
-      "exit_call_rva": 898536,
+      "enter_call_rva": 898600,
+      "exit_call_rva": 899032,
       "field_id": "0xc78a81e7028b9848",
       "function": "_Z20ehsm_aes_gcm_decryptP11ehsm_data_tP14ehsm_keyblob_tS0_S0_",
       "gate_a_rva": 5260654,
       "gate_b_rva": 5260809,
       "gate_c_rva": 5260988,
       "gate_d_rva": 5261179,
-      "marker_rva": 898109,
+      "marker_rva": 898605,
       "pretouch_jmp_rva": 5169162,
       "pretouch_rva": 5169162
     },
     {
-      "enter_call_rva": 895790,
-      "exit_call_rva": 895933,
+      "enter_call_rva": 896174,
+      "exit_call_rva": 896317,
       "field_id": "0xf91057fc204a2eec",
       "function": "_Z19ehsm_create_aes_keyP14ehsm_keyblob_t",
       "gate_a_rva": 5261349,
       "gate_b_rva": 5261504,
       "gate_c_rva": 5261683,
       "gate_d_rva": 5261874,
-      "marker_rva": 895795,
+      "marker_rva": 896179,
       "pretouch_jmp_rva": 5169167,
       "pretouch_rva": 5169167
     }
@@ -56,8 +56,8 @@
   "gate_bytes_used": 2780,
   "gate_helper_page_rva": 5259264,
   "input_elf": "/home/meandssh/islands-sgx/dynamic/targets/ehsm-opt-1/enclave.profile.so",
-  "input_elf_sha256": "9c334d132bee83e5ddf9bda6fa5f605f72f9ee4a1fe26d5256a40daf85fda311",
+  "input_elf_sha256": "891300710745a8b867d4564749863f3d85f430b94b1b7ba04bbf7165f941e051",
   "output_elf": "/home/meandssh/islands-sgx/dynamic/targets/ehsm-opt-1/enclave.profile.4gate.so",
-  "output_elf_sha256": "71f432ddfee93bbc163472109e219a5dd76d571c87a557f316b26172e64addf4",
+  "output_elf_sha256": "2053501e22378d8273b8e4c76e7e0b35ee40e3e664dd9e411efc371a78c742d9",
   "schema": "atfield-4gate-patch-v1"
 }

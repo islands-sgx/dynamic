@@ -1,5 +1,5 @@
 {
-  "all_committed_reg_pages": 1774,
+  "all_committed_reg_pages": 1773,
   "capacity_q": 90112,
   "enclave_size": 8388608,
   "excluded_regions": [
@@ -69,8 +69,8 @@
   "page_size": 4096,
   "pretouch_segment": true,
   "pretouch_start": 2809856,
-  "profile_elf": "/home/meandssh/islands-sgx/dynamic/targets/sgxwallet/enclave.profile.so",
-  "profile_elf_sha256": "a217599b4e84832e595d42318a2a7baede323a6aeafcc52e0e771e41154122be",
+  "profile_elf": "/home/meandssh/islands-sgx/sample/build/real/sgxwallet/protect/enclave.profile.so",
+  "profile_elf_sha256": "e598c6d21dba5b4b862f4d01abf503cec7b57d892cb17d15a06c6109a51f6ee3",
   "regions": [
     {
       "end_rva": 73728,
@@ -91,10 +91,10 @@
     {
       "end_rva": 2625536,
       "kind": "PT_LOAD",
-      "pages": 2,
+      "pages": 1,
       "permissions": 3,
       "segment_index": 4,
-      "start_rva": 2617344
+      "start_rva": 2621440
     },
     {
       "end_rva": 2809856,
@@ -150,20 +150,19 @@
     }
   ],
   "relro_pages": [
-    2617344,
     2621440
   ],
   "relro_ranges": [
     {
       "end_rva": 2625536,
       "protected_end_rva": 2625536,
-      "protected_start_rva": 2617344,
+      "protected_start_rva": 2621440,
       "segment_index": 8,
-      "start_rva": 2619904
+      "start_rva": 2621440
     }
   ],
   "schema": "atfield-signer-layout-v1",
-  "signed_elf": "/home/meandssh/islands-sgx/dynamic/targets/sgxwallet/enclave.profile.signed.so",
-  "signed_elf_sha256": "a00f17a16dcd17c9ef13a339eac3814fcac685cf8b65cfa2041a860763f25b64",
+  "signed_elf": "/home/meandssh/islands-sgx/sample/build/real/sgxwallet/protect/enclave.profile.signed.so",
+  "signed_elf_sha256": "e0b95687b7722999d0a53705be2015c9d8b3f74920cc532d0b40197fd57ce60e",
   "ssa_frame_pages": 1
 }

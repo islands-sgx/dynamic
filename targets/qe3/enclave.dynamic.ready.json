@@ -2,7 +2,7 @@
   "entry_count": 1,
   "fields_sha256": "748095038f69f343aaf712dd9c5cba063ea0d01286b21684fc3a78156f67fe8d",
   "final_elf": "/home/meandssh/islands-sgx/dynamic/targets/qe3/enclave.dynamic.final.so",
-  "final_elf_sha256": "d1dc9df2e959068f1904420d475eb4eba90d4de2f5cdf03fc46d694ee034c22e",
+  "final_elf_sha256": "936169f6d3ae876584cb19b0321c588c42c8bcf2cfa3767b299a73f685f26402",
   "format_version": 3,
   "schema": "atfield-ready-table-v3",
   "selectors": [
@@ -10,7 +10,7 @@
       "ecall_index": 0,
       "first_page": 0,
       "name": "ecall_get_attestation_key",
-      "page_count": 186,
+      "page_count": 185,
       "page_rvas": [
         0,
         8192,
@@ -114,7 +114,6 @@
         1990656,
         1994752,
         1998848,
-        2002944,
         2007040,
         2011136,
         2015232,
@@ -205,11 +204,11 @@
     }
   ],
   "signed_final_elf": "/home/meandssh/islands-sgx/dynamic/targets/qe3/enclave.dynamic.final.signed.so",
-  "signed_final_elf_sha256": "eda9ed1005e1ba565994b3706860f0cd5a26d7b70e30249e9bcd38218f9bddbc",
-  "table_bytes": 1544,
+  "signed_final_elf_sha256": "46d8acf12d0a03ee0b725d3c769e4d5341a97ff27cbcfa810721efa5e582d78f",
+  "table_bytes": 1536,
   "table_path": "/home/meandssh/islands-sgx/dynamic/targets/qe3/enclave.dynamic.ready.bin",
-  "table_sha256": "61f41d7bc086fabf2c6c9902110247aa91e19b70894ee5981a1ee132cceebb00",
-  "total_page_count": 186,
+  "table_sha256": "68163e171a8e5ca2f96a33b6b772a0e1d98ad3292ad6295599ccfbb470ca1094",
+  "total_page_count": 185,
   "workset": "/home/meandssh/islands-sgx/dynamic/targets/qe3/workset.dynamic.json",
-  "workset_sha256": "06b8671052d897fefb5703350a5b7e1fd764625dd0b57162b57ceee054d58769"
+  "workset_sha256": "f4e35148782155f44d7fa0a168565e89aa11cafb33cb99599fb5998e64bf4318"
 }

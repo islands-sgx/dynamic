@@ -1,211 +1,224 @@
 {
+  "schema": "atfield-sample-scenarios-v1",
+  "name": "ehsm-opt-2",
   "application_family": "ehsm",
-  "benchmark_host_args": [],
-  "calibration_host_args": [],
-  "coupled_struct_constraints": [
-    {
-      "constraint_id": "ehsm_sm4_keyblob_producer_tuple",
-      "coupled_ops": [
-        "f:0:4:4:20",
-        "f:0:12:4:64",
-        "s:1:80"
-      ],
-      "description": "Coupled 3-field producer constraint for SM4-CBC key creation in enclave_create_key(cmk, cmk_size): cmk->metadata.keyspec (offset 4, u32) = 20 (EH_SM4_CBC), cmk->keybloblen (offset 12, u32) = 64, and outer scalar cmk_size (param 1) = 80.",
-      "ecall_index": 1,
-      "manual_declaration_lines": 6,
-      "selector_seq": 0,
-      "struct_type": "ehsm_keyblob_t"
-    }
-  ],
   "domain_assisted_probes": [
     {
-      "allow_nonzero_rc": false,
-      "desc": "Verify S0 size-query backward compatibility and decrypt output capacity check",
+      "run_id": "layer3_ehsm_compat_check",
+      "subkind": "s0_backward_compat_check",
+      "intervention": "",
+      "stop_after": "",
+      "stop_before": "",
       "host_args": [
         "--compat-check"
       ],
-      "intervention": "",
-      "run_id": "layer3_ehsm_compat_check",
-      "stop_after": "",
-      "stop_before": "",
-      "subkind": "s0_backward_compat_check"
+      "allow_nonzero_rc": false,
+      "desc": "Verify S0 size-query backward compatibility and decrypt output capacity check"
+    }
+  ],
+  "seeded_variants": [
+    {
+      "variant_name": "sm4_seeded_xr",
+      "seed_host_args": [
+        "--sm4-check"
+      ],
+      "tier2_counterexample_host_args": [
+        "--sm4-check"
+      ],
+      "min_records": 18,
+      "structural_limitation": "ehsm_create_sm4_key requires coupled 3-field struct changes inside ehsm_keyblob_t (metadata.keyspec=20, keybloblen=64, cmk_size=80) before domain-key AES-GCM sealing."
+    }
+  ],
+  "coupled_struct_constraints": [
+    {
+      "constraint_id": "ehsm_sm4_ctr_keyblob_producer",
+      "ecall_index": 1,
+      "selector_seq": 0,
+      "struct_type": "ehsm_keyblob_t",
+      "description": "Coupled struct-field & size constraint on enclave_create_key(cmk, cmk_size): set cmk->metadata.keyspec (offset 0, u32) = 31 (EH_SM4_CTR), cmk->keybloblen (offset 40, u32) = 80, and cmk_size (param 1) = 124 so the sealed SM4 keyblob is accepted by subsequent host consumer calls.",
+      "manual_declaration_lines": 6,
+      "coupled_ops": [
+        "f:0:0:4:31",
+        "f:0:40:4:80",
+        "s:1:124"
+      ]
+    },
+    {
+      "constraint_id": "ehsm_sm4_cbc_keyblob_producer",
+      "ecall_index": 1,
+      "selector_seq": 0,
+      "struct_type": "ehsm_keyblob_t",
+      "description": "Coupled 3-field struct constraint on enclave_create_key(cmk, cmk_size) for EH_SM4_CBC (32): cmk->metadata.keyspec (offset 0, u32) = 32, cmk->keybloblen (offset 40, u32) = 64, cmk_size (param 1) = 108.",
+      "manual_declaration_lines": 6,
+      "coupled_ops": [
+        "f:0:0:4:32",
+        "f:0:40:4:64",
+        "s:1:108"
+      ]
     }
   ],
   "holdout_suite": {
-    "aux_runs": [
-      {
-        "expected_stdout_substr": "PASS",
-        "expected_tags": null,
-        "host_args": [
-          "--compat-check"
-        ],
-        "intervention": "",
-        "min_records": 23,
-        "name": "compat_query_and_capacity_matrix",
-        "stop_before_normal_ecall": ""
-      }
-    ],
-    "desc": "ehsm-opt-2 (--bytes 1536 --requests 3 + --compat-check query/capacity/canary/SM4 matrix) + cold-enclave state replay + byte-9 bit-flip",
     "expected_tags": [
       "cold_state_replay_ecall_2_after_0_1",
       "cold_state_replay_ecall_4_after_0_1",
       "schema_xor_p4_byte_9"
     ],
+    "intervention": "typed_state_probe:2:0:0:1;typed_state_probe:4:0:0:1;xor_param:3:0:4:9:127",
     "host_args": [
       "--bytes",
       "1536",
       "--requests",
       "3"
     ],
-    "intervention": "typed_state_probe:2:0:0:1;typed_state_probe:4:0:0:1;xor_param:3:0:4:9:127",
-    "min_records": 20
-  },
-  "name": "ehsm-opt-2",
-  "onboarding_metadata": {
-    "added_ported_loc": 0,
-    "configs_label": "ehsm, ehsm-opt-1, ehsm-opt-2",
-    "host_adapter_loc": 312,
-    "host_entry": "`sample/real/ehsm/host.cpp` (default AES-GCM + `--compat-check` + `--sm4-check`)",
-    "kernel_special_rules": 0,
-    "preserved_assertions_and_adaptations": "**Preserved**: `ehsm_create_key` -> `ehsm_encrypt` -> `ehsm_decrypt` -> `ehsm_generate_datakey` -> `ehsm_decrypt_datakey`, ciphertext/AAD tamper rejection, and round-trip plaintext equality. **Explicit adaptations**: extracted standalone C++ host driver from gtest/dkeyserver wrapper.",
-    "test_provenance": "**Selected & adapted workflow** from `core/Test/function_test.cpp` (`test_AES128_GCM`, `test_SM4_CBC`, `GenerateDataKey`, `Decrypt`)"
+    "min_records": 20,
+    "aux_runs": [
+      {
+        "name": "compat_query_and_capacity_matrix",
+        "expected_tags": null,
+        "intervention": "",
+        "stop_before_normal_ecall": "",
+        "host_args": [
+          "--compat-check"
+        ],
+        "min_records": 23,
+        "expected_stdout_substr": "PASS"
+      }
+    ],
+    "desc": "ehsm-opt-2 (--bytes 1536 --requests 3 + --compat-check query/capacity/canary/SM4 matrix) + cold-enclave state replay + byte-9 bit-flip"
   },
   "predetermined_regression_cases": [
     {
-      "expected_tags": [
-        "host_normal"
-      ],
+      "id": "unseen_compat_or_b1024_r3",
       "host_args": [
         "--compat-check"
       ],
-      "id": "unseen_compat_or_b1024_r3",
       "intervention": "",
-      "min_rec": 23
-    },
-    {
+      "min_rec": 23,
       "expected_tags": [
         "host_normal"
-      ],
+      ]
+    },
+    {
+      "id": "unseen_host_b48_r2",
       "host_args": [
         "--bytes",
         "48",
         "--requests",
         "2"
       ],
-      "id": "unseen_host_b48_r2",
       "intervention": "",
-      "min_rec": 19
-    },
-    {
+      "min_rec": 19,
       "expected_tags": [
         "host_normal"
-      ],
+      ]
+    },
+    {
+      "id": "unseen_host_b192_r3",
       "host_args": [
         "--bytes",
         "192",
         "--requests",
         "3"
       ],
-      "id": "unseen_host_b192_r3",
       "intervention": "",
-      "min_rec": 21
-    },
-    {
+      "min_rec": 21,
       "expected_tags": [
         "host_normal"
-      ],
+      ]
+    },
+    {
+      "id": "unseen_host_b384_r2",
       "host_args": [
         "--bytes",
         "384",
         "--requests",
         "2"
       ],
-      "id": "unseen_host_b384_r2",
       "intervention": "",
-      "min_rec": 19
-    },
-    {
+      "min_rec": 19,
       "expected_tags": [
         "host_normal"
-      ],
+      ]
+    },
+    {
+      "id": "unseen_host_b768_r3",
       "host_args": [
         "--bytes",
         "768",
         "--requests",
         "3"
       ],
-      "id": "unseen_host_b768_r3",
       "intervention": "",
-      "min_rec": 21
-    },
-    {
+      "min_rec": 21,
       "expected_tags": [
         "host_normal"
-      ],
+      ]
+    },
+    {
+      "id": "unseen_host_b1536_r4",
       "host_args": [
         "--bytes",
         "1536",
         "--requests",
         "4"
       ],
-      "id": "unseen_host_b1536_r4",
       "intervention": "",
-      "min_rec": 23
-    },
-    {
+      "min_rec": 23,
       "expected_tags": [
         "host_normal"
-      ],
+      ]
+    },
+    {
+      "id": "unseen_host_b3072_r2",
       "host_args": [
         "--bytes",
         "3072",
         "--requests",
         "2"
       ],
-      "id": "unseen_host_b3072_r2",
       "intervention": "",
-      "min_rec": 19
+      "min_rec": 19,
+      "expected_tags": [
+        "host_normal"
+      ]
     },
     {
+      "id": "unseen_aad_xor_b3",
+      "host_args": [],
+      "intervention": "xor_param:2:0:2:3:90",
+      "min_rec": 20,
       "expected_tags": [
         "schema_xor_p2_byte_3"
-      ],
-      "host_args": [],
-      "id": "unseen_aad_xor_b3",
-      "intervention": "xor_param:2:0:2:3:90",
-      "min_rec": 20
+      ]
     },
     {
+      "id": "unseen_plain_xor_b15",
+      "host_args": [],
+      "intervention": "xor_param:2:0:4:15:165",
+      "min_rec": 20,
       "expected_tags": [
         "schema_xor_p4_byte_15"
-      ],
-      "host_args": [],
-      "id": "unseen_plain_xor_b15",
-      "intervention": "xor_param:2:0:4:15:165",
-      "min_rec": 20
+      ]
     },
     {
+      "id": "unseen_decrypt_rep4",
+      "host_args": [],
+      "intervention": "repeat:3:0:4",
+      "min_rec": 23,
       "expected_tags": [
         "generic_repeat_4_of_4"
-      ],
-      "host_args": [],
-      "id": "unseen_decrypt_rep4",
-      "intervention": "repeat:3:0:4",
-      "min_rec": 23
+      ]
     }
   ],
-  "schema": "atfield-sample-scenarios-v1",
-  "seeded_variants": [
-    {
-      "min_records": 18,
-      "seed_host_args": [
-        "--sm4-check"
-      ],
-      "structural_limitation": "ehsm_create_sm4_key requires coupled 3-field struct changes inside ehsm_keyblob_t (metadata.keyspec=20, keybloblen=64, cmk_size=80) before domain-key AES-GCM sealing.",
-      "tier2_counterexample_host_args": [
-        "--sm4-check"
-      ],
-      "variant_name": "sm4_seeded_xr"
-    }
-  ]
+  "onboarding_metadata": {
+    "configs_label": "ehsm, ehsm-opt-1, ehsm-opt-2",
+    "test_provenance": "**Selected & adapted workflow** from `core/Test/function_test.cpp` (`test_AES128_GCM`, `test_SM4_CBC`, `GenerateDataKey`, `Decrypt`)",
+    "host_entry": "`sample/real/ehsm/host.cpp` (default AES-GCM + `--compat-check` + `--sm4-check`)",
+    "preserved_assertions_and_adaptations": "**Preserved**: `ehsm_create_key` -> `ehsm_encrypt` -> `ehsm_decrypt` -> `ehsm_generate_datakey` -> `ehsm_decrypt_datakey`, ciphertext/AAD tamper rejection, and round-trip plaintext equality. **Explicit adaptations**: extracted standalone C++ host driver from gtest/dkeyserver wrapper.",
+    "host_adapter_loc": 312,
+    "added_ported_loc": 0,
+    "kernel_special_rules": 0
+  },
+  "calibration_host_args": [],
+  "benchmark_host_args": []
 }

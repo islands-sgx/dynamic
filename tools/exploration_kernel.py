@@ -113,6 +113,7 @@ def build_unified_candidate_queues(
     selectors: list[dict],
     seed_records: list[dict],
     rng_seed: int = 101,
+    coupled_struct_constraints: list[dict] | None = None,
 ) -> tuple[dict[str, list[dict]], dict]:
     """Build the unified per-family candidate queues from EDL schema and seed L1 trace.
     All scheduling modes (`fixed_round_robin`, `static_priority_no_feedback`, `feedback_guided`)
@@ -207,6 +208,27 @@ def build_unified_candidate_queues(
         for lst in per_setup_lists:
             if i < len(lst):
                 queues["replace_prefix"].append(lst[i])
+
+    # Stage 2A: Single-call coupled multi-field/scalar replacement (`replace_coupled`)
+    constraints = coupled_struct_constraints if coupled_struct_constraints is not None else edl_schema.get("coupled_struct_constraints", [])
+    for cc in constraints:
+        c_eidx = int(cc["ecall_index"])
+        c_sseq = int(cc.get("selector_seq", 0))
+        c_ops = "+".join(cc["coupled_ops"])
+        cid = cc.get("constraint_id", f"e{c_eidx}_s{c_sseq}")
+        queues["replace_prefix"].append({
+            "family": "replace_prefix",
+            "subkind": "coupled_multi_field_replacement",
+            "ecall_index": c_eidx,
+            "selector_seq": c_sseq,
+            "param_index": 0,
+            "spec": f"replace_coupled:{c_eidx}:{c_sseq}:{c_ops}",
+            "stop_after": "",
+            "stop_before": "",
+            "allow_nonzero_rc": True,
+            "tag": f"replace_coupled_{cid}",
+            "desc": cc.get("description", f"Single-call coupled replacement {cid} on ecall {c_eidx}@{c_sseq}"),
+        })
 
     # 2. scale: Full progression (16..262144) queued across all scalable Field selectors (identical domain across modes)
     for sc in DECLARED_SCALE_PROGRESSION:
@@ -464,6 +486,8 @@ class ExplorationKernel:
         self.scale_max_heap_by_ecall: dict[int, int] = {}
         self.seen_state_obs_keys: set[tuple] = set()
         self.productive_plans: list[dict] = []
+        self.valid_prefix_corpus: list[dict] = []
+        self.seen_prefix_slots: set[tuple] = set()
         self.follow_up_queue: list[dict] = []
         self.secondary_branch_queue: list[dict] = []
         self.low_priority_queue: list[dict] = []
@@ -763,13 +787,92 @@ class ExplorationKernel:
 
         # Case A: Plan discovered concrete new per-Field S3 effects or heap growth
         if delta["new_effects_count"] > 0 or delta["heap_grew"]:
-            self.productive_plans.append({
+            prod_entry = {
                 "tag": plan["tag"],
                 "family": fam,
+                "ecall_index": eidx,
+                "selector_seq": sseq,
+                "param_index": plan.get("param_index", 0),
+                "scalar_val": plan.get("scalar_val"),
+                "scale": plan.get("scale", 0),
                 "spec": plan["spec"],
+                "stop_after": plan.get("stop_after", ""),
+                "stop_before": plan.get("stop_before", ""),
                 "reason": "new_concrete_effects_or_heap",
                 "new_effects": delta["new_effects_set"],
-            })
+            }
+            self.productive_plans.append(prod_entry)
+
+            # Stage 2B: Bounded 2-Step Valid Plan Reuse (`valid_prefix_corpus`)
+            # Bidirectional composition between productive upstream state/object prefixes (`replace_prefix` or `scale`)
+            # on selector e1 and productive downstream `boundary` (`replace_scalar`) branches on selector e2 != e1.
+            def _spawn_2step_pair(prefix_p: dict, down_p: dict) -> None:
+                if prefix_p["ecall_index"] == down_p["ecall_index"]:
+                    return
+                ctag = f"reuse2step_{prefix_p['tag']}__then__{down_p['tag']}"
+                if ctag in spawned_tags:
+                    return
+                spawned_tags.add(ctag)
+                composed_spec = f"{prefix_p['spec']};{down_p['spec']}"
+                self.secondary_branch_queue.append({
+                    "family": "joint",
+                    "subkind": "reused_prefix_2step_composition",
+                    "ecall_index": down_p["ecall_index"],
+                    "selector_seq": down_p.get("selector_seq", 0),
+                    "param_index": down_p.get("param_index", 0),
+                    "scalar_val": down_p.get("scalar_val"),
+                    "spec": composed_spec,
+                    "stop_after": down_p.get("stop_after", ""),
+                    "stop_before": "",
+                    "allow_nonzero_rc": True,
+                    "tag": ctag,
+                    "desc": f"Bounded 2-step plan reuse: ({prefix_p['tag']}) -> ({down_p['tag']})",
+                })
+                self.feedback_decisions.append({
+                    "tag": plan["tag"],
+                    "decision": f"spawn_2step_plan_reuse_{ctag}",
+                })
+
+            if (
+                fam in ("replace_prefix", "scale")
+                and delta.get("any_valid_field_return", False)
+                and not plan.get("stop_before")
+                and plan.get("subkind") != "reused_prefix_2step_composition"
+                and (fam != "scale" or plan.get("scale", 0) in (16, 256, 1024))
+                and len(self.valid_prefix_corpus) < 8
+            ):
+                p_slot = (fam, eidx, sseq, plan.get("scale", 0) if fam == "scale" else plan.get("tag", ""))
+                if p_slot not in self.seen_prefix_slots:
+                    self.seen_prefix_slots.add(p_slot)
+                    self.valid_prefix_corpus.append(prod_entry)
+                    # Compose with already-discovered productive boundary plans AND top remaining boundary plans
+                    prod_downs = [
+                        p for p in self.productive_plans
+                        if p.get("family") == "boundary"
+                        and not p.get("stop_before")
+                        and p.get("spec", "").startswith("replace_scalar:")
+                        and p.get("ecall_index") != eidx
+                    ]
+                    rem_downs = sorted(
+                        [
+                            dc for dc in (list(queues.get("boundary", [])) + list(self.secondary_branch_queue))
+                            if not dc.get("stop_before")
+                            and dc.get("spec", "").startswith("replace_scalar:")
+                            and dc.get("ecall_index") != eidx
+                        ],
+                        key=lambda dc: (dc.get("selector_seq", 0), dc.get("scalar_val", 999), dc.get("param_index", 0)),
+                    )[:4]
+                    for dc in (prod_downs + rem_downs)[:6]:
+                        _spawn_2step_pair(prod_entry, dc)
+
+            elif (
+                fam == "boundary"
+                and not plan.get("stop_before")
+                and plan.get("spec", "").startswith("replace_scalar:")
+            ):
+                for pref in self.valid_prefix_corpus:
+                    if pref["ecall_index"] != eidx:
+                        _spawn_2step_pair(pref, prod_entry)
         # Case B: No new pages or heap growth, but a new valid Field-entering state key was observed!
         elif delta["target_new_state_keys"] > 0 and delta["any_valid_field_return"]:
             self.productive_plans.append({
@@ -953,6 +1056,7 @@ class ExplorationKernel:
             "confirmed_s3_pages": len(self.cumulative_s3_pages),
             "confirmed_s3_effects": len(self.cumulative_s3_effects),
             "productive_plans": self.productive_plans,
+            "valid_prefix_corpus": self.valid_prefix_corpus,
             "feedback_decisions": self.feedback_decisions,
             "selection_trace": self.selection_trace,
             "unexplored_frontier": {

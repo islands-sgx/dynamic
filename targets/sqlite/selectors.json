@@ -1,0 +1,25 @@
+{
+  "schema": "atfield-selectors-v1",
+  "edl": "sqlite_enclave.edl",
+  "selectors": [
+    {
+      "ecall_index": 0,
+      "name": "ecall_db_open",
+      "reachable_functions": []
+    },
+    {
+      "ecall_index": 1,
+      "name": "ecall_db_exec_batch",
+      "reachable_functions": [
+        "sqlite_exec_batch_field"
+      ]
+    },
+    {
+      "ecall_index": 2,
+      "name": "ecall_db_query_stats",
+      "reachable_functions": [
+        "sqlite_query_stats_field"
+      ]
+    }
+  ]
+}

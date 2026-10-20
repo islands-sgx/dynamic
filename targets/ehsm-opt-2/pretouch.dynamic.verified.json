@@ -265,20 +265,20 @@
         },
         {
           "effects": [
-            "X",
-            "R"
+            "X"
           ],
-          "end_rva": 5169352,
+          "end_rva": 5169346,
           "page_rva": 901120,
           "start_rva": 5169341
         },
         {
           "effects": [
-            "X"
+            "X",
+            "R"
           ],
           "end_rva": 5169357,
           "page_rva": 905216,
-          "start_rva": 5169352
+          "start_rva": 5169346
         },
         {
           "effects": [
@@ -322,7 +322,7 @@
             "R"
           ],
           "end_rva": 5169412,
-          "page_rva": 991232,
+          "page_rva": 995328,
           "start_rva": 5169401
         },
         {
@@ -1558,9 +1558,9 @@
     },
     {
       "begin_rva": 5170514,
-      "end_rva": 5171914,
+      "end_rva": 5171926,
       "field_id": "0x5b139ee2956d5e69",
-      "size": 1400,
+      "size": 1412,
       "symbol": "__atfield_pretouch_6562763778015714921",
       "target_pages": [
         {
@@ -1648,7 +1648,7 @@
             "R"
           ],
           "end_rva": 5170580,
-          "page_rva": 401408,
+          "page_rva": 397312,
           "start_rva": 5170574
         },
         {
@@ -1656,7 +1656,7 @@
             "R"
           ],
           "end_rva": 5170586,
-          "page_rva": 405504,
+          "page_rva": 401408,
           "start_rva": 5170580
         },
         {
@@ -1664,7 +1664,7 @@
             "R"
           ],
           "end_rva": 5170592,
-          "page_rva": 409600,
+          "page_rva": 405504,
           "start_rva": 5170586
         },
         {
@@ -1672,7 +1672,7 @@
             "R"
           ],
           "end_rva": 5170598,
-          "page_rva": 421888,
+          "page_rva": 409600,
           "start_rva": 5170592
         },
         {
@@ -1680,7 +1680,7 @@
             "R"
           ],
           "end_rva": 5170604,
-          "page_rva": 425984,
+          "page_rva": 421888,
           "start_rva": 5170598
         },
         {
@@ -1688,7 +1688,7 @@
             "R"
           ],
           "end_rva": 5170610,
-          "page_rva": 430080,
+          "page_rva": 425984,
           "start_rva": 5170604
         },
         {
@@ -1696,7 +1696,7 @@
             "R"
           ],
           "end_rva": 5170616,
-          "page_rva": 434176,
+          "page_rva": 430080,
           "start_rva": 5170610
         },
         {
@@ -1704,7 +1704,7 @@
             "R"
           ],
           "end_rva": 5170622,
-          "page_rva": 438272,
+          "page_rva": 434176,
           "start_rva": 5170616
         },
         {
@@ -1712,7 +1712,7 @@
             "R"
           ],
           "end_rva": 5170628,
-          "page_rva": 442368,
+          "page_rva": 438272,
           "start_rva": 5170622
         },
         {
@@ -1720,7 +1720,7 @@
             "R"
           ],
           "end_rva": 5170634,
-          "page_rva": 446464,
+          "page_rva": 442368,
           "start_rva": 5170628
         },
         {
@@ -1728,7 +1728,7 @@
             "R"
           ],
           "end_rva": 5170640,
-          "page_rva": 450560,
+          "page_rva": 446464,
           "start_rva": 5170634
         },
         {
@@ -1736,7 +1736,7 @@
             "R"
           ],
           "end_rva": 5170646,
-          "page_rva": 458752,
+          "page_rva": 450560,
           "start_rva": 5170640
         },
         {
@@ -1744,7 +1744,7 @@
             "R"
           ],
           "end_rva": 5170652,
-          "page_rva": 466944,
+          "page_rva": 454656,
           "start_rva": 5170646
         },
         {
@@ -1752,7 +1752,7 @@
             "R"
           ],
           "end_rva": 5170658,
-          "page_rva": 536576,
+          "page_rva": 458752,
           "start_rva": 5170652
         },
         {
@@ -1760,7 +1760,7 @@
             "R"
           ],
           "end_rva": 5170664,
-          "page_rva": 540672,
+          "page_rva": 466944,
           "start_rva": 5170658
         },
         {
@@ -1768,7 +1768,7 @@
             "R"
           ],
           "end_rva": 5170670,
-          "page_rva": 544768,
+          "page_rva": 536576,
           "start_rva": 5170664
         },
         {
@@ -1776,7 +1776,7 @@
             "R"
           ],
           "end_rva": 5170676,
-          "page_rva": 610304,
+          "page_rva": 540672,
           "start_rva": 5170670
         },
         {
@@ -1784,596 +1784,596 @@
             "R"
           ],
           "end_rva": 5170682,
-          "page_rva": 614400,
+          "page_rva": 544768,
           "start_rva": 5170676
         },
         {
           "effects": [
-            "X"
+            "R"
           ],
-          "end_rva": 5170687,
-          "page_rva": 888832,
+          "end_rva": 5170688,
+          "page_rva": 610304,
           "start_rva": 5170682
         },
         {
           "effects": [
+            "R"
+          ],
+          "end_rva": 5170694,
+          "page_rva": 614400,
+          "start_rva": 5170688
+        },
+        {
+          "effects": [
             "X"
           ],
-          "end_rva": 5170692,
+          "end_rva": 5170699,
+          "page_rva": 888832,
+          "start_rva": 5170694
+        },
+        {
+          "effects": [
+            "X"
+          ],
+          "end_rva": 5170704,
           "page_rva": 892928,
-          "start_rva": 5170687
+          "start_rva": 5170699
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5170697,
+          "end_rva": 5170709,
           "page_rva": 897024,
-          "start_rva": 5170692
+          "start_rva": 5170704
         },
         {
           "effects": [
-            "X",
-            "R"
+            "X"
           ],
-          "end_rva": 5170708,
+          "end_rva": 5170714,
           "page_rva": 901120,
-          "start_rva": 5170697
+          "start_rva": 5170709
         },
         {
           "effects": [
-            "X"
+            "X",
+            "R"
           ],
-          "end_rva": 5170713,
+          "end_rva": 5170725,
           "page_rva": 905216,
-          "start_rva": 5170708
+          "start_rva": 5170714
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170724,
+          "end_rva": 5170736,
           "page_rva": 909312,
-          "start_rva": 5170713
+          "start_rva": 5170725
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170735,
+          "end_rva": 5170747,
           "page_rva": 913408,
-          "start_rva": 5170724
+          "start_rva": 5170736
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170746,
+          "end_rva": 5170758,
           "page_rva": 929792,
-          "start_rva": 5170735
+          "start_rva": 5170747
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170757,
+          "end_rva": 5170769,
           "page_rva": 974848,
-          "start_rva": 5170746
+          "start_rva": 5170758
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170768,
+          "end_rva": 5170780,
           "page_rva": 978944,
-          "start_rva": 5170757
+          "start_rva": 5170769
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170779,
-          "page_rva": 987136,
-          "start_rva": 5170768
-        },
-        {
-          "effects": [
-            "X",
-            "R"
-          ],
-          "end_rva": 5170790,
+          "end_rva": 5170791,
           "page_rva": 991232,
-          "start_rva": 5170779
+          "start_rva": 5170780
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170801,
+          "end_rva": 5170802,
+          "page_rva": 995328,
+          "start_rva": 5170791
+        },
+        {
+          "effects": [
+            "X",
+            "R"
+          ],
+          "end_rva": 5170813,
           "page_rva": 1511424,
-          "start_rva": 5170790
+          "start_rva": 5170802
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170812,
+          "end_rva": 5170824,
           "page_rva": 1523712,
-          "start_rva": 5170801
+          "start_rva": 5170813
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170823,
+          "end_rva": 5170835,
           "page_rva": 1527808,
-          "start_rva": 5170812
+          "start_rva": 5170824
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170834,
+          "end_rva": 5170846,
           "page_rva": 1531904,
-          "start_rva": 5170823
+          "start_rva": 5170835
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170845,
+          "end_rva": 5170857,
           "page_rva": 1540096,
-          "start_rva": 5170834
+          "start_rva": 5170846
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170856,
+          "end_rva": 5170868,
           "page_rva": 1544192,
-          "start_rva": 5170845
+          "start_rva": 5170857
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170867,
+          "end_rva": 5170879,
           "page_rva": 1568768,
-          "start_rva": 5170856
+          "start_rva": 5170868
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5170872,
+          "end_rva": 5170884,
           "page_rva": 1572864,
-          "start_rva": 5170867
+          "start_rva": 5170879
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5170877,
+          "end_rva": 5170889,
           "page_rva": 1576960,
-          "start_rva": 5170872
+          "start_rva": 5170884
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5170882,
+          "end_rva": 5170894,
           "page_rva": 1581056,
-          "start_rva": 5170877
+          "start_rva": 5170889
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170893,
+          "end_rva": 5170905,
           "page_rva": 1585152,
-          "start_rva": 5170882
+          "start_rva": 5170894
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5170898,
+          "end_rva": 5170910,
           "page_rva": 1593344,
-          "start_rva": 5170893
+          "start_rva": 5170905
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170909,
+          "end_rva": 5170921,
           "page_rva": 1597440,
-          "start_rva": 5170898
+          "start_rva": 5170910
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5170914,
+          "end_rva": 5170926,
           "page_rva": 1683456,
-          "start_rva": 5170909
+          "start_rva": 5170921
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5170919,
+          "end_rva": 5170931,
           "page_rva": 1687552,
-          "start_rva": 5170914
+          "start_rva": 5170926
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170930,
+          "end_rva": 5170942,
           "page_rva": 1691648,
-          "start_rva": 5170919
+          "start_rva": 5170931
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170941,
+          "end_rva": 5170953,
           "page_rva": 1720320,
-          "start_rva": 5170930
+          "start_rva": 5170942
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170952,
+          "end_rva": 5170964,
           "page_rva": 1724416,
-          "start_rva": 5170941
+          "start_rva": 5170953
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170963,
+          "end_rva": 5170975,
           "page_rva": 1728512,
-          "start_rva": 5170952
+          "start_rva": 5170964
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170974,
+          "end_rva": 5170986,
           "page_rva": 1732608,
-          "start_rva": 5170963
+          "start_rva": 5170975
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5170985,
+          "end_rva": 5170997,
           "page_rva": 1851392,
-          "start_rva": 5170974
+          "start_rva": 5170986
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5170990,
+          "end_rva": 5171002,
           "page_rva": 1855488,
-          "start_rva": 5170985
+          "start_rva": 5170997
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5170995,
+          "end_rva": 5171007,
           "page_rva": 1859584,
-          "start_rva": 5170990
+          "start_rva": 5171002
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5171000,
+          "end_rva": 5171012,
           "page_rva": 1863680,
-          "start_rva": 5170995
+          "start_rva": 5171007
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5171005,
+          "end_rva": 5171017,
           "page_rva": 1871872,
-          "start_rva": 5171000
+          "start_rva": 5171012
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5171010,
+          "end_rva": 5171022,
           "page_rva": 1875968,
-          "start_rva": 5171005
+          "start_rva": 5171017
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5171021,
+          "end_rva": 5171033,
           "page_rva": 1884160,
-          "start_rva": 5171010
+          "start_rva": 5171022
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5171032,
+          "end_rva": 5171044,
           "page_rva": 1888256,
-          "start_rva": 5171021
+          "start_rva": 5171033
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5171037,
+          "end_rva": 5171049,
           "page_rva": 1892352,
-          "start_rva": 5171032
+          "start_rva": 5171044
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5171048,
+          "end_rva": 5171060,
           "page_rva": 1896448,
-          "start_rva": 5171037
+          "start_rva": 5171049
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5171059,
+          "end_rva": 5171071,
           "page_rva": 1900544,
-          "start_rva": 5171048
+          "start_rva": 5171060
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5171070,
+          "end_rva": 5171082,
           "page_rva": 1904640,
-          "start_rva": 5171059
+          "start_rva": 5171071
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5171075,
+          "end_rva": 5171087,
           "page_rva": 1916928,
-          "start_rva": 5171070
+          "start_rva": 5171082
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5171086,
+          "end_rva": 5171098,
           "page_rva": 1921024,
-          "start_rva": 5171075
+          "start_rva": 5171087
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5171097,
+          "end_rva": 5171109,
           "page_rva": 1929216,
-          "start_rva": 5171086
+          "start_rva": 5171098
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5171108,
+          "end_rva": 5171120,
           "page_rva": 1941504,
-          "start_rva": 5171097
+          "start_rva": 5171109
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5171119,
+          "end_rva": 5171131,
           "page_rva": 1974272,
-          "start_rva": 5171108
+          "start_rva": 5171120
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5171130,
+          "end_rva": 5171142,
           "page_rva": 1978368,
-          "start_rva": 5171119
+          "start_rva": 5171131
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5171141,
+          "end_rva": 5171153,
           "page_rva": 2228224,
-          "start_rva": 5171130
+          "start_rva": 5171142
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5171152,
+          "end_rva": 5171164,
           "page_rva": 2269184,
-          "start_rva": 5171141
+          "start_rva": 5171153
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5171157,
+          "end_rva": 5171169,
           "page_rva": 2314240,
-          "start_rva": 5171152
+          "start_rva": 5171164
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5171162,
+          "end_rva": 5171174,
           "page_rva": 2318336,
-          "start_rva": 5171157
+          "start_rva": 5171169
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5171167,
+          "end_rva": 5171179,
           "page_rva": 2637824,
-          "start_rva": 5171162
+          "start_rva": 5171174
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5171172,
+          "end_rva": 5171184,
           "page_rva": 2650112,
-          "start_rva": 5171167
+          "start_rva": 5171179
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5171177,
+          "end_rva": 5171189,
           "page_rva": 2654208,
-          "start_rva": 5171172
+          "start_rva": 5171184
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5171182,
+          "end_rva": 5171194,
           "page_rva": 2658304,
-          "start_rva": 5171177
+          "start_rva": 5171189
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5171187,
+          "end_rva": 5171199,
           "page_rva": 2662400,
-          "start_rva": 5171182
+          "start_rva": 5171194
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5171192,
+          "end_rva": 5171204,
           "page_rva": 2666496,
-          "start_rva": 5171187
+          "start_rva": 5171199
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5171197,
+          "end_rva": 5171209,
           "page_rva": 2670592,
-          "start_rva": 5171192
+          "start_rva": 5171204
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5171202,
+          "end_rva": 5171214,
           "page_rva": 2682880,
-          "start_rva": 5171197
+          "start_rva": 5171209
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5171213,
+          "end_rva": 5171225,
           "page_rva": 2686976,
-          "start_rva": 5171202
+          "start_rva": 5171214
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5171218,
+          "end_rva": 5171230,
           "page_rva": 2707456,
-          "start_rva": 5171213
+          "start_rva": 5171225
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5171223,
+          "end_rva": 5171235,
           "page_rva": 4706304,
-          "start_rva": 5171218
+          "start_rva": 5171230
         },
         {
           "effects": [
             "X",
-            "R"
-          ],
-          "end_rva": 5171234,
-          "page_rva": 4710400,
-          "start_rva": 5171223
-        },
-        {
-          "effects": [
-            "R"
-          ],
-          "end_rva": 5171240,
-          "page_rva": 4714496,
-          "start_rva": 5171234
-        },
-        {
-          "effects": [
             "R"
           ],
           "end_rva": 5171246,
-          "page_rva": 4718592,
-          "start_rva": 5171240
+          "page_rva": 4710400,
+          "start_rva": 5171235
         },
         {
           "effects": [
             "R"
           ],
           "end_rva": 5171252,
-          "page_rva": 4734976,
+          "page_rva": 4714496,
           "start_rva": 5171246
         },
         {
@@ -2381,7 +2381,7 @@
             "R"
           ],
           "end_rva": 5171258,
-          "page_rva": 4739072,
+          "page_rva": 4718592,
           "start_rva": 5171252
         },
         {
@@ -2389,7 +2389,7 @@
             "R"
           ],
           "end_rva": 5171264,
-          "page_rva": 4743168,
+          "page_rva": 4734976,
           "start_rva": 5171258
         },
         {
@@ -2397,7 +2397,7 @@
             "R"
           ],
           "end_rva": 5171270,
-          "page_rva": 4747264,
+          "page_rva": 4739072,
           "start_rva": 5171264
         },
         {
@@ -2405,7 +2405,7 @@
             "R"
           ],
           "end_rva": 5171276,
-          "page_rva": 4792320,
+          "page_rva": 4743168,
           "start_rva": 5171270
         },
         {
@@ -2413,7 +2413,7 @@
             "R"
           ],
           "end_rva": 5171282,
-          "page_rva": 4796416,
+          "page_rva": 4747264,
           "start_rva": 5171276
         },
         {
@@ -2421,7 +2421,7 @@
             "R"
           ],
           "end_rva": 5171288,
-          "page_rva": 4800512,
+          "page_rva": 4792320,
           "start_rva": 5171282
         },
         {
@@ -2429,7 +2429,7 @@
             "R"
           ],
           "end_rva": 5171294,
-          "page_rva": 4804608,
+          "page_rva": 4796416,
           "start_rva": 5171288
         },
         {
@@ -2437,7 +2437,7 @@
             "R"
           ],
           "end_rva": 5171300,
-          "page_rva": 4808704,
+          "page_rva": 4800512,
           "start_rva": 5171294
         },
         {
@@ -2445,7 +2445,7 @@
             "R"
           ],
           "end_rva": 5171306,
-          "page_rva": 4812800,
+          "page_rva": 4804608,
           "start_rva": 5171300
         },
         {
@@ -2453,7 +2453,7 @@
             "R"
           ],
           "end_rva": 5171312,
-          "page_rva": 4816896,
+          "page_rva": 4808704,
           "start_rva": 5171306
         },
         {
@@ -2461,7 +2461,7 @@
             "R"
           ],
           "end_rva": 5171318,
-          "page_rva": 4820992,
+          "page_rva": 4812800,
           "start_rva": 5171312
         },
         {
@@ -2469,7 +2469,7 @@
             "R"
           ],
           "end_rva": 5171324,
-          "page_rva": 4825088,
+          "page_rva": 4816896,
           "start_rva": 5171318
         },
         {
@@ -2477,7 +2477,7 @@
             "R"
           ],
           "end_rva": 5171330,
-          "page_rva": 4829184,
+          "page_rva": 4820992,
           "start_rva": 5171324
         },
         {
@@ -2485,7 +2485,7 @@
             "R"
           ],
           "end_rva": 5171336,
-          "page_rva": 4833280,
+          "page_rva": 4825088,
           "start_rva": 5171330
         },
         {
@@ -2493,7 +2493,7 @@
             "R"
           ],
           "end_rva": 5171342,
-          "page_rva": 4837376,
+          "page_rva": 4829184,
           "start_rva": 5171336
         },
         {
@@ -2501,7 +2501,7 @@
             "R"
           ],
           "end_rva": 5171348,
-          "page_rva": 4841472,
+          "page_rva": 4833280,
           "start_rva": 5171342
         },
         {
@@ -2509,7 +2509,7 @@
             "R"
           ],
           "end_rva": 5171354,
-          "page_rva": 4894720,
+          "page_rva": 4837376,
           "start_rva": 5171348
         },
         {
@@ -2517,7 +2517,7 @@
             "R"
           ],
           "end_rva": 5171360,
-          "page_rva": 4898816,
+          "page_rva": 4841472,
           "start_rva": 5171354
         },
         {
@@ -2525,7 +2525,7 @@
             "R"
           ],
           "end_rva": 5171366,
-          "page_rva": 4902912,
+          "page_rva": 4894720,
           "start_rva": 5171360
         },
         {
@@ -2533,7 +2533,7 @@
             "R"
           ],
           "end_rva": 5171372,
-          "page_rva": 4993024,
+          "page_rva": 4898816,
           "start_rva": 5171366
         },
         {
@@ -2541,608 +2541,624 @@
             "R"
           ],
           "end_rva": 5171378,
-          "page_rva": 4997120,
+          "page_rva": 4902912,
           "start_rva": 5171372
         },
         {
           "effects": [
-            "R",
-            "W"
+            "R"
           ],
-          "end_rva": 5171386,
-          "page_rva": 5009408,
+          "end_rva": 5171384,
+          "page_rva": 4993024,
           "start_rva": 5171378
         },
         {
           "effects": [
+            "R"
+          ],
+          "end_rva": 5171390,
+          "page_rva": 4997120,
+          "start_rva": 5171384
+        },
+        {
+          "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171394,
+          "end_rva": 5171398,
+          "page_rva": 5009408,
+          "start_rva": 5171390
+        },
+        {
+          "effects": [
+            "R",
+            "W"
+          ],
+          "end_rva": 5171406,
           "page_rva": 5017600,
-          "start_rva": 5171386
+          "start_rva": 5171398
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171402,
+          "end_rva": 5171414,
           "page_rva": 5021696,
-          "start_rva": 5171394
+          "start_rva": 5171406
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171410,
+          "end_rva": 5171422,
           "page_rva": 5046272,
-          "start_rva": 5171402
+          "start_rva": 5171414
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171418,
+          "end_rva": 5171430,
           "page_rva": 5111808,
-          "start_rva": 5171410
+          "start_rva": 5171422
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171426,
+          "end_rva": 5171438,
           "page_rva": 5115904,
-          "start_rva": 5171418
+          "start_rva": 5171430
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171434,
+          "end_rva": 5171446,
           "page_rva": 5120000,
-          "start_rva": 5171426
+          "start_rva": 5171438
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171442,
+          "end_rva": 5171454,
           "page_rva": 5124096,
-          "start_rva": 5171434
+          "start_rva": 5171446
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171450,
+          "end_rva": 5171462,
           "page_rva": 5165056,
-          "start_rva": 5171442
+          "start_rva": 5171454
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171458,
+          "end_rva": 5171470,
           "page_rva": 5263360,
-          "start_rva": 5171450
+          "start_rva": 5171462
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171466,
+          "end_rva": 5171478,
           "page_rva": 5267456,
-          "start_rva": 5171458
+          "start_rva": 5171470
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171474,
+          "end_rva": 5171486,
           "page_rva": 5271552,
-          "start_rva": 5171466
+          "start_rva": 5171478
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171482,
+          "end_rva": 5171494,
           "page_rva": 5275648,
-          "start_rva": 5171474
+          "start_rva": 5171486
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171490,
+          "end_rva": 5171502,
           "page_rva": 5279744,
-          "start_rva": 5171482
+          "start_rva": 5171494
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171498,
+          "end_rva": 5171510,
           "page_rva": 5283840,
-          "start_rva": 5171490
+          "start_rva": 5171502
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171506,
+          "end_rva": 5171518,
           "page_rva": 5287936,
-          "start_rva": 5171498
+          "start_rva": 5171510
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171514,
+          "end_rva": 5171526,
           "page_rva": 5292032,
-          "start_rva": 5171506
+          "start_rva": 5171518
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171522,
+          "end_rva": 5171534,
           "page_rva": 5296128,
-          "start_rva": 5171514
+          "start_rva": 5171526
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171530,
+          "end_rva": 5171542,
           "page_rva": 5300224,
-          "start_rva": 5171522
+          "start_rva": 5171534
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171538,
+          "end_rva": 5171550,
           "page_rva": 5304320,
-          "start_rva": 5171530
+          "start_rva": 5171542
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171546,
+          "end_rva": 5171558,
           "page_rva": 5308416,
-          "start_rva": 5171538
+          "start_rva": 5171550
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171554,
+          "end_rva": 5171566,
           "page_rva": 5328896,
-          "start_rva": 5171546
+          "start_rva": 5171558
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171562,
+          "end_rva": 5171574,
           "page_rva": 5332992,
-          "start_rva": 5171554
+          "start_rva": 5171566
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171570,
+          "end_rva": 5171582,
           "page_rva": 5337088,
-          "start_rva": 5171562
+          "start_rva": 5171574
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171578,
+          "end_rva": 5171590,
           "page_rva": 5341184,
-          "start_rva": 5171570
+          "start_rva": 5171582
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171586,
+          "end_rva": 5171598,
           "page_rva": 5345280,
-          "start_rva": 5171578
+          "start_rva": 5171590
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171594,
+          "end_rva": 5171606,
           "page_rva": 5349376,
-          "start_rva": 5171586
+          "start_rva": 5171598
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171602,
+          "end_rva": 5171614,
           "page_rva": 5353472,
-          "start_rva": 5171594
+          "start_rva": 5171606
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171610,
+          "end_rva": 5171622,
           "page_rva": 5361664,
-          "start_rva": 5171602
+          "start_rva": 5171614
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171618,
+          "end_rva": 5171630,
           "page_rva": 5365760,
-          "start_rva": 5171610
+          "start_rva": 5171622
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171626,
+          "end_rva": 5171638,
           "page_rva": 5369856,
-          "start_rva": 5171618
+          "start_rva": 5171630
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171634,
+          "end_rva": 5171646,
           "page_rva": 5373952,
-          "start_rva": 5171626
+          "start_rva": 5171638
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171642,
+          "end_rva": 5171654,
           "page_rva": 5378048,
-          "start_rva": 5171634
+          "start_rva": 5171646
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171650,
+          "end_rva": 5171662,
           "page_rva": 5382144,
-          "start_rva": 5171642
+          "start_rva": 5171654
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171658,
+          "end_rva": 5171670,
           "page_rva": 5386240,
-          "start_rva": 5171650
+          "start_rva": 5171662
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171666,
+          "end_rva": 5171678,
           "page_rva": 5390336,
-          "start_rva": 5171658
+          "start_rva": 5171670
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171674,
+          "end_rva": 5171686,
           "page_rva": 5394432,
-          "start_rva": 5171666
+          "start_rva": 5171678
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171682,
+          "end_rva": 5171694,
           "page_rva": 5398528,
-          "start_rva": 5171674
+          "start_rva": 5171686
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171690,
+          "end_rva": 5171702,
           "page_rva": 5402624,
-          "start_rva": 5171682
+          "start_rva": 5171694
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171698,
+          "end_rva": 5171710,
           "page_rva": 5406720,
-          "start_rva": 5171690
+          "start_rva": 5171702
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171706,
+          "end_rva": 5171718,
           "page_rva": 5419008,
-          "start_rva": 5171698
+          "start_rva": 5171710
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171714,
+          "end_rva": 5171726,
           "page_rva": 5423104,
-          "start_rva": 5171706
+          "start_rva": 5171718
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171722,
+          "end_rva": 5171734,
           "page_rva": 5427200,
-          "start_rva": 5171714
+          "start_rva": 5171726
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171730,
+          "end_rva": 5171742,
           "page_rva": 5431296,
-          "start_rva": 5171722
+          "start_rva": 5171734
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171738,
+          "end_rva": 5171750,
           "page_rva": 5435392,
-          "start_rva": 5171730
+          "start_rva": 5171742
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171746,
+          "end_rva": 5171758,
           "page_rva": 5439488,
-          "start_rva": 5171738
+          "start_rva": 5171750
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171754,
+          "end_rva": 5171766,
           "page_rva": 5443584,
-          "start_rva": 5171746
+          "start_rva": 5171758
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171762,
+          "end_rva": 5171774,
           "page_rva": 5447680,
-          "start_rva": 5171754
+          "start_rva": 5171766
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171770,
+          "end_rva": 5171782,
           "page_rva": 5451776,
-          "start_rva": 5171762
+          "start_rva": 5171774
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171778,
+          "end_rva": 5171790,
           "page_rva": 5455872,
-          "start_rva": 5171770
+          "start_rva": 5171782
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171786,
+          "end_rva": 5171798,
           "page_rva": 5459968,
-          "start_rva": 5171778
+          "start_rva": 5171790
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171794,
+          "end_rva": 5171806,
           "page_rva": 5496832,
-          "start_rva": 5171786
+          "start_rva": 5171798
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171802,
+          "end_rva": 5171814,
           "page_rva": 5500928,
-          "start_rva": 5171794
+          "start_rva": 5171806
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171810,
+          "end_rva": 5171822,
           "page_rva": 5505024,
-          "start_rva": 5171802
+          "start_rva": 5171814
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171818,
+          "end_rva": 5171830,
           "page_rva": 5509120,
-          "start_rva": 5171810
+          "start_rva": 5171822
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171826,
+          "end_rva": 5171838,
           "page_rva": 5513216,
-          "start_rva": 5171818
+          "start_rva": 5171830
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171834,
+          "end_rva": 5171846,
           "page_rva": 5517312,
-          "start_rva": 5171826
+          "start_rva": 5171838
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171842,
+          "end_rva": 5171854,
           "page_rva": 5521408,
-          "start_rva": 5171834
+          "start_rva": 5171846
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171850,
+          "end_rva": 5171862,
           "page_rva": 5525504,
-          "start_rva": 5171842
+          "start_rva": 5171854
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171858,
+          "end_rva": 5171870,
           "page_rva": 5529600,
-          "start_rva": 5171850
+          "start_rva": 5171862
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171866,
+          "end_rva": 5171878,
           "page_rva": 9764864,
-          "start_rva": 5171858
+          "start_rva": 5171870
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171874,
+          "end_rva": 5171886,
           "page_rva": 9768960,
-          "start_rva": 5171866
+          "start_rva": 5171878
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171882,
+          "end_rva": 5171894,
           "page_rva": 9773056,
-          "start_rva": 5171874
+          "start_rva": 5171886
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171890,
+          "end_rva": 5171902,
           "page_rva": 9777152,
-          "start_rva": 5171882
+          "start_rva": 5171894
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171898,
+          "end_rva": 5171910,
           "page_rva": 9781248,
-          "start_rva": 5171890
+          "start_rva": 5171902
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5171906,
+          "end_rva": 5171918,
           "page_rva": 9928704,
-          "start_rva": 5171898
+          "start_rva": 5171910
         }
       ]
     },
     {
-      "begin_rva": 5171914,
-      "end_rva": 5173235,
+      "begin_rva": 5171926,
+      "end_rva": 5173247,
       "field_id": "0xcb2c56be4aa8b6df",
       "size": 1321,
       "symbol": "__atfield_pretouch_14640171863970985695",
@@ -3151,24 +3167,8 @@
           "effects": [
             "R"
           ],
-          "end_rva": 5171920,
-          "page_rva": 0,
-          "start_rva": 5171914
-        },
-        {
-          "effects": [
-            "R"
-          ],
-          "end_rva": 5171926,
-          "page_rva": 352256,
-          "start_rva": 5171920
-        },
-        {
-          "effects": [
-            "R"
-          ],
           "end_rva": 5171932,
-          "page_rva": 356352,
+          "page_rva": 0,
           "start_rva": 5171926
         },
         {
@@ -3176,7 +3176,7 @@
             "R"
           ],
           "end_rva": 5171938,
-          "page_rva": 360448,
+          "page_rva": 352256,
           "start_rva": 5171932
         },
         {
@@ -3184,7 +3184,7 @@
             "R"
           ],
           "end_rva": 5171944,
-          "page_rva": 364544,
+          "page_rva": 356352,
           "start_rva": 5171938
         },
         {
@@ -3192,7 +3192,7 @@
             "R"
           ],
           "end_rva": 5171950,
-          "page_rva": 368640,
+          "page_rva": 360448,
           "start_rva": 5171944
         },
         {
@@ -3200,7 +3200,7 @@
             "R"
           ],
           "end_rva": 5171956,
-          "page_rva": 376832,
+          "page_rva": 364544,
           "start_rva": 5171950
         },
         {
@@ -3208,7 +3208,7 @@
             "R"
           ],
           "end_rva": 5171962,
-          "page_rva": 380928,
+          "page_rva": 368640,
           "start_rva": 5171956
         },
         {
@@ -3216,7 +3216,7 @@
             "R"
           ],
           "end_rva": 5171968,
-          "page_rva": 385024,
+          "page_rva": 376832,
           "start_rva": 5171962
         },
         {
@@ -3224,7 +3224,7 @@
             "R"
           ],
           "end_rva": 5171974,
-          "page_rva": 389120,
+          "page_rva": 380928,
           "start_rva": 5171968
         },
         {
@@ -3232,7 +3232,7 @@
             "R"
           ],
           "end_rva": 5171980,
-          "page_rva": 401408,
+          "page_rva": 385024,
           "start_rva": 5171974
         },
         {
@@ -3240,7 +3240,7 @@
             "R"
           ],
           "end_rva": 5171986,
-          "page_rva": 405504,
+          "page_rva": 389120,
           "start_rva": 5171980
         },
         {
@@ -3248,7 +3248,7 @@
             "R"
           ],
           "end_rva": 5171992,
-          "page_rva": 409600,
+          "page_rva": 401408,
           "start_rva": 5171986
         },
         {
@@ -3256,7 +3256,7 @@
             "R"
           ],
           "end_rva": 5171998,
-          "page_rva": 421888,
+          "page_rva": 405504,
           "start_rva": 5171992
         },
         {
@@ -3264,7 +3264,7 @@
             "R"
           ],
           "end_rva": 5172004,
-          "page_rva": 425984,
+          "page_rva": 409600,
           "start_rva": 5171998
         },
         {
@@ -3272,7 +3272,7 @@
             "R"
           ],
           "end_rva": 5172010,
-          "page_rva": 430080,
+          "page_rva": 421888,
           "start_rva": 5172004
         },
         {
@@ -3280,7 +3280,7 @@
             "R"
           ],
           "end_rva": 5172016,
-          "page_rva": 434176,
+          "page_rva": 425984,
           "start_rva": 5172010
         },
         {
@@ -3288,7 +3288,7 @@
             "R"
           ],
           "end_rva": 5172022,
-          "page_rva": 438272,
+          "page_rva": 430080,
           "start_rva": 5172016
         },
         {
@@ -3296,7 +3296,7 @@
             "R"
           ],
           "end_rva": 5172028,
-          "page_rva": 442368,
+          "page_rva": 434176,
           "start_rva": 5172022
         },
         {
@@ -3304,7 +3304,7 @@
             "R"
           ],
           "end_rva": 5172034,
-          "page_rva": 446464,
+          "page_rva": 438272,
           "start_rva": 5172028
         },
         {
@@ -3312,7 +3312,7 @@
             "R"
           ],
           "end_rva": 5172040,
-          "page_rva": 450560,
+          "page_rva": 442368,
           "start_rva": 5172034
         },
         {
@@ -3320,7 +3320,7 @@
             "R"
           ],
           "end_rva": 5172046,
-          "page_rva": 454656,
+          "page_rva": 446464,
           "start_rva": 5172040
         },
         {
@@ -3328,7 +3328,7 @@
             "R"
           ],
           "end_rva": 5172052,
-          "page_rva": 458752,
+          "page_rva": 450560,
           "start_rva": 5172046
         },
         {
@@ -3336,7 +3336,7 @@
             "R"
           ],
           "end_rva": 5172058,
-          "page_rva": 466944,
+          "page_rva": 454656,
           "start_rva": 5172052
         },
         {
@@ -3344,7 +3344,7 @@
             "R"
           ],
           "end_rva": 5172064,
-          "page_rva": 536576,
+          "page_rva": 458752,
           "start_rva": 5172058
         },
         {
@@ -3352,7 +3352,7 @@
             "R"
           ],
           "end_rva": 5172070,
-          "page_rva": 540672,
+          "page_rva": 466944,
           "start_rva": 5172064
         },
         {
@@ -3360,7 +3360,7 @@
             "R"
           ],
           "end_rva": 5172076,
-          "page_rva": 544768,
+          "page_rva": 536576,
           "start_rva": 5172070
         },
         {
@@ -3368,7 +3368,7 @@
             "R"
           ],
           "end_rva": 5172082,
-          "page_rva": 610304,
+          "page_rva": 540672,
           "start_rva": 5172076
         },
         {
@@ -3376,551 +3376,551 @@
             "R"
           ],
           "end_rva": 5172088,
-          "page_rva": 614400,
+          "page_rva": 544768,
           "start_rva": 5172082
         },
         {
           "effects": [
-            "X"
+            "R"
           ],
-          "end_rva": 5172093,
-          "page_rva": 888832,
+          "end_rva": 5172094,
+          "page_rva": 610304,
           "start_rva": 5172088
         },
         {
           "effects": [
+            "R"
+          ],
+          "end_rva": 5172100,
+          "page_rva": 614400,
+          "start_rva": 5172094
+        },
+        {
+          "effects": [
             "X"
           ],
-          "end_rva": 5172098,
+          "end_rva": 5172105,
+          "page_rva": 888832,
+          "start_rva": 5172100
+        },
+        {
+          "effects": [
+            "X"
+          ],
+          "end_rva": 5172110,
           "page_rva": 892928,
-          "start_rva": 5172093
+          "start_rva": 5172105
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172103,
+          "end_rva": 5172115,
           "page_rva": 897024,
-          "start_rva": 5172098
+          "start_rva": 5172110
         },
         {
           "effects": [
-            "X",
-            "R"
+            "X"
           ],
-          "end_rva": 5172114,
+          "end_rva": 5172120,
           "page_rva": 901120,
-          "start_rva": 5172103
+          "start_rva": 5172115
         },
         {
           "effects": [
-            "X"
+            "X",
+            "R"
           ],
-          "end_rva": 5172119,
+          "end_rva": 5172131,
           "page_rva": 905216,
-          "start_rva": 5172114
+          "start_rva": 5172120
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172130,
+          "end_rva": 5172142,
           "page_rva": 909312,
-          "start_rva": 5172119
+          "start_rva": 5172131
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172141,
+          "end_rva": 5172153,
           "page_rva": 913408,
-          "start_rva": 5172130
+          "start_rva": 5172142
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172152,
+          "end_rva": 5172164,
           "page_rva": 929792,
-          "start_rva": 5172141
+          "start_rva": 5172153
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172163,
+          "end_rva": 5172175,
           "page_rva": 978944,
-          "start_rva": 5172152
+          "start_rva": 5172164
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172174,
-          "page_rva": 991232,
-          "start_rva": 5172163
+          "end_rva": 5172186,
+          "page_rva": 995328,
+          "start_rva": 5172175
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172185,
+          "end_rva": 5172197,
           "page_rva": 1511424,
-          "start_rva": 5172174
+          "start_rva": 5172186
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172196,
+          "end_rva": 5172208,
           "page_rva": 1523712,
-          "start_rva": 5172185
+          "start_rva": 5172197
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172207,
+          "end_rva": 5172219,
           "page_rva": 1527808,
-          "start_rva": 5172196
+          "start_rva": 5172208
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172218,
+          "end_rva": 5172230,
           "page_rva": 1531904,
-          "start_rva": 5172207
+          "start_rva": 5172219
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172229,
+          "end_rva": 5172241,
           "page_rva": 1540096,
-          "start_rva": 5172218
+          "start_rva": 5172230
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172240,
+          "end_rva": 5172252,
           "page_rva": 1544192,
-          "start_rva": 5172229
+          "start_rva": 5172241
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172245,
+          "end_rva": 5172257,
           "page_rva": 1572864,
-          "start_rva": 5172240
+          "start_rva": 5172252
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172250,
+          "end_rva": 5172262,
           "page_rva": 1576960,
-          "start_rva": 5172245
+          "start_rva": 5172257
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172255,
+          "end_rva": 5172267,
           "page_rva": 1581056,
-          "start_rva": 5172250
+          "start_rva": 5172262
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172266,
+          "end_rva": 5172278,
           "page_rva": 1585152,
-          "start_rva": 5172255
+          "start_rva": 5172267
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172271,
+          "end_rva": 5172283,
           "page_rva": 1593344,
-          "start_rva": 5172266
+          "start_rva": 5172278
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172282,
+          "end_rva": 5172294,
           "page_rva": 1597440,
-          "start_rva": 5172271
+          "start_rva": 5172283
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172287,
+          "end_rva": 5172299,
           "page_rva": 1683456,
-          "start_rva": 5172282
+          "start_rva": 5172294
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172292,
+          "end_rva": 5172304,
           "page_rva": 1687552,
-          "start_rva": 5172287
+          "start_rva": 5172299
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172303,
+          "end_rva": 5172315,
           "page_rva": 1691648,
-          "start_rva": 5172292
+          "start_rva": 5172304
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172314,
+          "end_rva": 5172326,
           "page_rva": 1720320,
-          "start_rva": 5172303
+          "start_rva": 5172315
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172325,
+          "end_rva": 5172337,
           "page_rva": 1724416,
-          "start_rva": 5172314
+          "start_rva": 5172326
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172336,
+          "end_rva": 5172348,
           "page_rva": 1728512,
-          "start_rva": 5172325
+          "start_rva": 5172337
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172347,
+          "end_rva": 5172359,
           "page_rva": 1732608,
-          "start_rva": 5172336
+          "start_rva": 5172348
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172358,
+          "end_rva": 5172370,
           "page_rva": 1851392,
-          "start_rva": 5172347
+          "start_rva": 5172359
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172363,
+          "end_rva": 5172375,
           "page_rva": 1855488,
-          "start_rva": 5172358
+          "start_rva": 5172370
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172368,
+          "end_rva": 5172380,
           "page_rva": 1859584,
-          "start_rva": 5172363
+          "start_rva": 5172375
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172373,
+          "end_rva": 5172385,
           "page_rva": 1863680,
-          "start_rva": 5172368
+          "start_rva": 5172380
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172378,
+          "end_rva": 5172390,
           "page_rva": 1871872,
-          "start_rva": 5172373
+          "start_rva": 5172385
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172383,
+          "end_rva": 5172395,
           "page_rva": 1875968,
-          "start_rva": 5172378
+          "start_rva": 5172390
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172388,
+          "end_rva": 5172400,
           "page_rva": 1892352,
-          "start_rva": 5172383
+          "start_rva": 5172395
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172399,
+          "end_rva": 5172411,
           "page_rva": 1896448,
-          "start_rva": 5172388
+          "start_rva": 5172400
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172410,
+          "end_rva": 5172422,
           "page_rva": 1900544,
-          "start_rva": 5172399
+          "start_rva": 5172411
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172421,
+          "end_rva": 5172433,
           "page_rva": 1904640,
-          "start_rva": 5172410
+          "start_rva": 5172422
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172426,
+          "end_rva": 5172438,
           "page_rva": 1916928,
-          "start_rva": 5172421
+          "start_rva": 5172433
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172437,
+          "end_rva": 5172449,
           "page_rva": 1921024,
-          "start_rva": 5172426
+          "start_rva": 5172438
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172448,
+          "end_rva": 5172460,
           "page_rva": 1929216,
-          "start_rva": 5172437
+          "start_rva": 5172449
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172459,
+          "end_rva": 5172471,
           "page_rva": 1941504,
-          "start_rva": 5172448
+          "start_rva": 5172460
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172470,
+          "end_rva": 5172482,
           "page_rva": 1974272,
-          "start_rva": 5172459
+          "start_rva": 5172471
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172481,
+          "end_rva": 5172493,
           "page_rva": 1978368,
-          "start_rva": 5172470
+          "start_rva": 5172482
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172492,
+          "end_rva": 5172504,
           "page_rva": 2228224,
-          "start_rva": 5172481
+          "start_rva": 5172493
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172503,
+          "end_rva": 5172515,
           "page_rva": 2269184,
-          "start_rva": 5172492
+          "start_rva": 5172504
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172508,
+          "end_rva": 5172520,
           "page_rva": 2314240,
-          "start_rva": 5172503
+          "start_rva": 5172515
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172513,
+          "end_rva": 5172525,
           "page_rva": 2318336,
-          "start_rva": 5172508
+          "start_rva": 5172520
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172518,
+          "end_rva": 5172530,
           "page_rva": 2637824,
-          "start_rva": 5172513
+          "start_rva": 5172525
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172523,
+          "end_rva": 5172535,
           "page_rva": 2650112,
-          "start_rva": 5172518
+          "start_rva": 5172530
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172528,
+          "end_rva": 5172540,
           "page_rva": 2654208,
-          "start_rva": 5172523
+          "start_rva": 5172535
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172533,
+          "end_rva": 5172545,
           "page_rva": 2658304,
-          "start_rva": 5172528
+          "start_rva": 5172540
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172538,
+          "end_rva": 5172550,
           "page_rva": 2662400,
-          "start_rva": 5172533
+          "start_rva": 5172545
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172543,
+          "end_rva": 5172555,
           "page_rva": 2666496,
-          "start_rva": 5172538
+          "start_rva": 5172550
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172548,
+          "end_rva": 5172560,
           "page_rva": 2670592,
-          "start_rva": 5172543
+          "start_rva": 5172555
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172553,
+          "end_rva": 5172565,
           "page_rva": 2682880,
-          "start_rva": 5172548
+          "start_rva": 5172560
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5172564,
+          "end_rva": 5172576,
           "page_rva": 2686976,
-          "start_rva": 5172553
+          "start_rva": 5172565
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172569,
+          "end_rva": 5172581,
           "page_rva": 2707456,
-          "start_rva": 5172564
+          "start_rva": 5172576
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5172574,
+          "end_rva": 5172586,
           "page_rva": 4706304,
-          "start_rva": 5172569
+          "start_rva": 5172581
         },
         {
           "effects": [
             "X",
-            "R"
-          ],
-          "end_rva": 5172585,
-          "page_rva": 4710400,
-          "start_rva": 5172574
-        },
-        {
-          "effects": [
-            "R"
-          ],
-          "end_rva": 5172591,
-          "page_rva": 4714496,
-          "start_rva": 5172585
-        },
-        {
-          "effects": [
             "R"
           ],
           "end_rva": 5172597,
-          "page_rva": 4718592,
-          "start_rva": 5172591
+          "page_rva": 4710400,
+          "start_rva": 5172586
         },
         {
           "effects": [
             "R"
           ],
           "end_rva": 5172603,
-          "page_rva": 4734976,
+          "page_rva": 4714496,
           "start_rva": 5172597
         },
         {
@@ -3928,7 +3928,7 @@
             "R"
           ],
           "end_rva": 5172609,
-          "page_rva": 4739072,
+          "page_rva": 4718592,
           "start_rva": 5172603
         },
         {
@@ -3936,7 +3936,7 @@
             "R"
           ],
           "end_rva": 5172615,
-          "page_rva": 4743168,
+          "page_rva": 4734976,
           "start_rva": 5172609
         },
         {
@@ -3944,7 +3944,7 @@
             "R"
           ],
           "end_rva": 5172621,
-          "page_rva": 4792320,
+          "page_rva": 4739072,
           "start_rva": 5172615
         },
         {
@@ -3952,7 +3952,7 @@
             "R"
           ],
           "end_rva": 5172627,
-          "page_rva": 4796416,
+          "page_rva": 4743168,
           "start_rva": 5172621
         },
         {
@@ -3960,7 +3960,7 @@
             "R"
           ],
           "end_rva": 5172633,
-          "page_rva": 4800512,
+          "page_rva": 4792320,
           "start_rva": 5172627
         },
         {
@@ -3968,7 +3968,7 @@
             "R"
           ],
           "end_rva": 5172639,
-          "page_rva": 4804608,
+          "page_rva": 4796416,
           "start_rva": 5172633
         },
         {
@@ -3976,7 +3976,7 @@
             "R"
           ],
           "end_rva": 5172645,
-          "page_rva": 4808704,
+          "page_rva": 4800512,
           "start_rva": 5172639
         },
         {
@@ -3984,7 +3984,7 @@
             "R"
           ],
           "end_rva": 5172651,
-          "page_rva": 4812800,
+          "page_rva": 4804608,
           "start_rva": 5172645
         },
         {
@@ -3992,7 +3992,7 @@
             "R"
           ],
           "end_rva": 5172657,
-          "page_rva": 4816896,
+          "page_rva": 4808704,
           "start_rva": 5172651
         },
         {
@@ -4000,7 +4000,7 @@
             "R"
           ],
           "end_rva": 5172663,
-          "page_rva": 4820992,
+          "page_rva": 4812800,
           "start_rva": 5172657
         },
         {
@@ -4008,7 +4008,7 @@
             "R"
           ],
           "end_rva": 5172669,
-          "page_rva": 4825088,
+          "page_rva": 4816896,
           "start_rva": 5172663
         },
         {
@@ -4016,7 +4016,7 @@
             "R"
           ],
           "end_rva": 5172675,
-          "page_rva": 4829184,
+          "page_rva": 4820992,
           "start_rva": 5172669
         },
         {
@@ -4024,7 +4024,7 @@
             "R"
           ],
           "end_rva": 5172681,
-          "page_rva": 4833280,
+          "page_rva": 4825088,
           "start_rva": 5172675
         },
         {
@@ -4032,7 +4032,7 @@
             "R"
           ],
           "end_rva": 5172687,
-          "page_rva": 4837376,
+          "page_rva": 4829184,
           "start_rva": 5172681
         },
         {
@@ -4040,7 +4040,7 @@
             "R"
           ],
           "end_rva": 5172693,
-          "page_rva": 4841472,
+          "page_rva": 4833280,
           "start_rva": 5172687
         },
         {
@@ -4048,7 +4048,7 @@
             "R"
           ],
           "end_rva": 5172699,
-          "page_rva": 4894720,
+          "page_rva": 4837376,
           "start_rva": 5172693
         },
         {
@@ -4056,7 +4056,7 @@
             "R"
           ],
           "end_rva": 5172705,
-          "page_rva": 4898816,
+          "page_rva": 4841472,
           "start_rva": 5172699
         },
         {
@@ -4064,7 +4064,7 @@
             "R"
           ],
           "end_rva": 5172711,
-          "page_rva": 4902912,
+          "page_rva": 4894720,
           "start_rva": 5172705
         },
         {
@@ -4072,7 +4072,7 @@
             "R"
           ],
           "end_rva": 5172717,
-          "page_rva": 4993024,
+          "page_rva": 4898816,
           "start_rva": 5172711
         },
         {
@@ -4080,581 +4080,597 @@
             "R"
           ],
           "end_rva": 5172723,
-          "page_rva": 4997120,
+          "page_rva": 4902912,
           "start_rva": 5172717
         },
         {
           "effects": [
-            "R",
-            "W"
+            "R"
           ],
-          "end_rva": 5172731,
-          "page_rva": 5009408,
+          "end_rva": 5172729,
+          "page_rva": 4993024,
           "start_rva": 5172723
         },
         {
           "effects": [
+            "R"
+          ],
+          "end_rva": 5172735,
+          "page_rva": 4997120,
+          "start_rva": 5172729
+        },
+        {
+          "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172739,
+          "end_rva": 5172743,
+          "page_rva": 5009408,
+          "start_rva": 5172735
+        },
+        {
+          "effects": [
+            "R",
+            "W"
+          ],
+          "end_rva": 5172751,
           "page_rva": 5017600,
-          "start_rva": 5172731
+          "start_rva": 5172743
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172747,
+          "end_rva": 5172759,
           "page_rva": 5021696,
-          "start_rva": 5172739
+          "start_rva": 5172751
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172755,
+          "end_rva": 5172767,
           "page_rva": 5046272,
-          "start_rva": 5172747
+          "start_rva": 5172759
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172763,
+          "end_rva": 5172775,
           "page_rva": 5111808,
-          "start_rva": 5172755
+          "start_rva": 5172767
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172771,
+          "end_rva": 5172783,
           "page_rva": 5115904,
-          "start_rva": 5172763
+          "start_rva": 5172775
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172779,
+          "end_rva": 5172791,
           "page_rva": 5120000,
-          "start_rva": 5172771
+          "start_rva": 5172783
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172787,
+          "end_rva": 5172799,
           "page_rva": 5124096,
-          "start_rva": 5172779
+          "start_rva": 5172791
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172795,
+          "end_rva": 5172807,
           "page_rva": 5165056,
-          "start_rva": 5172787
+          "start_rva": 5172799
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172803,
+          "end_rva": 5172815,
           "page_rva": 5263360,
-          "start_rva": 5172795
+          "start_rva": 5172807
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172811,
+          "end_rva": 5172823,
           "page_rva": 5267456,
-          "start_rva": 5172803
+          "start_rva": 5172815
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172819,
+          "end_rva": 5172831,
           "page_rva": 5271552,
-          "start_rva": 5172811
+          "start_rva": 5172823
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172827,
+          "end_rva": 5172839,
           "page_rva": 5275648,
-          "start_rva": 5172819
+          "start_rva": 5172831
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172835,
+          "end_rva": 5172847,
           "page_rva": 5279744,
-          "start_rva": 5172827
+          "start_rva": 5172839
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172843,
+          "end_rva": 5172855,
           "page_rva": 5283840,
-          "start_rva": 5172835
+          "start_rva": 5172847
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172851,
+          "end_rva": 5172863,
           "page_rva": 5287936,
-          "start_rva": 5172843
+          "start_rva": 5172855
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172859,
+          "end_rva": 5172871,
           "page_rva": 5292032,
-          "start_rva": 5172851
+          "start_rva": 5172863
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172867,
+          "end_rva": 5172879,
           "page_rva": 5296128,
-          "start_rva": 5172859
+          "start_rva": 5172871
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172875,
+          "end_rva": 5172887,
           "page_rva": 5300224,
-          "start_rva": 5172867
+          "start_rva": 5172879
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172883,
+          "end_rva": 5172895,
           "page_rva": 5304320,
-          "start_rva": 5172875
+          "start_rva": 5172887
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172891,
+          "end_rva": 5172903,
           "page_rva": 5308416,
-          "start_rva": 5172883
+          "start_rva": 5172895
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172899,
+          "end_rva": 5172911,
           "page_rva": 5328896,
-          "start_rva": 5172891
+          "start_rva": 5172903
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172907,
+          "end_rva": 5172919,
           "page_rva": 5332992,
-          "start_rva": 5172899
+          "start_rva": 5172911
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172915,
+          "end_rva": 5172927,
           "page_rva": 5337088,
-          "start_rva": 5172907
+          "start_rva": 5172919
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172923,
+          "end_rva": 5172935,
           "page_rva": 5341184,
-          "start_rva": 5172915
+          "start_rva": 5172927
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172931,
+          "end_rva": 5172943,
           "page_rva": 5345280,
-          "start_rva": 5172923
+          "start_rva": 5172935
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172939,
+          "end_rva": 5172951,
           "page_rva": 5349376,
-          "start_rva": 5172931
+          "start_rva": 5172943
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172947,
+          "end_rva": 5172959,
           "page_rva": 5353472,
-          "start_rva": 5172939
+          "start_rva": 5172951
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172955,
+          "end_rva": 5172967,
           "page_rva": 5361664,
-          "start_rva": 5172947
+          "start_rva": 5172959
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172963,
+          "end_rva": 5172975,
           "page_rva": 5365760,
-          "start_rva": 5172955
+          "start_rva": 5172967
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172971,
+          "end_rva": 5172983,
           "page_rva": 5369856,
-          "start_rva": 5172963
+          "start_rva": 5172975
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172979,
+          "end_rva": 5172991,
           "page_rva": 5373952,
-          "start_rva": 5172971
+          "start_rva": 5172983
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172987,
+          "end_rva": 5172999,
           "page_rva": 5378048,
-          "start_rva": 5172979
+          "start_rva": 5172991
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5172995,
+          "end_rva": 5173007,
           "page_rva": 5382144,
-          "start_rva": 5172987
+          "start_rva": 5172999
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173003,
+          "end_rva": 5173015,
           "page_rva": 5386240,
-          "start_rva": 5172995
+          "start_rva": 5173007
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173011,
+          "end_rva": 5173023,
           "page_rva": 5390336,
-          "start_rva": 5173003
+          "start_rva": 5173015
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173019,
+          "end_rva": 5173031,
           "page_rva": 5394432,
-          "start_rva": 5173011
+          "start_rva": 5173023
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173027,
+          "end_rva": 5173039,
           "page_rva": 5398528,
-          "start_rva": 5173019
+          "start_rva": 5173031
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173035,
+          "end_rva": 5173047,
           "page_rva": 5402624,
-          "start_rva": 5173027
+          "start_rva": 5173039
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173043,
+          "end_rva": 5173055,
           "page_rva": 5406720,
-          "start_rva": 5173035
+          "start_rva": 5173047
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173051,
+          "end_rva": 5173063,
           "page_rva": 5419008,
-          "start_rva": 5173043
+          "start_rva": 5173055
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173059,
+          "end_rva": 5173071,
           "page_rva": 5423104,
-          "start_rva": 5173051
+          "start_rva": 5173063
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173067,
+          "end_rva": 5173079,
           "page_rva": 5427200,
-          "start_rva": 5173059
+          "start_rva": 5173071
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173075,
+          "end_rva": 5173087,
           "page_rva": 5431296,
-          "start_rva": 5173067
+          "start_rva": 5173079
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173083,
+          "end_rva": 5173095,
           "page_rva": 5435392,
-          "start_rva": 5173075
+          "start_rva": 5173087
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173091,
+          "end_rva": 5173103,
           "page_rva": 5439488,
-          "start_rva": 5173083
+          "start_rva": 5173095
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173099,
+          "end_rva": 5173111,
           "page_rva": 5443584,
-          "start_rva": 5173091
+          "start_rva": 5173103
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173107,
+          "end_rva": 5173119,
           "page_rva": 5447680,
-          "start_rva": 5173099
+          "start_rva": 5173111
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173115,
+          "end_rva": 5173127,
           "page_rva": 5451776,
-          "start_rva": 5173107
+          "start_rva": 5173119
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173123,
+          "end_rva": 5173135,
           "page_rva": 5455872,
-          "start_rva": 5173115
+          "start_rva": 5173127
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173131,
+          "end_rva": 5173143,
           "page_rva": 5459968,
-          "start_rva": 5173123
+          "start_rva": 5173135
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173139,
+          "end_rva": 5173151,
           "page_rva": 5496832,
-          "start_rva": 5173131
+          "start_rva": 5173143
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173147,
+          "end_rva": 5173159,
           "page_rva": 5500928,
-          "start_rva": 5173139
+          "start_rva": 5173151
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173155,
+          "end_rva": 5173167,
           "page_rva": 5505024,
-          "start_rva": 5173147
+          "start_rva": 5173159
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173163,
+          "end_rva": 5173175,
           "page_rva": 5509120,
-          "start_rva": 5173155
+          "start_rva": 5173167
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173171,
+          "end_rva": 5173183,
           "page_rva": 5513216,
-          "start_rva": 5173163
+          "start_rva": 5173175
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173179,
+          "end_rva": 5173191,
           "page_rva": 5517312,
-          "start_rva": 5173171
+          "start_rva": 5173183
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173187,
+          "end_rva": 5173199,
           "page_rva": 9764864,
-          "start_rva": 5173179
+          "start_rva": 5173191
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173195,
+          "end_rva": 5173207,
           "page_rva": 9768960,
-          "start_rva": 5173187
+          "start_rva": 5173199
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173203,
+          "end_rva": 5173215,
           "page_rva": 9773056,
-          "start_rva": 5173195
+          "start_rva": 5173207
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173211,
+          "end_rva": 5173223,
           "page_rva": 9777152,
-          "start_rva": 5173203
+          "start_rva": 5173215
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173219,
+          "end_rva": 5173231,
           "page_rva": 9781248,
-          "start_rva": 5173211
+          "start_rva": 5173223
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5173227,
+          "end_rva": 5173239,
           "page_rva": 9928704,
-          "start_rva": 5173219
+          "start_rva": 5173231
         }
       ]
     },
     {
-      "begin_rva": 5173235,
-      "end_rva": 5174573,
+      "begin_rva": 5173247,
+      "end_rva": 5174585,
       "field_id": "0x61a6007dac8ab670",
       "size": 1338,
       "symbol": "__atfield_pretouch_7036312007578662512",
@@ -4663,24 +4679,8 @@
           "effects": [
             "R"
           ],
-          "end_rva": 5173241,
-          "page_rva": 0,
-          "start_rva": 5173235
-        },
-        {
-          "effects": [
-            "R"
-          ],
-          "end_rva": 5173247,
-          "page_rva": 352256,
-          "start_rva": 5173241
-        },
-        {
-          "effects": [
-            "R"
-          ],
           "end_rva": 5173253,
-          "page_rva": 356352,
+          "page_rva": 0,
           "start_rva": 5173247
         },
         {
@@ -4688,7 +4688,7 @@
             "R"
           ],
           "end_rva": 5173259,
-          "page_rva": 360448,
+          "page_rva": 352256,
           "start_rva": 5173253
         },
         {
@@ -4696,7 +4696,7 @@
             "R"
           ],
           "end_rva": 5173265,
-          "page_rva": 364544,
+          "page_rva": 356352,
           "start_rva": 5173259
         },
         {
@@ -4704,7 +4704,7 @@
             "R"
           ],
           "end_rva": 5173271,
-          "page_rva": 368640,
+          "page_rva": 360448,
           "start_rva": 5173265
         },
         {
@@ -4712,7 +4712,7 @@
             "R"
           ],
           "end_rva": 5173277,
-          "page_rva": 376832,
+          "page_rva": 364544,
           "start_rva": 5173271
         },
         {
@@ -4720,7 +4720,7 @@
             "R"
           ],
           "end_rva": 5173283,
-          "page_rva": 380928,
+          "page_rva": 368640,
           "start_rva": 5173277
         },
         {
@@ -4728,7 +4728,7 @@
             "R"
           ],
           "end_rva": 5173289,
-          "page_rva": 385024,
+          "page_rva": 376832,
           "start_rva": 5173283
         },
         {
@@ -4736,7 +4736,7 @@
             "R"
           ],
           "end_rva": 5173295,
-          "page_rva": 389120,
+          "page_rva": 380928,
           "start_rva": 5173289
         },
         {
@@ -4744,7 +4744,7 @@
             "R"
           ],
           "end_rva": 5173301,
-          "page_rva": 401408,
+          "page_rva": 385024,
           "start_rva": 5173295
         },
         {
@@ -4752,7 +4752,7 @@
             "R"
           ],
           "end_rva": 5173307,
-          "page_rva": 405504,
+          "page_rva": 389120,
           "start_rva": 5173301
         },
         {
@@ -4760,7 +4760,7 @@
             "R"
           ],
           "end_rva": 5173313,
-          "page_rva": 409600,
+          "page_rva": 401408,
           "start_rva": 5173307
         },
         {
@@ -4768,7 +4768,7 @@
             "R"
           ],
           "end_rva": 5173319,
-          "page_rva": 421888,
+          "page_rva": 405504,
           "start_rva": 5173313
         },
         {
@@ -4776,7 +4776,7 @@
             "R"
           ],
           "end_rva": 5173325,
-          "page_rva": 425984,
+          "page_rva": 409600,
           "start_rva": 5173319
         },
         {
@@ -4784,7 +4784,7 @@
             "R"
           ],
           "end_rva": 5173331,
-          "page_rva": 430080,
+          "page_rva": 421888,
           "start_rva": 5173325
         },
         {
@@ -4792,7 +4792,7 @@
             "R"
           ],
           "end_rva": 5173337,
-          "page_rva": 434176,
+          "page_rva": 425984,
           "start_rva": 5173331
         },
         {
@@ -4800,7 +4800,7 @@
             "R"
           ],
           "end_rva": 5173343,
-          "page_rva": 438272,
+          "page_rva": 430080,
           "start_rva": 5173337
         },
         {
@@ -4808,7 +4808,7 @@
             "R"
           ],
           "end_rva": 5173349,
-          "page_rva": 442368,
+          "page_rva": 434176,
           "start_rva": 5173343
         },
         {
@@ -4816,7 +4816,7 @@
             "R"
           ],
           "end_rva": 5173355,
-          "page_rva": 446464,
+          "page_rva": 438272,
           "start_rva": 5173349
         },
         {
@@ -4824,7 +4824,7 @@
             "R"
           ],
           "end_rva": 5173361,
-          "page_rva": 450560,
+          "page_rva": 442368,
           "start_rva": 5173355
         },
         {
@@ -4832,7 +4832,7 @@
             "R"
           ],
           "end_rva": 5173367,
-          "page_rva": 454656,
+          "page_rva": 446464,
           "start_rva": 5173361
         },
         {
@@ -4840,7 +4840,7 @@
             "R"
           ],
           "end_rva": 5173373,
-          "page_rva": 458752,
+          "page_rva": 450560,
           "start_rva": 5173367
         },
         {
@@ -4848,7 +4848,7 @@
             "R"
           ],
           "end_rva": 5173379,
-          "page_rva": 466944,
+          "page_rva": 454656,
           "start_rva": 5173373
         },
         {
@@ -4856,7 +4856,7 @@
             "R"
           ],
           "end_rva": 5173385,
-          "page_rva": 536576,
+          "page_rva": 458752,
           "start_rva": 5173379
         },
         {
@@ -4864,7 +4864,7 @@
             "R"
           ],
           "end_rva": 5173391,
-          "page_rva": 540672,
+          "page_rva": 466944,
           "start_rva": 5173385
         },
         {
@@ -4872,7 +4872,7 @@
             "R"
           ],
           "end_rva": 5173397,
-          "page_rva": 544768,
+          "page_rva": 536576,
           "start_rva": 5173391
         },
         {
@@ -4880,7 +4880,7 @@
             "R"
           ],
           "end_rva": 5173403,
-          "page_rva": 610304,
+          "page_rva": 540672,
           "start_rva": 5173397
         },
         {
@@ -4888,560 +4888,560 @@
             "R"
           ],
           "end_rva": 5173409,
-          "page_rva": 614400,
+          "page_rva": 544768,
           "start_rva": 5173403
         },
         {
           "effects": [
-            "X"
+            "R"
           ],
-          "end_rva": 5173414,
-          "page_rva": 888832,
+          "end_rva": 5173415,
+          "page_rva": 610304,
           "start_rva": 5173409
         },
         {
           "effects": [
+            "R"
+          ],
+          "end_rva": 5173421,
+          "page_rva": 614400,
+          "start_rva": 5173415
+        },
+        {
+          "effects": [
             "X"
           ],
-          "end_rva": 5173419,
+          "end_rva": 5173426,
+          "page_rva": 888832,
+          "start_rva": 5173421
+        },
+        {
+          "effects": [
+            "X"
+          ],
+          "end_rva": 5173431,
           "page_rva": 892928,
-          "start_rva": 5173414
+          "start_rva": 5173426
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173424,
+          "end_rva": 5173436,
           "page_rva": 897024,
-          "start_rva": 5173419
+          "start_rva": 5173431
         },
         {
           "effects": [
-            "X",
-            "R"
+            "X"
           ],
-          "end_rva": 5173435,
+          "end_rva": 5173441,
           "page_rva": 901120,
-          "start_rva": 5173424
+          "start_rva": 5173436
         },
         {
           "effects": [
-            "X"
+            "X",
+            "R"
           ],
-          "end_rva": 5173440,
+          "end_rva": 5173452,
           "page_rva": 905216,
-          "start_rva": 5173435
+          "start_rva": 5173441
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173451,
+          "end_rva": 5173463,
           "page_rva": 909312,
-          "start_rva": 5173440
+          "start_rva": 5173452
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173462,
+          "end_rva": 5173474,
           "page_rva": 913408,
-          "start_rva": 5173451
+          "start_rva": 5173463
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173473,
+          "end_rva": 5173485,
           "page_rva": 929792,
-          "start_rva": 5173462
+          "start_rva": 5173474
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173484,
+          "end_rva": 5173496,
           "page_rva": 978944,
-          "start_rva": 5173473
+          "start_rva": 5173485
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173495,
-          "page_rva": 991232,
-          "start_rva": 5173484
+          "end_rva": 5173507,
+          "page_rva": 995328,
+          "start_rva": 5173496
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173506,
+          "end_rva": 5173518,
           "page_rva": 1511424,
-          "start_rva": 5173495
+          "start_rva": 5173507
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173517,
+          "end_rva": 5173529,
           "page_rva": 1523712,
-          "start_rva": 5173506
+          "start_rva": 5173518
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173528,
+          "end_rva": 5173540,
           "page_rva": 1527808,
-          "start_rva": 5173517
+          "start_rva": 5173529
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173539,
+          "end_rva": 5173551,
           "page_rva": 1531904,
-          "start_rva": 5173528
+          "start_rva": 5173540
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173550,
+          "end_rva": 5173562,
           "page_rva": 1540096,
-          "start_rva": 5173539
+          "start_rva": 5173551
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173561,
+          "end_rva": 5173573,
           "page_rva": 1544192,
-          "start_rva": 5173550
+          "start_rva": 5173562
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173572,
+          "end_rva": 5173584,
           "page_rva": 1568768,
-          "start_rva": 5173561
+          "start_rva": 5173573
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173577,
+          "end_rva": 5173589,
           "page_rva": 1572864,
-          "start_rva": 5173572
+          "start_rva": 5173584
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173582,
+          "end_rva": 5173594,
           "page_rva": 1576960,
-          "start_rva": 5173577
+          "start_rva": 5173589
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173587,
+          "end_rva": 5173599,
           "page_rva": 1581056,
-          "start_rva": 5173582
+          "start_rva": 5173594
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173598,
+          "end_rva": 5173610,
           "page_rva": 1585152,
-          "start_rva": 5173587
+          "start_rva": 5173599
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173603,
+          "end_rva": 5173615,
           "page_rva": 1593344,
-          "start_rva": 5173598
+          "start_rva": 5173610
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173614,
+          "end_rva": 5173626,
           "page_rva": 1597440,
-          "start_rva": 5173603
+          "start_rva": 5173615
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173619,
+          "end_rva": 5173631,
           "page_rva": 1683456,
-          "start_rva": 5173614
+          "start_rva": 5173626
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173624,
+          "end_rva": 5173636,
           "page_rva": 1687552,
-          "start_rva": 5173619
+          "start_rva": 5173631
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173635,
+          "end_rva": 5173647,
           "page_rva": 1691648,
-          "start_rva": 5173624
+          "start_rva": 5173636
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173646,
+          "end_rva": 5173658,
           "page_rva": 1720320,
-          "start_rva": 5173635
+          "start_rva": 5173647
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173657,
+          "end_rva": 5173669,
           "page_rva": 1724416,
-          "start_rva": 5173646
+          "start_rva": 5173658
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173668,
+          "end_rva": 5173680,
           "page_rva": 1728512,
-          "start_rva": 5173657
+          "start_rva": 5173669
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173679,
+          "end_rva": 5173691,
           "page_rva": 1732608,
-          "start_rva": 5173668
+          "start_rva": 5173680
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173690,
+          "end_rva": 5173702,
           "page_rva": 1851392,
-          "start_rva": 5173679
+          "start_rva": 5173691
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173695,
+          "end_rva": 5173707,
           "page_rva": 1855488,
-          "start_rva": 5173690
+          "start_rva": 5173702
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173700,
+          "end_rva": 5173712,
           "page_rva": 1859584,
-          "start_rva": 5173695
+          "start_rva": 5173707
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173705,
+          "end_rva": 5173717,
           "page_rva": 1863680,
-          "start_rva": 5173700
+          "start_rva": 5173712
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173710,
+          "end_rva": 5173722,
           "page_rva": 1871872,
-          "start_rva": 5173705
+          "start_rva": 5173717
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173715,
+          "end_rva": 5173727,
           "page_rva": 1875968,
-          "start_rva": 5173710
+          "start_rva": 5173722
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173720,
+          "end_rva": 5173732,
           "page_rva": 1892352,
-          "start_rva": 5173715
+          "start_rva": 5173727
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173731,
+          "end_rva": 5173743,
           "page_rva": 1896448,
-          "start_rva": 5173720
+          "start_rva": 5173732
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173742,
+          "end_rva": 5173754,
           "page_rva": 1900544,
-          "start_rva": 5173731
+          "start_rva": 5173743
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173753,
+          "end_rva": 5173765,
           "page_rva": 1904640,
-          "start_rva": 5173742
+          "start_rva": 5173754
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173758,
+          "end_rva": 5173770,
           "page_rva": 1916928,
-          "start_rva": 5173753
+          "start_rva": 5173765
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173769,
+          "end_rva": 5173781,
           "page_rva": 1921024,
-          "start_rva": 5173758
+          "start_rva": 5173770
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173780,
+          "end_rva": 5173792,
           "page_rva": 1929216,
-          "start_rva": 5173769
+          "start_rva": 5173781
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173791,
+          "end_rva": 5173803,
           "page_rva": 1941504,
-          "start_rva": 5173780
+          "start_rva": 5173792
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173802,
+          "end_rva": 5173814,
           "page_rva": 1974272,
-          "start_rva": 5173791
+          "start_rva": 5173803
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173813,
+          "end_rva": 5173825,
           "page_rva": 1978368,
-          "start_rva": 5173802
+          "start_rva": 5173814
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173824,
+          "end_rva": 5173836,
           "page_rva": 2228224,
-          "start_rva": 5173813
+          "start_rva": 5173825
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173835,
+          "end_rva": 5173847,
           "page_rva": 2269184,
-          "start_rva": 5173824
+          "start_rva": 5173836
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173840,
+          "end_rva": 5173852,
           "page_rva": 2314240,
-          "start_rva": 5173835
+          "start_rva": 5173847
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173845,
+          "end_rva": 5173857,
           "page_rva": 2318336,
-          "start_rva": 5173840
+          "start_rva": 5173852
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173850,
+          "end_rva": 5173862,
           "page_rva": 2637824,
-          "start_rva": 5173845
+          "start_rva": 5173857
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173855,
+          "end_rva": 5173867,
           "page_rva": 2650112,
-          "start_rva": 5173850
+          "start_rva": 5173862
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173860,
+          "end_rva": 5173872,
           "page_rva": 2654208,
-          "start_rva": 5173855
+          "start_rva": 5173867
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173865,
+          "end_rva": 5173877,
           "page_rva": 2658304,
-          "start_rva": 5173860
+          "start_rva": 5173872
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173870,
+          "end_rva": 5173882,
           "page_rva": 2662400,
-          "start_rva": 5173865
+          "start_rva": 5173877
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173875,
+          "end_rva": 5173887,
           "page_rva": 2666496,
-          "start_rva": 5173870
+          "start_rva": 5173882
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173880,
+          "end_rva": 5173892,
           "page_rva": 2670592,
-          "start_rva": 5173875
+          "start_rva": 5173887
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173885,
+          "end_rva": 5173897,
           "page_rva": 2682880,
-          "start_rva": 5173880
+          "start_rva": 5173892
         },
         {
           "effects": [
             "X",
             "R"
           ],
-          "end_rva": 5173896,
+          "end_rva": 5173908,
           "page_rva": 2686976,
-          "start_rva": 5173885
+          "start_rva": 5173897
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173901,
+          "end_rva": 5173913,
           "page_rva": 2707456,
-          "start_rva": 5173896
+          "start_rva": 5173908
         },
         {
           "effects": [
             "X"
           ],
-          "end_rva": 5173906,
+          "end_rva": 5173918,
           "page_rva": 4706304,
-          "start_rva": 5173901
+          "start_rva": 5173913
         },
         {
           "effects": [
             "X",
-            "R"
-          ],
-          "end_rva": 5173917,
-          "page_rva": 4710400,
-          "start_rva": 5173906
-        },
-        {
-          "effects": [
-            "R"
-          ],
-          "end_rva": 5173923,
-          "page_rva": 4714496,
-          "start_rva": 5173917
-        },
-        {
-          "effects": [
             "R"
           ],
           "end_rva": 5173929,
-          "page_rva": 4718592,
-          "start_rva": 5173923
+          "page_rva": 4710400,
+          "start_rva": 5173918
         },
         {
           "effects": [
             "R"
           ],
           "end_rva": 5173935,
-          "page_rva": 4734976,
+          "page_rva": 4714496,
           "start_rva": 5173929
         },
         {
@@ -5449,7 +5449,7 @@
             "R"
           ],
           "end_rva": 5173941,
-          "page_rva": 4739072,
+          "page_rva": 4718592,
           "start_rva": 5173935
         },
         {
@@ -5457,7 +5457,7 @@
             "R"
           ],
           "end_rva": 5173947,
-          "page_rva": 4743168,
+          "page_rva": 4734976,
           "start_rva": 5173941
         },
         {
@@ -5465,7 +5465,7 @@
             "R"
           ],
           "end_rva": 5173953,
-          "page_rva": 4747264,
+          "page_rva": 4739072,
           "start_rva": 5173947
         },
         {
@@ -5473,7 +5473,7 @@
             "R"
           ],
           "end_rva": 5173959,
-          "page_rva": 4792320,
+          "page_rva": 4743168,
           "start_rva": 5173953
         },
         {
@@ -5481,7 +5481,7 @@
             "R"
           ],
           "end_rva": 5173965,
-          "page_rva": 4796416,
+          "page_rva": 4747264,
           "start_rva": 5173959
         },
         {
@@ -5489,7 +5489,7 @@
             "R"
           ],
           "end_rva": 5173971,
-          "page_rva": 4800512,
+          "page_rva": 4792320,
           "start_rva": 5173965
         },
         {
@@ -5497,7 +5497,7 @@
             "R"
           ],
           "end_rva": 5173977,
-          "page_rva": 4804608,
+          "page_rva": 4796416,
           "start_rva": 5173971
         },
         {
@@ -5505,7 +5505,7 @@
             "R"
           ],
           "end_rva": 5173983,
-          "page_rva": 4808704,
+          "page_rva": 4800512,
           "start_rva": 5173977
         },
         {
@@ -5513,7 +5513,7 @@
             "R"
           ],
           "end_rva": 5173989,
-          "page_rva": 4812800,
+          "page_rva": 4804608,
           "start_rva": 5173983
         },
         {
@@ -5521,7 +5521,7 @@
             "R"
           ],
           "end_rva": 5173995,
-          "page_rva": 4816896,
+          "page_rva": 4808704,
           "start_rva": 5173989
         },
         {
@@ -5529,7 +5529,7 @@
             "R"
           ],
           "end_rva": 5174001,
-          "page_rva": 4820992,
+          "page_rva": 4812800,
           "start_rva": 5173995
         },
         {
@@ -5537,7 +5537,7 @@
             "R"
           ],
           "end_rva": 5174007,
-          "page_rva": 4825088,
+          "page_rva": 4816896,
           "start_rva": 5174001
         },
         {
@@ -5545,7 +5545,7 @@
             "R"
           ],
           "end_rva": 5174013,
-          "page_rva": 4829184,
+          "page_rva": 4820992,
           "start_rva": 5174007
         },
         {
@@ -5553,7 +5553,7 @@
             "R"
           ],
           "end_rva": 5174019,
-          "page_rva": 4833280,
+          "page_rva": 4825088,
           "start_rva": 5174013
         },
         {
@@ -5561,7 +5561,7 @@
             "R"
           ],
           "end_rva": 5174025,
-          "page_rva": 4837376,
+          "page_rva": 4829184,
           "start_rva": 5174019
         },
         {
@@ -5569,7 +5569,7 @@
             "R"
           ],
           "end_rva": 5174031,
-          "page_rva": 4841472,
+          "page_rva": 4833280,
           "start_rva": 5174025
         },
         {
@@ -5577,7 +5577,7 @@
             "R"
           ],
           "end_rva": 5174037,
-          "page_rva": 4894720,
+          "page_rva": 4837376,
           "start_rva": 5174031
         },
         {
@@ -5585,7 +5585,7 @@
             "R"
           ],
           "end_rva": 5174043,
-          "page_rva": 4898816,
+          "page_rva": 4841472,
           "start_rva": 5174037
         },
         {
@@ -5593,7 +5593,7 @@
             "R"
           ],
           "end_rva": 5174049,
-          "page_rva": 4902912,
+          "page_rva": 4894720,
           "start_rva": 5174043
         },
         {
@@ -5601,7 +5601,7 @@
             "R"
           ],
           "end_rva": 5174055,
-          "page_rva": 4993024,
+          "page_rva": 4898816,
           "start_rva": 5174049
         },
         {
@@ -5609,587 +5609,603 @@
             "R"
           ],
           "end_rva": 5174061,
-          "page_rva": 4997120,
+          "page_rva": 4902912,
           "start_rva": 5174055
         },
         {
           "effects": [
-            "R",
-            "W"
+            "R"
           ],
-          "end_rva": 5174069,
-          "page_rva": 5009408,
+          "end_rva": 5174067,
+          "page_rva": 4993024,
           "start_rva": 5174061
         },
         {
           "effects": [
+            "R"
+          ],
+          "end_rva": 5174073,
+          "page_rva": 4997120,
+          "start_rva": 5174067
+        },
+        {
+          "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174077,
+          "end_rva": 5174081,
+          "page_rva": 5009408,
+          "start_rva": 5174073
+        },
+        {
+          "effects": [
+            "R",
+            "W"
+          ],
+          "end_rva": 5174089,
           "page_rva": 5017600,
-          "start_rva": 5174069
+          "start_rva": 5174081
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174085,
+          "end_rva": 5174097,
           "page_rva": 5021696,
-          "start_rva": 5174077
+          "start_rva": 5174089
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174093,
+          "end_rva": 5174105,
           "page_rva": 5046272,
-          "start_rva": 5174085
+          "start_rva": 5174097
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174101,
+          "end_rva": 5174113,
           "page_rva": 5111808,
-          "start_rva": 5174093
+          "start_rva": 5174105
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174109,
+          "end_rva": 5174121,
           "page_rva": 5115904,
-          "start_rva": 5174101
+          "start_rva": 5174113
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174117,
+          "end_rva": 5174129,
           "page_rva": 5120000,
-          "start_rva": 5174109
+          "start_rva": 5174121
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174125,
+          "end_rva": 5174137,
           "page_rva": 5124096,
-          "start_rva": 5174117
+          "start_rva": 5174129
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174133,
+          "end_rva": 5174145,
           "page_rva": 5165056,
-          "start_rva": 5174125
+          "start_rva": 5174137
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174141,
+          "end_rva": 5174153,
           "page_rva": 5263360,
-          "start_rva": 5174133
+          "start_rva": 5174145
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174149,
+          "end_rva": 5174161,
           "page_rva": 5267456,
-          "start_rva": 5174141
+          "start_rva": 5174153
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174157,
+          "end_rva": 5174169,
           "page_rva": 5271552,
-          "start_rva": 5174149
+          "start_rva": 5174161
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174165,
+          "end_rva": 5174177,
           "page_rva": 5275648,
-          "start_rva": 5174157
+          "start_rva": 5174169
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174173,
+          "end_rva": 5174185,
           "page_rva": 5279744,
-          "start_rva": 5174165
+          "start_rva": 5174177
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174181,
+          "end_rva": 5174193,
           "page_rva": 5283840,
-          "start_rva": 5174173
+          "start_rva": 5174185
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174189,
+          "end_rva": 5174201,
           "page_rva": 5287936,
-          "start_rva": 5174181
+          "start_rva": 5174193
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174197,
+          "end_rva": 5174209,
           "page_rva": 5292032,
-          "start_rva": 5174189
+          "start_rva": 5174201
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174205,
+          "end_rva": 5174217,
           "page_rva": 5296128,
-          "start_rva": 5174197
+          "start_rva": 5174209
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174213,
+          "end_rva": 5174225,
           "page_rva": 5300224,
-          "start_rva": 5174205
+          "start_rva": 5174217
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174221,
+          "end_rva": 5174233,
           "page_rva": 5304320,
-          "start_rva": 5174213
+          "start_rva": 5174225
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174229,
+          "end_rva": 5174241,
           "page_rva": 5308416,
-          "start_rva": 5174221
+          "start_rva": 5174233
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174237,
+          "end_rva": 5174249,
           "page_rva": 5328896,
-          "start_rva": 5174229
+          "start_rva": 5174241
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174245,
+          "end_rva": 5174257,
           "page_rva": 5332992,
-          "start_rva": 5174237
+          "start_rva": 5174249
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174253,
+          "end_rva": 5174265,
           "page_rva": 5337088,
-          "start_rva": 5174245
+          "start_rva": 5174257
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174261,
+          "end_rva": 5174273,
           "page_rva": 5341184,
-          "start_rva": 5174253
+          "start_rva": 5174265
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174269,
+          "end_rva": 5174281,
           "page_rva": 5345280,
-          "start_rva": 5174261
+          "start_rva": 5174273
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174277,
+          "end_rva": 5174289,
           "page_rva": 5349376,
-          "start_rva": 5174269
+          "start_rva": 5174281
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174285,
+          "end_rva": 5174297,
           "page_rva": 5353472,
-          "start_rva": 5174277
+          "start_rva": 5174289
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174293,
+          "end_rva": 5174305,
           "page_rva": 5361664,
-          "start_rva": 5174285
+          "start_rva": 5174297
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174301,
+          "end_rva": 5174313,
           "page_rva": 5365760,
-          "start_rva": 5174293
+          "start_rva": 5174305
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174309,
+          "end_rva": 5174321,
           "page_rva": 5369856,
-          "start_rva": 5174301
+          "start_rva": 5174313
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174317,
+          "end_rva": 5174329,
           "page_rva": 5373952,
-          "start_rva": 5174309
+          "start_rva": 5174321
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174325,
+          "end_rva": 5174337,
           "page_rva": 5378048,
-          "start_rva": 5174317
+          "start_rva": 5174329
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174333,
+          "end_rva": 5174345,
           "page_rva": 5382144,
-          "start_rva": 5174325
+          "start_rva": 5174337
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174341,
+          "end_rva": 5174353,
           "page_rva": 5386240,
-          "start_rva": 5174333
+          "start_rva": 5174345
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174349,
+          "end_rva": 5174361,
           "page_rva": 5390336,
-          "start_rva": 5174341
+          "start_rva": 5174353
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174357,
+          "end_rva": 5174369,
           "page_rva": 5394432,
-          "start_rva": 5174349
+          "start_rva": 5174361
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174365,
+          "end_rva": 5174377,
           "page_rva": 5398528,
-          "start_rva": 5174357
+          "start_rva": 5174369
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174373,
+          "end_rva": 5174385,
           "page_rva": 5402624,
-          "start_rva": 5174365
+          "start_rva": 5174377
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174381,
+          "end_rva": 5174393,
           "page_rva": 5406720,
-          "start_rva": 5174373
+          "start_rva": 5174385
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174389,
+          "end_rva": 5174401,
           "page_rva": 5419008,
-          "start_rva": 5174381
+          "start_rva": 5174393
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174397,
+          "end_rva": 5174409,
           "page_rva": 5423104,
-          "start_rva": 5174389
+          "start_rva": 5174401
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174405,
+          "end_rva": 5174417,
           "page_rva": 5427200,
-          "start_rva": 5174397
+          "start_rva": 5174409
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174413,
+          "end_rva": 5174425,
           "page_rva": 5431296,
-          "start_rva": 5174405
+          "start_rva": 5174417
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174421,
+          "end_rva": 5174433,
           "page_rva": 5435392,
-          "start_rva": 5174413
+          "start_rva": 5174425
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174429,
+          "end_rva": 5174441,
           "page_rva": 5439488,
-          "start_rva": 5174421
+          "start_rva": 5174433
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174437,
+          "end_rva": 5174449,
           "page_rva": 5443584,
-          "start_rva": 5174429
+          "start_rva": 5174441
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174445,
+          "end_rva": 5174457,
           "page_rva": 5447680,
-          "start_rva": 5174437
+          "start_rva": 5174449
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174453,
+          "end_rva": 5174465,
           "page_rva": 5451776,
-          "start_rva": 5174445
+          "start_rva": 5174457
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174461,
+          "end_rva": 5174473,
           "page_rva": 5455872,
-          "start_rva": 5174453
+          "start_rva": 5174465
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174469,
+          "end_rva": 5174481,
           "page_rva": 5459968,
-          "start_rva": 5174461
+          "start_rva": 5174473
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174477,
+          "end_rva": 5174489,
           "page_rva": 5496832,
-          "start_rva": 5174469
+          "start_rva": 5174481
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174485,
+          "end_rva": 5174497,
           "page_rva": 5500928,
-          "start_rva": 5174477
+          "start_rva": 5174489
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174493,
+          "end_rva": 5174505,
           "page_rva": 5505024,
-          "start_rva": 5174485
+          "start_rva": 5174497
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174501,
+          "end_rva": 5174513,
           "page_rva": 5509120,
-          "start_rva": 5174493
+          "start_rva": 5174505
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174509,
+          "end_rva": 5174521,
           "page_rva": 5513216,
-          "start_rva": 5174501
+          "start_rva": 5174513
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174517,
+          "end_rva": 5174529,
           "page_rva": 5517312,
-          "start_rva": 5174509
+          "start_rva": 5174521
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174525,
+          "end_rva": 5174537,
           "page_rva": 9764864,
-          "start_rva": 5174517
+          "start_rva": 5174529
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174533,
+          "end_rva": 5174545,
           "page_rva": 9768960,
-          "start_rva": 5174525
+          "start_rva": 5174537
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174541,
+          "end_rva": 5174553,
           "page_rva": 9773056,
-          "start_rva": 5174533
+          "start_rva": 5174545
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174549,
+          "end_rva": 5174561,
           "page_rva": 9777152,
-          "start_rva": 5174541
+          "start_rva": 5174553
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174557,
+          "end_rva": 5174569,
           "page_rva": 9781248,
-          "start_rva": 5174549
+          "start_rva": 5174561
         },
         {
           "effects": [
             "R",
             "W"
           ],
-          "end_rva": 5174565,
+          "end_rva": 5174577,
           "page_rva": 9928704,
-          "start_rva": 5174557
+          "start_rva": 5174569
         }
       ]
     }
   ],
   "capacity_q": 94208,
-  "code_bytes": 5421,
+  "code_bytes": 5433,
   "fields_sha256": "182e9ce804ee898c357b35f2195af0b2b0477dfc3081cedf66999eef511dd87c",
   "final_elf": "/home/meandssh/islands-sgx/dynamic/targets/ehsm-opt-2/enclave.dynamic.final.so",
-  "final_elf_sha256": "43b759a8e2d68be8d1d370eafa9f4ad9a90d9b79f05ea1f066a7d84dea4d6471",
+  "final_elf_sha256": "14d03fd69da2c40bbad7e745d32de95231be0c4e47809f5577393f90d264c981",
   "post_start": 5169152,
   "schema": "atfield-pretouch-final-v1",
   "signed_final_elf": "/home/meandssh/islands-sgx/dynamic/targets/ehsm-opt-2/enclave.dynamic.final.signed.so",
-  "signed_final_elf_sha256": "c8d3e2646ca3af10dd888fc98db9b4f69fb7dd9adf27c8f859fad5ffdeb02102",
-  "workset_sha256": "52dc2ed9317ef416dc7515760ec532a0ad69b8a83a31bf3d2dba5f84cc81b12d"
+  "signed_final_elf_sha256": "348943110ce838c85e8376f14190f86eb0964d572e8d4a75b2b5bdc7bd096842",
+  "workset_sha256": "51d294bed4f3d11c85a12ab3563a7c1c9ffde66f3930fc1849bb8f3174dd8562"
 }

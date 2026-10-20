@@ -207,6 +207,172 @@ static void run_interventions_if_matching(
                     }
                 }
             }
+        } else if (strncmp(tok, "replace_coupled:", 16) == 0) {
+            /* Single-call coupled multi-field/scalar replacement:
+             * Format: replace_coupled:<t_idx>:<t_seq>:<op1>+<op2>+...
+             *   s:<p_idx>:<val>                  -> set scalar parameter p_idx to val
+             *   f:<p_idx>:<off>:<width>:<val>    -> set struct field at [off, off+width) in [in]/[inout] pointer param p_idx
+             *   x:<p_idx>:<off>:<mask>           -> XOR byte at off in [in]/[inout] pointer param p_idx
+             * Validates all schema directions, widths, and host output buffer capacities BEFORE executing the single ECALL.
+             */
+            int c_idx = -1, c_seq = -1, c_chars = 0;
+            if (sscanf(tok + 16, "%d:%d:%n", &c_idx, &c_seq, &c_chars) >= 2 && c_chars > 0 &&
+                c_idx == index && c_seq == sseq && es && check_ms_frame_capacity(es, es->ms_size) == 0) {
+                if (out_was_replaced && *out_was_replaced) {
+                    mutation_oob_rejected_count++;
+                    mark_invalid("duplicate_replace_at_same_callsite");
+                    continue;
+                }
+                const char *bundle_str = tok + 16 + c_chars;
+                uint8_t ms_work[MAX_MS_FRAME_BYTES] = {0};
+                memcpy(ms_work, ms, es->ms_size);
+
+                /* Parse bundle operations */
+                typedef struct {
+                    char kind;
+                    int p_idx;
+                    size_t off;
+                    size_t width;
+                    uint64_t val;
+                } coupled_op_t;
+                coupled_op_t ops[8];
+                int n_ops = 0;
+                int parse_ok = 1;
+
+                char *bcopy = strdup(bundle_str);
+                if (!bcopy) {
+                    parse_ok = 0;
+                } else {
+                    char *sp2 = NULL;
+                    for (char *otok = strtok_r(bcopy, "+", &sp2); otok; otok = strtok_r(NULL, "+", &sp2)) {
+                        if (n_ops >= 8) { parse_ok = 0; break; }
+                        int op_p = -1;
+                        unsigned long op_off = 0, op_w = 0, op_v = 0;
+                        if (sscanf(otok, "s:%d:%lu", &op_p, &op_v) == 2) {
+                            ops[n_ops++] = (coupled_op_t){'s', op_p, 0, 0, (uint64_t)op_v};
+                        } else if (sscanf(otok, "f:%d:%lu:%lu:%lu", &op_p, &op_off, &op_w, &op_v) == 4) {
+                            ops[n_ops++] = (coupled_op_t){'f', op_p, (size_t)op_off, (size_t)op_w, (uint64_t)op_v};
+                        } else if (sscanf(otok, "x:%d:%lu:%lu", &op_p, &op_off, &op_v) == 3) {
+                            ops[n_ops++] = (coupled_op_t){'x', op_p, (size_t)op_off, 1, (uint64_t)op_v};
+                        } else {
+                            parse_ok = 0;
+                            break;
+                        }
+                    }
+                    free(bcopy);
+                }
+
+                if (!parse_ok || n_ops <= 0) {
+                    mutation_oob_rejected_count++;
+                    mark_invalid("replace_coupled_parse_rejected");
+                    continue;
+                }
+
+                /* Step 1: validate and stage scalar updates in ms_work */
+                int cap_ok = 1;
+                for (int oi = 0; oi < n_ops; oi++) {
+                    if (ops[oi].kind != 's') continue;
+                    int pi = ops[oi].p_idx;
+                    if (pi < 0 || (uint32_t)pi >= es->num_params || es->params[pi].is_pointer) {
+                        cap_ok = 0;
+                        break;
+                    }
+                    if (write_scalar_u64(ms_work, es->ms_size, es->params[pi].ms_offset, es->params[pi].ms_size, ops[oi].val) != 0) {
+                        cap_ok = 0;
+                        break;
+                    }
+                }
+
+                /* Step 2: check all pointer buffer capacities and stage pure-[in] clones */
+                void *in_allocs[MAX_SCHEMA_PARAMS] = {0};
+                size_t eff_caps[MAX_SCHEMA_PARAMS] = {0};
+                if (cap_ok) {
+                    for (uint32_t pi = 0; pi < es->num_params; pi++) {
+                        const param_schema_t *ppi = &es->params[pi];
+                        if (!ppi->is_pointer) continue;
+                        size_t orig_b = 0, orig_u = 0, new_b = 0, new_u = 0;
+                        if (compute_param_byte_len((const uint8_t *)ms, es->ms_size, ppi, &orig_b, &orig_u) != 0 ||
+                            compute_param_byte_len(ms_work, es->ms_size, ppi, &new_b, &new_u) != 0) {
+                            cap_ok = 0;
+                            break;
+                        }
+                        if (new_b > orig_b) {
+                            if (ppi->direction == DIR_OUT || ppi->direction == DIR_INOUT) {
+                                cap_ok = 0;
+                                break;
+                            }
+                            uint8_t *nbuf = (uint8_t *)calloc(1, new_b ? new_b : 8);
+                            if (!nbuf) { cap_ok = 0; break; }
+                            const uint8_t *optr = *(const uint8_t *const *)((const uint8_t *)ms + ppi->ms_offset);
+                            if (optr && orig_b > 0) memcpy(nbuf, optr, orig_b);
+                            in_allocs[pi] = nbuf;
+                            *(void **)(ms_work + ppi->ms_offset) = nbuf;
+                            eff_caps[pi] = new_b;
+                        } else {
+                            if (ppi->direction == DIR_IN) {
+                                uint8_t *nbuf = (uint8_t *)calloc(1, orig_b ? orig_b : 8);
+                                if (!nbuf) { cap_ok = 0; break; }
+                                const uint8_t *optr = *(const uint8_t *const *)((const uint8_t *)ms + ppi->ms_offset);
+                                if (optr && orig_b > 0) memcpy(nbuf, optr, orig_b);
+                                in_allocs[pi] = nbuf;
+                                *(void **)(ms_work + ppi->ms_offset) = nbuf;
+                            }
+                            eff_caps[pi] = new_b;
+                        }
+                    }
+                }
+
+                /* Step 3: validate all struct field ('f') and byte XOR ('x') operations BEFORE mutating any DIR_INOUT buffer */
+                if (cap_ok) {
+                    for (int oi = 0; oi < n_ops; oi++) {
+                        if (ops[oi].kind == 's') continue;
+                        int pi = ops[oi].p_idx;
+                        if (pi < 0 || (uint32_t)pi >= es->num_params) { cap_ok = 0; break; }
+                        const param_schema_t *ppi = &es->params[pi];
+                        if (!ppi->is_pointer || (ppi->direction != DIR_IN && ppi->direction != DIR_INOUT)) {
+                            cap_ok = 0;
+                            break;
+                        }
+                        uint8_t *tptr = *(uint8_t **)(ms_work + ppi->ms_offset);
+                        if (!tptr) { cap_ok = 0; break; }
+                        if (ops[oi].width != 1 && ops[oi].width != 2 && ops[oi].width != 4 && ops[oi].width != 8) {
+                            cap_ok = 0;
+                            break;
+                        }
+                        if (ops[oi].off + ops[oi].width > eff_caps[pi]) {
+                            cap_ok = 0;
+                            break;
+                        }
+                    }
+                }
+
+                /* Step 4: apply field/XOR updates and execute the single ECALL */
+                if (cap_ok) {
+                    for (int oi = 0; oi < n_ops; oi++) {
+                        if (ops[oi].kind == 's') continue;
+                        int pi = ops[oi].p_idx;
+                        const param_schema_t *ppi = &es->params[pi];
+                        uint8_t *tptr = *(uint8_t **)(ms_work + ppi->ms_offset);
+                        if (ops[oi].kind == 'x') {
+                            tptr[ops[oi].off] ^= (uint8_t)ops[oi].val;
+                        } else if (ops[oi].kind == 'f') {
+                            write_scalar_u64(tptr, eff_caps[pi], (uint32_t)ops[oi].off, (uint32_t)ops[oi].width, ops[oi].val);
+                        }
+                    }
+                    char tag[96];
+                    snprintf(tag, sizeof(tag), "replace_coupled_n%d_p%d_%lu", n_ops, ops[0].p_idx, (unsigned long)ops[0].val);
+                    sgx_status_t rst = execute_one_measured_ecall(eid, index, ocall_table, ms_work, tag, 1);
+                    if (es->has_retval && (size_t)es->retval_offset + (size_t)es->retval_size <= es->ms_size) {
+                        memcpy((uint8_t *)ms + es->retval_offset, ms_work + es->retval_offset, es->retval_size);
+                    }
+                    if (out_was_replaced) *out_was_replaced = 1;
+                    if (out_replaced_status) *out_replaced_status = rst;
+                } else {
+                    mutation_oob_rejected_count++;
+                    mark_invalid("replace_coupled_capacity_or_bounds_rejected");
+                }
+                for (int pi = 0; pi < MAX_SCHEMA_PARAMS; pi++) free(in_allocs[pi]);
+            }
         } else if (sscanf(tok, "replace_xor:%d:%d:%d:%lu:%lu", &t_idx, &t_seq, &p_idx, &sub, &val) == 5) {
             /* In-place byte XOR replacement on an [in] or [inout] pointer parameter:
              * Rejects duplicate replacement tokens and allocation failures;

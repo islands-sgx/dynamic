@@ -28,7 +28,7 @@
         },
         {
           "code_anchor": {
-            "rva": 8852,
+            "rva": 8799,
             "symbol": "__atf_n_25f3b6463cdf8682_0_0"
           },
           "effects": [
@@ -43,7 +43,7 @@
         },
         {
           "code_anchor": {
-            "rva": 16665,
+            "rva": 16633,
             "symbol": "__atf_n_ac47a12fa52eb1e0_0_0"
           },
           "data_anchor_rva": 16384,
@@ -61,7 +61,7 @@
         },
         {
           "code_anchor": {
-            "rva": 20811,
+            "rva": 20779,
             "symbol": "__atf_n_afac04beeba3f158_8_0"
           },
           "data_anchor_rva": 20480,
@@ -79,7 +79,7 @@
         },
         {
           "code_anchor": {
-            "rva": 24732,
+            "rva": 24700,
             "symbol": "__atf_n_2fe7776524024f0d_2_b"
           },
           "effects": [
@@ -94,8 +94,8 @@
         },
         {
           "code_anchor": {
-            "rva": 28694,
-            "symbol": "__atf_n_bbd50a5239189205_a_0"
+            "rva": 28743,
+            "symbol": "__atf_n_bbd50a5239189205_a_1"
           },
           "effects": [
             "X"
@@ -109,8 +109,8 @@
         },
         {
           "code_anchor": {
-            "rva": 36886,
-            "symbol": "__atf_n_a4d2370179a5e9df_20_0"
+            "rva": 36901,
+            "symbol": "__atf_n_2d8ea065ae8a7c0f_5_0"
           },
           "effects": [
             "X"
@@ -124,7 +124,7 @@
         },
         {
           "code_anchor": {
-            "rva": 41019,
+            "rva": 40987,
             "symbol": "__atf_n_2800505f4bbe6bf1_6_0"
           },
           "data_anchor_rva": 40960,
@@ -142,7 +142,7 @@
         },
         {
           "code_anchor": {
-            "rva": 45851,
+            "rva": 45819,
             "symbol": "__atf_n_b504425f1efea5fb_0_1"
           },
           "effects": [
@@ -157,7 +157,7 @@
         },
         {
           "code_anchor": {
-            "rva": 49265,
+            "rva": 49233,
             "symbol": "__atf_n_b504425f1efea5fb_1_0"
           },
           "effects": [
@@ -172,7 +172,7 @@
         },
         {
           "code_anchor": {
-            "rva": 53609,
+            "rva": 53577,
             "symbol": "__atf_n_b504425f1efea5fb_9_3"
           },
           "effects": [
@@ -187,7 +187,7 @@
         },
         {
           "code_anchor": {
-            "rva": 57746,
+            "rva": 57714,
             "symbol": "__atf_n_edd6c1a30c81da57_4_3"
           },
           "effects": [
@@ -8034,8 +8034,8 @@
     "page_size": 4096,
     "pretouch_segment": true,
     "pretouch_start": 155648,
-    "profile_elf": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/enclave.profile.so",
-    "profile_elf_sha256": "d3673190dadcffaf4b3206ad33bdf769de0414d47a35b6a8f7886258308eaf42",
+    "profile_elf": "/home/meandssh/islands-sgx/sample/build/real/signal-cds/protect/enclave.profile.so",
+    "profile_elf_sha256": "0f9bedf9c4535cd43e083b23ceeb0d23560cd922a35c9dc61456bcf1b2bd542b",
     "regions": [
       {
         "end_rva": 8192,
@@ -8127,8 +8127,8 @@
       }
     ],
     "schema": "atfield-signer-layout-v1",
-    "signed_elf": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/enclave.profile.signed.so",
-    "signed_elf_sha256": "20b5b43e783fbd1c564debc25cbcf2e50edeba779f1e405e73ad05d444826002",
+    "signed_elf": "/home/meandssh/islands-sgx/sample/build/real/signal-cds/protect/enclave.profile.signed.so",
+    "signed_elf_sha256": "7c65c0c9296ab40b84a61c4198a7f9c2838de860724dd6f650fe6c08b9534364",
     "ssa_frame_pages": 1
   },
   "page_size": 4096,

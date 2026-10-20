@@ -1,0 +1,24 @@
+{
+  "fields": [
+    {
+      "enter_call_rva": 9512,
+      "exit_call_rva": 11452,
+      "field_id": "0xd9e7e566ea39a756",
+      "function": "sabd_lookup_hash",
+      "gate_a_rva": 167936,
+      "gate_b_rva": 168091,
+      "gate_c_rva": 168270,
+      "gate_d_rva": 168461,
+      "marker_rva": 9517,
+      "pretouch_jmp_rva": 164703,
+      "pretouch_rva": 155648
+    }
+  ],
+  "gate_bytes_used": 695,
+  "gate_helper_page_rva": 167936,
+  "input_elf": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/enclave.all_reg_xr.final.so",
+  "input_elf_sha256": "0101abbb595de07893e4c8f2837e7696bbeff699857c4b42fbc0e6f27a7e89a0",
+  "output_elf": "/home/meandssh/islands-sgx/dynamic/targets/signal-cds/enclave.all_reg_xr.4gate.so",
+  "output_elf_sha256": "93dae522a4c9e016d6a50aca3f79b2ac68429e18fc6bb07c6795eca283e29db3",
+  "schema": "atfield-4gate-patch-v1"
+}

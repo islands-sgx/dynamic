@@ -502,7 +502,7 @@ def explore_and_close_sample(sample: str) -> dict:
         ingest_run(
             {
                 "run_id": dp["run_id"],
-                "layer": "layer3_domain_assisted",
+                "layer": "layer3_domain_assist",
                 "subkind": dp["subkind"],
                 "intervention": dp.get("intervention", ""),
                 "allow_nonzero_rc": bool(dp.get("allow_nonzero_rc", False)),
@@ -698,7 +698,7 @@ def explore_and_close_sample(sample: str) -> dict:
                     "cumulative_pages_after_layer2": len(l1_pg | l2_pg),
                     "cumulative_effects_after_layer2": len(l1_eff | l2_eff),
                 },
-                "layer3_domain_assisted": {
+                "layer3_domain_assist": {
                     "added_pages_beyond_layer2": len(l3_pg - (l1_pg | l2_pg)),
                     "added_effects_beyond_layer2": len(l3_eff - (l1_eff | l2_eff)),
                     "cumulative_pages_after_layer3": len(obs_pages),
@@ -750,6 +750,139 @@ def explore_and_close_sample(sample: str) -> dict:
             "fields": f_list,
         })
         artifacts[variant_name] = emit_and_sign_variant(tdir, variant_name, w_path, cap_q)
+
+    # Stage 2A/2B: Build coupled_assisted_xr if sample declares `coupled_struct_constraints`
+    coupled_constraints = manifest.get("scenarios", {}).get("coupled_struct_constraints", [])
+    if coupled_constraints:
+        from acceptance_validator import extract_valid_s3_effects, is_valid_measurement_run
+        cp_obs_pages = {fid: dict(dyn_obs_pages[fid]) for fid in field_ids}
+        cp_bridge_pages = {fid: set(dyn_bridge_pages[fid]) for fid in field_ids}
+        cp_chunks = {fid: list(dyn_chunks[fid]) for fid in field_ids}
+        cp_rsps = {fid: list(dyn_rsps[fid]) for fid in field_ids}
+        cp_trace_shas = []
+        for cc in coupled_constraints:
+            c_eidx = int(cc["ecall_index"])
+            c_sseq = int(cc.get("selector_seq", 0))
+            c_ops = "+".join(cc["coupled_ops"])
+            cid = cc.get("constraint_id", f"e{c_eidx}_s{c_sseq}")
+            r_cc = run_sample(
+                sample,
+                mode="profile_4gate",
+                ipi_mask=7,
+                intervention=f"replace_coupled:{c_eidx}:{c_sseq}:{c_ops}",
+                host_args=[],
+                allow_fast_forward=0,
+                persist_prefix=raw_trace_dir / f"tier2b_coupled_{cid}",
+            )
+            ok_cc, cc_reasons = is_valid_measurement_run(
+                r_cc,
+                allow_nonzero_rc=True,
+                require_ipi_mask=7,
+                require_nonempty_s3=False,
+            )
+            if not ok_cc:
+                raise RuntimeError(f"Tier-2b coupled run {cid} failed measurement admission on {sample}: {cc_reasons}")
+            cp_trace_shas.append(r_cc["trace_sha256"])
+            for rec in r_cc["records"]:
+                for fobs in rec["fields"]:
+                    fid = fobs["field_id"]
+                    if fid not in cp_obs_pages:
+                        continue
+                    for item in fobs["s0"] + fobs["s1"] + rec.get("ecall_ad", []):
+                        rva = int(item["rva"], 16)
+                        if rva in committed_map:
+                            cp_bridge_pages[fid].add(rva)
+                    for rva, ad in extract_valid_s3_effects(fobs):
+                        if rva in committed_map:
+                            prev_ad = cp_obs_pages[fid].get(rva)
+                            if prev_ad is None or (prev_ad == "A" and ad == "D"):
+                                cp_obs_pages[fid][rva] = ad
+                    for lo_s, hi_s in fobs.get("chunks", []):
+                        cp_chunks[fid].append((int(lo_s, 16), int(hi_s, 16)))
+                    for rk in ("gateB_rsp_rva", "gateD_rsp_rva"):
+                        rv = int(fobs.get(rk, "0x0"), 16)
+                        if rv > 0:
+                            cp_rsps[fid].append(rv)
+
+        closed_fields_cp_xr = []
+        for idx_f, field in enumerate(fields):
+            fid = f"0x{field['_id_value']:016x}"
+            base_pages = {pg["page_rva"] for pg in closed_fields_xr[idx_f]["pages"]}
+            p_set = set(base_pages) | set(cp_obs_pages[fid].keys()) | set(cp_bridge_pages[fid])
+            for obj in objects:
+                olo = obj["value"]
+                ohi = obj["value"] + max(obj["size"], 1)
+                span = list(range(align_down(olo), align_up(ohi), PAGE))
+                check_span = span[1:-1] if len(span) >= 4 else span
+                if any(p in cp_obs_pages[fid] for p in check_span):
+                    for p in span:
+                        if p in committed_map:
+                            p_set.add(p)
+            for clo, chi in set(cp_chunks[fid]):
+                span = list(range(align_down(max(0, clo - 16)), align_up(chi + 16), PAGE))
+                if any(p in cp_obs_pages[fid] for p in span):
+                    for p in span:
+                        if p in committed_map:
+                            p_set.add(p)
+            touched_hp = [p for p in cp_obs_pages[fid] if p in heap_pages]
+            if touched_hp:
+                max_hp = max(touched_hp)
+                for p in range(max(min(heap_pages), max_hp - PAGE), min(max_hp + 3 * PAGE, max(heap_pages) + PAGE), PAGE):
+                    if p in committed_map:
+                        p_set.add(p)
+            if stack_pages and cp_rsps[fid]:
+                stack_hi_pg = max(stack_pages)
+                stack_lo_pg = max(min(stack_pages), align_down(min(cp_rsps[fid])) - 4 * PAGE)
+                for p in range(stack_lo_pg, stack_hi_pg + PAGE, PAGE):
+                    if p in committed_map:
+                        p_set.add(p)
+
+            recs_cp = []
+            for page in sorted(p_set):
+                base_rec = committed_map[page]
+                eff_xr = list(base_rec["effects"])
+                rec_out = {
+                    "page_rva": page,
+                    "effects": eff_xr,
+                    "max_permissions": base_rec["max_permissions"],
+                    "relro": base_rec["relro"],
+                    "origins": base_rec["origins"],
+                }
+                if "X" in eff_xr:
+                    choices = anchors.get(page, [])
+                    if not choices:
+                        raise RuntimeError(f"X page {page:#x} lacks a same-page C3 anchor")
+                    rec_out["code_anchor"] = choices[0]
+                if "R" in eff_xr or "W" in eff_xr:
+                    rec_out["data_anchor_rva"] = page
+                    rec_out["data_width"] = 1
+                recs_cp.append(rec_out)
+
+            closed_fields_cp_xr.append({
+                "id": field["id"],
+                "name": field.get("name", field.get("function", field["id"])),
+                "function": field.get("function"),
+                "order": field["order"],
+                "stack_bytes": field.get("stack_bytes"),
+                "pages": recs_cp,
+            })
+
+        w_cp_path = tdir / "workset.coupled_assisted_xr.json"
+        write_json(w_cp_path, {
+            "schema": "atfield-workset-v1",
+            "page_size": PAGE,
+            "layout": layout,
+            "field_manifest": str(tdir / "fields.json"),
+            "field_manifest_sha256": sha256_file(tdir / "fields.json"),
+            "selector_manifest": str(tdir / "selectors.json"),
+            "selector_manifest_sha256": sha256_file(tdir / "selectors.json"),
+            "edl_manifest": str(edl_path),
+            "edl_manifest_sha256": sha256_file(edl_path),
+            "selectors": selectors,
+            "fields": closed_fields_cp_xr,
+        })
+        artifacts["coupled_assisted_xr"] = emit_and_sign_variant(tdir, "coupled_assisted_xr", w_cp_path, cap_q)
+        artifacts["coupled_assisted_xr"]["coupled_trace_sha256s"] = cp_trace_shas
 
     # Build any sample-declared seeded variants from `scenarios.json` (`seeded_variants`)
     for sv_cfg in manifest.get("scenarios", {}).get("seeded_variants", []):
@@ -918,7 +1051,7 @@ def main() -> None:
         existing_sha = json.loads(strat_path.read_text()).get("frozen_kernel_commit_sha", "")
     if not existing_sha:
         existing_sha = subprocess.check_output(["git", "-C", str(DYN_ROOT), "rev-parse", "HEAD"], text=True).strip()
-    if not strat_path.is_file() or not sys.argv[1:] or set(samples) == set(all_discovered):
+    if not strat_path.is_file():
         hw_challenge_res = run_real_hardware_challenge_ablation(max_enclave_budget=68, seeds=(101, 102, 103, 104, 105))
     else:
         hw_challenge_res = json.loads(strat_path.read_text())["real_hardware_challenge_enclaves"]
@@ -941,8 +1074,8 @@ def main() -> None:
                 f"L2_seed={fl['layer2_generic_schema_explorer']['seed_isolated_pages']}p "
                 f"L2_over_L1=+{fl['layer2_generic_schema_explorer']['added_pages_beyond_full_host_layer1']}p/"
                 f"+{fl['layer2_generic_schema_explorer']['added_effects_beyond_full_host_layer1']}e "
-                f"L3=+{fl['layer3_domain_assisted']['added_pages_beyond_layer2']}p/"
-                f"+{fl['layer3_domain_assisted']['added_effects_beyond_layer2']}e "
+                f"L3=+{fl['layer3_domain_assist']['added_pages_beyond_layer2']}p/"
+                f"+{fl['layer3_domain_assist']['added_effects_beyond_layer2']}e "
                 f"-> Final={cb['final_field_target_pages']}p"
             )
 

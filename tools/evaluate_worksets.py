@@ -719,6 +719,114 @@ def run_frozen_workset_generalization_suite(
     }
 
 
+def _eval_tier2b_coupled(
+    sample: str,
+    tdir: Path,
+    raw_dir: Path,
+    ledger: dict,
+    expected_fids: set[str],
+    closed_target_effects_by_fid: dict[str, set[tuple[int, str]]],
+    r_sm4_cov: dict,
+    sm4_ecall_seq: list[int],
+    sm4_field_call_seqs: set[int],
+) -> dict | None:
+    ws_cp_path = tdir / "workset.coupled_assisted_xr.json"
+    rdy_cp_path = tdir / "enclave.coupled_assisted_xr.ready.json"
+    if not ws_cp_path.is_file() or not rdy_cp_path.is_file():
+        return None
+    manifest = load_target_manifest(sample)
+    constraints = manifest.get("scenarios", {}).get("coupled_struct_constraints", [])
+    decl_lines = sum(int(c.get("manual_declaration_lines", 6)) for c in constraints)
+
+    ws_cp = json.loads(ws_cp_path.read_text())
+    rdy_cp = json.loads(rdy_cp_path.read_text())
+    cp_ready_sel_set = {s["ecall_index"] for s in rdy_cp["selectors"] if s["page_rvas"]}
+    cp_effects_by_fid: dict[str, set[tuple[int, str]]] = {}
+    for f in ws_cp["fields"]:
+        fid = f"0x{int(f['id'], 16):016x}" if isinstance(f["id"], str) else f"0x{f['id']:016x}"
+        effs: set[tuple[int, str]] = set()
+        for pg in f["pages"]:
+            rva = pg["page_rva"]
+            effs.add((rva, "A"))
+            if "W" in pg["effects"]:
+                effs.add((rva, "D"))
+        cp_effects_by_fid[fid] = effs
+
+    val_t2b_cov = validate_run_result(
+        r_sm4_cov,
+        expected_returncode=0,
+        expected_stdout_substr="PASS",
+        expected_min_records=21,
+        expected_field_ids=expected_fids,
+        require_ipi_mask=7,
+        closed_workset_effects=cp_effects_by_fid,
+    )
+
+    r_cp_4gate = run_sample(
+        sample,
+        mode="coupled_assisted_xr_4gate",
+        ipi_mask=3,
+        host_args=["--sm4-check"],
+        allow_fast_forward=0,
+        persist_prefix=raw_dir / "holdout_tier2b_coupled_4gate_pretouch",
+    )
+    val_t2b_4gate = validate_diagnostic_4gate_run(
+        r_cp_4gate,
+        expected_field_ids=expected_fids,
+        expected_ecall_seq=sm4_ecall_seq,
+        expected_field_call_seqs=sm4_field_call_seqs,
+        require_ipi_mask=3,
+    )
+    cp_clean_rewalks = [
+        len(fobs["s3"])
+        for rec in r_cp_4gate["records"]
+        for fobs in rec["fields"]
+        if fobs.get("s3_active_aex_count", 0) == 0
+    ]
+
+    val_t2b_prod = {"status": "FAIL", "reasons": ["NOT_RUN"]}
+    r_cp_prod = {}
+    for att in range(4):
+        sfx = "" if att == 0 else f"_retry{att}"
+        r_cp_prod = run_sample(
+            sample,
+            mode="coupled_assisted_xr_final",
+            ipi_mask=0,
+            host_args=["--sm4-check"],
+            allow_fast_forward=0,
+            persist_prefix=raw_dir / f"holdout_tier2b_coupled_prod_aex1{sfx}",
+        )
+        val_t2b_prod = validate_production_run_result(
+            r_cp_prod,
+            expected_stdout_substr="PASS",
+            expected_ecall_seq=sm4_ecall_seq,
+            ready_sel_set=cp_ready_sel_set,
+            require_readiness=True,
+        )
+        if val_t2b_prod["status"] == "PASS":
+            break
+        if not any(r.get("sgx_status") == 0x1006 for r in r_cp_prod.get("records", [])):
+            break
+
+    t2b_pass = bool(
+        val_t2b_cov["status"] == "PASS"
+        and val_t2b_4gate["status"] == "PASS"
+        and val_t2b_prod["status"] == "PASS"
+        and len(cp_clean_rewalks) > 0 and all(x == 0 for x in cp_clean_rewalks)
+    )
+    return {
+        "description": "Tier 2b (Single-Call Coupled Producer Mutation replace_coupled on Default AES Host Workflow, WITHOUT --sm4-check): Uses sample-declared coupled struct constraint on enclave_create_key and lets unmodified AES host carry sealed SM4 keyblob into enclave_generate_datakey.",
+        "manual_constraint_count": len(constraints),
+        "manual_declaration_lines": decl_lines,
+        "added_effects_count": sum(len(cp_effects_by_fid[fid] - closed_target_effects_by_fid[fid]) for fid in cp_effects_by_fid),
+        "validator_result": val_t2b_cov,
+        "diagnostic_4gate_validator_result": val_t2b_4gate,
+        "clean_zero_rewalk_observations": f"{sum(1 for x in cp_clean_rewalks if x == 0)}/{len(cp_clean_rewalks)}",
+        "protected_production_validator_result": val_t2b_prod,
+        "overall_tier2b_status": "PASS" if t2b_pass else "FAIL",
+    }
+
+
 def evaluate_sm4_two_tier(
     sample: str,
     tdir: Path,
@@ -902,10 +1010,13 @@ def evaluate_sm4_two_tier(
             "overall_tier1_status": "PASS" if tier1_overall_pass else "FAIL",
         },
         "tier2_aes_only_seed_discovery": {
-            "description": "Tier 2 (Un-Seeded Discovery from AES-Only Workflow): Validates fresh --sm4-check run against AES-only dynamic_xr workset (with expected_field_ids and require_ipi_mask=7).",
-            "structural_limitation": "ehsm_create_sm4_key requires coupled 3-field struct changes inside ehsm_keyblob_t (metadata.keyspec=20, keybloblen=64, cmk_size=80) before domain-key AES-GCM sealing.",
+            "description": "Tier 2a (Zero-Constraint Unassisted Discovery from AES-Only Workflow): Validates fresh --sm4-check run against AES-only dynamic_xr workset (0 manual struct constraints).",
+            "structural_limitation": "ehsm_create_sm4_key requires coupled struct changes inside ehsm_keyblob_t (metadata.keyspec=31/32, keybloblen, cmk_size) before domain-key AES-GCM sealing.",
             "validator_result": val_t2_cov,
         },
+        "tier2b_coupled_producer_mutation": _eval_tier2b_coupled(
+            sample, tdir, raw_dir, ledger, expected_fids, closed_target_effects_by_fid, r_sm4_cov, sm4_ecall_seq, sm4_field_call_seqs
+        ),
     }
 
 
