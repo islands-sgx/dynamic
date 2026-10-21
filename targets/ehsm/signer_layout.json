@@ -70,7 +70,7 @@
   "pretouch_segment": true,
   "pretouch_start": 5169152,
   "profile_elf": "/home/meandssh/islands-sgx/sample/build/real/ehsm/protect/enclave.profile.so",
-  "profile_elf_sha256": "2c38bfe90b50ea0cee63f33ae9433549f0e56459c9c96f24aaad1d8a61f1e7f0",
+  "profile_elf_sha256": "8475aabd15b8957a7fff6167dd9c28dab49804a7bd52ac066b8d69d8f24f78ee",
   "regions": [
     {
       "end_rva": 884736,
@@ -233,6 +233,6 @@
   ],
   "schema": "atfield-signer-layout-v1",
   "signed_elf": "/home/meandssh/islands-sgx/sample/build/real/ehsm/protect/enclave.profile.signed.so",
-  "signed_elf_sha256": "c6f2a62496bb4b4809b464d6622190685f0ac4fe531451cd6f18313f2d14d7d8",
+  "signed_elf_sha256": "e918693b28f8470e9db64ca544125d6fc210d18dd8d86b3338e72bfa289bd925",
   "ssa_frame_pages": 1
 }

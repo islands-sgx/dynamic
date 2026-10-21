@@ -58,9 +58,61 @@ void on_aex_event(uint64_t tcs_va, uint64_t rax_mode) {
         (void)d;
     }
     if (!g_shared || !in_measured_ecall || !encl_base) return;
+    __atomic_add_fetch(&in_aep_handler, 1, __ATOMIC_SEQ_CST);
     uint32_t seq = __atomic_add_fetch(&g_shared->total_aex_count, 1, __ATOMIC_SEQ_CST);
-    if (__atomic_load_n(&g_shared->in_gate_spin, __ATOMIC_ACQUIRE)) {
+    uint32_t in_spin = __atomic_load_n(&g_shared->in_gate_spin, __ATOMIC_ACQUIRE);
+    uint32_t host_gate = __atomic_load_n(&g_shared->host_gate, __ATOMIC_ACQUIRE);
+    uint32_t st_code = __atomic_load_n(&g_shared->current_stage, __ATOMIC_ACQUIRE);
+    uint32_t gate_en = __atomic_load_n(&g_shared->gate_enable, __ATOMIC_ACQUIRE);
+
+    uint64_t encl_rip = 0;
+    uint32_t exitinfo = 0;
+    int rip_read_ok = 0;
+    if (ssa_rva && fd_self_mem >= 0 && encl_base) {
+        if (pread(fd_self_mem, &encl_rip, 8, encl_base + ssa_rva + 0xfd0) == 8) {
+            rip_read_ok = 1;
+        } else {
+            syscall_error_count++;
+        }
+        if (pread(fd_self_mem, &exitinfo, 4, encl_base + ssa_rva + 0xfe8) != 4) {
+            syscall_error_count++;
+        }
+    }
+    int rip_valid = rip_read_ok && (encl_rip >= encl_base && encl_rip < encl_base + encl_size);
+    uint64_t rip_rva = rip_valid ? (encl_rip - encl_base) : 0;
+
+    int any_strict_healed = 0;
+    for (int i = 0; i < num_pages; i++) {
+        if (strict_retracted[i] == 1 && PRESENT(*pte_slots[i])) {
+            any_strict_healed = 1;
+            break;
+        }
+    }
+
+    atfield_aex_class_t aex_class = atfield_classify_aex_event(
+        use_4gate,
+        gate_en,
+        in_spin,
+        host_gate,
+        st_code,
+        ipi_mask,
+        strict_mode,
+        any_strict_healed,
+        gate_helper_range_configured,
+        gate_helper_start_rva,
+        gate_helper_end_rva,
+        rip_valid,
+        rip_rva);
+
+    if (aex_class != ATFIELD_AEX_UNEXPECTED) {
+        if (aex_class == ATFIELD_AEX_PROTOCOL_GATE_A)
+            __atomic_add_fetch(&gate_a_ipi_aex_count, 1, __ATOMIC_SEQ_CST);
+        else if (aex_class == ATFIELD_AEX_PROTOCOL_GATE_B)
+            __atomic_add_fetch(&gate_b_ipi_aex_count, 1, __ATOMIC_SEQ_CST);
+        else if (aex_class == ATFIELD_AEX_PROTOCOL_GATE_C)
+            __atomic_add_fetch(&gate_c_ipi_aex_count, 1, __ATOMIC_SEQ_CST);
         __atomic_add_fetch(&g_shared->gate_ipi_aex_count, 1, __ATOMIC_SEQ_CST);
+        __atomic_sub_fetch(&in_aep_handler, 1, __ATOMIC_SEQ_CST);
         return;
     }
 
@@ -71,19 +123,16 @@ void on_aex_event(uint64_t tcs_va, uint64_t rax_mode) {
             mark_invalid("pread_atfield_active_failed");
         }
     }
-    uint64_t encl_rip = 0;
-    uint32_t exitinfo = 0;
-    if (ssa_rva && fd_self_mem >= 0 && encl_base) {
-        if (pread(fd_self_mem, &encl_rip, 8, encl_base + ssa_rva + 0xfd0) != 8) {
-            syscall_error_count++;
-        }
-        if (pread(fd_self_mem, &exitinfo, 4, encl_base + ssa_rva + 0xfe8) != 4) {
-            syscall_error_count++;
-        }
-    }
-    uint64_t rip_rva = (encl_rip >= encl_base && encl_rip < encl_base + encl_size) ? (encl_rip - encl_base) : 0;
-    uint32_t st_code = g_shared->current_stage;
 
+    unsigned stage_idx = atfield_stage_index_from_state(st_code, host_gate);
+    __atomic_add_fetch(&unexpected_aex_count, 1, __ATOMIC_SEQ_CST);
+    __atomic_add_fetch(&unexpected_stage_aex[stage_idx], 1, __ATOMIC_SEQ_CST);
+    mark_invalid("unexpected_aex_observed");
+    if (stage_idx == 3u) {
+        mark_invalid("s3_body_aex_observed");
+    }
+
+    pthread_mutex_lock(&phase_mutex);
     int recorded_strict = 0;
     for (int i = 0; i < num_pages; i++) {
         if (strict_retracted[i] == 1) {
@@ -110,7 +159,27 @@ void on_aex_event(uint64_t tcs_va, uint64_t rax_mode) {
             }
         }
     }
-    (void)recorded_strict;
+    if (!recorded_strict) {
+        if (cur_fault_count < MAX_FAULT_EVENTS_PER_ECALL) {
+            fault_event_t *fe = &cur_faults[cur_fault_count++];
+            memset(fe, 0, sizeof(*fe));
+            fe->aex_seq = seq;
+            fe->page_idx = -1;
+            fe->page_rva = rip_rva & ~0xfffULL;
+            fe->encl_rip_rva = rip_rva;
+            fe->exitinfo = exitinfo;
+            fe->active_flag = active_val;
+            snprintf(fe->stage, sizeof(fe->stage), "%s", stage_name_from_code(st_code, active_val, rip_rva));
+            fe->pte_healed_observed = 0;
+            snprintf(fe->confirmed_access_kind, sizeof(fe->confirmed_access_kind), "unexpected");
+            snprintf(fe->inferred_post_window_kind, sizeof(fe->inferred_post_window_kind), "none");
+        } else {
+            fault_events_truncated = 1;
+            mark_invalid("fault_events_truncated");
+        }
+    }
+    pthread_mutex_unlock(&phase_mutex);
+    __atomic_sub_fetch(&in_aep_handler, 1, __ATOMIC_SEQ_CST);
 }
 
 static void install_urts_aep_hook(void) {
@@ -129,10 +198,11 @@ static void install_urts_aep_hook(void) {
         char perms[8];
         if (sscanf(line, "%lx-%lx %7s %lx", &s, &e, perms, &off) == 4) {
             if (strstr(perms, "x")) {
-                urts_rx_start = s;
-                urts_rx_end = e;
-                urts_rx_off = off;
-                break;
+                if (!urts_rx_start) {
+                    urts_rx_start = s;
+                    urts_rx_off = off;
+                }
+                if (e > urts_rx_end) urts_rx_end = e;
             }
         }
     }
@@ -146,11 +216,19 @@ static void install_urts_aep_hook(void) {
     uint64_t urts_base = urts_rx_start - urts_rx_off;
     uint64_t vdso_det_va = urts_base + 0x6abd0;
     uint64_t vdso_ptr_va = urts_base + 0x3ec128;
-    if (mprotect((void *)(vdso_det_va & ~0xfffULL), 4096, PROT_READ | PROT_WRITE | PROT_EXEC) == 0) {
+    if (!vdso_det_saved && mprotect((void *)(vdso_det_va & ~0xfffULL), 4096, PROT_READ | PROT_WRITE | PROT_EXEC) == 0) {
+        vdso_det_va_saved = vdso_det_va;
+        vdso_det_original = *(uint8_t *)vdso_det_va;
+        vdso_det_saved = 1;
         *(uint8_t *)vdso_det_va = 0xc3;
         __builtin___clear_cache((char *)vdso_det_va, (char *)(vdso_det_va + 1));
     }
-    *(uint64_t *)vdso_ptr_va = 0;
+    if (!vdso_ptr_saved) {
+        vdso_ptr_va_saved = vdso_ptr_va;
+        memcpy(&vdso_ptr_original, (void *)vdso_ptr_va, sizeof(vdso_ptr_original));
+        vdso_ptr_saved = 1;
+        *(uint64_t *)vdso_ptr_va = 0;
+    }
 
     uint64_t aep_va = 0;
     const uint8_t pat[] = {0x0f, 0x01, 0xd7, 0x0f, 0x0b};
@@ -235,16 +313,59 @@ static void install_urts_aep_hook(void) {
     uint8_t jmp_patch[5];
     jmp_patch[0] = 0xe9;
     memcpy(jmp_patch + 1, &rel32, 4);
+    memcpy(aep_original_bytes, (void *)aep_va, sizeof(aep_original_bytes));
+    aep_patch_va = aep_va;
+    aep_patch_saved = 1;
     memcpy((void *)aep_va, jmp_patch, 5);
     __builtin___clear_cache((char *)aep_va, (char *)(aep_va + 5));
     aep_hooked = 1;
 }
 
+static void restore_urts_aep_hook(void) {
+    int restored = 1;
+    if (aep_patch_saved) {
+        uint64_t page = aep_patch_va & ~0xfffULL;
+        if (mprotect((void *)page, 4096, PROT_READ | PROT_WRITE | PROT_EXEC) == 0) {
+            memcpy((void *)aep_patch_va, aep_original_bytes, sizeof(aep_original_bytes));
+            __builtin___clear_cache((char *)aep_patch_va, (char *)(aep_patch_va + sizeof(aep_original_bytes)));
+            if (mprotect((void *)page, 4096, PROT_READ | PROT_EXEC) == 0) {
+                aep_patch_saved = 0;
+                aep_hooked = 0;
+            } else restored = 0;
+        } else restored = 0;
+    }
+    if (vdso_det_saved) {
+        uint64_t page = vdso_det_va_saved & ~0xfffULL;
+        if (mprotect((void *)page, 4096, PROT_READ | PROT_WRITE | PROT_EXEC) == 0) {
+            *(uint8_t *)vdso_det_va_saved = vdso_det_original;
+            __builtin___clear_cache((char *)vdso_det_va_saved, (char *)(vdso_det_va_saved + 1));
+            if (mprotect((void *)page, 4096, PROT_READ | PROT_EXEC) == 0) vdso_det_saved = 0;
+            else restored = 0;
+        } else restored = 0;
+    }
+    if (vdso_ptr_saved) {
+        memcpy((void *)vdso_ptr_va_saved, &vdso_ptr_original, sizeof(vdso_ptr_original));
+        vdso_ptr_saved = 0;
+    }
+    if (!aep_patch_saved && aep_trampoline_va) {
+        munmap(aep_trampoline_va, 4096);
+        aep_trampoline_va = NULL;
+    }
+    if (!restored) {
+        mark_invalid("aep_hook_restore_failed");
+    }
+}
+
 static int ipi_dummy_prot_rw = 1;
 
-static int trigger_tlb_shootdown_ipi_verified(void) {
-    __atomic_store_n(&g_shared->in_gate_spin, 1, __ATOMIC_SEQ_CST);
-    uint32_t before = __atomic_load_n(&g_shared->gate_ipi_aex_count, __ATOMIC_ACQUIRE);
+static int trigger_tlb_shootdown_ipi_verified(uint32_t gate_code) {
+    volatile uint32_t *gate_counter = &g_shared->gate_ipi_aex_count;
+    if (gate_code == 10u) gate_counter = &gate_a_ipi_aex_count;
+    else if (gate_code == 30u) gate_counter = &gate_b_ipi_aex_count;
+    else if (gate_code == 50u) gate_counter = &gate_c_ipi_aex_count;
+
+    __atomic_store_n(&g_shared->in_gate_spin, gate_code, __ATOMIC_SEQ_CST);
+    uint32_t before = __atomic_load_n(gate_counter, __ATOMIC_ACQUIRE);
     uint64_t t_start = monotonic_ns();
     int verified = 0;
 
@@ -257,8 +378,8 @@ static int trigger_tlb_shootdown_ipi_verified(void) {
         }
         ipi_dummy_prot_rw = !ipi_dummy_prot_rw;
         uint64_t round_start = monotonic_ns();
-        while (monotonic_ns() - round_start < 1000000ULL) {
-            if (__atomic_load_n(&g_shared->gate_ipi_aex_count, __ATOMIC_ACQUIRE) > before) {
+        while (monotonic_ns() - round_start < 2000000ULL) {
+            if (__atomic_load_n(gate_counter, __ATOMIC_ACQUIRE) > before) {
                 verified = 1;
                 break;
             }
@@ -271,11 +392,15 @@ static int trigger_tlb_shootdown_ipi_verified(void) {
             break;
         }
     }
-    /* Wait briefly for CPU 45 to finish returning from on_aex_event before opening gate */
+    uint64_t drain_start = monotonic_ns();
+    while (__atomic_load_n(&in_aep_handler, __ATOMIC_ACQUIRE) != 0 &&
+           monotonic_ns() - drain_start < 5000000ULL) {
+        __asm__ volatile("pause" ::: "memory");
+    }
+    /* Wait briefly for CPU 45 to finish returning from on_aex_event */
     for (int spin = 0; spin < 200; spin++) {
         __asm__ volatile("pause" ::: "memory");
     }
-    __atomic_store_n(&g_shared->in_gate_spin, 0, __ATOMIC_SEQ_CST);
     return verified;
 }
 
@@ -390,91 +515,177 @@ static void disarm_and_check_strict_ptes(const char *fallback_stage) {
     __atomic_thread_fence(__ATOMIC_SEQ_CST);
 }
 
+static field_obs_t *watcher_current_observation_locked(void) {
+    if (watcher_active_slot < 0) {
+        if (cur_obs_count >= MAX_FIELD_OBS_PER_ECALL) {
+            obs_truncated = 1;
+            mark_invalid("field_obs_per_ecall_truncated");
+            return NULL;
+        }
+        int slot = cur_obs_count++;
+        field_obs_t *o = &cur_obs[slot];
+        uint64_t *s0 = o->s0_ad, *s1 = o->s1_ad, *s2 = o->s2_ad, *s3 = o->s3_ad;
+        memset(o, 0, sizeof(*o));
+        o->s0_ad = s0; o->s1_ad = s1; o->s2_ad = s2; o->s3_ad = s3;
+        if (!s0 || !s1 || !s2 || !s3) {
+            obs_truncated = 1;
+            mark_invalid("field_observation_buffers_unavailable");
+            return NULL;
+        }
+        memset(s0, 0, sizeof(uint64_t) * num_pages);
+        memset(s1, 0, sizeof(uint64_t) * num_pages);
+        memset(s2, 0, sizeof(uint64_t) * num_pages);
+        memset(s3, 0, sizeof(uint64_t) * num_pages);
+        o->field_id = g_shared->active_field_id;
+        watcher_active_slot = slot;
+    }
+    return &cur_obs[watcher_active_slot];
+}
+
 static void *watcher_loop(void *arg) {
     (void)arg;
-    cpu_set_t set;
-    CPU_ZERO(&set);
-    CPU_SET(watch_cpu, &set);
-    if (sched_setaffinity(0, sizeof(set), &set) != 0) {
-        syscall_error_count++;
-        mark_invalid("watcher_setaffinity_failed");
-    }
-    __atomic_store_n(&watcher_ready, 1, __ATOMIC_RELEASE);
-
     uint64_t *tmp_s0 = (uint64_t *)calloc(MAX_TRACKED_PAGES, sizeof(uint64_t));
     uint64_t *tmp_s1 = (uint64_t *)calloc(MAX_TRACKED_PAGES, sizeof(uint64_t));
     uint64_t *tmp_s2 = (uint64_t *)calloc(MAX_TRACKED_PAGES, sizeof(uint64_t));
+    const void *scratch_buffers[] = {tmp_s0, tmp_s1, tmp_s2};
+    if (!atfield_buffers_ready(scratch_buffers, sizeof(scratch_buffers) / sizeof(scratch_buffers[0]))) {
+        free(tmp_s0); free(tmp_s1); free(tmp_s2);
+        __atomic_store_n(&watcher_init_failed, 1, __ATOMIC_RELEASE);
+        return NULL;
+    }
+    cpu_set_t set;
+    CPU_ZERO(&set);
+    CPU_SET(watch_cpu, &set);
+    cpu_set_t verify_set;
+    CPU_ZERO(&verify_set);
+    if (sched_setaffinity(0, sizeof(set), &set) != 0 ||
+        sched_getaffinity(0, sizeof(verify_set), &verify_set) != 0 ||
+        CPU_COUNT(&verify_set) != 1 || !CPU_ISSET(watch_cpu, &verify_set)) {
+        syscall_error_count++;
+        mark_invalid("watcher_setaffinity_failed");
+        free(tmp_s0); free(tmp_s1); free(tmp_s2);
+        __atomic_store_n(&watcher_init_failed, 1, __ATOMIC_RELEASE);
+        return NULL;
+    }
+    __atomic_store_n(&watcher_ready, 1, __ATOMIC_RELEASE);
+
     uint32_t cur_ipi_ok_mask = 0;
     uint32_t s3_start_aex = 0;
-
     while (!__atomic_load_n(&watcher_stop, __ATOMIC_ACQUIRE)) {
         uint32_t g = __atomic_load_n(&g_shared->host_gate, __ATOMIC_ACQUIRE);
         if (g == 10) {
             cur_ipi_ok_mask = 0;
             snapshot_ad(tmp_s0);
-            if (ipi_mask & 1) {
-                if (trigger_tlb_shootdown_ipi_verified()) cur_ipi_ok_mask |= 1;
-            }
             clear_ad_only();
+            if (ipi_mask & 1) {
+                if (trigger_tlb_shootdown_ipi_verified(10u)) cur_ipi_ok_mask |= 1;
+                clear_ad_only();
+            }
+            pthread_mutex_lock(&phase_mutex);
+            if (watcher_active_slot >= 0) {
+                mark_invalid("field_invocation_missing_gate_d");
+                watcher_active_slot = -1;
+            }
+            field_obs_t *o = watcher_current_observation_locked();
+            if (o) {
+                memcpy(o->s0_ad, tmp_s0, sizeof(uint64_t) * num_pages);
+                o->gate_mask = 1u;
+                o->field_id = g_shared->active_field_id;
+                o->ipi_aex_verified_mask = cur_ipi_ok_mask;
+            }
+            pthread_mutex_unlock(&phase_mutex);
+            __atomic_store_n(&g_shared->in_gate_spin, 0, __ATOMIC_SEQ_CST);
             __atomic_store_n(&g_shared->host_gate, 20, __ATOMIC_RELEASE);
         } else if (g == 30) {
             snapshot_ad(tmp_s1);
+            clear_ad_only();
             if (strict_mode == 2 && active_strict_selector >= 0) {
+                pthread_mutex_lock(&phase_mutex);
                 arm_strict_ptes_for_selector(active_strict_selector);
+                pthread_mutex_unlock(&phase_mutex);
             }
             if ((ipi_mask & 2) || strict_mode == 2) {
-                if (trigger_tlb_shootdown_ipi_verified()) cur_ipi_ok_mask |= 2;
+                if (trigger_tlb_shootdown_ipi_verified(30u)) cur_ipi_ok_mask |= 2;
+                clear_ad_only();
             }
-            clear_ad_only();
+            pthread_mutex_lock(&phase_mutex);
+            if (watcher_active_slot < 0) {
+                mark_invalid("field_gate_order_invalid");
+            } else {
+                field_obs_t *o = &cur_obs[watcher_active_slot];
+                if (o->field_id != g_shared->active_field_id || o->gate_mask != 1u) {
+                    mark_invalid("field_gate_order_invalid");
+                } else {
+                    memcpy(o->s1_ad, tmp_s1, sizeof(uint64_t) * num_pages);
+                    o->gate_mask |= 2u;
+                    o->gateB_rsp_rva = g_shared->saved_rsp ? g_shared->saved_rsp - encl_base : 0;
+                    o->tsc_s2 = g_shared->tsc_s2_end - g_shared->tsc_s2_start;
+                    o->ipi_aex_verified_mask = cur_ipi_ok_mask;
+                }
+            }
+            pthread_mutex_unlock(&phase_mutex);
+            __atomic_store_n(&g_shared->in_gate_spin, 0, __ATOMIC_SEQ_CST);
             __atomic_store_n(&g_shared->host_gate, 40, __ATOMIC_RELEASE);
         } else if (g == 50) {
             snapshot_ad(tmp_s2);
-            if (ipi_mask & 4) {
-                if (trigger_tlb_shootdown_ipi_verified()) cur_ipi_ok_mask |= 4;
-            }
             clear_ad_only();
+            if (ipi_mask & 4) {
+                if (trigger_tlb_shootdown_ipi_verified(50u)) cur_ipi_ok_mask |= 4;
+                clear_ad_only();
+            }
+            pthread_mutex_lock(&phase_mutex);
+            if (watcher_active_slot < 0) {
+                mark_invalid("field_gate_order_invalid");
+            } else {
+                field_obs_t *o = &cur_obs[watcher_active_slot];
+                if (o->field_id != g_shared->active_field_id || o->gate_mask != 3u) {
+                    mark_invalid("field_gate_order_invalid");
+                } else {
+                    memcpy(o->s2_ad, tmp_s2, sizeof(uint64_t) * num_pages);
+                    o->gate_mask |= 4u;
+                    o->tsc_s2 = g_shared->tsc_s2_end - g_shared->tsc_s2_start;
+                    o->ipi_aex_verified_mask = cur_ipi_ok_mask;
+                }
+            }
+            pthread_mutex_unlock(&phase_mutex);
+            __atomic_store_n(&g_shared->in_gate_spin, 0, __ATOMIC_SEQ_CST);
             s3_start_aex = __atomic_load_n(&g_shared->total_aex_count, __ATOMIC_ACQUIRE);
             __atomic_store_n(&g_shared->host_gate, 60, __ATOMIC_RELEASE);
         } else if (g == 70) {
             uint32_t s3_end_aex = __atomic_load_n(&g_shared->total_aex_count, __ATOMIC_ACQUIRE);
             if (strict_mode == 2 && active_strict_selector >= 0) {
+                pthread_mutex_lock(&phase_mutex);
                 disarm_and_check_strict_ptes("S2_OR_S3_FIELD");
+                pthread_mutex_unlock(&phase_mutex);
             }
-            int slot = cur_obs_count;
-            if (slot < MAX_FIELD_OBS_PER_ECALL) {
-                field_obs_t *o = &cur_obs[slot];
-                if (!o->s0_ad) {
-                    o->s0_ad = (uint64_t *)calloc(MAX_TRACKED_PAGES, sizeof(uint64_t));
-                    o->s1_ad = (uint64_t *)calloc(MAX_TRACKED_PAGES, sizeof(uint64_t));
-                    o->s2_ad = (uint64_t *)calloc(MAX_TRACKED_PAGES, sizeof(uint64_t));
-                    o->s3_ad = (uint64_t *)calloc(MAX_TRACKED_PAGES, sizeof(uint64_t));
-                }
-                o->field_id = g_shared->active_field_id;
-                o->tsc_s2 = g_shared->tsc_s2_end - g_shared->tsc_s2_start;
-                o->tsc_s3 = g_shared->tsc_s3_end - g_shared->tsc_s3_start;
-                o->gateB_rsp_rva = g_shared->saved_rsp ? (g_shared->saved_rsp - encl_base) : 0;
-                o->gateD_rsp_rva = g_shared->gateD_rsp ? (g_shared->gateD_rsp - encl_base) : 0;
-                o->ipi_aex_verified_mask = cur_ipi_ok_mask;
-                o->s3_active_aex_count = s3_end_aex - s3_start_aex;
-                memcpy(o->s0_ad, tmp_s0, sizeof(uint64_t) * num_pages);
-                memcpy(o->s1_ad, tmp_s1, sizeof(uint64_t) * num_pages);
-                memcpy(o->s2_ad, tmp_s2, sizeof(uint64_t) * num_pages);
-                snapshot_ad(o->s3_ad);
-                walk_dlmalloc_at_gate(o);
-                cur_obs_count = slot + 1;
+            pthread_mutex_lock(&phase_mutex);
+            if (watcher_active_slot < 0) {
+                mark_invalid("field_gate_order_invalid");
             } else {
-                obs_truncated = 1;
-                mark_invalid("field_obs_per_ecall_truncated");
+                field_obs_t *o = &cur_obs[watcher_active_slot];
+                if (o->field_id != g_shared->active_field_id || o->gate_mask != 7u) {
+                    mark_invalid("field_gate_order_invalid");
+                } else {
+                    snapshot_ad(o->s3_ad);
+                    o->gate_mask |= 8u;
+                    o->field_id = g_shared->active_field_id;
+                    o->tsc_s2 = g_shared->tsc_s2_end - g_shared->tsc_s2_start;
+                    o->tsc_s3 = g_shared->tsc_s3_end - g_shared->tsc_s3_start;
+                    o->gateD_rsp_rva = g_shared->gateD_rsp ? g_shared->gateD_rsp - encl_base : 0;
+                    o->ipi_aex_verified_mask = cur_ipi_ok_mask;
+                    o->s3_active_aex_count = (s3_end_aex >= s3_start_aex) ? (s3_end_aex - s3_start_aex) : 0;
+                    walk_dlmalloc_at_gate(o);
+                }
             }
+            watcher_active_slot = -1;
+            pthread_mutex_unlock(&phase_mutex);
             clear_ad_only();
             __atomic_store_n(&g_shared->host_gate, 80, __ATOMIC_RELEASE);
         } else {
             __asm__ volatile("pause" ::: "memory");
         }
     }
-    free(tmp_s0);
-    free(tmp_s1);
-    free(tmp_s2);
+    free(tmp_s0); free(tmp_s1); free(tmp_s2);
     return NULL;
 }
 
@@ -522,7 +733,6 @@ static void setup_enclave_ptes(void) {
             pretouch_start_rva = strtoull(p + 9, &endp, 16);
             if (endp && *endp == ':') pretouch_end_rva = strtoull(endp + 1, NULL, 16);
         }
-        if ((p = strstr(spec, "gate="))) gate_helper_rva = strtoull(p + 5, NULL, 16);
         if ((p = strstr(spec, "stack="))) {
             char *endp = NULL;
             stack_lo_rva = strtoull(p + 6, &endp, 16);
@@ -542,6 +752,38 @@ static void setup_enclave_ptes(void) {
                 p = nxt + 1;
             }
         }
+    }
+
+    gate_helper_range_configured = 0;
+    gate_helper_start_rva = 0;
+    gate_helper_end_rva = 0;
+    int gate_range_found = 0;
+    uint64_t parsed_gate_start = 0, parsed_gate_end = 0;
+    int gate_range_status = atfield_parse_layout_gate_range(
+        spec, &gate_range_found, &parsed_gate_start, &parsed_gate_end);
+    int gate_range_valid = gate_range_status == 0 && gate_range_found &&
+        first != 0 && last > first &&
+        atfield_range_within_enclave(parsed_gate_start, parsed_gate_end, encl_size) &&
+        first <= UINT64_MAX - parsed_gate_end;
+    if (gate_range_valid) {
+        uint64_t cursor = first + parsed_gate_start;
+        uint64_t goal = first + parsed_gate_end;
+        for (int i = 0; i < nvmas && cursor < goal; i++) {
+            if (vmas[i].end <= cursor) continue;
+            if (vmas[i].start > cursor) break;
+            if (vmas[i].end > cursor) cursor = vmas[i].end < goal ? vmas[i].end : goal;
+        }
+        gate_range_valid = cursor == goal;
+    }
+    if (gate_range_valid) {
+        gate_helper_start_rva = parsed_gate_start;
+        gate_helper_end_rva = parsed_gate_end;
+        gate_helper_range_configured = 1;
+    } else if (gate_range_status != 0 || gate_range_found || use_4gate) {
+        mark_invalid(gate_range_found || gate_range_status != 0
+                         ? "gate_helper_range_invalid"
+                         : "gate_helper_range_missing");
+        if (use_4gate) use_4gate = 0;
     }
 
     if (tcs_rva && fd_self_mem >= 0) {

@@ -61,6 +61,7 @@ def parse_disasm_graph(elf_path: Path, elf: ElfFile) -> dict:
                 "callees": set(),
                 "rip_refs": set(),
                 "indirect_branches": [],
+                "has_enclu": False,
             }
 
     def owner_func(rva: int) -> int | None:
@@ -78,16 +79,18 @@ def parse_disasm_graph(elf_path: Path, elf: ElfFile) -> dict:
         text=True,
     )
     for line in txt.splitlines():
-        m = re.match(r"^\s*([0-9a-f]+):\s+(\S+)\s+(.*)$", line)
+        m = re.match(r"^\s*([0-9a-f]+):\s+(\S+)(?:\s+(.*))?$", line)
         if not m:
             continue
         insn_rva = int(m.group(1), 16)
         mnemonic = m.group(2)
-        ops = m.group(3)
+        ops = m.group(3) or ""
         fstart = owner_func(insn_rva)
         if fstart is None:
             continue
         finfo = func_by_start[fstart]
+        if mnemonic == "enclu":
+            finfo["has_enclu"] = True
         if mnemonic.startswith(("call", "jmp", "j")):
             if "*" in ops:
                 finfo["indirect_branches"].append({"insn_rva": hex(insn_rva), "mnemonic": mnemonic, "ops": ops.strip()})
@@ -572,6 +575,20 @@ def explore_and_close_sample(sample: str) -> dict:
                             visited_fn.add(callee)
                             queue.append((callee, depth + 1))
 
+            full_reach = {func_by_name[entry_fn]}
+            reach_queue = [func_by_name[entry_fn]]
+            while reach_queue:
+                cur = reach_queue.pop(0)
+                for callee in func_by_start[cur]["callees"]:
+                    if callee not in full_reach:
+                        full_reach.add(callee)
+                        reach_queue.append(callee)
+            enclu_leaf_functions = sorted(
+                func_by_start[c]["name"] for c in full_reach if func_by_start[c]["has_enclu"]
+            )
+        else:
+            enclu_leaf_functions = []
+
         obj_added = set()
         for obj in objects:
             olo = obj["value"]
@@ -674,6 +691,7 @@ def explore_and_close_sample(sample: str) -> dict:
 
         closure_breakdown[fid] = {
             "function": field["function"],
+            "enclu_leaf_functions_in_subgraph": enclu_leaf_functions,
             "call_statistics": field_call_stats[fid],
             "four_layer_attribution": {
                 "layer0_first_field_call": {

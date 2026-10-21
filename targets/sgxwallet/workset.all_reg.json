@@ -1,5 +1,11 @@
 {
-  "edl_manifest": "/home/meandssh/islands-sgx/sample/real/sgxwallet/secure_enclave.edl",
+  "capacity_policy": "automatic-q-supported-signer-regions-v1",
+  "capacity_verification": {
+    "capacity_q": 90112,
+    "code_bytes": 80085,
+    "minimum_q": 90112
+  },
+  "edl_manifest": "/home/meandssh/islands-sgx/sample/real/sgxwallet/enclave.edl",
   "edl_manifest_sha256": "536f14f71505eb03f711779ea766cd7193e9e6f78c710790107c007563177a46",
   "field_manifest": "/home/meandssh/islands-sgx/sample/build/real/sgxwallet/protect/fields.json",
   "field_manifest_sha256": "b53f72dfeb61885d832f8498bc745add906915e81c72fc53a26071f9fa0fbf35",
@@ -269,7 +275,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 75265,
-            "symbol": "__atf_n_b93ac42c790e896d_0_0"
+            "symbol": "__atf_n_73166f8f4c141668_0_0"
           },
           "data_anchor_rva": 73728,
           "data_width": 1,
@@ -288,7 +294,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 79175,
-            "symbol": "__atf_n_b93ac42c790e896d_5_0"
+            "symbol": "__atf_n_73166f8f4c141668_5_0"
           },
           "data_anchor_rva": 77824,
           "data_width": 1,
@@ -307,7 +313,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 82007,
-            "symbol": "__atf_n_b93ac42c790e896d_7_0"
+            "symbol": "__atf_n_73166f8f4c141668_7_0"
           },
           "data_anchor_rva": 81920,
           "data_width": 1,
@@ -29341,7 +29347,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 75265,
-            "symbol": "__atf_n_b93ac42c790e896d_0_0"
+            "symbol": "__atf_n_73166f8f4c141668_0_0"
           },
           "data_anchor_rva": 73728,
           "data_width": 1,
@@ -29360,7 +29366,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 79175,
-            "symbol": "__atf_n_b93ac42c790e896d_5_0"
+            "symbol": "__atf_n_73166f8f4c141668_5_0"
           },
           "data_anchor_rva": 77824,
           "data_width": 1,
@@ -29379,7 +29385,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 82007,
-            "symbol": "__atf_n_b93ac42c790e896d_7_0"
+            "symbol": "__atf_n_73166f8f4c141668_7_0"
           },
           "data_anchor_rva": 81920,
           "data_width": 1,
@@ -58413,7 +58419,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 75265,
-            "symbol": "__atf_n_b93ac42c790e896d_0_0"
+            "symbol": "__atf_n_73166f8f4c141668_0_0"
           },
           "data_anchor_rva": 73728,
           "data_width": 1,
@@ -58432,7 +58438,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 79175,
-            "symbol": "__atf_n_b93ac42c790e896d_5_0"
+            "symbol": "__atf_n_73166f8f4c141668_5_0"
           },
           "data_anchor_rva": 77824,
           "data_width": 1,
@@ -58451,7 +58457,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 82007,
-            "symbol": "__atf_n_b93ac42c790e896d_7_0"
+            "symbol": "__atf_n_73166f8f4c141668_7_0"
           },
           "data_anchor_rva": 81920,
           "data_width": 1,
@@ -87485,7 +87491,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 75265,
-            "symbol": "__atf_n_b93ac42c790e896d_0_0"
+            "symbol": "__atf_n_73166f8f4c141668_0_0"
           },
           "data_anchor_rva": 73728,
           "data_width": 1,
@@ -87504,7 +87510,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 79175,
-            "symbol": "__atf_n_b93ac42c790e896d_5_0"
+            "symbol": "__atf_n_73166f8f4c141668_5_0"
           },
           "data_anchor_rva": 77824,
           "data_width": 1,
@@ -87523,7 +87529,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 82007,
-            "symbol": "__atf_n_b93ac42c790e896d_7_0"
+            "symbol": "__atf_n_73166f8f4c141668_7_0"
           },
           "data_anchor_rva": 81920,
           "data_width": 1,
@@ -116557,7 +116563,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 75265,
-            "symbol": "__atf_n_b93ac42c790e896d_0_0"
+            "symbol": "__atf_n_73166f8f4c141668_0_0"
           },
           "data_anchor_rva": 73728,
           "data_width": 1,
@@ -116576,7 +116582,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 79175,
-            "symbol": "__atf_n_b93ac42c790e896d_5_0"
+            "symbol": "__atf_n_73166f8f4c141668_5_0"
           },
           "data_anchor_rva": 77824,
           "data_width": 1,
@@ -116595,7 +116601,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 82007,
-            "symbol": "__atf_n_b93ac42c790e896d_7_0"
+            "symbol": "__atf_n_73166f8f4c141668_7_0"
           },
           "data_anchor_rva": 81920,
           "data_width": 1,
@@ -145437,7 +145443,7 @@
     "pretouch_segment": true,
     "pretouch_start": 2809856,
     "profile_elf": "/home/meandssh/islands-sgx/sample/build/real/sgxwallet/protect/enclave.profile.so",
-    "profile_elf_sha256": "e598c6d21dba5b4b862f4d01abf503cec7b57d892cb17d15a06c6109a51f6ee3",
+    "profile_elf_sha256": "d730a3adabdf8dcf155cf7173f37cc10e1808e1dbfc0ea724c2f0fb2c0ee1bb0",
     "regions": [
       {
         "end_rva": 73728,
@@ -145530,75 +145536,105 @@
     ],
     "schema": "atfield-signer-layout-v1",
     "signed_elf": "/home/meandssh/islands-sgx/sample/build/real/sgxwallet/protect/enclave.profile.signed.so",
-    "signed_elf_sha256": "e0b95687b7722999d0a53705be2015c9d8b3f74920cc532d0b40197fd57ce60e",
+    "signed_elf_sha256": "9551f8e0454f92bbe43625e617bec92f9b57b9a4a7fd37309e584a0f4457cf86",
     "ssa_frame_pages": 1
   },
   "page_size": 4096,
   "schema": "atfield-workset-v1",
-  "selector_manifest": "/home/meandssh/islands-sgx/sample/real/sgxwallet/selectors.json",
-  "selector_manifest_sha256": "e4b2ca89d8c7951186338b80e65f20e618273aca883200eaf04fc091b35ca378",
+  "selector_manifest": "/home/meandssh/islands-sgx/sample/build/real/sgxwallet/protect/selectors.json",
+  "selector_manifest_sha256": "6c2942b12872fcac04ed47b60eb980d02c5f333f50566d49b35f03488ca20b90",
+  "selector_policy": "conservative-all-fields",
   "selectors": [
     {
       "ecall_index": 0,
       "name": "trustedEnclaveInit",
-      "reachable_fields": [],
+      "policy": "conservative-all-fields",
+      "reachable_fields": [
+        "0xd9243791a2c13244",
+        "0x9304e1c7e45cef0a",
+        "0xa9d5e11946c68a33",
+        "0x6be0530730e7f5f1",
+        "0x25c0fd3d7283b2b7"
+      ],
       "reachable_functions": []
     },
     {
       "ecall_index": 1,
       "name": "trustedEnclaveClear",
-      "reachable_fields": [],
+      "policy": "conservative-all-fields",
+      "reachable_fields": [
+        "0xd9243791a2c13244",
+        "0x9304e1c7e45cef0a",
+        "0xa9d5e11946c68a33",
+        "0x6be0530730e7f5f1",
+        "0x25c0fd3d7283b2b7"
+      ],
       "reachable_functions": []
     },
     {
       "ecall_index": 2,
       "name": "trustedGenerateSEK",
+      "policy": "conservative-all-fields",
       "reachable_fields": [
-        "0xd9243791a2c13244"
+        "0xd9243791a2c13244",
+        "0x9304e1c7e45cef0a",
+        "0xa9d5e11946c68a33",
+        "0x6be0530730e7f5f1",
+        "0x25c0fd3d7283b2b7"
       ],
-      "reachable_functions": [
-        "generate_sek_field"
-      ]
+      "reachable_functions": []
     },
     {
       "ecall_index": 3,
       "name": "trustedSetSEK",
+      "policy": "conservative-all-fields",
       "reachable_fields": [
-        "0x9304e1c7e45cef0a"
+        "0xd9243791a2c13244",
+        "0x9304e1c7e45cef0a",
+        "0xa9d5e11946c68a33",
+        "0x6be0530730e7f5f1",
+        "0x25c0fd3d7283b2b7"
       ],
-      "reachable_functions": [
-        "set_sek_field"
-      ]
+      "reachable_functions": []
     },
     {
       "ecall_index": 4,
       "name": "trustedGenerateEcdsaKey",
+      "policy": "conservative-all-fields",
       "reachable_fields": [
-        "0xa9d5e11946c68a33"
+        "0xd9243791a2c13244",
+        "0x9304e1c7e45cef0a",
+        "0xa9d5e11946c68a33",
+        "0x6be0530730e7f5f1",
+        "0x25c0fd3d7283b2b7"
       ],
-      "reachable_functions": [
-        "generate_ecdsa_key_field"
-      ]
+      "reachable_functions": []
     },
     {
       "ecall_index": 5,
       "name": "trustedGetPublicEcdsaKey",
+      "policy": "conservative-all-fields",
       "reachable_fields": [
-        "0x6be0530730e7f5f1"
+        "0xd9243791a2c13244",
+        "0x9304e1c7e45cef0a",
+        "0xa9d5e11946c68a33",
+        "0x6be0530730e7f5f1",
+        "0x25c0fd3d7283b2b7"
       ],
-      "reachable_functions": [
-        "get_public_ecdsa_key_field"
-      ]
+      "reachable_functions": []
     },
     {
       "ecall_index": 6,
       "name": "trustedEcdsaSign",
+      "policy": "conservative-all-fields",
       "reachable_fields": [
+        "0xd9243791a2c13244",
+        "0x9304e1c7e45cef0a",
+        "0xa9d5e11946c68a33",
+        "0x6be0530730e7f5f1",
         "0x25c0fd3d7283b2b7"
       ],
-      "reachable_functions": [
-        "ecdsa_sign_field"
-      ]
+      "reachable_functions": []
     }
   ]
 }

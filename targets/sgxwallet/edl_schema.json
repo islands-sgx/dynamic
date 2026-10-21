@@ -1,7 +1,7 @@
 {
   "sample": "sgxwallet",
-  "edl_path": "/home/meandssh/islands-sgx/sample/real/sgxwallet/secure_enclave.edl",
-  "u_c_path": "/home/meandssh/islands-sgx/sample/build/real/sgxwallet/protect/real/sgxwallet/sgxwallet_enclave_edl_untrusted/secure_enclave_u.c",
+  "edl_path": "/home/meandssh/islands-sgx/sample/real/sgxwallet/enclave.edl",
+  "u_c_path": "/home/meandssh/islands-sgx/sample/build/real/sgxwallet/protect/real/sgxwallet/sgxwallet_enclave_edl_untrusted/enclave_u.c",
   "ecalls": [
     {
       "ecall_index": 0,

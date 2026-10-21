@@ -1,7 +1,7 @@
 {
   "sample": "signal-cds",
-  "edl_path": "/home/meandssh/islands-sgx/sample/real/signal-cds/sabd_enclave.edl",
-  "u_c_path": "/home/meandssh/islands-sgx/sample/build/real/signal-cds/protect/real/signal-cds/signal_cds_enclave_edl_untrusted/sabd_enclave_u.c",
+  "edl_path": "/home/meandssh/islands-sgx/sample/real/signal-cds/enclave.edl",
+  "u_c_path": "/home/meandssh/islands-sgx/sample/build/real/signal-cds/protect/real/signal-cds/signal_cds_enclave_edl_untrusted/enclave_u.c",
   "ecalls": [
     {
       "ecall_index": 0,

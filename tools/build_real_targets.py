@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare dynamic exploration & diagnostic variants in `targets/<name>/` solely from
-the single-source `target_manifest.json` exported by `sample`'s CMake build.
-"""
+"""Prepare dynamic artifacts from sample build metadata and dynamic-owned scenarios."""
 from __future__ import annotations
 
 import json
@@ -14,18 +12,26 @@ DYN_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(DYN_ROOT / "tools"))
 from elf_workset import ElfFile, parse_signed_metadata, write_json  # noqa: E402
 from patch_4gate import patch_elf_4gate  # noqa: E402
-from target_manifest import discover_real_target_manifests  # noqa: E402
+from target_manifest import DEFAULT_SAMPLE_ROOT, discover_real_target_manifests  # noqa: E402
 
 
 def prepare_target_from_manifest(manifest: dict) -> dict:
     name = manifest["name"]
     out_dir = DYN_ROOT / "targets" / name
+    scenario_path = out_dir / "scenarios.json"
+    if not scenario_path.is_file():
+        raise FileNotFoundError(f"Missing dynamic-owned scenarios for {name}: {scenario_path}")
+    local_scenarios = json.loads(scenario_path.read_text())
+    if local_scenarios != manifest.get("scenarios"):
+        raise ValueError(f"Loaded scenario/oracle differs from dynamic source {scenario_path}")
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # Persist the authoritative manifest and scenarios in targets/<name>/
-    write_json(out_dir / "target_manifest.json", manifest)
-    if manifest.get("scenarios"):
-        write_json(out_dir / "scenarios.json", manifest["scenarios"])
+    # Persist build metadata only; scenarios.json remains dynamic's canonical source.
+    persisted_manifest = {
+        key: value for key, value in manifest.items()
+        if key not in {"manifest_path", "scenarios", "scenarios_json"}
+    }
+    write_json(out_dir / "target_manifest.json", persisted_manifest)
 
     # Copy authoritative artifacts already built by `sample` (`ATFIELD_MODE=protect`)
     copy_pairs = [
@@ -192,8 +198,26 @@ def prepare_target_from_manifest(manifest: dict) -> dict:
     }
 
 
+def _prefer_current_sample_manifests(requests: list[str]) -> list[str | Path]:
+    """Resolve target names to current sample build manifests, never old dynamic snapshots."""
+    resolved: list[str | Path] = []
+    for request in requests:
+        if Path(request).is_file():
+            resolved.append(request)
+            continue
+        sample_manifest = (
+            DEFAULT_SAMPLE_ROOT / "build" / "real" / request / "protect" / "target_manifest.json"
+        )
+        if not sample_manifest.is_file():
+            raise FileNotFoundError(
+                f"Cannot rebuild {request!r} without current sample build metadata: {sample_manifest}"
+            )
+        resolved.append(sample_manifest)
+    return resolved
+
+
 def main() -> None:
-    manifests = discover_real_target_manifests(sys.argv[1:])
+    manifests = discover_real_target_manifests(_prefer_current_sample_manifests(sys.argv[1:]))
     summary = {}
     for m in manifests:
         name = m["name"]

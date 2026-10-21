@@ -1,5 +1,11 @@
 {
-  "edl_manifest": "/home/meandssh/islands-sgx/sample/real/qe3/qe3_enclave.edl",
+  "capacity_policy": "automatic-q-supported-signer-regions-v1",
+  "capacity_verification": {
+    "capacity_q": 12288,
+    "code_bytes": 7376,
+    "minimum_q": 12288
+  },
+  "edl_manifest": "/home/meandssh/islands-sgx/sample/real/qe3/enclave.edl",
   "edl_manifest_sha256": "871c472dcf03d076893e9f71cc9c183d3b18f506dac2d067ad1d15fe1e2a2404",
   "field_manifest": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/fields.json",
   "field_manifest_sha256": "748095038f69f343aaf712dd9c5cba063ea0d01286b21684fc3a78156f67fe8d",
@@ -2579,7 +2585,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 752009,
-            "symbol": "__atf_n_89b35b4100362666_0_0"
+            "symbol": "__atf_n_41c4619aca205b33_0_0"
           },
           "data_anchor_rva": 749568,
           "data_width": 1,
@@ -13903,7 +13909,7 @@
     "pretouch_segment": true,
     "pretouch_start": 2170880,
     "profile_elf": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/enclave.profile.so",
-    "profile_elf_sha256": "5da08a4bb6e8fa771c5195af43cfdb6b4f227d6666ccff9a5493352105c61664",
+    "profile_elf_sha256": "2f1ca8fa1a765f3d517e6e1f7ac69afa415ee95ecc107f22db0c773aa3137e1f",
     "regions": [
       {
         "end_rva": 749568,
@@ -13996,23 +14002,23 @@
     ],
     "schema": "atfield-signer-layout-v1",
     "signed_elf": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/enclave.profile.signed.so",
-    "signed_elf_sha256": "2935f0798d25863d98118378bcb1bf2e186e4f7fbae7b1be37ddea39b1808b55",
+    "signed_elf_sha256": "48a06f7d92621ab2c1274452d7626535a32e7e60bcd051f6f8df95e4a8603070",
     "ssa_frame_pages": 1
   },
   "page_size": 4096,
   "schema": "atfield-workset-v1",
-  "selector_manifest": "/home/meandssh/islands-sgx/sample/real/qe3/selectors.json",
-  "selector_manifest_sha256": "1e97163af4e89962a4a231434c8679ba5699faf23ec00ab36c213927bd97f857",
+  "selector_manifest": "/home/meandssh/islands-sgx/sample/build/real/qe3/protect/selectors.json",
+  "selector_manifest_sha256": "287dffab9b9299cdb497d0ce0959ed7d514413844e14f84540c1ffd9a5554b27",
+  "selector_policy": "conservative-all-fields",
   "selectors": [
     {
       "ecall_index": 0,
       "name": "ecall_get_attestation_key",
+      "policy": "conservative-all-fields",
       "reachable_fields": [
         "0x2a10deb0a1ec70f8"
       ],
-      "reachable_functions": [
-        "get_att_key_based_from_seal_key"
-      ]
+      "reachable_functions": []
     }
   ]
 }

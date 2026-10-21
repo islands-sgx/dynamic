@@ -6,18 +6,54 @@ import json
 from pathlib import Path
 
 DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
-SAMPLES = ["qe3", "signal-cds", "sgxwallet", "ehsm", "ehsm-opt-1", "ehsm-opt-2", "sqlite"]
+REAL_TARGETS = ["qe3", "signal-cds", "sgxwallet", "ehsm", "ehsm-opt-1", "ehsm-opt-2"]
 
 
-def short_fn(fn: str) -> str:
-    mapping = {
-        "_ZL31get_att_key_based_from_seal_keyP20_sgx_ec256_private_tP19_sgx_ec256_public_tPK13_sgx_key_id_t": "get_att_key_based_from_seal_key",
-        "_Z19ehsm_create_aes_keyP14ehsm_keyblob_t": "ehsm_create_aes_key",
-        "_ZL21ehsm_generate_datakeyP14ehsm_keyblob_tP11ehsm_data_tS2_S2_": "ehsm_generate_datakey",
-        "_Z20ehsm_aes_gcm_encryptP11ehsm_data_tP14ehsm_keyblob_tS0_S0_": "ehsm_aes_gcm_encrypt",
-        "_Z20ehsm_aes_gcm_decryptP11ehsm_data_tP14ehsm_keyblob_tS0_S0_": "ehsm_aes_gcm_decrypt",
-    }
-    return mapping.get(fn, fn)
+DYNAMIC_PAGE_ORIGINS = {"HEAP_INIT", "HEAP_MIN", "STACK_MIN", "TD"}
+
+
+def _load_field_meta(sample: str) -> dict:
+    """Field-id -> recorded field metadata (demangled name etc.) from the build artifact."""
+    path = DYN_ROOT / "targets" / sample / "fields.json"
+    if not path.is_file():
+        return {}
+    return {f["id"]: f for f in json.loads(path.read_text())["fields"]}
+
+
+def _load_page_origins(sample: str) -> dict:
+    """page_rva -> origins set, from the committed-superset workset artifact."""
+    path = DYN_ROOT / "targets" / sample / "workset.all_reg.json"
+    if not path.is_file():
+        return {}
+    origins = {}
+    for field in json.loads(path.read_text())["fields"]:
+        for rec in field["pages"]:
+            origins[rec["page_rva"]] = set(rec.get("origins", []))
+    return origins
+
+
+def short_fn(fn: str, field_meta: dict | None = None) -> str:
+    """Demangle via the recorded field metadata; fall back to the raw linkage name."""
+    for f in (field_meta or {}).values():
+        if f.get("function") == fn:
+            return f.get("name", fn).split("(")[0] or fn
+    return fn
+
+
+def structural_rewalk_only(groups: dict, page_origins: dict) -> bool:
+    """True iff the field shows nonzero residual rewalks AND every rewalked page is
+    a dynamic heap/stack/thread-data page (in-workset re-dirty each entry), i.e.
+    zero-rewalk is structurally unattainable regardless of pretouch correctness.
+    A field rewalking any code/rodata page stays measurable in the aggregate."""
+    events = groups["groupB_dynamic_xr"].get("clean_nonzero_rewalk_events", [])
+    if not events:
+        return False
+    for ev in events:
+        for page in ev.get("s3_pages", []):
+            origins = page_origins.get(int(page, 16), set())
+            if not origins or not (origins & DYNAMIC_PAGE_ORIGINS):
+                return False
+    return True
 
 
 def main() -> None:
@@ -27,14 +63,14 @@ def main() -> None:
     manifest_data = json.loads(manifest_path.read_text()) if manifest_path.is_file() else {}
     ledgers = {
         s: json.loads((DYN_ROOT / "witnesses" / s / "witness_ledger.json").read_text())
-        for s in SAMPLES
+        for s in REAL_TARGETS
     }
     interpose_sha = ledgers["qe3"]["interpose_sha256"]
 
     lines = []
     lines.append("# ATField-SGX Dynamic Workset Explorer & Hardware Verification (`dynamic`)")
     lines.append("")
-    lines.append("All tables in this document are generated automatically from `experiments/evaluation_results.json`, `experiments/strategy_comparison.json`, `experiments/traces_manifest.json`, and `witnesses/<sample>/witness_ledger.json` via `python3 tools/generate_report_tables.py`.")
+    lines.append("Real-target tables in this document are generated from `experiments/evaluation_results.json`, `experiments/strategy_comparison.json`, `experiments/traces_manifest.json`, and `witnesses/<target>/witness_ledger.json` via `python3 tools/generate_report_tables.py`; SQLite research history is preserved separately under `fixtures/sqlite/`.")
     lines.append("")
     lines.append("- **Frozen Initial Hardware Prototype Tag**: `v0-hardware-prototype-frozen` (`7daae4f82ba5380f1ef96c5c0f2f273e01ab360a`)")
     lines.append(f"- **Unified Collector (`build/libatfield_native_sgx.so`) SHA-256 across Discovery & Evaluation**: `{interpose_sha}`")
@@ -44,11 +80,12 @@ def main() -> None:
     lines.append("- **Scope & Boundary Statement**: Dynamic exploration and hold-out evaluations provide empirical evidence on the executed inputs, prefixes, histories, and hardware runs; heuristic assistance (depth-4 direct call graph, `+2` heap frontier pages, `-4` stack margin pages) is an empirical aid rather than a formal whole-program upper-bound proof.")
     lines.append("")
 
-    lines.append("## 0. Three-Owner Architecture & Single-Source `target_manifest.json` Contract")
+    lines.append("## 0. Three-Owner Architecture & Build Manifest / Scenario Contract")
     lines.append("")
-    lines.append("- **`sample` (Business Owner)**: Owns upstream source bindings, patches (`ehsm-opt-1/2`), `ATFIELD` Field annotations, `selectors.json`, `scenarios.json`, and authoritative host tests (`sample/real/<name>/host.{c,cpp}`). During `sgx_add_sample(... MODE protect)` in `sample/cmake/SgxEnclave.cmake`, CMake exports `sample/build/real/<name>/protect/target_manifest.json` containing compiler-resolved paths, layout capacities (`heap_size`, `stack_size`, `capacity_q`), signing keys, and scenario metadata.")
-    lines.append("- **`implement` (Protection Mechanism Owner)**: Owns anchor verification, Profile/Final ELF pre-touch generation (`pretouch.ts`), `workset.ts`, `ReadyTable v3` emission (`ready.ts`), and the host readiness runtime (`atfield_readiness.cpp` / `atfield-host`).")
-    lines.append("- **`dynamic` (Exploration & Verification Owner)**: Consumes only `target_manifest.json` (`tools/target_manifest.py`); contains **zero hardcoded sample registries, zero hardcoded Nix store paths, zero implicit host fallbacks, and zero sample-name branches** in `build_real_targets.py`, `edl_harness.py`, `run_native_sgx.py`, `exploration_kernel.py`, `controller.py`, and `evaluate_worksets.py`.")
+    lines.append("- **`sample` (Business Owner)**: Owns application sources and upstream bindings/patches, `ATFIELD` Field and EDL annotations, authoritative host tests, and business workloads.")
+    lines.append("- **`implement` (Protection Mechanism Owner)**: Generates conservative all-fields selector/Q baselines from EDL schema and live Field annotations, plus build manifests, worksets, readiness artifacts, and the host readiness runtime. Dynamic reachability comes from dynamic traces and refinement.")
+    lines.append("- **`dynamic` (Exploration & Verification Owner)**: Owns per-target `scenarios.json` (probe scenarios and oracles), intervention plans, trace collection, dynamic exploration, and evaluation. It loads compiler-resolved build metadata from the manifest, ignores its legacy `scenarios_json` pointer, and attaches scenarios from its own `targets/<name>/scenarios.json`; persisted target manifests contain no runtime scenarios or `manifest_path`.")
+    lines.append("- **Research fixtures**: `fixtures/sqlite/` preserves the SQLite target snapshot and witness ledger for research. SQLite is not a real target and is excluded from discovery, controller execution, evaluation cohorts, and real-target totals.")
     lines.append("")
     # Section 1A: Audit of Legacy Heuristics & Equal-Budget 4-Strategy Challenge Evaluation
     lines.append("## 1A. Legacy Heuristics Audit & Equal-Budget 4-Strategy Challenge Evaluation")
@@ -167,7 +204,7 @@ def main() -> None:
     lines.append("")
 
     # Section 1B: Three-Layer Workset Attribution across 6 Targets (19 Field instances)
-    lines.append("## 1B. Three-Layer Workset Attribution Across 5 Real Applications (7 Configurations: `qe3`, `signal-cds`, `sgxwallet`, `ehsm`, `ehsm-opt-1`, `ehsm-opt-2`, `sqlite`)")
+    lines.append("## 1B. Three-Layer Workset Attribution Across 4 Real Applications (6 Configurations: `qe3`, `signal-cds`, `sgxwallet`, `ehsm`, `ehsm-opt-1`, `ehsm-opt-2`)")
     lines.append("")
     lines.append("- **`ehsm` (Original)**: Unmodified two-step size-query + crypto host workflow (`32` ECALLs/round: `14` Field-entering + `16` early-return + `2` init); OpenSSL 3.0 lazy provider init occurs inside the first Field call.")
     lines.append("- **`ehsm-opt-1` (Direct Host Sizing + Backward-Compatible Enclave `S0`)**: Host allocates buffers directly using public constants (`EH_AES_GCM_256_SIZE`, `plain_len + 28`), eliminating `13` redundant size-query ECALLs (`19` ECALLs/round: `14` Field-entering + `3` negative early-return + `2` init) while preserving `S0` size-query compatibility, full `SM4` dispatch, and strict `decrypt` output capacity validation (`plaintext->datalen >= ciphertext->datalen - 28`).")
@@ -176,8 +213,9 @@ def main() -> None:
     lines.append("| Sample | Field | L0 First Call (`p / eff`) | L1 Full Host (`p / +p`) | L2 Isolated from Seed (`p / +p`) | L2 Added Beyond Full Host (`+p / +eff`) | Bridge + Heuristic Assist (`+p`) | Final `FieldTargetPages` (Group B `XR`) | All-REG Baseline | Reduction vs All-REG |")
     lines.append("|---|---|---:|---:|---:|---:|---:|---:|---:|---:|")
 
-    for s in SAMPLES:
+    for s in REAL_TARGETS:
         cb_map = ledgers[s]["closure_breakdown"]
+        fmeta = _load_field_meta(s)
         for fid, cb in cb_map.items():
             fl = cb["four_layer_attribution"]
             l0_p = fl["layer0_first_field_call"]["pages"]
@@ -194,7 +232,7 @@ def main() -> None:
             all_reg = cb["all_business_reg_pages"]
             red = cb["reduction_vs_all_reg_pct"]
             lines.append(
-                f"| `{s}` | `{short_fn(cb['function'])}` | {l0_p}p / {l0_e}e | {l1_p}p (`+{l1_add}p`) | "
+                f"| `{s}` | `{short_fn(cb['function'], fmeta)}` | {l0_p}p / {l0_e}e | {l1_p}p (`+{l1_add}p`) | "
                 f"**{l2_seed}p** (`+{l2_seed_add}p`) | **+{l2_over_l1_p}p / +{l2_over_l1_e}e** | "
                 f"+{assist_p}p | **{fin_p}p** | {all_reg}p | **{red:.2f}%** |"
             )
@@ -229,7 +267,7 @@ def main() -> None:
     lines.append("| Sample | Provenance Hash Match | Cold vs Warm TLB (`ipi=7` vs `0` S3 Pages) | 4-Gate vs Uninst `AEX0` Equivalence | Single-Page `X / R / W` Confirmed Kind (`healed:kind`) | Restored Positive Control Faults | Same-Fault `AEX0` (`rc=0`) vs `AEX1` (`0x1006` on same page) | Hold-Out Main `rc` & `stdout` | Hold-Out Unseen `(page / effect)` | Strict `FieldTargetPages` (`Gate B..D`) Faults | Strict `ReadyTable v3` (`ECALL`) Faults | Validator Verdict |")
     lines.append("|---|---|---|---|---|---:|---|---|---|---|---:|---:|---|")
 
-    for s in SAMPLES:
+    for s in REAL_TARGETS:
         ev = eval_data[s]
         prov = ev["provenance_consistency"]["status"]
         tlb = ev["tlb_and_fixture_validation"]["cold_vs_warm_tlb_calibration"]
@@ -253,7 +291,7 @@ def main() -> None:
         )
     lines.append("")
 
-    lines.append("### 2A-2. Stage 2 Capability Extension: Single-Call Coupled Mutation (`replace_coupled`) on `eHSM` SM4 & Bounded 2-Step Plan Reuse (`valid_prefix_corpus`) on `sqlite`")
+    lines.append("### 2A-2. Stage 2 Capability Extension: eHSM SM4 Coupled Mutation & SQLite Research Fixture (Non-Real) 2-Step Plan Reuse")
     s2_abl = eval_data.get("_stage2_capability_ablation", {})
     if s2_abl:
         lines.append("")
@@ -263,7 +301,8 @@ def main() -> None:
         for s_ab in ("sqlite", "ehsm-opt-1", "ehsm-opt-2"):
             if s_ab not in s2_abl:
                 continue
-            ho_lbl = "`--rows 320 --full-tx-suite`" if s_ab == "sqlite" else "`--sm4-check`"
+            ho_lbl = "research fixture: `--rows 320 --full-tx-suite`" if s_ab == "sqlite" else "`--sm4-check`"
+            target_label = "SQLite fixture (non-real)" if s_ab == "sqlite" else s_ab
             for cfg_k in ("1_single_param_only", "2_coupled_single_call", "3_coupled_plus_2step_reuse"):
                 r_ab = s2_abl[s_ab][cfg_k]
                 fc = r_ab.get("first_coupled_new_effect")
@@ -271,7 +310,7 @@ def main() -> None:
                 fc_str = f"`step={fc['step']}, {fc['elapsed_sec']:.2f}s (+{fc['new_pages_count']}p/+{fc['new_effects_count']}e)`" if fc else "`none`"
                 f2_str = f"`step={f2['step']}, {f2['elapsed_sec']:.2f}s (+{f2['new_pages_count']}p/+{f2['new_effects_count']}e)`" if f2 else "`none`"
                 lines.append(
-                    f"| `{s_ab}` ({ho_lbl}) | **`{cfg_k}`** | `{r_ab['enclave_creations']} / {r_ab['total_ecalls']}` (`{r_ab['wall_clock_sec']:.2f}s`) | "
+                    f"| `{target_label}` ({ho_lbl}) | **`{cfg_k}`** | `{r_ab['enclave_creations']} / {r_ab['total_ecalls']}` (`{r_ab['wall_clock_sec']:.2f}s`) | "
                     f"**`{r_ab['valid_measurement_rate']*100:.1f}%`** | **`{r_ab['business_valid_field_rate']*100:.2f}%`** | "
                     f"{fc_str} | {f2_str} | `{r_ab['confirmed_s3_field_pages']}p / {r_ab['confirmed_s3_field_effects']}e` | "
                     f"**`{r_ab['closed_workset_pages']}p`** | **`{r_ab['holdout_omitted_pages']}p / {r_ab['holdout_omitted_effects']}e` (`{r_ab['holdout_status']}`)** |"
@@ -281,7 +320,7 @@ def main() -> None:
     lines.append("  - **Tier 2a (`dynamic_xr`, Zero-Constraint Unassisted AES-Only Seed)**: `0` manual struct constraints; fails (`4` and `14` omitted pages) because the compiler cannot infer business enum-to-keyblob-length semantics (`keyspec=31, keybloblen=80, cmk_size=124`) from `uint8_t data[0]` alone.")
     lines.append("  - **Tier 2b (`coupled_assisted_xr`, `replace_coupled` on Default AES Host Workflow WITHOUT `--sm4-check`, `12` JSON lines in `scenarios.json`)**: Mutates `enclave_create_key` (`ecall 1, sseq 0`) once in-place so the enclave seals a genuine SM4 keyblob (`EH_SM4_CTR=31`) and the unmodified AES host carries it into `enclave_generate_datakey` (`ecall 4, sseq 0`). On `ehsm-opt-1`, Tier 2b achieves **`PASS` (`0` omitted pages, `0` omitted effects, `15/15` `0`-rewalk, `PASS` on protected `AEX1`)** without running `--sm4-check`. On `ehsm-opt-2`, Tier 2b discovers **all `9` SM4 cipher implementation pages (`+16` effects, reducing omitted pages from `14` to `5`)**, while the remaining `5` pages (`0x89000..0x4a6000`) are OpenSSL's one-time lazy `EVP_sm4_ctr()` provider-lookup pages, which in the default host call order (`ecall 1 -> ecall 2 -> ecall 4`) are warmed up by non-Field `ecall 2` (`enclave_encrypt`) before Field `ecall 4` (`ehsm_generate_datakey`).")
     lines.append("  - **Tier 1 (`sm4_seeded_xr`, Explicit `--sm4-check` Seed Run)**: Exercises `ecall 1 -> ecall 4` directly and achieves **`PASS` (`0` omissions)** on both `ehsm-opt-1` and `ehsm-opt-2`.")
-    lines.append("- **Stage 2B (`valid_prefix_corpus` Bounded 2-Step Valid Plan Reuse on `sqlite`, `0` Manual Constraints)**: On `sqlite`, single-call `scale_bound_v2` on `ecall_db_exec_batch` (`ecall 1`) populates `256..1024` rows into the in-memory B-tree while `ecall_db_query_stats` (`ecall 2`) runs default `query_mode=0`; conversely, single-call `replace_scalar` (`query_mode=1` window-function `LEFT JOIN + GROUP BY + ORDER BY`) on `ecall 2` sorts only the `8` seed rows (`303` pages on Selector 2, leaving `4` sorter/B-tree heap pages `0x147000..0x14a000` omitted on `--rows 256 --full-tx-suite`). Bidirectional 2-step plan reuse automatically composes productive `scale` prefixes on `ecall 1` with productive `boundary` branches on `ecall 2` (`reuse2step_scale_e1_s0_n256__then__scalar_e2_s0_p1_v1`: `+28` effects; `reuse2step_scale_e1_s0_n1024__then__scalar_e2_s0_p0_v1`: `+8` effects; `reuse2step_scale_e1_s0_n1024__then__scalar_e2_s0_p1_v1`: `+64` effects), expanding Selector 2 from **`303 -> 352` pages (`+49` pages / `+100` effects)** and achieving **`0` omissions (`10/10 PASS`)** across all SQLite transactional workflows.")
+    lines.append("- **Stage 2B (SQLite research fixture; non-real)**: The preserved `valid_prefix_corpus` bounded 2-step plan reuse used `0` manual constraints. On the SQLite fixture, single-call `scale_bound_v2` on `ecall_db_exec_batch` (`ecall 1`) populates `256..1024` rows into the in-memory B-tree while `ecall_db_query_stats` (`ecall 2`) runs default `query_mode=0`; conversely, single-call `replace_scalar` (`query_mode=1` window-function `LEFT JOIN + GROUP BY + ORDER BY`) on `ecall 2` sorts only the `8` seed rows (`303` pages on Selector 2, leaving `4` sorter/B-tree heap pages `0x147000..0x14a000` omitted on `--rows 256 --full-tx-suite`). Bidirectional 2-step plan reuse automatically composes productive `scale` prefixes on `ecall 1` with productive `boundary` branches on `ecall 2` (`reuse2step_scale_e1_s0_n256__then__scalar_e2_s0_p1_v1`: `+28` effects; `reuse2step_scale_e1_s0_n1024__then__scalar_e2_s0_p0_v1`: `+8` effects; `reuse2step_scale_e1_s0_n1024__then__scalar_e2_s0_p1_v1`: `+64` effects), expanding Selector 2 from **`303 -> 352` pages (`+49` pages / `+100` effects)** and achieving **`0` omissions (`10/10 PASS`)** across all SQLite transactional workflows.")
     lines.append("")
     lines.append("| Target | Accounting Tier (`Manual Constraint Lines`) | Frozen Artifact Hashes (`workset / signed_aex1 / ready_bin`) | Fresh Hold-Out Coverage (`ipi=7`) | Fresh 4-Gate Diagnostic (`clean 0-rewalk`) | Fresh Protected `AEX1` Execution (`ReadyTable`) | Overall Verdict & Explanation |")
     lines.append("|---|---|---|---|---|---|---|")
@@ -322,8 +361,8 @@ def main() -> None:
                 f"| `{s_sm4}` | **Tier 2a (`dynamic_xr` 0-constraint blind AES seed)** | {aes_h_str} (`0` manual lines) | **`{v2['status']}`** (`{len(uncov2)}` uncovered) | N/A (coverage failed) | N/A (coverage failed) | **`{v2['status']}`**: Catches **{len(uncov2)} uncovered SM4 effects** (`{', '.join(uncov2[:3])}...`) when no struct constraint or SM4 seed is supplied |"
             )
     lines.append("")
-    lines.append("### 2B. Predetermined 70-Case End-to-End Regression Matrix Across 5 Applications / 7 Configurations (`4` Separate Verdicts per Case; No Binomial Probability Claim)")
-    lines.append("- **Methodology & Scope**: After freezing `workset.dynamic_xr.json` and the signed production enclaves, each of the 5 real applications (7 configurations) is evaluated against `10` predetermined test cases (`70` cases total) covering varied payload lengths, byte perturbations, repeat depths, and the 6 adapted upstream `signal-cds` test cases (`95` ECALLs/run). Because these 70 cases are a predetermined regression matrix rather than random draws from a formally defined input distribution, we report exact observed pass/omission counts across **four separate acceptance dimensions** without claiming a binomial probability upper bound:")
+    lines.append("### 2B. Predetermined 60-Case End-to-End Real-Target Regression Matrix Across 4 Applications / 6 Configurations (`4` Separate Verdicts per Case; SQLite Fixture Excluded)")
+    lines.append("- **Methodology & Scope**: Each of the 4 real applications (6 configurations) is evaluated against 10 predetermined cases (`60` real-target cases total), including varied payload lengths, byte perturbations, repeat depths, and the 6 adapted upstream `signal-cds` test cases (`95` ECALLs/run). SQLite's separate 10-case research fixture remains archived and is excluded from these real-target totals. Because the real-target cases are predetermined rather than random draws from a formally defined input distribution, we report observed counts across **four separate acceptance dimensions** without claiming a binomial probability upper bound:")
     lines.append("  1. **Measurement Valid (`ipi=7`)**: Passes unified `is_valid_measurement_run()` (`s3_active_aex_count` present, well-formed `A/D` items, `ipi_aex_verified_mask == 7`, `fast_forwarded_prior == 0`, `measurement_invalid == 0`);")
     lines.append("  2. **Business Workflow Completed**: Enforces `min_rec` minimum ECALL count, verifies all target `expected_fids` were entered (`field_entries > 0`), verifies the expected intervention tags were applied, and checks `returncode == 0` with business `PASS`;")
     lines.append("  3. **Workset Coverage Zero-Omission**: Requires `Measurement Valid` and `Business Workflow Completed` and verifies `0` uncovered `(field_id, page_rva, effect)` tuples against `workset.dynamic_xr.json`;")
@@ -339,7 +378,7 @@ def main() -> None:
     tot_c_ok = 0
     tot_p_ok = 0
     tot_ret = 0
-    for s in SAMPLES:
+    for s in REAL_TARGETS:
         ug = eval_data[s]["independent_holdout_evaluation"].get("unseen_input_history_generalization")
         if not ug:
             continue
@@ -365,19 +404,19 @@ def main() -> None:
         )
     if tot_wf_all > 0:
         lines.append(
-            f"| **Total (`5` Apps / `7` Configs)** | **`{tot_wf_all}`** | **`{tot_ec_all} / {tot_fe_all}`** | "
+            f"| **Total (`4` Apps / `6` Configs)** | **`{tot_wf_all}`** | **`{tot_ec_all} / {tot_fe_all}`** | "
             f"**`{tot_m_ok} / {tot_wf_all}`** | **`{tot_b_ok} / {tot_wf_all}`** | "
             f"**`{tot_c_ok} / {tot_wf_all}`** (`0p / 0e`) | **`{tot_p_ok} / {tot_wf_all}`** (`{tot_ret}` retries) |"
         )
     lines.append("")
-    lines.append("### 2C. Upstream Test Adaptation & Onboarding Cost Accounting (`5` Real Applications, `7` Configurations)")
+    lines.append("### 2C. Upstream Test Adaptation & Onboarding Cost Accounting (`4` Real Applications, `6` Configurations; SQLite Fixture Separate)")
     lines.append("| Application (`Configs`) | Test Provenance & Upstream Reference | Host Entry / Flag | Preserved Assertions & Explicit Adaptation Differences | Host Adapter LOC (`Added LOC`) | Explorer / Kernel Special-Case Rules |")
     lines.append("|---|---|---|---|---:|---:|")
     lines.append("| `signal-cds` (`1`) | **Selected & adapted 6 upstream Cmockery tests** from `enclave/src/sabd-enclave-test.c` (`setup_sabd_lookup_test`, `test_sabd_lookup_batch_too_large`, `test_sabd_lookup_many_duplicates`, `test_sabd_lookup_small_{all_in,no_in,random}`, `test_sabd_lookup_large`) | `sample/real/signal-cds/host.c` (`--upstream-cmockery-test --seed S --in-jids N`, `95` ECALLs/run) | **Preserved**: `(1<<14)+1` `SGX_ERROR_INVALID_PARAMETER` check, `!!result[i]` normalization, even-index duplication, and `memcmp` across `0..32`, `0..25`, and `2048`-query batches. **Explicit adaptations**: (1) replaced Cmockery mock macros with real `ecall_lookup_hash` calls; (2) avoided reserved miss sentinel `jid <= 1` when generating `test_in_jids` via `mrand48_r`; (3) parameterized `in_jid_count` (`128..4096` vs static `1,000,000`). | `358` (`+122` for adapted suite) | **`0`** |")
     lines.append("| `ehsm` (`ehsm`, `ehsm-opt-1`, `ehsm-opt-2`) | **Selected & adapted workflow** from `core/Test/function_test.cpp` (`test_AES128_GCM`, `test_SM4_CBC`, `GenerateDataKey`, `Decrypt`) | `sample/real/ehsm/host.cpp` (default AES-GCM + `--compat-check` + `--sm4-check`) | **Preserved**: `ehsm_create_key` -> `ehsm_encrypt` -> `ehsm_decrypt` -> `ehsm_generate_datakey` -> `ehsm_decrypt_datakey`, ciphertext/AAD tamper rejection, and round-trip plaintext equality. **Explicit adaptations**: extracted standalone C++ host driver from gtest/dkeyserver wrapper. | `312` (`+0` kernel rules) | **`0`** |")
     lines.append("| `sgxwallet` (`1`) | **Selected & adapted workflow** from `tests/integration/keys/ECDSAIntegrationTests.cpp` | `sample/real/sgxwallet/host.cpp` | **Preserved**: SEK provisioning -> ECDSA keygen -> public key extraction -> hash signing -> signature verification -> invalid input rejection -> enclave restart & recovery. **Explicit adaptations**: standalone C++ host driver without JSON-RPC/LevelDB server daemon. | `264` (`+0` kernel rules) | **`0`** |")
     lines.append("| `qe3` (`1`) | **Local functional test written against upstream production code** `QuoteGeneration/quote_wrapper/quote/enclave/qe3.c` (`get_att_key_based_from_seal_key`) | `sample/real/qe3/host.c` | **Local test**: invokes attestation-key derivation across identical vs distinct `key_id` values and asserts public-key determinism and uniqueness (not ported from an upstream test file). | `118` (`+0` kernel rules) | **`0`** |")
-    lines.append("| `sqlite` (`1`) | **Non-cryptographic stateful SQLite 3 in-memory transactional database** adapted from `sample/anchor/sqlite` VFS (`enclave-mem`) against unmodified upstream `vendor/sqlite3.c` | `sample/real/sqlite/host.c` (`--rows N --full-tx-suite`, `3..10` ECALLs/run) | **Stateful multi-ECALL workflow**: `ecall_db_open` -> `ecall_db_exec_batch` (`INSERT`, `CREATE INDEX + UPDATE`, `SAVEPOINT + DELETE`) -> `ecall_db_query_stats` (`SUM`, window-function `LEFT JOIN + GROUP BY + ORDER BY`, `PRAGMA integrity_check` + correlated subquery). **Onboarded via `target_manifest.json` with `0` lines modified in `dynamic` engine/controller/schema/evaluator.** | `146` (`+195` enclave wrapper LOC, `+0` kernel rules) | **`0`** |")
+    lines.append("| SQLite research fixture (`1`, non-real) | **Historical non-cryptographic SQLite 3 in-memory transaction workload** adapted from the `sample/anchor/sqlite` VFS and upstream `vendor/sqlite3.c` | Former host path (historical reference): `sample/real/sqlite/host.c`; preserved target snapshot: `fixtures/sqlite/target/` | **Historical multi-ECALL workload**: `ecall_db_open` -> `ecall_db_exec_batch` -> `ecall_db_query_stats`. The original target and witness artifacts are preserved as a research fixture and excluded from real-target discovery and execution. | `146` (`+195` enclave wrapper LOC, `+0` kernel rules in the archived study) | **`0`** |")
     lines.append("")
 
     # Table 3: Per-Observation 3-Group Ablation
@@ -386,33 +425,36 @@ def main() -> None:
     lines.append("| Sample | Field | Total Attempts | Group A Clean `0`-Rewalk / Clean (`med / max`) | **Group B (`XR` Default) Clean `0`-Rewalk / Clean (`med / max`)** | Group B Interrupt-Contaminated Count (`max` pages) | Group C (`X-only`) Clean `0`-Rewalk / Clean (`med / max`) | Group C Interrupt-Contaminated Count (`max` pages) | Group A -> B -> C Cold-TLB `S2` Median TSC Ticks |")
     lines.append("|---|---|---:|---|---|---|---:|---|---|")
 
-    non_enclu_attempts = 0
-    non_enclu_b_clean = 0
-    non_enclu_b_clean_zero = 0
-    non_enclu_b_contam = 0
-    non_enclu_c_clean = 0
-    non_enclu_c_clean_zero = 0
-    non_enclu_c_contam = 0
+    measurable_attempts = 0
+    measurable_field_instances = 0
+    measurable_b_clean = 0
+    measurable_b_clean_zero = 0
+    measurable_b_contam = 0
+    measurable_c_clean = 0
+    measurable_c_clean_zero = 0
+    measurable_c_contam = 0
 
-    for s in SAMPLES:
+    for s in REAL_TARGETS:
         ev = eval_data[s]
         cb_map = ev["closure_breakdown"]
         ab_map = ev["three_group_ablation"]["per_field_4gate_diagnostic_ablation"]
         for fid, groups in ab_map.items():
-            fn = short_fn(cb_map[fid]["function"])
+            fn = short_fn(cb_map[fid]["function"], _load_field_meta(s))
             gA = groups["groupA_all_reg_xr"]
             gB = groups["groupB_dynamic_xr"]
             gC = groups["groupC_dynamic_refined"]
             att = gB["total_attempts"]
-            is_enclu = (s == "qe3") or (s == "sgxwallet" and fn in ("generate_sek_field", "set_sek_field"))
-            if not is_enclu:
-                non_enclu_attempts += att
-                non_enclu_b_clean += gB["clean_no_aex_count"]
-                non_enclu_b_clean_zero += gB["clean_zero_rewalk_count"]
-                non_enclu_b_contam += gB["interrupt_aex_contaminated_count"]
-                non_enclu_c_clean += gC["clean_no_aex_count"]
-                non_enclu_c_clean_zero += gC["clean_zero_rewalk_count"]
-                non_enclu_c_contam += gC["interrupt_aex_contaminated_count"]
+            page_origins = _load_page_origins(s)
+            structural_only = structural_rewalk_only(groups, page_origins)
+            if not structural_only:
+                measurable_field_instances += 1
+                measurable_attempts += att
+                measurable_b_clean += gB["clean_no_aex_count"]
+                measurable_b_clean_zero += gB["clean_zero_rewalk_count"]
+                measurable_b_contam += gB["interrupt_aex_contaminated_count"]
+                measurable_c_clean += gC["clean_no_aex_count"]
+                measurable_c_clean_zero += gC["clean_zero_rewalk_count"]
+                measurable_c_contam += gC["interrupt_aex_contaminated_count"]
 
             lines.append(
                 f"| `{s}` | `{fn}` | {att} | "
@@ -425,9 +467,9 @@ def main() -> None:
             )
 
     lines.append("")
-    lines.append(f"- **Exact Per-Observation Totals Across the 18 Non-`ENCLU` Field Instances ({non_enclu_attempts} total Field entries across 5 rounds)**:")
-    lines.append(f"  - **Group B (`dynamic_xr`, Default `XR`)**: **{non_enclu_b_clean} / {non_enclu_attempts}** clean (`s3_aex=0`) observations, **{non_enclu_b_contam} / {non_enclu_attempts}** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **{non_enclu_b_clean_zero} / {non_enclu_b_clean}** achieved `0` residual page-table A/D re-walks.")
-    lines.append(f"  - **Group C (`dynamic_refined`, `X-only`)**: **{non_enclu_c_clean} / {non_enclu_attempts}** clean (`s3_aex=0`) observations, **{non_enclu_c_contam} / {non_enclu_attempts}** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **{non_enclu_c_clean_zero} / {non_enclu_c_clean}** achieved `0` residual page-table A/D re-walks.")
+    lines.append(f"- **Exact Per-Observation Totals Across the {measurable_field_instances} Field Instances Without Inherent Dynamic-Page Rewalk ({measurable_attempts} total Field entries across 5 rounds)**:")
+    lines.append(f"  - **Group B (`dynamic_xr`, Default `XR`)**: **{measurable_b_clean} / {measurable_attempts}** clean (`s3_aex=0`) observations, **{measurable_b_contam} / {measurable_attempts}** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **{measurable_b_clean_zero} / {measurable_b_clean}** achieved `0` residual page-table A/D re-walks.")
+    lines.append(f"  - **Group C (`dynamic_refined`, `X-only`)**: **{measurable_c_clean} / {measurable_attempts}** clean (`s3_aex=0`) observations, **{measurable_c_contam} / {measurable_attempts}** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **{measurable_c_clean_zero} / {measurable_c_clean}** achieved `0` residual page-table A/D re-walks.")
     lines.append("")
 
     # Section 4: Production AEX1 Segmented Breakdown (4A: cat=3, 4B: cat=2 & cat=1 direct segmented, 4C: sum of ECALLs)
@@ -436,14 +478,14 @@ def main() -> None:
     lines.append("- **Strict Non-Bypassable Production Acceptance**: Every production run is validated by `validate_production_run_result()` (`returncode == 0`, business `PASS`, `measurement_invalid == 0`, exact `ecall_index` sequence parity with the 4-Gate diagnostic reference, and for protected groups `readiness_installed == 1` plus verified `enclave_pages_acquire/release` execution on every non-empty selector).")
     lines.append("- **Direct Hardware Segmented Timing vs Post-Readiness Body Delta**: `acquire_ns` and `release_ns` are measured directly around `enclave_pages_acquire` and `enclave_pages_release` (`ioctl(SGX_IOC_ENCLAVE_PAGES_ACQUIRE/RELEASE)`). `encl_body_ns = elapsed_ns - acquire_ns - release_ns` is the post-readiness enclave execution time (`EENTER..EEXIT`); its difference against `No-PreTouch` (`ΔBody`) is reported as **Post-Readiness Enclave Body Delta** (not an isolated in-enclave `S2` timer; cold-TLB `S2` TSC ticks are measured directly at Gate B..C in Table 3).")
     lines.append("")
-    lines.append("- **Short-Call Readiness Overhead & Baseline Scope Caveat**: On short ECALLs such as `ehsm-opt-2` (`11.6 µs` `No-PreTouch` body vs `51.2 µs` `ACQUIRE + RELEASE`) and `sqlite` (`42.6 µs` body vs `89.7 µs` `ACQUIRE + RELEASE`), total overhead is dominated by the fixed per-ECALL kernel readiness ioctl transition (`SGX_IOC_ENCLAVE_PAGES_ACQUIRE/RELEASE`) rather than enclave body execution (`+3.2 µs` on `ehsm-opt-2`). Further shrinking the workset by a few pages cannot eliminate this fixed kernel transition cost; reducing it is a protection-runtime concern (`implement`). Moreover, `Group A (all_reg_xr)` is an internal full-REG upper-bound ablation; comparing against external systems such as TLBlur requires identical workloads and matched protection targets rather than merely outperforming `Group A`.")
+    lines.append("- **Short-Call Readiness Overhead & Baseline Scope Caveat**: On short real-target ECALLs such as `ehsm-opt-2` (`11.6 µs` `No-PreTouch` body vs `51.2 µs` `ACQUIRE + RELEASE`) and the archived SQLite research fixture (`42.6 µs` body vs `89.7 µs` `ACQUIRE + RELEASE`), total overhead is dominated by the fixed per-ECALL kernel readiness ioctl transition (`SGX_IOC_ENCLAVE_PAGES_ACQUIRE/RELEASE`) rather than enclave body execution (`+3.2 µs` on `ehsm-opt-2`). Further shrinking the workset by a few pages cannot eliminate this fixed kernel transition cost; reducing it is a protection-runtime concern (`implement`). Moreover, `Group A (all_reg_xr)` is an internal full-REG upper-bound ablation; comparing against external systems such as TLBlur requires identical workloads and matched protection targets rather than merely outperforming `Group A`.")
     lines.append("")
     lines.append("### 4A. Protected Field-Entering ECALLs (`cat=3`) — Per-Call Segmented Breakdown")
     lines.append("")
     lines.append("| Sample | `cat=3` Calls / Round | Group B Clean / Attempts | `No-PreTouch` Body (µs/call) | Group B `ACQUIRE + RELEASE` (µs/call) | Group B Post-Readiness Body (`encl_body_ns`, µs/call) | Group B Post-Readiness Body Delta (`ΔBody`, µs/call) | **Group B Total (µs/call)** | **Group B Per-Call Overhead vs `No-PreTouch`** | Group A Total (µs/call) | **Group B Protection Overhead Reduction vs Group A** |")
     lines.append("|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|")
 
-    for s in SAMPLES:
+    for s in REAL_TARGETS:
         ab = eval_data[s]["three_group_ablation"]
         cats = ab["workflow_call_category_counts"]
         n_c3 = max(1, cats["cat3_field_entering_calls"])
@@ -472,7 +514,7 @@ def main() -> None:
     lines.append("| Sample | `cat=2` Early-Ret Calls | `No-PreTouch` `cat=2` Total (ms) | Group B `cat=2` `ACQUIRE + RELEASE` (ms) | Group B `cat=2` Body (ms) | **Group B `cat=2` Total (ms)** | `cat=1` Init Calls (`ReadyTable=0`) | `No-PreTouch` `cat=1` Total (ms) | Group B `cat=1` Total (`ACQUIRE=0`, ms) |")
     lines.append("|---|---:|---:|---:|---:|---:|---:|---:|---:|")
 
-    for s in SAMPLES:
+    for s in REAL_TARGETS:
         ab = eval_data[s]["three_group_ablation"]
         cats = ab["workflow_call_category_counts"]
         n_c2 = cats["cat2_early_return_ready_calls"]
@@ -495,7 +537,7 @@ def main() -> None:
     lines.append("| Sample | Call Mix (`cat3 / cat2 / cat1`) | Group B Clean / Attempts | `Raw` (ms) | `No-PreTouch` (ms) | Group A (`all_reg_xr`) (ms) | **Group B (`dynamic_xr` Default)** (ms) | Group C (`dynamic_refined`) (ms) | **Group B ECALL-Sum Overhead vs `No-PreTouch`** | Group B Speedup vs Group A | Loaded `PT_LOAD` MemSiz (`Raw -> Group B`) | `.atfield_pretouch` + `ReadyTable` Bytes |")
     lines.append("|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|")
 
-    for s in SAMPLES:
+    for s in REAL_TARGETS:
         ab = eval_data[s]["three_group_ablation"]
         cats = ab["workflow_call_category_counts"]
         mix_str = f"{cats['cat3_field_entering_calls']} / {cats['cat2_early_return_ready_calls']} / {cats['cat1_init_no_ready_calls']}"
@@ -554,9 +596,9 @@ def main() -> None:
     lines.append(f"| `challenge-exam-a` & `challenge-exam-b` (`post_revision_regression`, 5 seeds, 3 modes) | Evaluated as post-revision regression: `feedback_guided` achieves `{ea_fg:.2f}/8` and `{eb_fg:.2f}/8` confirmed vs `{hw_ch['challenge-exam-a']['modes']['static_priority_no_feedback']['confirmed_mean']:.2f}`–`{hw_ch['challenge-exam-b']['modes']['static_priority_no_feedback']['confirmed_mean']:.2f}/8` for `static_priority_no_feedback` and `{hw_ch['challenge-exam-a']['modes']['fixed_round_robin']['confirmed_mean']:.2f}`–`{hw_ch['challenge-exam-b']['modes']['fixed_round_robin']['confirmed_mean']:.2f}/8` for `fixed_round_robin`. | Section 1A & `strategy_comparison.json` |")
     lines.append(f"| `challenge-exam-c` & `challenge-exam-d` (`frozen_holdout_variants`, 5 seeds, 3 modes, frozen kernel `{frozen_sha[:7]}`) | Evaluated on the frozen exploration kernel (`{frozen_sha}`): `feedback_guided` achieves `{ec_fg:.2f}/8` (`0.0` missed Field-effects) on `exam-c` and `{ed_fg:.2f}/8` on `exam-d`, outperforming `static_priority_no_feedback` (`{hw_ch['challenge-exam-c']['modes']['static_priority_no_feedback']['confirmed_mean']:.2f}/8`, `{hw_ch['challenge-exam-d']['modes']['static_priority_no_feedback']['confirmed_mean']:.2f}/8`) and `fixed_round_robin` (`{hw_ch['challenge-exam-c']['modes']['fixed_round_robin']['confirmed_mean']:.2f}/8`, `{hw_ch['challenge-exam-d']['modes']['fixed_round_robin']['confirmed_mean']:.2f}/8`). | Section 1A & `strategy_comparison.json` |")
     lines.append("| `calibration-fixture` (`7`-case hardware measurement calibration) | Verifies `0 / 36` (`0.00%`) measurement omission rate across `S0/S1`-then-`S3` pre-access, `2` repeated Field entries per ECALL, `5` dirty pages on a temporary deep stack frame (`gateB_rsp == gateD_rsp`), deliberate 1-page omission detection, and active permission retraction (`AEX0` healed + `AEX1` `0x1006`). | Section 2A & `evaluation_results.json` |")
-    lines.append("| `signal-cds` Adapted Upstream Cmockery Tests & `70`-Case Predetermined End-to-End Regression Matrix | Selects and adapts `6` upstream Cmockery tests from `enclave/src/sabd-enclave-test.c` (`95` ECALLs/run) and evaluates `70` predetermined regression cases across all 5 applications / 7 configurations on four separate verdicts (`70/70` measurement valid, `70/70` business completed, `70/70` zero workset omissions, `70/70` frozen protected `AEX1` completed). | Sections 2B, 2C & `evaluation_results.json` |")
-    lines.append("| `qe3`, `signal-cds`, `sgxwallet`, `ehsm` (`opt-1/2`), `sqlite` Migration | The exact same frozen `ExplorationKernel` closes all 5 real applications (7 configurations) (`5/5` production acceptance, `305/305` clean `0`-rewalk observations across the 18 non-`ENCLU` Field instances in Group B). | Sections 0, 1B, 2, 3, 4 |")
-    lines.append("| `ehsm-opt-1/2` Three-Tier SM4 Accounting & `sqlite` 2-Step Plan Reuse | Tier 1 (`sm4_seeded_xr`) and Tier 2b (`coupled_assisted_xr` via `replace_coupled` on default AES host without `--sm4-check`) build independent enclaves & ReadyTables (`0` omissions on `ehsm-opt-1`, `14 -> 5` omitted on `ehsm-opt-2`); Tier 2a (`0`-constraint blind) catches `4` / `14` uncovered effects; `sqlite` 2-step plan reuse (`valid_prefix_corpus`) discovers `+49` pages (`+100` effects) with `0` manual rules. | Section 2A-2 (`sm4_two_tier_accounting`) |")
+    lines.append("| `signal-cds` Adapted Upstream Cmockery Tests & 60-Case Real-Target Regression Matrix | Selects and adapts `6` upstream Cmockery tests from `enclave/src/sabd-enclave-test.c` (`95` ECALLs/run) and evaluates the `60` real-target regression cases across 4 applications / 6 configurations on four separate verdicts. SQLite's 10 cases remain separate research-fixture evidence. | Sections 2B, 2C & `evaluation_results.json` |")
+    lines.append("| Six real configurations (`qe3`, `signal-cds`, `sgxwallet`, `ehsm`, `ehsm-opt-1/2`) | The same frozen `ExplorationKernel` serves the four real applications and six configurations. SQLite's previous measurements remain archived under `fixtures/sqlite/` and are not included in real-target acceptance totals. | Sections 0, 1B, 2, 3, 4 |")
+    lines.append("| `ehsm-opt-1/2` Three-Tier SM4 Accounting & SQLite Fixture 2-Step Plan Reuse | Tier 1 (`sm4_seeded_xr`) and Tier 2b (`coupled_assisted_xr` via `replace_coupled` on default AES host without `--sm4-check`) build independent enclaves & ReadyTables (`0` omissions on `ehsm-opt-1`, `14 -> 5` omitted on `ehsm-opt-2`); the separate SQLite research fixture retains its historical `valid_prefix_corpus` results (`+49` pages, `+100` effects, `0` manual rules). | Section 2A-2 (`sm4_two_tier_accounting`) |")
     lines.append("")
     lines.append("## 5. Clean-Checkout Reproducible Workflow")
     lines.append("")
@@ -564,24 +606,32 @@ def main() -> None:
     lines.append("# 0. Run offline negative, schema/ABI, and 6-case challenge suite unit tests first")
     lines.append("python3 -m unittest discover -s tests -p 'test_*.py' -v")
     lines.append("")
-    lines.append("# 1. Build baseline Profile & All-REG enclaves + extract compiler-exact EDL schemas")
+    lines.append("# 1. In the sample checkout, build all six protect manifests/artifacts with the flake.lock-pinned implement")
+    lines.append("cd ../sample")
+    lines.append("for target in ehsm ehsm-opt-1 ehsm-opt-2 qe3 sgxwallet signal-cds; do")
+    lines.append("  nix develop \".#real-$target-protect\" --command bash -c \\")
+    lines.append("    \"cmake -S . -B build/real/$target/protect -G Ninja -DATFIELD_GROUP=real -DATFIELD_SAMPLE=$target -DATFIELD_MODE=protect && cmake --build build/real/$target/protect\"")
+    lines.append("done")
+    lines.append("")
+    lines.append("# 2. Back in dynamic, import those existing sample protect outputs and generate dynamic diagnostics/worksets")
+    lines.append("cd ../dynamic")
     lines.append("python3 tools/build_real_targets.py")
     lines.append("python3 tools/edl_harness.py")
     lines.append("")
-    lines.append("# 2. Compile the SGX-Step + AEP native interposer")
+    lines.append("# 3. Compile the SGX-Step + AEP native interposer")
     lines.append("gcc -shared -fPIC -O2 -Wno-unused-result -DLIBSGXSTEP_SILENT=1 \\")
     lines.append("  -Isrc -Ivendor/sgxstep src/native_sgx_interpose.c \\")
     lines.append("  vendor/sgxstep/libsgxstep/pt.c vendor/sgxstep/libsgxstep/file.c \\")
     lines.append("  vendor/sgxstep/libsgxstep/debug.c -ldl -lpthread \\")
     lines.append("  -o build/libatfield_native_sgx.so")
     lines.append("")
-    lines.append("# 3. Run 3-layer dynamic exploration & emit Group B (dynamic_xr) and Group C (dynamic) artifacts")
-    lines.append("python3 controller.py qe3 signal-cds sgxwallet ehsm ehsm-opt-1 ehsm-opt-2 sqlite")
+    lines.append("# 4. Run 3-layer dynamic exploration & emit Group B (dynamic_xr) and Group C (dynamic) artifacts")
+    lines.append("python3 controller.py qe3 signal-cds sgxwallet ehsm ehsm-opt-1 ehsm-opt-2")
     lines.append("")
-    lines.append("# 4. Run calibration, independent hold-out verification, and 5-round 3-group evaluation")
+    lines.append("# 5. Run calibration, independent hold-out verification, and 5-round 3-group evaluation")
     lines.append("python3 tools/evaluate_worksets.py")
     lines.append("")
-    lines.append("# 5. Generate summary tables from JSON evidence")
+    lines.append("# 6. Generate summary tables from JSON evidence")
     lines.append("python3 tools/generate_report_tables.py")
     lines.append("```")
     lines.append("")

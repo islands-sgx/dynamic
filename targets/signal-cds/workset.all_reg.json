@@ -1,5 +1,11 @@
 {
-  "edl_manifest": "/home/meandssh/islands-sgx/sample/real/signal-cds/sabd_enclave.edl",
+  "capacity_policy": "automatic-q-supported-signer-regions-v1",
+  "capacity_verification": {
+    "capacity_q": 16384,
+    "code_bytes": 9060,
+    "minimum_q": 16384
+  },
+  "edl_manifest": "/home/meandssh/islands-sgx/sample/real/signal-cds/enclave.edl",
   "edl_manifest_sha256": "3e41555eb147f51bea03bfa234a19c7df28aaf1afd63281183c44e4e4a330c06",
   "field_manifest": "/home/meandssh/islands-sgx/sample/build/real/signal-cds/protect/fields.json",
   "field_manifest_sha256": "804aecd814d5cb89fa5114e1e16f3cf05b2719036f9d85a261586b4d64e2f17a",
@@ -45,7 +51,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 8799,
-            "symbol": "__atf_n_25f3b6463cdf8682_0_0"
+            "symbol": "__atf_n_cab37e227af724ad_0_0"
           },
           "data_anchor_rva": 8192,
           "data_width": 1,
@@ -17047,7 +17053,7 @@
     "pretouch_segment": true,
     "pretouch_start": 155648,
     "profile_elf": "/home/meandssh/islands-sgx/sample/build/real/signal-cds/protect/enclave.profile.so",
-    "profile_elf_sha256": "0f9bedf9c4535cd43e083b23ceeb0d23560cd922a35c9dc61456bcf1b2bd542b",
+    "profile_elf_sha256": "726bff15a11a07fd798344d728ee7c97c97b0d87fe8d1d486541036a091a2bcd",
     "regions": [
       {
         "end_rva": 8192,
@@ -17140,23 +17146,23 @@
     ],
     "schema": "atfield-signer-layout-v1",
     "signed_elf": "/home/meandssh/islands-sgx/sample/build/real/signal-cds/protect/enclave.profile.signed.so",
-    "signed_elf_sha256": "7c65c0c9296ab40b84a61c4198a7f9c2838de860724dd6f650fe6c08b9534364",
+    "signed_elf_sha256": "9bb979f52ee9d01bd19c402daf37d8fd5b17065203eb1d9f1a46848168e8013e",
     "ssa_frame_pages": 1
   },
   "page_size": 4096,
   "schema": "atfield-workset-v1",
-  "selector_manifest": "/home/meandssh/islands-sgx/sample/real/signal-cds/selectors.json",
-  "selector_manifest_sha256": "71fa06b2aab24212c423bec81682aed5bd423825237857abafa9c238637691f8",
+  "selector_manifest": "/home/meandssh/islands-sgx/sample/build/real/signal-cds/protect/selectors.json",
+  "selector_manifest_sha256": "43911a4ef223dd003541379027dbd5799a4d84c89ee45b6f2dfe47d15beef88c",
+  "selector_policy": "conservative-all-fields",
   "selectors": [
     {
       "ecall_index": 0,
       "name": "ecall_lookup_hash",
+      "policy": "conservative-all-fields",
       "reachable_fields": [
         "0xd9e7e566ea39a756"
       ],
-      "reachable_functions": [
-        "sabd_lookup_hash"
-      ]
+      "reachable_functions": []
     }
   ]
 }

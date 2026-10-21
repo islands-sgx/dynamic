@@ -1,0 +1,78 @@
+#ifndef ATFIELD_NATIVE_TRACE_JSON_H
+#define ATFIELD_NATIVE_TRACE_JSON_H
+
+#include <inttypes.h>
+#include <stdint.h>
+#include <stdio.h>
+
+/* Write a JSON string value, escaping quotes, backslashes, and control bytes. */
+static int atfield_json_write_string(FILE *out, const char *value) {
+    if (!out) return -1;
+    if (!value) value = "";
+    if (fputc('"', out) == EOF) return -1;
+    for (const unsigned char *p = (const unsigned char *)value; *p; p++) {
+        const char *escape = NULL;
+        switch (*p) {
+            case '"': escape = "\\\""; break;
+            case '\\': escape = "\\\\"; break;
+            case '\b': escape = "\\b"; break;
+            case '\f': escape = "\\f"; break;
+            case '\n': escape = "\\n"; break;
+            case '\r': escape = "\\r"; break;
+            case '\t': escape = "\\t"; break;
+            default: break;
+        }
+        if (escape) {
+            for (const char *q = escape; *q; q++)
+                if (fputc((unsigned char)*q, out) == EOF) return -1;
+        } else if (*p < 0x20) {
+            static const char hex[] = "0123456789abcdef";
+            const char control_escape[] = {'\\', 'u', '0', '0', hex[*p >> 4], hex[*p & 0x0f]};
+            for (size_t i = 0; i < sizeof(control_escape); i++)
+                if (fputc((unsigned char)control_escape[i], out) == EOF) return -1;
+        } else if (*p < 0x80) {
+            if (fputc(*p, out) == EOF) return -1;
+        } else {
+            size_t width = 0;
+            uint32_t codepoint = 0;
+            uint32_t minimum = 0;
+            if (*p >= 0xc2 && *p <= 0xdf) {
+                width = 2; codepoint = *p & 0x1f; minimum = 0x80;
+            } else if (*p >= 0xe0 && *p <= 0xef) {
+                width = 3; codepoint = *p & 0x0f; minimum = 0x800;
+            } else if (*p >= 0xf0 && *p <= 0xf4) {
+                width = 4; codepoint = *p & 0x07; minimum = 0x10000;
+            }
+            int valid_utf8 = width != 0;
+            for (size_t i = 1; valid_utf8 && i < width; i++) {
+                if (p[i] == 0 || (p[i] & 0xc0) != 0x80) {
+                    valid_utf8 = 0;
+                } else {
+                    codepoint = (codepoint << 6) | (p[i] & 0x3f);
+                }
+            }
+            if (valid_utf8 && codepoint >= minimum && codepoint <= 0x10ffff &&
+                !(codepoint >= 0xd800 && codepoint <= 0xdfff)) {
+                for (size_t i = 0; i < width; i++)
+                    if (fputc(p[i], out) == EOF) return -1;
+                p += width - 1;
+            } else {
+                static const char hex[] = "0123456789abcdef";
+                const char byte_escape[] = {'\\', 'u', '0', '0', hex[*p >> 4], hex[*p & 0x0f]};
+                for (size_t i = 0; i < sizeof(byte_escape); i++)
+                    if (fputc((unsigned char)byte_escape[i], out) == EOF) return -1;
+            }
+        }
+    }
+    return fputc('"', out) == EOF ? -1 : 0;
+}
+
+static int atfield_json_write_page_effect(FILE *out, uint64_t rva, int a, int d) {
+    if (!out) return -1;
+    if (fprintf(out, "{\"rva\":\"0x%" PRIx64 "\",\"a\":%s,\"d\":%s}",
+                rva, a ? "true" : "false", d ? "true" : "false") < 0)
+        return -1;
+    return 0;
+}
+
+#endif /* ATFIELD_NATIVE_TRACE_JSON_H */

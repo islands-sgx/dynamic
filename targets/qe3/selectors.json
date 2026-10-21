@@ -1,11 +1,12 @@
 {
+  "policy": "conservative-all-fields",
   "schema": "atfield-selectors-v1",
   "selectors": [
     {
       "ecall_index": 0,
       "name": "ecall_get_attestation_key",
-      "reachable_functions": [
-        "get_att_key_based_from_seal_key"
+      "reachable_fields": [
+        "0x2a10deb0a1ec70f8"
       ]
     }
   ]

@@ -1,5 +1,11 @@
 {
-  "edl_manifest": "/home/meandssh/islands-sgx/sample/real/ehsm-opt-2/enclave_hsm.edl",
+  "capacity_policy": "automatic-q-supported-signer-regions-v1",
+  "capacity_verification": {
+    "capacity_q": 94208,
+    "code_bytes": 84112,
+    "minimum_q": 94208
+  },
+  "edl_manifest": "/home/meandssh/islands-sgx/sample/real/ehsm-opt-2/enclave.edl",
   "edl_manifest_sha256": "1d4a4fbb86a34bea8f664315f5f49f865ecdc92efd30cd8b113495f337bca8a0",
   "field_manifest": "/home/meandssh/islands-sgx/sample/build/real/ehsm-opt-2/protect/fields.json",
   "field_manifest_sha256": "182e9ce804ee898c357b35f2195af0b2b0477dfc3081cedf66999eef511dd87c",
@@ -3041,7 +3047,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 888992,
-            "symbol": "__atf_n_b83decde7ead2bf2_0_0"
+            "symbol": "__atf_n_a2863277a6ed7685_0_0"
           },
           "data_anchor_rva": 888832,
           "data_width": 1,
@@ -3060,7 +3066,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 893172,
-            "symbol": "__atf_n_b83decde7ead2bf2_6_0"
+            "symbol": "__atf_n_a2863277a6ed7685_6_0"
           },
           "data_anchor_rva": 892928,
           "data_width": 1,
@@ -41737,7 +41743,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 888992,
-            "symbol": "__atf_n_b83decde7ead2bf2_0_0"
+            "symbol": "__atf_n_a2863277a6ed7685_0_0"
           },
           "data_anchor_rva": 888832,
           "data_width": 1,
@@ -41756,7 +41762,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 893172,
-            "symbol": "__atf_n_b83decde7ead2bf2_6_0"
+            "symbol": "__atf_n_a2863277a6ed7685_6_0"
           },
           "data_anchor_rva": 892928,
           "data_width": 1,
@@ -80433,7 +80439,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 888992,
-            "symbol": "__atf_n_b83decde7ead2bf2_0_0"
+            "symbol": "__atf_n_a2863277a6ed7685_0_0"
           },
           "data_anchor_rva": 888832,
           "data_width": 1,
@@ -80452,7 +80458,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 893172,
-            "symbol": "__atf_n_b83decde7ead2bf2_6_0"
+            "symbol": "__atf_n_a2863277a6ed7685_6_0"
           },
           "data_anchor_rva": 892928,
           "data_width": 1,
@@ -119129,7 +119135,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 888992,
-            "symbol": "__atf_n_b83decde7ead2bf2_0_0"
+            "symbol": "__atf_n_a2863277a6ed7685_0_0"
           },
           "data_anchor_rva": 888832,
           "data_width": 1,
@@ -119148,7 +119154,7 @@
           "active_permissions": 5,
           "code_anchor": {
             "rva": 893172,
-            "symbol": "__atf_n_b83decde7ead2bf2_6_0"
+            "symbol": "__atf_n_a2863277a6ed7685_6_0"
           },
           "data_anchor_rva": 892928,
           "data_width": 1,
@@ -154861,7 +154867,7 @@
     "pretouch_segment": true,
     "pretouch_start": 5169152,
     "profile_elf": "/home/meandssh/islands-sgx/sample/build/real/ehsm-opt-2/protect/enclave.profile.so",
-    "profile_elf_sha256": "f5c0ac12fccc945d61a325cd7b1070eed5d694265df4bacd4461d05f51e0036a",
+    "profile_elf_sha256": "6616e4612f4b8d0293238284afb540c9d96221b6d4f42908a8fd4bcaf18505a4",
     "regions": [
       {
         "end_rva": 884736,
@@ -155024,59 +155030,74 @@
     ],
     "schema": "atfield-signer-layout-v1",
     "signed_elf": "/home/meandssh/islands-sgx/sample/build/real/ehsm-opt-2/protect/enclave.profile.signed.so",
-    "signed_elf_sha256": "9ecdb9d1882143959dd62f7c9bb332cbd4813e2580d502de47657b4b9644a74d",
+    "signed_elf_sha256": "24dde6bb1a8fc128090e50aa70e672cd0caa0697b0fde66bd1235605af1d57cc",
     "ssa_frame_pages": 1
   },
   "page_size": 4096,
   "schema": "atfield-workset-v1",
-  "selector_manifest": "/home/meandssh/islands-sgx/sample/real/ehsm-opt-2/selectors.json",
-  "selector_manifest_sha256": "f88fb04898355847734bfac0b3d7581dc6ef5e3c46e32c102d58b7b9f15599f0",
+  "selector_manifest": "/home/meandssh/islands-sgx/sample/build/real/ehsm-opt-2/protect/selectors.json",
+  "selector_manifest_sha256": "f583045934d8936bf03f4f1377379d0364b7d6295202d29cecc53efbef1c6372",
+  "selector_policy": "conservative-all-fields",
   "selectors": [
     {
       "ecall_index": 0,
       "name": "enclave_get_domain_key_from_local",
-      "reachable_fields": [],
+      "policy": "conservative-all-fields",
+      "reachable_fields": [
+        "0x14f44918d7091b2f",
+        "0x5b139ee2956d5e69",
+        "0xcb2c56be4aa8b6df",
+        "0x61a6007dac8ab670"
+      ],
       "reachable_functions": []
     },
     {
       "ecall_index": 1,
       "name": "enclave_create_key",
+      "policy": "conservative-all-fields",
       "reachable_fields": [
-        "0xcb2c56be4aa8b6df"
+        "0x14f44918d7091b2f",
+        "0x5b139ee2956d5e69",
+        "0xcb2c56be4aa8b6df",
+        "0x61a6007dac8ab670"
       ],
-      "reachable_functions": [
-        "ehsm_create_aes_key"
-      ]
+      "reachable_functions": []
     },
     {
       "ecall_index": 2,
       "name": "enclave_encrypt",
+      "policy": "conservative-all-fields",
       "reachable_fields": [
-        "0x14f44918d7091b2f"
+        "0x14f44918d7091b2f",
+        "0x5b139ee2956d5e69",
+        "0xcb2c56be4aa8b6df",
+        "0x61a6007dac8ab670"
       ],
-      "reachable_functions": [
-        "ehsm_aes_gcm_encrypt"
-      ]
+      "reachable_functions": []
     },
     {
       "ecall_index": 3,
       "name": "enclave_decrypt",
+      "policy": "conservative-all-fields",
       "reachable_fields": [
-        "0x5b139ee2956d5e69"
+        "0x14f44918d7091b2f",
+        "0x5b139ee2956d5e69",
+        "0xcb2c56be4aa8b6df",
+        "0x61a6007dac8ab670"
       ],
-      "reachable_functions": [
-        "ehsm_aes_gcm_decrypt"
-      ]
+      "reachable_functions": []
     },
     {
       "ecall_index": 4,
       "name": "enclave_generate_datakey",
+      "policy": "conservative-all-fields",
       "reachable_fields": [
+        "0x14f44918d7091b2f",
+        "0x5b139ee2956d5e69",
+        "0xcb2c56be4aa8b6df",
         "0x61a6007dac8ab670"
       ],
-      "reachable_functions": [
-        "ehsm_generate_datakey"
-      ]
+      "reachable_functions": []
     }
   ]
 }

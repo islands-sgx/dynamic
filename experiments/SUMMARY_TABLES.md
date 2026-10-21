@@ -1,6 +1,6 @@
 # ATField-SGX Dynamic Workset Explorer & Hardware Verification (`dynamic`)
 
-All tables in this document are generated automatically from `experiments/evaluation_results.json`, `experiments/strategy_comparison.json`, `experiments/traces_manifest.json`, and `witnesses/<sample>/witness_ledger.json` via `python3 tools/generate_report_tables.py`.
+Real-target tables in this document are generated from `experiments/evaluation_results.json`, `experiments/strategy_comparison.json`, `experiments/traces_manifest.json`, and `witnesses/<target>/witness_ledger.json` via `python3 tools/generate_report_tables.py`; SQLite research history is preserved separately under `fixtures/sqlite/`.
 
 - **Frozen Initial Hardware Prototype Tag**: `v0-hardware-prototype-frozen` (`7daae4f82ba5380f1ef96c5c0f2f273e01ab360a`)
 - **Unified Collector (`build/libatfield_native_sgx.so`) SHA-256 across Discovery & Evaluation**: `b500f38eeb1c28d401c193bada17352b3d5cec77145b80eec57198acedb695e3`
@@ -8,11 +8,12 @@ All tables in this document are generated automatically from `experiments/evalua
 - **Default Conservative Candidate**: **Group B (`workset.dynamic_xr.json`)**, which keeps all `RX` code pages as `XR` (`RX = XR`), avoiding unverified `X-only` read-permission stripping.
 - **Scope & Boundary Statement**: Dynamic exploration and hold-out evaluations provide empirical evidence on the executed inputs, prefixes, histories, and hardware runs; heuristic assistance (depth-4 direct call graph, `+2` heap frontier pages, `-4` stack margin pages) is an empirical aid rather than a formal whole-program upper-bound proof.
 
-## 0. Three-Owner Architecture & Single-Source `target_manifest.json` Contract
+## 0. Three-Owner Architecture & Build Manifest / Scenario Contract
 
-- **`sample` (Business Owner)**: Owns upstream source bindings, patches (`ehsm-opt-1/2`), `ATFIELD` Field annotations, `selectors.json`, `scenarios.json`, and authoritative host tests (`sample/real/<name>/host.{c,cpp}`). During `sgx_add_sample(... MODE protect)` in `sample/cmake/SgxEnclave.cmake`, CMake exports `sample/build/real/<name>/protect/target_manifest.json` containing compiler-resolved paths, layout capacities (`heap_size`, `stack_size`, `capacity_q`), signing keys, and scenario metadata.
-- **`implement` (Protection Mechanism Owner)**: Owns anchor verification, Profile/Final ELF pre-touch generation (`pretouch.ts`), `workset.ts`, `ReadyTable v3` emission (`ready.ts`), and the host readiness runtime (`atfield_readiness.cpp` / `atfield-host`).
-- **`dynamic` (Exploration & Verification Owner)**: Consumes only `target_manifest.json` (`tools/target_manifest.py`); contains **zero hardcoded sample registries, zero hardcoded Nix store paths, zero implicit host fallbacks, and zero sample-name branches** in `build_real_targets.py`, `edl_harness.py`, `run_native_sgx.py`, `exploration_kernel.py`, `controller.py`, and `evaluate_worksets.py`.
+- **`sample` (Business Owner)**: Owns application sources and upstream bindings/patches, `ATFIELD` Field and EDL annotations, authoritative host tests, and business workloads.
+- **`implement` (Protection Mechanism Owner)**: Generates conservative all-fields selector/Q baselines from EDL schema and live Field annotations, plus build manifests, worksets, readiness artifacts, and the host readiness runtime. Dynamic reachability comes from dynamic traces and refinement.
+- **`dynamic` (Exploration & Verification Owner)**: Owns per-target `scenarios.json` (probe scenarios and oracles), intervention plans, trace collection, dynamic exploration, and evaluation. It loads compiler-resolved build metadata from the manifest, ignores its legacy `scenarios_json` pointer, and attaches scenarios from its own `targets/<name>/scenarios.json`; persisted target manifests contain no runtime scenarios or `manifest_path`.
+- **Research fixtures**: `fixtures/sqlite/` preserves the SQLite target snapshot and witness ledger for research. SQLite is not a real target and is excluded from discovery, controller execution, evaluation cohorts, and real-target totals.
 
 ## 1A. Legacy Heuristics Audit & Equal-Budget 4-Strategy Challenge Evaluation
 
@@ -95,7 +96,7 @@ All tables in this document are generated automatically from `experiments/evalua
 | `challenge-exam-d` (`frozen_holdout_variants`) | **`static_priority_no_feedback`** | `68 / 939.0 / 4.81s` -> **6.00/8** | `128 / 3666.0 / 9.52s` -> **8.00/8** | `147.0 / 3795.0 / 10.84s` -> **8.00/8** | `seed=101 C2: step=76 (primary_replace_prefix) replace_scalar:3:0:0:4` |
 | `challenge-exam-d` (`frozen_holdout_variants`) | **`feedback_guided`** | `68 / 696.2 / 4.71s` -> **6.80/8** | `128 / 3666.0 / 9.50s` -> **8.00/8** | `147.0 / 3795.0 / 10.81s` -> **8.00/8** | `seed=101 C4: step=75 (primary_joint) joint_scalar_xor:5:0:0:1:1:0:255` |
 
-## 1B. Three-Layer Workset Attribution Across 5 Real Applications (7 Configurations: `qe3`, `signal-cds`, `sgxwallet`, `ehsm`, `ehsm-opt-1`, `ehsm-opt-2`, `sqlite`)
+## 1B. Three-Layer Workset Attribution Across 4 Real Applications (6 Configurations: `qe3`, `signal-cds`, `sgxwallet`, `ehsm`, `ehsm-opt-1`, `ehsm-opt-2`)
 
 - **`ehsm` (Original)**: Unmodified two-step size-query + crypto host workflow (`32` ECALLs/round: `14` Field-entering + `16` early-return + `2` init); OpenSSL 3.0 lazy provider init occurs inside the first Field call.
 - **`ehsm-opt-1` (Direct Host Sizing + Backward-Compatible Enclave `S0`)**: Host allocates buffers directly using public constants (`EH_AES_GCM_256_SIZE`, `plain_len + 28`), eliminating `13` redundant size-query ECALLs (`19` ECALLs/round: `14` Field-entering + `3` negative early-return + `2` init) while preserving `S0` size-query compatibility, full `SM4` dispatch, and strict `decrypt` output capacity validation (`plaintext->datalen >= ciphertext->datalen - 28`).
@@ -122,8 +123,6 @@ All tables in this document are generated automatically from `experiments/evalua
 | `ehsm-opt-2` | `ehsm_aes_gcm_decrypt` | 89p / 95e | 92p (`+3p`) | **92p** (`+3p`) | **+0p / +0e** | +94p | **186p** | 2349p | **92.08%** |
 | `ehsm-opt-2` | `ehsm_generate_datakey` | 89p / 95e | 89p (`+0p`) | **89p** (`+0p`) | **+0p / +0e** | +89p | **178p** | 2349p | **92.42%** |
 | `ehsm-opt-2` | `ehsm_create_aes_key` | 86p / 93e | 86p (`+0p`) | **86p** (`+0p`) | **+0p / +0e** | +90p | **176p** | 2349p | **92.51%** |
-| `sqlite` | `sqlite_query_stats_field` | 154p / 167e | 154p (`+0p`) | **283p** (`+129p`) | **+129p / +204e** | +8p | **291p** | 1368p | **78.73%** |
-| `sqlite` | `sqlite_exec_batch_field` | 147p / 165e | 147p (`+0p`) | **409p** (`+262p`) | **+262p / +471e** | +18p | **427p** | 1368p | **68.79%** |
 
 ## 2. Provenance, Fault-Detector Calibration, Same-Fault AEX0/AEX1, and Hold-Out Validation
 
@@ -141,16 +140,15 @@ All tables in this document are generated automatically from `experiments/evalua
 | `ehsm` | **PASS** | 265p vs 246p (`True`) | `True` | `0xdb000:True:X`, `0x57000:True:R`, `0x4c9000:True:W` | 0 | `0xdb000` -> **PASS** | `rc=0` (`PASS`) | **0p / 0e** | **0** | **0** | **PASS** |
 | `ehsm-opt-1` | **PASS** | 265p vs 246p (`True`) | `True` | `0xdb000:True:X`, `0x57000:True:R`, `0x4c9000:True:W` | 0 | `0xdb000` -> **PASS** | `rc=0` (`PASS`) | **0p / 0e** | **0** | **0** | **PASS** |
 | `ehsm-opt-2` | **PASS** | 86p vs 68p (`True`) | `True` | `0xdb000:True:X`, `0x5c000:True:R`, `0x52e000:True:W` | 0 | `0xdb000` -> **PASS** | `rc=0` (`PASS`) | **0p / 0e** | **0** | **0** | **PASS** |
-| `sqlite` | **PASS** | 147p vs 128p (`True`) | `True` | `0x16000:True:X`, `0x5000:True:R`, `0x12b000:True:W` | 0 | `0x16000` -> **PASS** | `rc=0` (`PASS`) | **0p / 0e** | **0** | **0** | **PASS** |
 
-### 2A-2. Stage 2 Capability Extension: Single-Call Coupled Mutation (`replace_coupled`) on `eHSM` SM4 & Bounded 2-Step Plan Reuse (`valid_prefix_corpus`) on `sqlite`
+### 2A-2. Stage 2 Capability Extension: eHSM SM4 Coupled Mutation & SQLite Research Fixture (Non-Real) 2-Step Plan Reuse
 
 #### Controlled Priority-3 Ablation Under Identical Seed (`rng_seed=101`), Budget, and Frozen Profile Binaries
 | Target (`Hold-Out`) | Configuration | Enclaves / ECALLs (`Wall`) | Valid Meas. Rate | Business-Valid Field Rate | First Coupled New Effect (`step / time / +eff`) | First 2-Step Reuse New Effect (`step / time / +eff`) | Observed `S3` (`pages / effs`) | Closed Workset Pages | Hold-Out Omitted (`pages / effs`) & Verdict |
 |---|---|---:|---:|---:|---|---|---:|---:|---|
-| `sqlite` (`--rows 320 --full-tx-suite`) | **`1_single_param_only`** | `87 / 2953` (`10.44s`) | **`100.0%`** | **`51.72%`** | `none` | `none` | `641p / 907e` | **`669p`** | **`13p / 26e` (`FAIL`)** |
-| `sqlite` (`--rows 320 --full-tx-suite`) | **`2_coupled_single_call`** | `91 / 2965` (`10.76s`) | **`100.0%`** | **`53.85%`** | `step=22, 2.01s (+66p/+91e)` | `none` | `641p / 907e` | **`669p`** | **`13p / 26e` (`FAIL`)** |
-| `sqlite` (`--rows 320 --full-tx-suite`) | **`3_coupled_plus_2step_reuse`** | `109 / 3055` (`12.54s`) | **`100.0%`** | **`58.72%`** | `step=22, 2.00s (+66p/+91e)` | `step=67, 6.12s (+15p/+28e)` | `692p / 1007e` | **`718p`** | **`0p / 0e` (`PASS`)** |
+| `SQLite fixture (non-real)` (research fixture: `--rows 320 --full-tx-suite`) | **`1_single_param_only`** | `87 / 2953` (`10.44s`) | **`100.0%`** | **`51.72%`** | `none` | `none` | `641p / 907e` | **`669p`** | **`13p / 26e` (`FAIL`)** |
+| `SQLite fixture (non-real)` (research fixture: `--rows 320 --full-tx-suite`) | **`2_coupled_single_call`** | `91 / 2965` (`10.76s`) | **`100.0%`** | **`53.85%`** | `step=22, 2.01s (+66p/+91e)` | `none` | `641p / 907e` | **`669p`** | **`13p / 26e` (`FAIL`)** |
+| `SQLite fixture (non-real)` (research fixture: `--rows 320 --full-tx-suite`) | **`3_coupled_plus_2step_reuse`** | `109 / 3055` (`12.54s`) | **`100.0%`** | **`58.72%`** | `step=22, 2.00s (+66p/+91e)` | `step=67, 6.12s (+15p/+28e)` | `692p / 1007e` | **`718p`** | **`0p / 0e` (`PASS`)** |
 | `ehsm-opt-1` (`--sm4-check`) | **`1_single_param_only`** | `252 / 7291` (`89.54s`) | **`100.0%`** | **`36.11%`** | `none` | `none` | `1067p / 1348e` | **`1209p`** | **`4p / 4e` (`FAIL`)** |
 | `ehsm-opt-1` (`--sm4-check`) | **`2_coupled_single_call`** | `254 / 7303` (`89.66s`) | **`100.0%`** | **`36.22%`** | `step=2, 0.48s (+13p/+14e)` | `none` | `1071p / 1352e` | **`1213p`** | **`0p / 0e` (`PASS`)** |
 | `ehsm-opt-1` (`--sm4-check`) | **`3_coupled_plus_2step_reuse`** | `254 / 7303` (`89.75s`) | **`100.0%`** | **`36.22%`** | `step=2, 0.48s (+13p/+14e)` | `none` | `1071p / 1352e` | **`1213p`** | **`0p / 0e` (`PASS`)** |
@@ -162,7 +160,7 @@ All tables in this document are generated automatically from `experiments/evalua
   - **Tier 2a (`dynamic_xr`, Zero-Constraint Unassisted AES-Only Seed)**: `0` manual struct constraints; fails (`4` and `14` omitted pages) because the compiler cannot infer business enum-to-keyblob-length semantics (`keyspec=31, keybloblen=80, cmk_size=124`) from `uint8_t data[0]` alone.
   - **Tier 2b (`coupled_assisted_xr`, `replace_coupled` on Default AES Host Workflow WITHOUT `--sm4-check`, `12` JSON lines in `scenarios.json`)**: Mutates `enclave_create_key` (`ecall 1, sseq 0`) once in-place so the enclave seals a genuine SM4 keyblob (`EH_SM4_CTR=31`) and the unmodified AES host carries it into `enclave_generate_datakey` (`ecall 4, sseq 0`). On `ehsm-opt-1`, Tier 2b achieves **`PASS` (`0` omitted pages, `0` omitted effects, `15/15` `0`-rewalk, `PASS` on protected `AEX1`)** without running `--sm4-check`. On `ehsm-opt-2`, Tier 2b discovers **all `9` SM4 cipher implementation pages (`+16` effects, reducing omitted pages from `14` to `5`)**, while the remaining `5` pages (`0x89000..0x4a6000`) are OpenSSL's one-time lazy `EVP_sm4_ctr()` provider-lookup pages, which in the default host call order (`ecall 1 -> ecall 2 -> ecall 4`) are warmed up by non-Field `ecall 2` (`enclave_encrypt`) before Field `ecall 4` (`ehsm_generate_datakey`).
   - **Tier 1 (`sm4_seeded_xr`, Explicit `--sm4-check` Seed Run)**: Exercises `ecall 1 -> ecall 4` directly and achieves **`PASS` (`0` omissions)** on both `ehsm-opt-1` and `ehsm-opt-2`.
-- **Stage 2B (`valid_prefix_corpus` Bounded 2-Step Valid Plan Reuse on `sqlite`, `0` Manual Constraints)**: On `sqlite`, single-call `scale_bound_v2` on `ecall_db_exec_batch` (`ecall 1`) populates `256..1024` rows into the in-memory B-tree while `ecall_db_query_stats` (`ecall 2`) runs default `query_mode=0`; conversely, single-call `replace_scalar` (`query_mode=1` window-function `LEFT JOIN + GROUP BY + ORDER BY`) on `ecall 2` sorts only the `8` seed rows (`303` pages on Selector 2, leaving `4` sorter/B-tree heap pages `0x147000..0x14a000` omitted on `--rows 256 --full-tx-suite`). Bidirectional 2-step plan reuse automatically composes productive `scale` prefixes on `ecall 1` with productive `boundary` branches on `ecall 2` (`reuse2step_scale_e1_s0_n256__then__scalar_e2_s0_p1_v1`: `+28` effects; `reuse2step_scale_e1_s0_n1024__then__scalar_e2_s0_p0_v1`: `+8` effects; `reuse2step_scale_e1_s0_n1024__then__scalar_e2_s0_p1_v1`: `+64` effects), expanding Selector 2 from **`303 -> 352` pages (`+49` pages / `+100` effects)** and achieving **`0` omissions (`10/10 PASS`)** across all SQLite transactional workflows.
+- **Stage 2B (SQLite research fixture; non-real)**: The preserved `valid_prefix_corpus` bounded 2-step plan reuse used `0` manual constraints. On the SQLite fixture, single-call `scale_bound_v2` on `ecall_db_exec_batch` (`ecall 1`) populates `256..1024` rows into the in-memory B-tree while `ecall_db_query_stats` (`ecall 2`) runs default `query_mode=0`; conversely, single-call `replace_scalar` (`query_mode=1` window-function `LEFT JOIN + GROUP BY + ORDER BY`) on `ecall 2` sorts only the `8` seed rows (`303` pages on Selector 2, leaving `4` sorter/B-tree heap pages `0x147000..0x14a000` omitted on `--rows 256 --full-tx-suite`). Bidirectional 2-step plan reuse automatically composes productive `scale` prefixes on `ecall 1` with productive `boundary` branches on `ecall 2` (`reuse2step_scale_e1_s0_n256__then__scalar_e2_s0_p1_v1`: `+28` effects; `reuse2step_scale_e1_s0_n1024__then__scalar_e2_s0_p0_v1`: `+8` effects; `reuse2step_scale_e1_s0_n1024__then__scalar_e2_s0_p1_v1`: `+64` effects), expanding Selector 2 from **`303 -> 352` pages (`+49` pages / `+100` effects)** and achieving **`0` omissions (`10/10 PASS`)** across all SQLite transactional workflows.
 
 | Target | Accounting Tier (`Manual Constraint Lines`) | Frozen Artifact Hashes (`workset / signed_aex1 / ready_bin`) | Fresh Hold-Out Coverage (`ipi=7`) | Fresh 4-Gate Diagnostic (`clean 0-rewalk`) | Fresh Protected `AEX1` Execution (`ReadyTable`) | Overall Verdict & Explanation |
 |---|---|---|---|---|---|---|
@@ -173,8 +171,8 @@ All tables in this document are generated automatically from `experiments/evalua
 | `ehsm-opt-2` | **Tier 2b (`coupled_assisted_xr`, `replace_coupled`, `12` JSON lines, NO `--sm4-check`)** | `b35e296e / 7a293ca9 / a04e41e8` (`+16e` over AES) | **`FAIL`** (`5` unseen) | **`PASS`** (`14/15 0-rewalk`) | **`PASS`** (`rc=0, PASS`) | **`FAIL`**: Discovers **all `9` SM4 cipher pages (`+16e`, `14 -> 5` omitted)** without `--sm4-check`; remaining `5` pages are one-time lazy `EVP_sm4_ctr()` provider lookup warmed up in non-Field `ecall 2` |
 | `ehsm-opt-2` | **Tier 2a (`dynamic_xr` 0-constraint blind AES seed)** | `26320e29 / 7adc9654 / d7251c02` (`0` manual lines) | **`FAIL`** (`14` uncovered) | N/A (coverage failed) | N/A (coverage failed) | **`FAIL`**: Catches **14 uncovered SM4 effects** (`UNCOVERED_PAGE_0x5b000_IN_0x61a6007dac8ab670, UNCOVERED_PAGE_0x89000_IN_0x61a6007dac8ab670, UNCOVERED_PAGE_0x93000_IN_0x61a6007dac8ab670...`) when no struct constraint or SM4 seed is supplied |
 
-### 2B. Predetermined 70-Case End-to-End Regression Matrix Across 5 Applications / 7 Configurations (`4` Separate Verdicts per Case; No Binomial Probability Claim)
-- **Methodology & Scope**: After freezing `workset.dynamic_xr.json` and the signed production enclaves, each of the 5 real applications (7 configurations) is evaluated against `10` predetermined test cases (`70` cases total) covering varied payload lengths, byte perturbations, repeat depths, and the 6 adapted upstream `signal-cds` test cases (`95` ECALLs/run). Because these 70 cases are a predetermined regression matrix rather than random draws from a formally defined input distribution, we report exact observed pass/omission counts across **four separate acceptance dimensions** without claiming a binomial probability upper bound:
+### 2B. Predetermined 60-Case End-to-End Real-Target Regression Matrix Across 4 Applications / 6 Configurations (`4` Separate Verdicts per Case; SQLite Fixture Excluded)
+- **Methodology & Scope**: Each of the 4 real applications (6 configurations) is evaluated against 10 predetermined cases (`60` real-target cases total), including varied payload lengths, byte perturbations, repeat depths, and the 6 adapted upstream `signal-cds` test cases (`95` ECALLs/run). SQLite's separate 10-case research fixture remains archived and is excluded from these real-target totals. Because the real-target cases are predetermined rather than random draws from a formally defined input distribution, we report observed counts across **four separate acceptance dimensions** without claiming a binomial probability upper bound:
   1. **Measurement Valid (`ipi=7`)**: Passes unified `is_valid_measurement_run()` (`s3_active_aex_count` present, well-formed `A/D` items, `ipi_aex_verified_mask == 7`, `fast_forwarded_prior == 0`, `measurement_invalid == 0`);
   2. **Business Workflow Completed**: Enforces `min_rec` minimum ECALL count, verifies all target `expected_fids` were entered (`field_entries > 0`), verifies the expected intervention tags were applied, and checks `returncode == 0` with business `PASS`;
   3. **Workset Coverage Zero-Omission**: Requires `Measurement Valid` and `Business Workflow Completed` and verifies `0` uncovered `(field_id, page_rva, effect)` tuples against `workset.dynamic_xr.json`;
@@ -188,17 +186,16 @@ All tables in this document are generated automatically from `experiments/evalua
 | `ehsm` | `10` | `346 / 155` | **`10 / 10`** | **`10 / 10`** | **`10 / 10`** (`0p / 0e`) | **`10 / 10`** (`0` retries) |
 | `ehsm-opt-1` | `10` | `208 / 153` | **`10 / 10`** | **`10 / 10`** | **`10 / 10`** (`0p / 0e`) | **`10 / 10`** (`0` retries) |
 | `ehsm-opt-2` | `10` | `208 / 153` | **`10 / 10`** | **`10 / 10`** | **`10 / 10`** (`0p / 0e`) | **`10 / 10`** (`0` retries) |
-| `sqlite` | `10` | `72 / 52` | **`10 / 10`** | **`10 / 10`** | **`10 / 10`** (`0p / 0e`) | **`10 / 10`** (`0` retries) |
-| **Total (`5` Apps / `7` Configs)** | **`70`** | **`11562 / 11176`** | **`70 / 70`** | **`70 / 70`** | **`70 / 70`** (`0p / 0e`) | **`70 / 70`** (`0` retries) |
+| **Total (`4` Apps / `6` Configs)** | **`60`** | **`11490 / 11124`** | **`60 / 60`** | **`60 / 60`** | **`60 / 60`** (`0p / 0e`) | **`60 / 60`** (`0` retries) |
 
-### 2C. Upstream Test Adaptation & Onboarding Cost Accounting (`5` Real Applications, `7` Configurations)
+### 2C. Upstream Test Adaptation & Onboarding Cost Accounting (`4` Real Applications, `6` Configurations; SQLite Fixture Separate)
 | Application (`Configs`) | Test Provenance & Upstream Reference | Host Entry / Flag | Preserved Assertions & Explicit Adaptation Differences | Host Adapter LOC (`Added LOC`) | Explorer / Kernel Special-Case Rules |
 |---|---|---|---|---:|---:|
 | `signal-cds` (`1`) | **Selected & adapted 6 upstream Cmockery tests** from `enclave/src/sabd-enclave-test.c` (`setup_sabd_lookup_test`, `test_sabd_lookup_batch_too_large`, `test_sabd_lookup_many_duplicates`, `test_sabd_lookup_small_{all_in,no_in,random}`, `test_sabd_lookup_large`) | `sample/real/signal-cds/host.c` (`--upstream-cmockery-test --seed S --in-jids N`, `95` ECALLs/run) | **Preserved**: `(1<<14)+1` `SGX_ERROR_INVALID_PARAMETER` check, `!!result[i]` normalization, even-index duplication, and `memcmp` across `0..32`, `0..25`, and `2048`-query batches. **Explicit adaptations**: (1) replaced Cmockery mock macros with real `ecall_lookup_hash` calls; (2) avoided reserved miss sentinel `jid <= 1` when generating `test_in_jids` via `mrand48_r`; (3) parameterized `in_jid_count` (`128..4096` vs static `1,000,000`). | `358` (`+122` for adapted suite) | **`0`** |
 | `ehsm` (`ehsm`, `ehsm-opt-1`, `ehsm-opt-2`) | **Selected & adapted workflow** from `core/Test/function_test.cpp` (`test_AES128_GCM`, `test_SM4_CBC`, `GenerateDataKey`, `Decrypt`) | `sample/real/ehsm/host.cpp` (default AES-GCM + `--compat-check` + `--sm4-check`) | **Preserved**: `ehsm_create_key` -> `ehsm_encrypt` -> `ehsm_decrypt` -> `ehsm_generate_datakey` -> `ehsm_decrypt_datakey`, ciphertext/AAD tamper rejection, and round-trip plaintext equality. **Explicit adaptations**: extracted standalone C++ host driver from gtest/dkeyserver wrapper. | `312` (`+0` kernel rules) | **`0`** |
 | `sgxwallet` (`1`) | **Selected & adapted workflow** from `tests/integration/keys/ECDSAIntegrationTests.cpp` | `sample/real/sgxwallet/host.cpp` | **Preserved**: SEK provisioning -> ECDSA keygen -> public key extraction -> hash signing -> signature verification -> invalid input rejection -> enclave restart & recovery. **Explicit adaptations**: standalone C++ host driver without JSON-RPC/LevelDB server daemon. | `264` (`+0` kernel rules) | **`0`** |
 | `qe3` (`1`) | **Local functional test written against upstream production code** `QuoteGeneration/quote_wrapper/quote/enclave/qe3.c` (`get_att_key_based_from_seal_key`) | `sample/real/qe3/host.c` | **Local test**: invokes attestation-key derivation across identical vs distinct `key_id` values and asserts public-key determinism and uniqueness (not ported from an upstream test file). | `118` (`+0` kernel rules) | **`0`** |
-| `sqlite` (`1`) | **Non-cryptographic stateful SQLite 3 in-memory transactional database** adapted from `sample/anchor/sqlite` VFS (`enclave-mem`) against unmodified upstream `vendor/sqlite3.c` | `sample/real/sqlite/host.c` (`--rows N --full-tx-suite`, `3..10` ECALLs/run) | **Stateful multi-ECALL workflow**: `ecall_db_open` -> `ecall_db_exec_batch` (`INSERT`, `CREATE INDEX + UPDATE`, `SAVEPOINT + DELETE`) -> `ecall_db_query_stats` (`SUM`, window-function `LEFT JOIN + GROUP BY + ORDER BY`, `PRAGMA integrity_check` + correlated subquery). **Onboarded via `target_manifest.json` with `0` lines modified in `dynamic` engine/controller/schema/evaluator.** | `146` (`+195` enclave wrapper LOC, `+0` kernel rules) | **`0`** |
+| SQLite research fixture (`1`, non-real) | **Historical non-cryptographic SQLite 3 in-memory transaction workload** adapted from the `sample/anchor/sqlite` VFS and upstream `vendor/sqlite3.c` | Former host path (historical reference): `sample/real/sqlite/host.c`; preserved target snapshot: `fixtures/sqlite/target/` | **Historical multi-ECALL workload**: `ecall_db_open` -> `ecall_db_exec_batch` -> `ecall_db_query_stats`. The original target and witness artifacts are preserved as a research fixture and excluded from real-target discovery and execution. | `146` (`+195` enclave wrapper LOC, `+0` kernel rules in the archived study) | **`0`** |
 
 ## 3. Three-Group 5-Round Interleaved Diagnostic Ablation (Per-Observation Accounting)
 
@@ -223,19 +220,17 @@ All tables in this document are generated automatically from `experiments/evalua
 | `ehsm-opt-2` | `ehsm_aes_gcm_decrypt` | 40 | 0/40 (`38 / 47`) | **40/40** (`0 / 0`) | 0 (`max=0p`) | 40/40 (`0 / 0`) | 0 (`max=0p`) | `2,871,379` -> **`295,043`** -> `296,951` |
 | `ehsm-opt-2` | `ehsm_create_aes_key` | 5 | 0/5 (`36 / 36`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `8,222,848` -> **`386,762`** -> `377,524` |
 | `ehsm-opt-2` | `ehsm_generate_datakey` | 5 | 0/5 (`35 / 43`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `2,900,362` -> **`292,298`** -> `289,806` |
-| `sqlite` | `sqlite_exec_batch_field` | 5 | 0/5 (`12 / 14`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `4,723,336` -> **`1,289,126`** -> `1,171,806` |
-| `sqlite` | `sqlite_query_stats_field` | 5 | 2/5 (`1 / 3`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `2,217,470` -> **`419,920`** -> `385,162` |
 
-- **Exact Per-Observation Totals Across the 18 Non-`ENCLU` Field Instances (305 total Field entries across 5 rounds)**:
-  - **Group B (`dynamic_xr`, Default `XR`)**: **305 / 305** clean (`s3_aex=0`) observations, **0 / 305** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **305 / 305** achieved `0` residual page-table A/D re-walks.
-  - **Group C (`dynamic_refined`, `X-only`)**: **305 / 305** clean (`s3_aex=0`) observations, **0 / 305** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **305 / 305** achieved `0` residual page-table A/D re-walks.
+- **Exact Per-Observation Totals Across the 16 Field Instances Without Inherent Dynamic-Page Rewalk (295 total Field entries across 5 rounds)**:
+  - **Group B (`dynamic_xr`, Default `XR`)**: **295 / 295** clean (`s3_aex=0`) observations, **0 / 295** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **295 / 295** achieved `0` residual page-table A/D re-walks.
+  - **Group C (`dynamic_refined`, `X-only`)**: **295 / 295** clean (`s3_aex=0`) observations, **0 / 295** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **295 / 295** achieved `0` residual page-table A/D re-walks.
 
 ## 4. Production `AEX1` Latency Breakdown & Footprint (5 Interleaved Rounds, `no_turbo=1, governor=performance`)
 
 - **Strict Non-Bypassable Production Acceptance**: Every production run is validated by `validate_production_run_result()` (`returncode == 0`, business `PASS`, `measurement_invalid == 0`, exact `ecall_index` sequence parity with the 4-Gate diagnostic reference, and for protected groups `readiness_installed == 1` plus verified `enclave_pages_acquire/release` execution on every non-empty selector).
 - **Direct Hardware Segmented Timing vs Post-Readiness Body Delta**: `acquire_ns` and `release_ns` are measured directly around `enclave_pages_acquire` and `enclave_pages_release` (`ioctl(SGX_IOC_ENCLAVE_PAGES_ACQUIRE/RELEASE)`). `encl_body_ns = elapsed_ns - acquire_ns - release_ns` is the post-readiness enclave execution time (`EENTER..EEXIT`); its difference against `No-PreTouch` (`ΔBody`) is reported as **Post-Readiness Enclave Body Delta** (not an isolated in-enclave `S2` timer; cold-TLB `S2` TSC ticks are measured directly at Gate B..C in Table 3).
 
-- **Short-Call Readiness Overhead & Baseline Scope Caveat**: On short ECALLs such as `ehsm-opt-2` (`11.6 µs` `No-PreTouch` body vs `51.2 µs` `ACQUIRE + RELEASE`) and `sqlite` (`42.6 µs` body vs `89.7 µs` `ACQUIRE + RELEASE`), total overhead is dominated by the fixed per-ECALL kernel readiness ioctl transition (`SGX_IOC_ENCLAVE_PAGES_ACQUIRE/RELEASE`) rather than enclave body execution (`+3.2 µs` on `ehsm-opt-2`). Further shrinking the workset by a few pages cannot eliminate this fixed kernel transition cost; reducing it is a protection-runtime concern (`implement`). Moreover, `Group A (all_reg_xr)` is an internal full-REG upper-bound ablation; comparing against external systems such as TLBlur requires identical workloads and matched protection targets rather than merely outperforming `Group A`.
+- **Short-Call Readiness Overhead & Baseline Scope Caveat**: On short real-target ECALLs such as `ehsm-opt-2` (`11.6 µs` `No-PreTouch` body vs `51.2 µs` `ACQUIRE + RELEASE`) and the archived SQLite research fixture (`42.6 µs` body vs `89.7 µs` `ACQUIRE + RELEASE`), total overhead is dominated by the fixed per-ECALL kernel readiness ioctl transition (`SGX_IOC_ENCLAVE_PAGES_ACQUIRE/RELEASE`) rather than enclave body execution (`+3.2 µs` on `ehsm-opt-2`). Further shrinking the workset by a few pages cannot eliminate this fixed kernel transition cost; reducing it is a protection-runtime concern (`implement`). Moreover, `Group A (all_reg_xr)` is an internal full-REG upper-bound ablation; comparing against external systems such as TLBlur requires identical workloads and matched protection targets rather than merely outperforming `Group A`.
 
 ### 4A. Protected Field-Entering ECALLs (`cat=3`) — Per-Call Segmented Breakdown
 
@@ -247,7 +242,6 @@ All tables in this document are generated automatically from `experiments/evalua
 | `ehsm` | 14 | **5/5** | 141.3 | **70.2** | 145.9 | +4.6 | **215.9** | **+52.77%** (`+74.6 µs`) | 734.4 (`+593.0 µs`) | **7.95x** |
 | `ehsm-opt-1` | 14 | **5/5** | 142.2 | **74.5** | 144.7 | +2.4 | **218.9** | **+53.93%** (`+76.7 µs`) | 738.7 (`+596.5 µs`) | **7.78x** |
 | `ehsm-opt-2` | 14 | **5/5** | 11.6 | **51.2** | 14.8 | +3.2 | **66.2** | **+470.23%** (`+54.6 µs`) | 614.3 (`+602.7 µs`) | **11.03x** |
-| `sqlite` | 2 | **5/5** | 42.6 | **89.7** | 62.5 | +20.0 | **152.7** | **+258.78%** (`+110.1 µs`) | 397.0 (`+354.5 µs`) | **3.22x** |
 
 ### 4B. Non-Field Early-Return (`cat=2`, Non-Empty `ReadyTable`) & Init (`cat=1`, Empty `ReadyTable`) Direct Segmented Breakdown (Per Round)
 
@@ -259,7 +253,6 @@ All tables in this document are generated automatically from `experiments/evalua
 | `ehsm` | 16 | 0.092 | **1.164** | 0.097 | **1.263** | 2 | 0.159 | 0.152 |
 | `ehsm-opt-1` | 3 | 0.017 | **0.210** | 0.017 | **0.227** | 2 | 0.152 | 0.152 |
 | `ehsm-opt-2` | 3 | 0.017 | **0.143** | 0.017 | **0.161** | 2 | 2.009 | 2.001 |
-| `sqlite` | 0 | 0.000 | **0.000** | 0.000 | **0.000** | 1 | 0.251 | 0.240 |
 
 ### 4C. Whole-Workflow Sum of ECALL Durations (Excluding Enclave Creation & Inter-Call Host Work) & Binary Footprint
 
@@ -271,7 +264,6 @@ All tables in this document are generated automatically from `experiments/evalua
 | `ehsm` | `14 / 16 / 2` | **5/5** | 2.26 | 2.23 | 18.21 | **4.46** | 4.46 | **+99.90%** (`+2.23 ms`) | **4.09x** | `5023.2 -> 5123.3 KiB` (**+1.99%**) | `10239 B + 11720 B` |
 | `ehsm-opt-1` | `14 / 3 / 2` | **5/5** | 2.19 | 2.16 | 11.85 | **3.45** | 3.48 | **+59.81%** (`+1.29 ms`) | **3.43x** | `5023.2 -> 5123.3 KiB` (**+1.99%**) | `10294 B + 11760 B` |
 | `ehsm-opt-2` | `14 / 3 / 2` | **5/5** | 2.17 | 2.19 | 11.95 | **3.08** | 3.08 | **+40.65%** (`+0.89 ms`) | **3.88x** | `5023.2 -> 5123.3 KiB` (**+1.99%**) | `6129 B + 7848 B` |
-| `sqlite` | `2 / 0 / 1` | **5/5** | 0.32 | 0.34 | 1.05 | **0.55** | 0.54 | **+61.87%** (`+0.21 ms`) | **1.92x** | `1110.4 -> 1146.4 KiB` (**+3.24%**) | `6727 B + 6816 B` |
 
 ## 6. One-Page Methodology & Boundary Specification: Why It Works, When It Can Miss, and What Each Experiment Verifies
 
@@ -299,9 +291,9 @@ All tables in this document are generated automatically from `experiments/evalua
 | `challenge-exam-a` & `challenge-exam-b` (`post_revision_regression`, 5 seeds, 3 modes) | Evaluated as post-revision regression: `feedback_guided` achieves `6.80/8` and `6.80/8` confirmed vs `5.40`–`6.80/8` for `static_priority_no_feedback` and `5.00`–`5.60/8` for `fixed_round_robin`. | Section 1A & `strategy_comparison.json` |
 | `challenge-exam-c` & `challenge-exam-d` (`frozen_holdout_variants`, 5 seeds, 3 modes, frozen kernel `c60f19b`) | Evaluated on the frozen exploration kernel (`c60f19bd49c6a840bc36102693c63cd5e43072bb`): `feedback_guided` achieves `8.00/8` (`0.0` missed Field-effects) on `exam-c` and `6.80/8` on `exam-d`, outperforming `static_priority_no_feedback` (`7.00/8`, `6.00/8`) and `fixed_round_robin` (`6.20/8`, `5.60/8`). | Section 1A & `strategy_comparison.json` |
 | `calibration-fixture` (`7`-case hardware measurement calibration) | Verifies `0 / 36` (`0.00%`) measurement omission rate across `S0/S1`-then-`S3` pre-access, `2` repeated Field entries per ECALL, `5` dirty pages on a temporary deep stack frame (`gateB_rsp == gateD_rsp`), deliberate 1-page omission detection, and active permission retraction (`AEX0` healed + `AEX1` `0x1006`). | Section 2A & `evaluation_results.json` |
-| `signal-cds` Adapted Upstream Cmockery Tests & `70`-Case Predetermined End-to-End Regression Matrix | Selects and adapts `6` upstream Cmockery tests from `enclave/src/sabd-enclave-test.c` (`95` ECALLs/run) and evaluates `70` predetermined regression cases across all 5 applications / 7 configurations on four separate verdicts (`70/70` measurement valid, `70/70` business completed, `70/70` zero workset omissions, `70/70` frozen protected `AEX1` completed). | Sections 2B, 2C & `evaluation_results.json` |
-| `qe3`, `signal-cds`, `sgxwallet`, `ehsm` (`opt-1/2`), `sqlite` Migration | The exact same frozen `ExplorationKernel` closes all 5 real applications (7 configurations) (`5/5` production acceptance, `305/305` clean `0`-rewalk observations across the 18 non-`ENCLU` Field instances in Group B). | Sections 0, 1B, 2, 3, 4 |
-| `ehsm-opt-1/2` Three-Tier SM4 Accounting & `sqlite` 2-Step Plan Reuse | Tier 1 (`sm4_seeded_xr`) and Tier 2b (`coupled_assisted_xr` via `replace_coupled` on default AES host without `--sm4-check`) build independent enclaves & ReadyTables (`0` omissions on `ehsm-opt-1`, `14 -> 5` omitted on `ehsm-opt-2`); Tier 2a (`0`-constraint blind) catches `4` / `14` uncovered effects; `sqlite` 2-step plan reuse (`valid_prefix_corpus`) discovers `+49` pages (`+100` effects) with `0` manual rules. | Section 2A-2 (`sm4_two_tier_accounting`) |
+| `signal-cds` Adapted Upstream Cmockery Tests & 60-Case Real-Target Regression Matrix | Selects and adapts `6` upstream Cmockery tests from `enclave/src/sabd-enclave-test.c` (`95` ECALLs/run) and evaluates the `60` real-target regression cases across 4 applications / 6 configurations on four separate verdicts. SQLite's 10 cases remain separate research-fixture evidence. | Sections 2B, 2C & `evaluation_results.json` |
+| Six real configurations (`qe3`, `signal-cds`, `sgxwallet`, `ehsm`, `ehsm-opt-1/2`) | The same frozen `ExplorationKernel` serves the four real applications and six configurations. SQLite's previous measurements remain archived under `fixtures/sqlite/` and are not included in real-target acceptance totals. | Sections 0, 1B, 2, 3, 4 |
+| `ehsm-opt-1/2` Three-Tier SM4 Accounting & SQLite Fixture 2-Step Plan Reuse | Tier 1 (`sm4_seeded_xr`) and Tier 2b (`coupled_assisted_xr` via `replace_coupled` on default AES host without `--sm4-check`) build independent enclaves & ReadyTables (`0` omissions on `ehsm-opt-1`, `14 -> 5` omitted on `ehsm-opt-2`); the separate SQLite research fixture retains its historical `valid_prefix_corpus` results (`+49` pages, `+100` effects, `0` manual rules). | Section 2A-2 (`sm4_two_tier_accounting`) |
 
 ## 5. Clean-Checkout Reproducible Workflow
 
@@ -309,23 +301,31 @@ All tables in this document are generated automatically from `experiments/evalua
 # 0. Run offline negative, schema/ABI, and 6-case challenge suite unit tests first
 python3 -m unittest discover -s tests -p 'test_*.py' -v
 
-# 1. Build baseline Profile & All-REG enclaves + extract compiler-exact EDL schemas
+# 1. In the sample checkout, build all six protect manifests/artifacts with the flake.lock-pinned implement
+cd ../sample
+for target in ehsm ehsm-opt-1 ehsm-opt-2 qe3 sgxwallet signal-cds; do
+  nix develop ".#real-$target-protect" --command bash -c \
+    "cmake -S . -B build/real/$target/protect -G Ninja -DATFIELD_GROUP=real -DATFIELD_SAMPLE=$target -DATFIELD_MODE=protect && cmake --build build/real/$target/protect"
+done
+
+# 2. Back in dynamic, import those existing sample protect outputs and generate dynamic diagnostics/worksets
+cd ../dynamic
 python3 tools/build_real_targets.py
 python3 tools/edl_harness.py
 
-# 2. Compile the SGX-Step + AEP native interposer
+# 3. Compile the SGX-Step + AEP native interposer
 gcc -shared -fPIC -O2 -Wno-unused-result -DLIBSGXSTEP_SILENT=1 \
   -Isrc -Ivendor/sgxstep src/native_sgx_interpose.c \
   vendor/sgxstep/libsgxstep/pt.c vendor/sgxstep/libsgxstep/file.c \
   vendor/sgxstep/libsgxstep/debug.c -ldl -lpthread \
   -o build/libatfield_native_sgx.so
 
-# 3. Run 3-layer dynamic exploration & emit Group B (dynamic_xr) and Group C (dynamic) artifacts
-python3 controller.py qe3 signal-cds sgxwallet ehsm ehsm-opt-1 ehsm-opt-2 sqlite
+# 4. Run 3-layer dynamic exploration & emit Group B (dynamic_xr) and Group C (dynamic) artifacts
+python3 controller.py qe3 signal-cds sgxwallet ehsm ehsm-opt-1 ehsm-opt-2
 
-# 4. Run calibration, independent hold-out verification, and 5-round 3-group evaluation
+# 5. Run calibration, independent hold-out verification, and 5-round 3-group evaluation
 python3 tools/evaluate_worksets.py
 
-# 5. Generate summary tables from JSON evidence
+# 6. Generate summary tables from JSON evidence
 python3 tools/generate_report_tables.py
 ```

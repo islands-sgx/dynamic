@@ -1,5 +1,5 @@
 {
-  "schema": "atfield-sample-scenarios-v1",
+  "schema": "atfield-dynamic-scenarios-v1",
   "name": "ehsm-opt-2",
   "application_family": "ehsm",
   "domain_assisted_probes": [
@@ -213,7 +213,7 @@
   "onboarding_metadata": {
     "configs_label": "ehsm, ehsm-opt-1, ehsm-opt-2",
     "test_provenance": "**Selected & adapted workflow** from `core/Test/function_test.cpp` (`test_AES128_GCM`, `test_SM4_CBC`, `GenerateDataKey`, `Decrypt`)",
-    "host_entry": "`sample/real/ehsm/host.cpp` (default AES-GCM + `--compat-check` + `--sm4-check`)",
+    "host_entry": "`sample/real/ehsm-opt-2/host.cpp` (default AES-GCM + `--compat-check` + `--sm4-check`)",
     "preserved_assertions_and_adaptations": "**Preserved**: `ehsm_create_key` -> `ehsm_encrypt` -> `ehsm_decrypt` -> `ehsm_generate_datakey` -> `ehsm_decrypt_datakey`, ciphertext/AAD tamper rejection, and round-trip plaintext equality. **Explicit adaptations**: extracted standalone C++ host driver from gtest/dkeyserver wrapper.",
     "host_adapter_loc": 312,
     "added_ported_loc": 0,

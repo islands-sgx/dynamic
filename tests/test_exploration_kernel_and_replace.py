@@ -14,14 +14,17 @@
 from __future__ import annotations
 
 import json
+import shutil
+import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
 DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
 sys.path.insert(0, str(DYN_ROOT / "tools"))
 
-from elf_workset import normalized_fields, resolve_selectors  # noqa: E402
+from elf_workset import WorksetError, normalized_fields, resolve_selectors  # noqa: E402
 from exploration_kernel import ExplorationKernel, build_unified_candidate_queues, extract_concrete_record_feedback  # noqa: E402
 from run_native_sgx import run_sample  # noqa: E402
 
@@ -552,6 +555,168 @@ class TestExplorationKernelAndReplace(unittest.TestCase):
         summary = kernel.run()
         self.assertTrue(len(summary["valid_prefix_corpus"]) >= 1)
         self.assertIn(("0x2222", 0x99000, "D"), kernel.cumulative_s3_field_effects)
+
+
+class TestConservativeAllFieldsSelectors(unittest.TestCase):
+    FIELD_IDS = ["0x0000000000001111", "0x0000000000002222"]
+
+    def resolve_payload(self, payload: dict, field_functions: tuple[str, str] = ("field_a", "field_b")) -> list[dict]:
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        root = Path(temp.name)
+        edl_file = root / "sample.edl"
+        edl_file.write_text(
+            "enclave { trusted { public void ecall_a(); public void ecall_b(); }; };\n"
+        )
+        selector_file = root / "selectors.json"
+        selector_file.write_text(json.dumps(payload))
+        fields = [
+            {"id": self.FIELD_IDS[0], "function": field_functions[0]},
+            {"id": self.FIELD_IDS[1], "function": field_functions[1]},
+        ]
+        return resolve_selectors(selector_file, fields, edl_file)
+
+    def policy_payload(self) -> dict:
+        return {
+            "schema": "atfield-selectors-v1",
+            "policy": "conservative-all-fields",
+            "selectors": [
+                {"ecall_index": 0, "name": "ecall_a", "reachable_fields": list(reversed(self.FIELD_IDS))},
+                {"ecall_index": 1, "name": "ecall_b", "reachable_fields": self.FIELD_IDS.copy()},
+            ],
+        }
+
+    def test_policy_resolves_all_field_ids_and_marks_policy(self) -> None:
+        resolved = self.resolve_payload(self.policy_payload(), field_functions=("same_name", "same_name"))
+
+        for selector in resolved:
+            self.assertEqual(selector["reachable_fields"], self.FIELD_IDS)
+            self.assertEqual(selector["policy"], "conservative-all-fields")
+            self.assertNotIn("reachable_functions", selector)
+
+    def test_policy_rejects_missing_duplicate_unknown_ids_and_function_entries(self) -> None:
+        invalid_payloads = []
+
+        missing = self.policy_payload()
+        missing["selectors"][0]["reachable_fields"] = self.FIELD_IDS[:1]
+        invalid_payloads.append((missing, "every fields.json ID exactly once"))
+
+        duplicate = self.policy_payload()
+        duplicate["selectors"][0]["reachable_fields"] = [self.FIELD_IDS[0], self.FIELD_IDS[0]]
+        invalid_payloads.append((duplicate, "repeats reachable Field ID"))
+
+        unknown = self.policy_payload()
+        unknown["selectors"][0]["reachable_fields"] = [self.FIELD_IDS[0], "0x0000000000003333"]
+        invalid_payloads.append((unknown, "unknown Field ID"))
+
+        function_names = self.policy_payload()
+        function_names["selectors"][0]["reachable_functions"] = ["field_a", "field_b"]
+        invalid_payloads.append((function_names, "must contain only"))
+
+        for payload, message in invalid_payloads:
+            with self.subTest(message=message):
+                with self.assertRaisesRegex(WorksetError, message):
+                    self.resolve_payload(payload)
+
+    def test_hand_written_function_selectors_keep_legacy_resolution(self) -> None:
+        payload = {
+            "schema": "atfield-selectors-v1",
+            "selectors": [
+                {"ecall_index": 0, "name": "ecall_a", "reachable_functions": ["field_a"]},
+                {"ecall_index": 1, "name": "ecall_b", "reachable_functions": ["field_b"]},
+            ],
+        }
+
+        resolved = self.resolve_payload(payload)
+
+        self.assertEqual([item["reachable_fields"] for item in resolved], [[self.FIELD_IDS[0]], [self.FIELD_IDS[1]]])
+        self.assertEqual(resolved[0]["reachable_functions"], ["field_a"])
+        self.assertNotIn("policy", resolved[0])
+
+
+class TestImplementDynamicSelectorContract(unittest.TestCase):
+    IMPLEMENT_ROOT = Path("/home/meandssh/islands-sgx/implement")
+    SAMPLE_ROOT = Path("/home/meandssh/islands-sgx/sample")
+
+    def test_current_implement_generator_output_is_consumed_by_dynamic(self) -> None:
+        implement_entry = self.IMPLEMENT_ROOT / "build" / "workset" / "workset.ts"
+        if not implement_entry.is_file():
+            self.skipTest(f"current implement selector generator is unavailable: {implement_entry}")
+        if shutil.which("nix") is None:
+            self.skipTest("Nix is required to provide Bun from the sample flake's real protect devShell")
+
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            edl_file = root / "enclave.edl"
+            edl_file.write_text(
+                "enclave { trusted { public void ecall_a(); public void ecall_b(); }; };\n"
+            )
+            fields_file = root / "fields.json"
+            field_ids = ["0x0000000000001001", "0x0000000000002002"]
+            fields_file.write_text(json.dumps({
+                "schema": "atfield-fields-v1",
+                "fields": [
+                    {
+                        "id": field_ids[0],
+                        "name": "duplicate_field()",
+                        "function": "duplicate_field",
+                        "linkage_name": "_duplicate_field",
+                        "order": ["1", "0"],
+                    },
+                    {
+                        "id": field_ids[1],
+                        "name": "duplicate_field()",
+                        "function": "duplicate_field",
+                        "linkage_name": "_duplicate_field",
+                        "order": ["2", "0"],
+                    },
+                ],
+            }))
+            selectors_file = root / "selectors.json"
+            js = f"""
+import {{ buildConservativeSelectorManifest }} from {json.dumps(str(implement_entry))};
+import {{ readFileSync, writeFileSync }} from "node:fs";
+const fields = JSON.parse(readFileSync({json.dumps(str(fields_file))}, "utf8")).fields;
+const manifest = buildConservativeSelectorManifest(fields, {json.dumps(str(edl_file))});
+writeFileSync({json.dumps(str(selectors_file))}, JSON.stringify(manifest));
+"""
+            completed = subprocess.run(
+                [
+                    "nix", "develop", f"{self.SAMPLE_ROOT}#real-ehsm-protect",
+                    "--command", "bun", "-e", js,
+                ],
+                cwd=self.SAMPLE_ROOT,
+                text=True,
+                capture_output=True,
+                timeout=120,
+                check=False,
+            )
+            self.assertEqual(
+                completed.returncode,
+                0,
+                msg=f"implement selector generator failed:\n{completed.stdout}\n{completed.stderr}",
+            )
+
+            generated = json.loads(selectors_file.read_text())
+            fields = normalized_fields(fields_file)
+            expected_ids = [field["id"] for field in fields]
+            self.assertEqual(generated["schema"], "atfield-selectors-v1")
+            self.assertEqual(generated["policy"], "conservative-all-fields")
+            self.assertEqual(len(generated["selectors"]), 2)
+            self.assertTrue(all("reachable_functions" not in item for item in generated["selectors"]))
+            for item in generated["selectors"]:
+                ids = item["reachable_fields"]
+                self.assertEqual(len(ids), len(expected_ids))
+                self.assertEqual(set(ids), set(expected_ids))
+            self.assertEqual(fields[0]["function"], fields[1]["function"])
+            self.assertNotEqual(fields[0]["id"], fields[1]["id"])
+
+            resolved = resolve_selectors(selectors_file, fields, edl_file)
+
+            self.assertEqual([item["name"] for item in resolved], ["ecall_a", "ecall_b"])
+            self.assertTrue(all(item["reachable_fields"] == expected_ids for item in resolved))
+            self.assertTrue(all(item["policy"] == "conservative-all-fields" for item in resolved))
+            self.assertTrue(all("reachable_functions" not in item for item in resolved))
 
 
 if __name__ == "__main__":

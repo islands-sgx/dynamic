@@ -1,49 +1,82 @@
 {
+  "policy": "conservative-all-fields",
   "schema": "atfield-selectors-v1",
   "selectors": [
     {
       "ecall_index": 0,
       "name": "trustedEnclaveInit",
-      "reachable_functions": []
+      "reachable_fields": [
+        "0xd9243791a2c13244",
+        "0x9304e1c7e45cef0a",
+        "0xa9d5e11946c68a33",
+        "0x6be0530730e7f5f1",
+        "0x25c0fd3d7283b2b7"
+      ]
     },
     {
       "ecall_index": 1,
       "name": "trustedEnclaveClear",
-      "reachable_functions": []
+      "reachable_fields": [
+        "0xd9243791a2c13244",
+        "0x9304e1c7e45cef0a",
+        "0xa9d5e11946c68a33",
+        "0x6be0530730e7f5f1",
+        "0x25c0fd3d7283b2b7"
+      ]
     },
     {
       "ecall_index": 2,
       "name": "trustedGenerateSEK",
-      "reachable_functions": [
-        "generate_sek_field"
+      "reachable_fields": [
+        "0xd9243791a2c13244",
+        "0x9304e1c7e45cef0a",
+        "0xa9d5e11946c68a33",
+        "0x6be0530730e7f5f1",
+        "0x25c0fd3d7283b2b7"
       ]
     },
     {
       "ecall_index": 3,
       "name": "trustedSetSEK",
-      "reachable_functions": [
-        "set_sek_field"
+      "reachable_fields": [
+        "0xd9243791a2c13244",
+        "0x9304e1c7e45cef0a",
+        "0xa9d5e11946c68a33",
+        "0x6be0530730e7f5f1",
+        "0x25c0fd3d7283b2b7"
       ]
     },
     {
       "ecall_index": 4,
       "name": "trustedGenerateEcdsaKey",
-      "reachable_functions": [
-        "generate_ecdsa_key_field"
+      "reachable_fields": [
+        "0xd9243791a2c13244",
+        "0x9304e1c7e45cef0a",
+        "0xa9d5e11946c68a33",
+        "0x6be0530730e7f5f1",
+        "0x25c0fd3d7283b2b7"
       ]
     },
     {
       "ecall_index": 5,
       "name": "trustedGetPublicEcdsaKey",
-      "reachable_functions": [
-        "get_public_ecdsa_key_field"
+      "reachable_fields": [
+        "0xd9243791a2c13244",
+        "0x9304e1c7e45cef0a",
+        "0xa9d5e11946c68a33",
+        "0x6be0530730e7f5f1",
+        "0x25c0fd3d7283b2b7"
       ]
     },
     {
       "ecall_index": 6,
       "name": "trustedEcdsaSign",
-      "reachable_functions": [
-        "ecdsa_sign_field"
+      "reachable_fields": [
+        "0xd9243791a2c13244",
+        "0x9304e1c7e45cef0a",
+        "0xa9d5e11946c68a33",
+        "0x6be0530730e7f5f1",
+        "0x25c0fd3d7283b2b7"
       ]
     }
   ]

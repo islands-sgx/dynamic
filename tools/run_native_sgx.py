@@ -14,6 +14,7 @@ from pathlib import Path
 
 sys.path.insert(0, "/home/meandssh/islands-sgx/dynamic/tools")
 from elf_workset import ElfFile, parse_signed_metadata, signer_regions  # noqa: E402
+from target_manifest import ensure_real_target_name  # noqa: E402
 
 DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
 SAMPLE_ROOT = Path("/home/meandssh/islands-sgx/sample")
@@ -146,6 +147,7 @@ def run_sample(
     persist_prefix: Path | None = None,
     timeout_sec: int = 300,
 ) -> dict:
+    ensure_real_target_name(sample)
     tdir = DYN_ROOT / "targets" / sample
     manifest = json.loads((tdir / "target_manifest.json").read_text()) if (tdir / "target_manifest.json").is_file() else None
     if manifest and manifest.get("anchor_host_binary"):

@@ -71,6 +71,10 @@ static void run_interventions_if_matching(
     char *copy = strdup(spec);
     char *saveptr = NULL;
     for (char *tok = strtok_r(copy, ";", &saveptr); tok; tok = strtok_r(NULL, ";", &saveptr)) {
+        /* This collector records exactly one host call. Only in-place replacements may execute here. */
+        if (strncmp(tok, "replace_scalar:", 15) != 0 &&
+            strncmp(tok, "replace_coupled:", 16) != 0 &&
+            strncmp(tok, "replace_xor:", 12) != 0) continue;
         int t_idx = -1, t_seq = -1, p_idx = -1, p_idx2 = -1;
         unsigned long sub = 0, val = 0, val2 = 0;
 

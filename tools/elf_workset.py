@@ -659,10 +659,23 @@ def resolve_selectors(selector_file: str | Path | None, fields: list[dict],
     payload = read_json(selector_file)
     if payload.get("schema") != "atfield-selectors-v1" or not isinstance(payload.get("selectors"), list):
         raise WorksetError(f"expected atfield-selectors-v1 manifest: {selector_file}")
+    policy = payload.get("policy")
+    if "policy" in payload and policy != "conservative-all-fields":
+        raise WorksetError(f"unsupported selector policy {policy!r}: {selector_file}")
+    conservative_all_fields = policy == "conservative-all-fields"
     expected_names = edl_public_ecalls(edl_file)
     supplied = payload["selectors"]
     if len(supplied) != len(expected_names):
         raise WorksetError(f"selector map has {len(supplied)} entries, EDL declares {len(expected_names)} public ECALLs")
+    expected_field_ids: list[int] = []
+    canonical_field_ids: dict[int, str] = {}
+    if conservative_all_fields:
+        for field in fields:
+            identity = parse_u64(field.get("id"), "Field id")
+            if identity == 0 or identity in canonical_field_ids:
+                raise WorksetError(f"zero or duplicate Field id in conservative-all-fields input: {field.get('id')!r}")
+            expected_field_ids.append(identity)
+            canonical_field_ids[identity] = str(field["id"])
     resolved = []
     for expected_index, (selector, expected_name) in enumerate(zip(supplied, expected_names)):
         if not isinstance(selector, dict):
@@ -671,9 +684,40 @@ def resolve_selectors(selector_file: str | Path | None, fields: list[dict],
         if index != expected_index:
             raise WorksetError(f"selector index {index} is out of EDL order; expected {expected_index}")
         name = selector.get("name")
-        functions = selector.get("reachable_functions")
         if name != expected_name:
             raise WorksetError(f"selector {index} name {name!r} differs from EDL public ECALL {expected_name!r}")
+        if conservative_all_fields:
+            if set(selector) != {"ecall_index", "name", "reachable_fields"}:
+                raise WorksetError(
+                    f"selector {index} under conservative-all-fields must contain only ecall_index, name, and reachable_fields"
+                )
+            supplied_ids = selector.get("reachable_fields")
+            if not isinstance(supplied_ids, list):
+                raise WorksetError(f"selector {index} requires reachable_fields under conservative-all-fields")
+            seen_ids: set[int] = set()
+            for field_id in supplied_ids:
+                if not isinstance(field_id, str) or not field_id:
+                    raise WorksetError(f"selector {index} reachable_fields entries must be nonempty Field ID strings")
+                identity = parse_u64(field_id, "reachable Field ID")
+                if identity not in canonical_field_ids:
+                    raise WorksetError(f"selector {index} references unknown Field ID {field_id!r}")
+                if identity in seen_ids:
+                    raise WorksetError(f"selector {index} repeats reachable Field ID {field_id!r}")
+                seen_ids.add(identity)
+            if seen_ids != set(expected_field_ids):
+                missing = [canonical_field_ids[value] for value in expected_field_ids if value not in seen_ids]
+                raise WorksetError(
+                    f"selector {index} conservative-all-fields must include every fields.json ID exactly once; missing {missing}"
+                )
+            resolved.append({
+                "ecall_index": index,
+                "name": name,
+                "reachable_fields": [canonical_field_ids[value] for value in expected_field_ids],
+                "policy": policy,
+            })
+            continue
+
+        functions = selector.get("reachable_functions")
         if not isinstance(functions, list):
             raise WorksetError(f"selector {index} requires reachable_functions")
         ids = []
@@ -749,7 +793,7 @@ def main() -> int:
     parser.add_argument("--signed-elf", required=True, help="matching signer output containing .note.sgxmeta")
     parser.add_argument("--fields", required=True, help="build/field/fields.json")
     parser.add_argument("--capacity-q", required=True, type=int, help="protect-configured post RX PT_LOAD capacity in bytes")
-    parser.add_argument("--selectors", help="public selector map with reachable_functions names; IDs are resolved from fields.json")
+    parser.add_argument("--selectors", help="public selector map with reachable_functions names or conservative-all-fields Field IDs")
     parser.add_argument("--edl", help="simple target EDL used to verify public ECALL indices and names; required with --selectors")
     parser.add_argument("--layout-out", help="write the extracted signer layout intermediate JSON")
     parser.add_argument("--layout", help="consume a previously extracted layout JSON instead of parsing the note again")
