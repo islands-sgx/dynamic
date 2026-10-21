@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# DEPRECATED: canonical implementation is lib/target/manifest.ts. Retained
+# only for the legacy Python chain that still imports it in-process.
 """Load build metadata and dynamic-owned scenario/oracle configurations."""
 from __future__ import annotations
 
@@ -88,3 +90,21 @@ def discover_real_target_manifests(
             continue
         manifests.append(load_target_manifest(manifest_path, sample_root=sample_root))
     return manifests
+
+
+def _prefer_current_sample_manifests(requests: list[str]) -> list[str | Path]:
+    """Resolve target names to current sample build manifests, never old dynamic snapshots."""
+    resolved: list[str | Path] = []
+    for request in requests:
+        if Path(request).is_file():
+            resolved.append(request)
+            continue
+        sample_manifest = (
+            DEFAULT_SAMPLE_ROOT / "build" / "real" / request / "protect" / "target_manifest.json"
+        )
+        if not sample_manifest.is_file():
+            raise FileNotFoundError(
+                f"Cannot rebuild {request!r} without current sample build metadata: {sample_manifest}"
+            )
+        resolved.append(sample_manifest)
+    return resolved

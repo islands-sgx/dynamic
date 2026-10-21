@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# DEPRECATED: canonical implementation is lib/workset/elf.ts (byte-identical
+# artifacts verified across all 6 real targets). Retained only for the legacy
+# Python exploration/evaluation chain that still imports it in-process.
 """Build FieldTargetPages from a signed SGX layout and frozen ELF inputs.
 
 The producer uses ELF PT_LOAD p_memsz plus the signed .note.sgxmeta DIR_LAYOUT.

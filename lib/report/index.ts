@@ -661,7 +661,7 @@ function emitSection5(lines: string[]): void {
   lines.push("");
   lines.push("# 2. Back in dynamic, import those existing sample protect outputs and generate dynamic diagnostics/worksets");
   lines.push("cd ../dynamic");
-  lines.push("python3 tools/build_real_targets.py");
+  lines.push("bun cli/build-real-targets.ts");
   lines.push("python3 tools/edl_harness.py");
   lines.push("");
   lines.push("# 3. Compile the SGX-Step + AEP native interposer");

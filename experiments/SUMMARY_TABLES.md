@@ -312,7 +312,7 @@ done
 
 # 2. Back in dynamic, import those existing sample protect outputs and generate dynamic diagnostics/worksets
 cd ../dynamic
-python3 tools/build_real_targets.py
+bun cli/build-real-targets.ts
 python3 tools/edl_harness.py
 
 # 3. Compile the SGX-Step + AEP native interposer

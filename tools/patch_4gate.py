@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# DEPRECATED: canonical implementation is lib/workset/patch-4gate.ts
+# (byte-identical .4gate.so across 18/18 target/group inputs). Retained only
+# for the legacy Python chain that invokes it as a subprocess.
 """Create layout-identical 4-gate diagnostic Enclave ELF from a ProfileElf or FinalElf.
 
 Places per-Field Gate A / Gate B / Gate C / Gate D trampolines in the last page

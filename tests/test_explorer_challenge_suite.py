@@ -19,7 +19,6 @@ from generic_explorer import (  # noqa: E402
     round_robin_schedule_interventions,
 )
 import target_manifest as target_manifest_module  # noqa: E402
-import build_real_targets as build_real_targets_module  # noqa: E402
 
 
 class TestExplorerChallengeSuite(unittest.TestCase):
@@ -96,15 +95,15 @@ class TestDynamicScenarioOwnership(unittest.TestCase):
 
     def test_explicit_build_target_name_uses_current_sample_manifest(self) -> None:
         manifest_path = self.write_sample_manifest("ehsm")
-        with patch.object(build_real_targets_module, "DEFAULT_SAMPLE_ROOT", self.sample_root):
-            resolved = build_real_targets_module._prefer_current_sample_manifests(["ehsm"])
+        with patch.object(target_manifest_module, "DEFAULT_SAMPLE_ROOT", self.sample_root):
+            resolved = target_manifest_module._prefer_current_sample_manifests(["ehsm"])
 
         self.assertEqual(resolved, [manifest_path])
 
     def test_explicit_build_does_not_fall_back_to_dynamic_snapshot(self) -> None:
-        with patch.object(build_real_targets_module, "DEFAULT_SAMPLE_ROOT", self.sample_root):
+        with patch.object(target_manifest_module, "DEFAULT_SAMPLE_ROOT", self.sample_root):
             with self.assertRaisesRegex(FileNotFoundError, "current sample build metadata"):
-                build_real_targets_module._prefer_current_sample_manifests(["ehsm"])
+                target_manifest_module._prefer_current_sample_manifests(["ehsm"])
 
     def test_dynamic_scenario_overrides_legacy_sample_pointer(self) -> None:
         sample_scenarios = self.sample_root / "real" / "ehsm" / "scenarios.json"
