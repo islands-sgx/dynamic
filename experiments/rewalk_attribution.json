@@ -1,0 +1,36 @@
+{
+ "schema": "rewalk-attribution-v1",
+ "date": "2026-10-21",
+ "method": "strict_ready_file per-page retraction + aex.fault_events encl_rip_rva symbolization",
+ "results": {
+  "qe3": {
+   "0x215000": {
+    "accessor": "dlmalloc+0xab7",
+    "stage": "S0_OR_POST",
+    "active": 0,
+    "class": "allocator heap frontier (marshal/body allocs)"
+   },
+   "0x363000": {
+    "accessor": "__atfield_pretouch_<field>+0x4ec",
+    "stage": "S2_PRETOUCH",
+    "active": 1,
+    "class": "pretouch sequence stack slot"
+   },
+   "0x364000": {
+    "accessor": "enclave_entry+0x4d",
+    "stage": "S0_OR_POST",
+    "active": 0,
+    "class": "OENTRY prologue stack frame"
+   }
+  },
+  "sgxwallet": {
+   "0x2c4000": {
+    "accessor": "dlmalloc+0x25e (1010 faults identical)",
+    "stage": "S0_OR_POST",
+    "active": 0,
+    "class": "shared allocator bookkeeping page"
+   }
+  }
+ },
+ "conclusion": "residual rewalk pages are re-dirtied by bridge/mechanism-layer accessors (dlmalloc, OENTRY prologue, pretouch stack slot) on every call - not by ENCLU microcode and not by field-semantic code; in-workset re-dirty, not coverage gap"
+}

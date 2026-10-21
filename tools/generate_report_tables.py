@@ -43,9 +43,12 @@ def short_fn(fn: str, field_meta: dict | None = None) -> str:
 def structural_rewalk_only(groups: dict, page_origins: dict) -> bool:
     """True iff the field shows nonzero residual rewalks AND every rewalked page is
     both already inside the installed ready set (``missing_from_s2 == 0``) and a
-    dynamic heap/stack/thread-data page (in-workset re-dirty each entry), i.e.
-    zero-rewalk is structurally unattainable regardless of pretouch correctness.
-    A field rewalking any out-of-set or code/rodata page stays measurable."""
+    dynamic heap/stack/thread-data page. Accessor attribution on every residual
+    page (``experiments/rewalk_attribution.json``: per-page strict retraction +
+    AEP ``encl_rip_rva`` symbolization) shows bridge/mechanism-layer writes —
+    ``dlmalloc`` heap-frontier bookkeeping, ``enclave_entry`` prologue stack,
+    and pretouch-sequence stack slots — not field-semantic code. A field
+    rewalking any out-of-set or code/rodata page stays measurable."""
     events = groups["groupB_dynamic_xr"].get("clean_nonzero_rewalk_events", [])
     if not events:
         return False
@@ -477,7 +480,7 @@ def main() -> None:
     lines.append("")
     excluded_instances = total_field_instances - measurable_field_instances
     excluded_attempts = total_attempts - measurable_attempts
-    lines.append(f"- **Full Denominator**: {total_field_instances} Field instances / {total_attempts} entries across 5 rounds; {excluded_instances} instances / {excluded_attempts} entries are excluded from the zero-rewalk aggregate because every residual rewalk page is an in-workset (`missing_from_s2 == 0`) dynamic heap/stack/thread-data page (re-dirty per entry, structural), listed individually in the table above.")
+    lines.append(f"- **Full Denominator**: {total_field_instances} Field instances / {total_attempts} entries across 5 rounds; {excluded_instances} instances / {excluded_attempts} entries are excluded from the zero-rewalk aggregate because every residual rewalk page is an in-workset (`missing_from_s2 == 0`) dynamic heap/stack/thread-data page whose accessor is bridge/mechanism-layer (dlmalloc heap-frontier, OENTRY prologue stack, pretouch stack slot — see `experiments/rewalk_attribution.json`), not field-semantic code, listed individually in the table above.")
     lines.append(f"- **Exact Per-Observation Totals Across the {measurable_field_instances} Field Instances Without Inherent Dynamic-Page Rewalk ({measurable_attempts} total Field entries across 5 rounds)**:")
     lines.append(f"  - **Group B (`dynamic_xr`, Default `XR`)**: **{measurable_b_clean} / {measurable_attempts}** clean (`s3_aex=0`) observations, **{measurable_b_contam} / {measurable_attempts}** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **{measurable_b_clean_zero} / {measurable_b_clean}** achieved `0` residual page-table A/D re-walks.")
     lines.append(f"  - **Group C (`dynamic_refined`, `X-only`)**: **{measurable_c_clean} / {measurable_attempts}** clean (`s3_aex=0`) observations, **{measurable_c_contam} / {measurable_attempts}** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **{measurable_c_clean_zero} / {measurable_c_clean}** achieved `0` residual page-table A/D re-walks.")
