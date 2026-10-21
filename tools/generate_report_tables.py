@@ -42,13 +42,16 @@ def short_fn(fn: str, field_meta: dict | None = None) -> str:
 
 def structural_rewalk_only(groups: dict, page_origins: dict) -> bool:
     """True iff the field shows nonzero residual rewalks AND every rewalked page is
-    a dynamic heap/stack/thread-data page (in-workset re-dirty each entry), i.e.
+    both already inside the installed ready set (``missing_from_s2 == 0``) and a
+    dynamic heap/stack/thread-data page (in-workset re-dirty each entry), i.e.
     zero-rewalk is structurally unattainable regardless of pretouch correctness.
-    A field rewalking any code/rodata page stays measurable in the aggregate."""
+    A field rewalking any out-of-set or code/rodata page stays measurable."""
     events = groups["groupB_dynamic_xr"].get("clean_nonzero_rewalk_events", [])
     if not events:
         return False
     for ev in events:
+        if ev.get("missing_from_s2", 0) > 0:
+            return False
         for page in ev.get("s3_pages", []):
             origins = page_origins.get(int(page, 16), set())
             if not origins or not (origins & DYNAMIC_PAGE_ORIGINS):
@@ -71,6 +74,7 @@ def main() -> None:
     lines.append("# ATField-SGX Dynamic Workset Explorer & Hardware Verification (`dynamic`)")
     lines.append("")
     lines.append("Real-target tables in this document are generated from `experiments/evaluation_results.json`, `experiments/strategy_comparison.json`, `experiments/traces_manifest.json`, and `witnesses/<target>/witness_ledger.json` via `python3 tools/generate_report_tables.py`; SQLite research history is preserved separately under `fixtures/sqlite/`.")
+    lines.append("- **Acquisition-Lineage Note**: Every discovery and evaluation measurement reported here was collected by the Python `controller.py` + `libatfield_native_sgx.so` native-collector chain (including target-specific `scenarios.json` where present, e.g. the eHSM-opt SM4 coupled constraints). The TypeScript `lib/explorer` acquisition path — which mutates marshaled ECALL parameters via the native interposer — is a separate, newer chain and contributes **no** numbers to these tables.")
     lines.append("")
     lines.append("- **Frozen Initial Hardware Prototype Tag**: `v0-hardware-prototype-frozen` (`7daae4f82ba5380f1ef96c5c0f2f273e01ab360a`)")
     lines.append(f"- **Unified Collector (`build/libatfield_native_sgx.so`) SHA-256 across Discovery & Evaluation**: `{interpose_sha}`")
@@ -425,6 +429,8 @@ def main() -> None:
     lines.append("| Sample | Field | Total Attempts | Group A Clean `0`-Rewalk / Clean (`med / max`) | **Group B (`XR` Default) Clean `0`-Rewalk / Clean (`med / max`)** | Group B Interrupt-Contaminated Count (`max` pages) | Group C (`X-only`) Clean `0`-Rewalk / Clean (`med / max`) | Group C Interrupt-Contaminated Count (`max` pages) | Group A -> B -> C Cold-TLB `S2` Median TSC Ticks |")
     lines.append("|---|---|---:|---|---|---|---:|---|---|")
 
+    total_attempts = 0
+    total_field_instances = 0
     measurable_attempts = 0
     measurable_field_instances = 0
     measurable_b_clean = 0
@@ -444,6 +450,8 @@ def main() -> None:
             gB = groups["groupB_dynamic_xr"]
             gC = groups["groupC_dynamic_refined"]
             att = gB["total_attempts"]
+            total_attempts += att
+            total_field_instances += 1
             page_origins = _load_page_origins(s)
             structural_only = structural_rewalk_only(groups, page_origins)
             if not structural_only:
@@ -467,6 +475,9 @@ def main() -> None:
             )
 
     lines.append("")
+    excluded_instances = total_field_instances - measurable_field_instances
+    excluded_attempts = total_attempts - measurable_attempts
+    lines.append(f"- **Full Denominator**: {total_field_instances} Field instances / {total_attempts} entries across 5 rounds; {excluded_instances} instances / {excluded_attempts} entries are excluded from the zero-rewalk aggregate because every residual rewalk page is an in-workset (`missing_from_s2 == 0`) dynamic heap/stack/thread-data page (re-dirty per entry, structural), listed individually in the table above.")
     lines.append(f"- **Exact Per-Observation Totals Across the {measurable_field_instances} Field Instances Without Inherent Dynamic-Page Rewalk ({measurable_attempts} total Field entries across 5 rounds)**:")
     lines.append(f"  - **Group B (`dynamic_xr`, Default `XR`)**: **{measurable_b_clean} / {measurable_attempts}** clean (`s3_aex=0`) observations, **{measurable_b_contam} / {measurable_attempts}** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **{measurable_b_clean_zero} / {measurable_b_clean}** achieved `0` residual page-table A/D re-walks.")
     lines.append(f"  - **Group C (`dynamic_refined`, `X-only`)**: **{measurable_c_clean} / {measurable_attempts}** clean (`s3_aex=0`) observations, **{measurable_c_contam} / {measurable_attempts}** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **{measurable_c_clean_zero} / {measurable_c_clean}** achieved `0` residual page-table A/D re-walks.")

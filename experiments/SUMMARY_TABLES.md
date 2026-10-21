@@ -1,6 +1,7 @@
 # ATField-SGX Dynamic Workset Explorer & Hardware Verification (`dynamic`)
 
 Real-target tables in this document are generated from `experiments/evaluation_results.json`, `experiments/strategy_comparison.json`, `experiments/traces_manifest.json`, and `witnesses/<target>/witness_ledger.json` via `python3 tools/generate_report_tables.py`; SQLite research history is preserved separately under `fixtures/sqlite/`.
+- **Acquisition-Lineage Note**: Every discovery and evaluation measurement reported here was collected by the Python `controller.py` + `libatfield_native_sgx.so` native-collector chain (including target-specific `scenarios.json` where present, e.g. the eHSM-opt SM4 coupled constraints). The TypeScript `lib/explorer` acquisition path — which mutates marshaled ECALL parameters via the native interposer — is a separate, newer chain and contributes **no** numbers to these tables.
 
 - **Frozen Initial Hardware Prototype Tag**: `v0-hardware-prototype-frozen` (`7daae4f82ba5380f1ef96c5c0f2f273e01ab360a`)
 - **Unified Collector (`build/libatfield_native_sgx.so`) SHA-256 across Discovery & Evaluation**: `b500f38eeb1c28d401c193bada17352b3d5cec77145b80eec57198acedb695e3`
@@ -221,6 +222,7 @@ Real-target tables in this document are generated from `experiments/evaluation_r
 | `ehsm-opt-2` | `ehsm_create_aes_key` | 5 | 0/5 (`36 / 36`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `8,222,848` -> **`386,762`** -> `377,524` |
 | `ehsm-opt-2` | `ehsm_generate_datakey` | 5 | 0/5 (`35 / 43`) | **5/5** (`0 / 0`) | 0 (`max=0p`) | 5/5 (`0 / 0`) | 0 (`max=0p`) | `2,900,362` -> **`292,298`** -> `289,806` |
 
+- **Full Denominator**: 19 Field instances / 320 entries across 5 rounds; 3 instances / 25 entries are excluded from the zero-rewalk aggregate because every residual rewalk page is an in-workset (`missing_from_s2 == 0`) dynamic heap/stack/thread-data page (re-dirty per entry, structural), listed individually in the table above.
 - **Exact Per-Observation Totals Across the 16 Field Instances Without Inherent Dynamic-Page Rewalk (295 total Field entries across 5 rounds)**:
   - **Group B (`dynamic_xr`, Default `XR`)**: **295 / 295** clean (`s3_aex=0`) observations, **0 / 295** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **295 / 295** achieved `0` residual page-table A/D re-walks.
   - **Group C (`dynamic_refined`, `X-only`)**: **295 / 295** clean (`s3_aex=0`) observations, **0 / 295** interrupt-contaminated (`s3_aex>0`) observations; among clean observations, **295 / 295** achieved `0` residual page-table A/D re-walks.
