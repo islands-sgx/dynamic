@@ -69,7 +69,7 @@ def make_layout_spec(sample: str, encl_path: Path | None = None) -> str:
     gate_rva = p_end - 4096
     return (
         f"tcs={tcs_rva:x};ssa={ssa_rva:x};gm={gm_rva:x};active={active_rva:x};"
-        f"pretouch={p_start:x}:{p_end:x};gate={gate_rva:x};stack={stack_lo:x}:{stack_hi:x};"
+        f"pretouch={p_start:x}:{p_end:x};gate={gate_rva:x}:{gate_rva + 0x1000:x};stack={stack_lo:x}:{stack_hi:x};"
         f"excl={','.join(excl)}"
     )
 
@@ -129,6 +129,37 @@ def resolve_enclave_path(tdir: Path, mode: str, manifest: dict | None = None) ->
     raise ValueError(f"unknown mode: {mode}")
 
 
+
+def manifest_run_id(sample: str, mode: str) -> str:
+    import hashlib as _h
+    return _h.sha256(f"{sample}:{mode}".encode()).hexdigest()[:32]
+
+
+def manifest_layout_epoch(tdir: Path) -> str:
+    rj = tdir / "enclave.dynamic_xr.ready.json"
+    if rj.is_file():
+        try:
+            return str(json.loads(rj.read_text()).get("layout_epoch") or 1)
+        except Exception:
+            return "1"
+    return "1"
+
+
+def manifest_bundle_sha(tdir: Path) -> str:
+    for cand in ("enclave.dynamic_xr.ready.json", "workset.dynamic_xr.json", "target_manifest.json"):
+        f = tdir / cand
+        if f.is_file():
+            return sha256_file(f)
+    return "0" * 64
+
+
+def atfield_mode_for(mode: str, ipi_mask: int) -> str:
+    if ipi_mask == 7:
+        return "profile"
+    if ipi_mask == 3:
+        return "verify-pretouch"
+    return "explore"
+
 def run_sample(
     sample: str,
     mode: str = "profile_4gate",
@@ -179,13 +210,20 @@ def run_sample(
 
     with tempfile.TemporaryDirectory(prefix=f"atfield_run_{sample}_") as work_cwd:
         trace_file = Path(work_cwd) / "trace.jsonl"
+        encl_sha = sha256_file(encl)
         env_args = [
             f"LD_PRELOAD={INTERPOSE_SO}",
             f"LD_LIBRARY_PATH={LD_LIB_PATH}",
             f"ATFIELD_ENCLAVE_PATH={encl}",
             f"ATFIELD_LAYOUT_SPEC={spec}",
             f"ATFIELD_SCHEMA_SPEC={schema_spec}",
-            f"ATFIELD_TRACE_OUT={trace_file}",
+            f"ATFIELD_TRACE_PATH={trace_file}",
+            f"ATFIELD_RUN_ID={manifest_run_id(sample, mode)}",
+            f"ATFIELD_SAMPLE={sample}",
+            f"ATFIELD_MODE={atfield_mode_for(mode, ipi_mask)}",
+            f"ATFIELD_ENCLAVE_SHA256={encl_sha}",
+            f"ATFIELD_LAYOUT_EPOCH={manifest_layout_epoch(tdir)}",
+            f"ATFIELD_BUNDLE_MANIFEST_SHA256={manifest_bundle_sha(tdir)}",
             f"ATFIELD_USE_4GATE={use_4gate}",
             f"ATFIELD_IPI_MASK={ipi_mask}",
             f"ATFIELD_ENCL_CPU={encl_cpu}",
