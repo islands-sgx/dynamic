@@ -238,6 +238,8 @@ def run_sample(
             f"ATFIELD_STRICT_MODE={strict_mode}",
             f"ATFIELD_DUMP_DIR={dump_dir}",
         ]
+        if os.environ.get("ATFIELD_S3_ARM_FILE"):
+            env_args.append(f"ATFIELD_S3_ARM_FILE={os.environ['ATFIELD_S3_ARM_FILE']}")
         if ready_bin is not None and is_pure_prod:
             if not ready_bin.is_file():
                 raise FileNotFoundError(f"Required ReadyTable missing for protected mode {mode}: {ready_bin}")

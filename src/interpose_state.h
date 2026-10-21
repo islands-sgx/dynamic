@@ -170,6 +170,8 @@ static char last_invalid_reason[128] = "";
 static int strict_mode = 0;
 static int strict_config_invalid = 0;
 static uint8_t strict_selector_has_map[64];
+static uint8_t s3_arm_page[MAX_TRACKED_PAGES];
+static int s3_arm_any = 0;
 static uint8_t strict_allowed_page[64][MAX_TRACKED_PAGES];
 static volatile uint8_t strict_retracted[MAX_TRACKED_PAGES];
 static int active_strict_selector = -1;

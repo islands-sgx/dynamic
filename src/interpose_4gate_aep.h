@@ -633,6 +633,15 @@ static void *watcher_loop(void *arg) {
                 if (trigger_tlb_shootdown_ipi_verified(50u)) cur_ipi_ok_mask |= 4;
                 clear_ad_only();
             }
+            if (s3_arm_any) {
+                for (int i = 0; i < num_pages; i++) {
+                    if (!s3_arm_page[i]) continue;
+                    *pte_slots[i] = 0;
+                    checked_flush_tlb(encl_base + page_rvas[i]);
+                    strict_retracted[i] = 1;
+                }
+                __atomic_thread_fence(__ATOMIC_SEQ_CST);
+            }
             pthread_mutex_lock(&phase_mutex);
             if (watcher_active_slot < 0) {
                 mark_invalid("field_gate_order_invalid");
@@ -834,6 +843,25 @@ static void setup_enclave_ptes(void) {
                 mark_invalid("get_mappings_missing_pte");
             }
             if (m) free(m);
+        }
+    }
+
+    memset(s3_arm_page, 0, sizeof(s3_arm_page));
+    const char *s3arm_path = getenv("ATFIELD_S3_ARM_FILE");
+    if (s3arm_path && *s3arm_path) {
+        FILE *af = fopen(s3arm_path, "r");
+        if (af) {
+            char *aline = (char *)malloc(65536);
+            while (aline && fgets(aline, 65536, af)) {
+                char *cur = aline, *nxt = NULL;
+                uint64_t rva = strtoull(cur, &nxt, 16);
+                if (nxt == cur) continue;
+                for (int i = 0; i < num_pages; i++) {
+                    if (page_rvas[i] == rva) { s3_arm_page[i] = 1; s3_arm_any = 1; break; }
+                }
+            }
+            free(aline);
+            fclose(af);
         }
     }
 

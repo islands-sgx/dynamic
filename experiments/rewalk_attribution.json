@@ -1,36 +1,33 @@
 {
- "schema": "rewalk-attribution-v1",
+ "schema": "rewalk-attribution-v2",
  "date": "2026-10-21",
- "method": "strict_ready_file per-page retraction + aex.fault_events encl_rip_rva symbolization",
+ "method": "per-page strict retraction at gate50 (S3-only arm via ATFIELD_S3_ARM_FILE) + AEP encl_rip_rva symbolization; first-toucher attribution via ecall-mode retraction",
  "results": {
   "qe3": {
    "0x215000": {
-    "accessor": "dlmalloc+0xab7",
-    "stage": "S0_OR_POST",
-    "active": 0,
-    "class": "allocator heap frontier (marshal/body allocs)"
+    "s3_accessor": "do_egetkey+0x14 (EGETKEY leaf, RIP at enclu insn = microcode signature)",
+    "first_toucher": "dlmalloc+0xab7 (S0 marshal alloc) + pretouch (S2)",
+    "class": "ENCLU operand write: EGETKEY keyrequest buffer on heap"
    },
    "0x363000": {
-    "accessor": "__atfield_pretouch_<field>+0x4ec",
-    "stage": "S2_PRETOUCH",
-    "active": 1,
-    "class": "pretouch sequence stack slot"
+    "s3_accessor": "do_ereport+0x15 (EREPORT leaf)",
+    "first_toucher": "__atfield_pretouch+0x4ec (S2 pretouch stack slot)",
+    "class": "ENCLU operand write: EREPORT operand on stack"
    },
    "0x364000": {
-    "accessor": "enclave_entry+0x4d",
-    "stage": "S0_OR_POST",
-    "active": 0,
-    "class": "OENTRY prologue stack frame"
+    "s3_accessor": "do_ereport+0x15 (EREPORT leaf)",
+    "first_toucher": "enclave_entry+0x4d (S0) + pretouch",
+    "class": "ENCLU operand write: EREPORT operand on stack"
    }
   },
   "sgxwallet": {
    "0x2c4000": {
-    "accessor": "dlmalloc+0x25e (1010 faults identical)",
-    "stage": "S0_OR_POST",
-    "active": 0,
-    "class": "shared allocator bookkeeping page"
+    "s3_accessor": "do_egetkey+0x14 (EGETKEY leaf; first S3-arm fault), then 1009 refaults from gmpz_powm_ui/invert/strlen (shared working page)",
+    "first_toucher": "dlmalloc+0x25e (S0 alloc)",
+    "class": "ENCLU operand write: EGETKEY keyrequest on shared heap page (generate_sek/set_sek seal paths)"
    }
   }
  },
- "conclusion": "residual rewalk pages are re-dirtied by bridge/mechanism-layer accessors (dlmalloc, OENTRY prologue, pretouch stack slot) on every call - not by ENCLU microcode and not by field-semantic code; in-workset re-dirty, not coverage gap"
+ "conclusion": "all 25 residual rewalks are ENCLU leaf microcode writes to operand buffers (EGETKEY keyrequest / EREPORT operands) on in-workset dynamic pages after the S2 gate cleared A/D; pages ARE pretouched - leaves re-dirty them inside S3. Instruction-level causal attribution, not coverage gaps.",
+ "correction": "supersedes v1 which attributed causation to bridge/marshal machinery based on first-toucher faults only; the machinery touches are allocation/setup, the S3 re-accessor is the ENCLU leaf"
 }
