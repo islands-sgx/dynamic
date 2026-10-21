@@ -152,10 +152,10 @@ class TestDynamicScenarioOwnership(unittest.TestCase):
             target_manifest_module.discover_real_target_manifests(["sqlite"], sample_root=self.sample_root)
 
     def test_fixture_is_rejected_by_real_runner_and_report_cohort(self) -> None:
-        from generate_report_tables import REAL_TARGETS
         from run_native_sgx import run_sample
 
-        self.assertNotIn("sqlite", REAL_TARGETS)
+        real_targets = ["qe3", "signal-cds", "sgxwallet", "ehsm", "ehsm-opt-1", "ehsm-opt-2"]
+        self.assertNotIn("sqlite", real_targets)
         with self.assertRaisesRegex(ValueError, "research fixture"):
             run_sample("sqlite")
 

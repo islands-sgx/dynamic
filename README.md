@@ -1,6 +1,6 @@
 # ATField-SGX Dynamic Workset Explorer & Hardware Verification (`dynamic`)
 
-Real-target tables in this document are generated from `experiments/evaluation_results.json`, `experiments/strategy_comparison.json`, `experiments/traces_manifest.json`, and `witnesses/<target>/witness_ledger.json` via `python3 tools/generate_report_tables.py`; SQLite research history is preserved separately under `fixtures/sqlite/`.
+Real-target tables in this document are generated from `experiments/evaluation_results.json`, `experiments/strategy_comparison.json`, `experiments/traces_manifest.json`, and `witnesses/<target>/witness_ledger.json` via `bun cli/report.ts`; SQLite research history is preserved separately under `fixtures/sqlite/`.
 - **Acquisition-Lineage Note**: Every discovery and evaluation measurement reported here was collected by the Python `controller.py` + `libatfield_native_sgx.so` native-collector chain (including target-specific `scenarios.json` where present, e.g. the eHSM-opt SM4 coupled constraints). The TypeScript `lib/explorer` acquisition path — which mutates marshaled ECALL parameters via the native interposer — is a separate, newer chain and contributes **no** numbers to these tables.
 
 - **Frozen Initial Hardware Prototype Tag**: `v0-hardware-prototype-frozen` (`7daae4f82ba5380f1ef96c5c0f2f273e01ab360a`)
@@ -329,5 +329,5 @@ python3 controller.py qe3 signal-cds sgxwallet ehsm ehsm-opt-1 ehsm-opt-2
 python3 tools/evaluate_worksets.py
 
 # 6. Generate summary tables from JSON evidence
-python3 tools/generate_report_tables.py
+bun cli/report.ts
 ```
