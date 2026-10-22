@@ -14,6 +14,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -278,6 +279,7 @@ class TestExplorationKernelAndReplace(unittest.TestCase):
         self.assertNotEqual(fb0["state_obs_key"], fb2["state_obs_key"])
         self.assertTrue(fb0["s3_field_effects"].isdisjoint(fbb["s3_field_effects"]))
 
+    @unittest.skipUnless(os.environ.get("ATFIELD_RUN_HARDWARE_TESTS") == "1", "requires explicit SGX hardware opt-in")
     def test_hardware_replace_scalar_executes_once_and_rejects_duplicate_token(self) -> None:
         """On real SGX hardware (`challenge-bench`), verify that:
         - `set_scalar:1:0:0:2` inserts an extra call before the normal call (10 ECALL records),
@@ -301,6 +303,7 @@ class TestExplorationKernelAndReplace(unittest.TestCase):
         self.assertTrue(res_dup["measurement_invalid"])
         self.assertEqual([r["tag"] for r in res_dup["records"] if r["ecall_index"] == 1], ["replace_scalar_p0_val_2"])
 
+    @unittest.skipUnless(os.environ.get("ATFIELD_RUN_HARDWARE_TESTS") == "1", "requires explicit SGX hardware opt-in")
     def test_c2_overwriting_setter_and_c7_sgx_sdk_cmac_token_chain_on_hardware(self) -> None:
         """Verify on real SGX hardware (`challenge-bench`, 8 challenges, 2 Fields) that:
         1. C2 (overwriting setter): `set_scalar:1:0:0:2` is overwritten by normal `ecall_configure_stage(0)`
