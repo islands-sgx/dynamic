@@ -201,6 +201,28 @@ export function captureFormalRegistrySnapshot(samples: readonly string[]): Forma
     }),
   };
 }
+export function verifyAcceptedWorkset(target: Record<string, unknown>, artifactRoot: string): boolean {
+  try {
+    const sample = target.sample;
+    const relativePath = target.worksetPath;
+    const expectedSha256 = target.worksetSha256;
+    if (typeof sample !== "string" || !/^[a-zA-Z0-9][a-zA-Z0-9_-]*$/.test(sample) ||
+        relativePath !== sample + "/workset.v2.json" || typeof expectedSha256 !== "string" ||
+        !/^[a-f0-9]{64}$/.test(expectedSha256)) return false;
+    const root = realpathSync(artifactRoot);
+    const candidate = path.resolve(root, relativePath);
+    const candidateRelative = path.relative(root, candidate);
+    if (candidateRelative === ".." || candidateRelative.startsWith(".." + path.sep) || path.isAbsolute(candidateRelative))
+      return false;
+    const worksetPath = realpathSync(candidate);
+    const worksetRelative = path.relative(root, worksetPath);
+    if (worksetRelative === ".." || worksetRelative.startsWith(".." + path.sep) || path.isAbsolute(worksetRelative))
+      return false;
+    return createHash("sha256").update(readFileSync(worksetPath)).digest("hex") === expectedSha256;
+  } catch {
+    return false;
+  }
+}
 export function validateSampleSelection(samples: readonly string[], _pilot: boolean): void {
   if (!samples.length) throw new TypeError("at least one sample is required");
   if (new Set(samples).size !== samples.length) throw new TypeError("sample IDs must be unique");
@@ -208,7 +230,7 @@ export function validateSampleSelection(samples: readonly string[], _pilot: bool
     throw new TypeError("sample IDs must be simple path-safe identifiers");
 }
 export function formalTargetsAccepted(samples: readonly string[], targets: readonly Record<string, unknown>[], failures: readonly string[], budget: number,
-  registrySnapshot = captureFormalRegistrySnapshot(samples)): boolean {
+  registrySnapshot = captureFormalRegistrySnapshot(samples), worksetArtifactRoot?: string): boolean {
   try { validateSampleSelection(samples, false); } catch { return false; }
   if (failures.length || targets.length !== samples.length || registrySnapshot.targets.length !== samples.length) return false;
   const actual = targets.map((target) => target.sample).sort();
@@ -219,7 +241,10 @@ export function formalTargetsAccepted(samples: readonly string[], targets: reado
       const audits = Array.isArray(target.planningAudits) ? target.planningAudits : [];
       const targetConfig = registrySnapshot.targets.find((item) => item.sample === target.sample);
       if (!targetConfig || target.formalConfigSha256 !== registrySnapshot.sha256 ||
-          target.acquisitionStrategy !== targetConfig.strategy || !Array.isArray(target.sourceTraces)) return false;
+          target.acquisitionStrategy !== targetConfig.strategy || !Array.isArray(target.sourceTraces) ||
+          target.worksetPath !== target.sample + "/workset.v2.json" ||
+          typeof target.worksetSha256 !== "string" || !/^[a-f0-9]{64}$/.test(target.worksetSha256) ||
+          (worksetArtifactRoot !== undefined && !verifyAcceptedWorkset(target, worksetArtifactRoot))) return false;
       const expectedPhases = targetConfig.phases;
       const sourceTraceIds = new Set(target.sourceTraces.flatMap((item) => !!item && typeof item === "object" &&
         typeof (item as Record<string, unknown>).run_id === "string" ? [(item as Record<string, unknown>).run_id as string] : []));
@@ -592,7 +617,10 @@ async function run(): Promise<void> {
       }
       const corpus = readFinalizableCorpus(corpusPath, bundlePath);
       const workset = buildWorkset(profile.bundle, corpus.map((t) => t.parsedTrace));
-      writeJson(path.join(dest, "workset.v2.json"), workset);
+      const worksetArtifactPath = path.join(dest, "workset.v2.json");
+      writeJson(worksetArtifactPath, workset);
+      const worksetPath = path.relative(out, worksetArtifactPath);
+      const worksetSha256 = createHash("sha256").update(readFileSync(worksetArtifactPath)).digest("hex");
       const holdoutCoverageByAttempt = new Map<string, S3HoldoutCoverage>();
       for (const p of phases) {
         const spec = phaseSpecs.find((item) => item.name === p.name);
@@ -728,6 +756,7 @@ async function run(): Promise<void> {
       const linkedExecutions = phaseSummaries.reduce((sum, phase) => sum + phase.linkedExecutions, 0);
       completed.push({ sample, bundleManifestSha256: profile.binding.bundleManifestSha256,
         formalConfigSha256: formalRegistrySnapshot.sha256, acquisitionStrategy: targetConfig.strategy, valid,
+        worksetPath, worksetSha256,
         phases: phaseSummaries, fields, planningAudits,
         accepted: candidates.filter((x) => x.accepted).length,
         rejected: candidates.filter((x) => !x.accepted).length,
@@ -738,8 +767,9 @@ async function run(): Promise<void> {
       checkFreeze(sources, collector, collectorHash, inputs);
     }
     const success = pilot
-      ? failures.length === 0 && completed.length === samples.length && completed.every((target) => target.valid === true)
-      : formalTargetsAccepted(samples, completed, failures, budget, formalRegistrySnapshot);
+      ? failures.length === 0 && completed.length === samples.length && completed.every((target) =>
+        target.valid === true && verifyAcceptedWorkset(target, out))
+      : formalTargetsAccepted(samples, completed, failures, budget, formalRegistrySnapshot, out);
     if (!success) {
       failures.push(pilot ? "pilot targets did not pass their phase validation" :
         "formal acceptance requires every requested target and configured phase to meet its seed, trace, workset, candidate, and holdout evidence policy");

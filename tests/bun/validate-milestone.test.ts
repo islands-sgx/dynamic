@@ -1,9 +1,13 @@
+import { createHash } from "node:crypto";
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { describe, expect, test } from "bun:test";
 import {
   FORMAL_SAMPLES, captureFormalRegistrySnapshot, compareS3HoldoutCoverage,
   formalPhaseSpecsForSample, formalSeedEvidenceFailure, formalTargetsAccepted,
   hasAppliedCoupledEvidence, linkedCandidateVerdictFailure, loadFormalHostSeeds,
-  resolveFormalHoldoutContract, validateSampleSelection,
+  resolveFormalHoldoutContract, validateSampleSelection, verifyAcceptedWorkset,
 } from "../../tools/validate-milestone.ts";
 import { linkedDataflowFailure } from "../../lib/explorer/linked-proof.ts";
 import type { CallCaptureDocument, CallCaptureEvent, ScalarMutationRule } from "../../lib/explorer/contract.ts";
@@ -143,6 +147,7 @@ function targetEvidence(sample: string, candidateRuns = 16, acceptedCompleteCand
   return {
     sample, valid: true, formalConfigSha256: snapshot.sha256, acquisitionStrategy: targetConfig.strategy,
     sourceTraces: specs.filter((spec) => spec.includeInWorkset).map((spec) => ({ run_id: "run-" + spec.id, sha256: "trace-" + spec.id })),
+    worksetPath: sample + "/workset.v2.json", worksetSha256: "00".repeat(32),
     planningAudits: specs.map((spec) => ({ phase: spec.name, seedId: spec.id, attempt: 0, coupledEncodable, linkedEncodable })),
     phases: specs.map((spec) => phaseEvidence(spec, phaseBudget,
       targetConfig.strategy === "baseline-only" ? 0 : acceptedCompleteCandidates, linkedExecutions)),
@@ -242,6 +247,27 @@ describe("formal milestone acceptance gates", () => {
         ? { ...p, baselineAccepted: false } : p) }
       : item);
     expect(formalTargetsAccepted(FORMAL_SAMPLES, rejectedSm4, [], 16)).toBe(false);
+  });
+
+  test("accepted workset binding rejects a changed artifact", () => {
+    const sample = "qe3";
+    const snapshot = captureFormalRegistrySnapshot([sample]);
+    const target = targetEvidence(sample);
+    const root = mkdtempSync(path.join(tmpdir(), "formal-workset-"));
+    const worksetPath = path.join(root, sample, "workset.v2.json");
+    const original = JSON.stringify({ schema: "atfield-workset-v2", source_traces: [] }) + "\n";
+    try {
+      mkdirSync(path.dirname(worksetPath), { recursive: true });
+      writeFileSync(worksetPath, original);
+      target.worksetSha256 = createHash("sha256").update(original).digest("hex");
+      expect(verifyAcceptedWorkset(target, root)).toBe(true);
+      expect(formalTargetsAccepted([sample], [target], [], 16, snapshot, root)).toBe(true);
+      writeFileSync(worksetPath, JSON.stringify({ schema: "atfield-workset-v2", source_traces: [], tampered: true }) + "\n");
+      expect(verifyAcceptedWorkset(target, root)).toBe(false);
+      expect(formalTargetsAccepted([sample], [target], [], 16, snapshot, root)).toBe(false);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 
   test("baseline-only registered bench phases isolate 100/1000 holdouts from training workset", () => {
