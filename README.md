@@ -316,11 +316,11 @@ bun cli/build-real-targets.ts
 python3 tools/edl_harness.py
 
 # 3. Compile the SGX-Step + AEP native interposer
-gcc -shared -fPIC -O2 -Wno-unused-result -DLIBSGXSTEP_SILENT=1 \
-  -Isrc -Ivendor/sgxstep src/native_sgx_interpose.c \
+nix develop ../sample#real-ehsm-protect --command cc -shared -fPIC -O2 -Wno-unused-result -DLIBSGXSTEP_SILENT=1 \
+  -Isrc -Ivendor/sgxstep src/native_sgx_interpose.c src/interpose_mutation.c \
   vendor/sgxstep/libsgxstep/pt.c vendor/sgxstep/libsgxstep/file.c \
-  vendor/sgxstep/libsgxstep/debug.c -ldl -lpthread \
-  -o build/libatfield_native_sgx.so
+  vendor/sgxstep/libsgxstep/debug.c -ldl -lpthread -lcrypto \
+  -Wl,--no-undefined -Wl,-z,defs -o build/libatfield_native_sgx.so
 
 # 4. Run 3-layer dynamic exploration & emit Group B (dynamic_xr) and Group C (dynamic) artifacts
 python3 controller.py qe3 signal-cds sgxwallet ehsm ehsm-opt-1 ehsm-opt-2

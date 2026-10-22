@@ -148,6 +148,14 @@ static inline atfield_aex_class_t atfield_classify_aex_event(
     return ATFIELD_AEX_UNEXPECTED;
 }
 
+static inline int atfield_proven_outside_field_window(
+    uint32_t current_stage, uint32_t active_flag, uint32_t host_gate,
+    int active_flag_valid, int watcher_slot_closed, int strict_retractions_clear)
+{
+    return current_stage == 4u && active_flag_valid && active_flag == 0u &&
+        host_gate == 80u && watcher_slot_closed && strict_retractions_clear;
+}
+
 static inline unsigned atfield_stage_index_from_state(uint32_t current_stage, uint32_t host_gate) {
     if (current_stage == 1u) return 0u; /* S0_BRIDGE / Gate A */
     if (current_stage == 2u) return 1u; /* S1_ENTER / Gate B */

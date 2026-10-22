@@ -1,11 +1,16 @@
 import { parseStrictJson } from "../bundle/profile-bundle.ts";
 import type { CanonicalRun } from "../runner/canonical-runner.ts";
 
-export const MUTATION_SPEC_VERSION = 1;
+export const MUTATION_SPEC_VERSION = 2;
+export const MUTATION_SPEC_VERSION_LEGACY = 1;
 export const MUTATION_SPEC_HEADER_BYTES = 88;
 export const MUTATION_SPEC_RULE_BYTES = 24;
 export const MUTATION_SPEC_SCALAR_OP_BYTES = 32;
+export const MUTATION_SPEC_PREFIX_OP_BYTES = 48;
+export const MUTATION_SPEC_BUDGET_OP_BYTES = 24;
+export const MUTATION_SPEC_MAX_PREFIX_OPS = 8;
 export const CALL_CAPTURE_SCHEMA = "atfield-call-capture-v1" as const;
+export const CALL_CAPTURE_MAX_BUF_PREFIX_BYTES = 128;
 
 export type MutationOpKind = "replace_scalar" | "mutate_buffer" | "extend_history";
 export type BufferSubOpKind = "xor_byte" | "fill_slice" | "write_le";
@@ -30,6 +35,37 @@ export interface ScalarMutationRule {
   byteOffset?: number;
   sliceLength?: number;
   repeatCount?: number;
+  prefixMutations?: PrefixMutation[];
+  dataflowTarget?: DataflowTarget;
+  expansionBudget?: { readonly perBufferBytes: number; readonly totalBytes: number };
+}
+
+/* A planned, recorded scalar write applied to an earlier call's buffer
+   contents, addressed by that call's (selectorOrdinal, selectorSeq). Each
+   applied prefix mutation is captured on that call's own mutation record so
+   the executed input is always derivable from the trace. */
+export interface PrefixMutation {
+  selectorOrdinal: number;
+  selectorSeq: number;
+  paramIndex: number;
+  byteOffset: number;
+  widthBytes: 1 | 2 | 4 | 8;
+  expectedBits: string;
+  replacementBits: string;
+}
+
+export interface DataflowTarget {
+  consumerGeneration: number;
+  consumerCallSeq: number;
+  consumerSelectorOrdinal: number;
+  consumerSelectorSeq: number;
+  consumerParamIndex: number;
+  consumerByteOffset: number;
+  consumerWidthBytes: 1 | 2 | 4 | 8;
+  baselineBits: string;
+  propagatedBits: string;
+  bufferByteLength: number;
+  elementSize: number;
 }
 
 export interface CapturedScalarBits {
@@ -46,7 +82,21 @@ export interface CapturedBufferInput {
   elementSize: number;
   byteLength: number;
   fnv1a64: string;
+  sha256?: string;
   prefixHex: string;
+  storageAddress?: string;
+}
+
+export interface CapturedBufferOutput {
+  paramIndex: number;
+  direction: "out" | "inout";
+  isString: boolean;
+  elementSize: number;
+  byteLength: number;
+  fnv1a64: string;
+  sha256?: string;
+  prefixHex: string;
+  storageAddress?: string;
 }
 
 export interface CapturedMutation {
@@ -58,6 +108,7 @@ export interface CapturedMutation {
   replacementBits: string;
   applied: boolean;
   reason: string | null;
+  byteOffset?: number;
 }
 
 export interface CapturedReturnValue {
@@ -74,6 +125,7 @@ export interface CallCaptureEvent {
   transportStatus: number;
   scalarInputs: CapturedScalarBits[];
   bufferInputs?: CapturedBufferInput[];
+  bufferOutputs?: CapturedBufferOutput[];
   retval: CapturedReturnValue | null;
   scalarOutputs: CapturedScalarBits[];
   mutation: CapturedMutation | null;
@@ -81,6 +133,7 @@ export interface CallCaptureEvent {
 
 export interface CallCaptureEnd {
   processReturnCode: number | null;
+  termination: "exited" | "signaled" | "timeout" | "unknown";
   timedOut: boolean;
   complete: boolean;
   ecallCount: number;
@@ -106,6 +159,7 @@ export interface CaptureExpectation extends MutationBinding {
     selectorOrdinal: number;
     selectorSeq: number;
     paramIndex: number;
+    prefixMutations?: Pick<PrefixMutation, "selectorOrdinal" | "selectorSeq">[];
   };
 }
 
@@ -184,6 +238,16 @@ function validateMutationRule(rule: ScalarMutationRule): void {
   integer(rule.selectorOrdinal, "selectorOrdinal");
   integer(rule.selectorSeq, "selectorSeq");
   integer(rule.paramIndex, "paramIndex");
+  const generation = integer(rule.targetGeneration ?? 1, "targetGeneration", 1);
+  const mode = integer(rule.execMode ?? 0, "execMode");
+  if (generation > 255 || mode > 4 || rule.selectorOrdinal >= 64 || rule.paramIndex >= 64) {
+    fail("mutation target is outside the protocol range");
+  }
+  if (rule.expansionBudget) {
+    integer(rule.expansionBudget.perBufferBytes, "expansionBudget.perBufferBytes", 1);
+    integer(rule.expansionBudget.totalBytes, "expansionBudget.totalBytes", 1);
+    if (rule.expansionBudget.perBufferBytes > 0xffffffff) fail("expansion buffer budget exceeds uint32");
+  }
   widthBytes(rule.widthBytes, "widthBytes");
   if (rule.signedness !== "unsigned" && rule.signedness !== "signed") {
     fail("signedness must be unsigned or signed");
@@ -194,6 +258,76 @@ function validateMutationRule(rule: ScalarMutationRule): void {
       bitsBigInt(rule.replacementBits, width, "replacementBits") >= max) {
     fail("mutation bits exceed the scalar width");
   }
+  const prefixes = rule.prefixMutations ?? [];
+  if (prefixes.length > MUTATION_SPEC_MAX_PREFIX_OPS) {
+    fail("too many prefix mutations");
+  }
+  const seenPrefixCalls = new Set<string>();
+  for (const [index, prefix] of prefixes.entries()) {
+    const label = "prefixMutations[" + index + "]";
+    if (!Number.isInteger(prefix.selectorOrdinal) || prefix.selectorOrdinal < 0 ||
+        prefix.selectorOrdinal >= 64) {
+      fail(label + ".selectorOrdinal out of range");
+    }
+    integer(prefix.selectorSeq, label + ".selectorSeq");
+    if (!Number.isInteger(prefix.paramIndex) || prefix.paramIndex < 0 || prefix.paramIndex >= 64) {
+      fail(label + ".paramIndex out of range");
+    }
+    if (!Number.isInteger(prefix.byteOffset) || prefix.byteOffset < 0 || prefix.byteOffset > 0xffffffff) {
+      fail(label + ".byteOffset out of range");
+    }
+    const pWidth = widthBytes(prefix.widthBytes, label + ".widthBytes");
+    const pMax = 1n << BigInt(pWidth * 8);
+    if (bitsBigInt(prefix.expectedBits, pWidth, label + ".expectedBits") >= pMax ||
+        bitsBigInt(prefix.replacementBits, pWidth, label + ".replacementBits") >= pMax) {
+      fail(label + " bits exceed the scalar width");
+    }
+    if (prefix.selectorOrdinal === rule.selectorOrdinal &&
+        BigInt(prefix.selectorSeq) === BigInt(rule.selectorSeq)) {
+      fail(label + " addresses the mutation target call");
+    }
+    const callKey = prefix.selectorOrdinal + ":" + prefix.selectorSeq;
+    if (seenPrefixCalls.has(callKey)) {
+      fail(label + " duplicates another prefix mutation target call");
+    }
+    seenPrefixCalls.add(callKey);
+  }
+  if (rule.dataflowTarget) {
+    const target = rule.dataflowTarget;
+    if ((rule.opKind ?? "replace_scalar") !== "mutate_buffer" ||
+        rule.bufferSubOp !== "write_le" ||
+        mode !== 0 ||
+        rule.byteOffset === undefined ||
+        (rule.sliceLength !== undefined && rule.sliceLength !== rule.widthBytes) ||
+        prefixes.length !== 0) {
+      fail("dataflowTarget requires a single mode-0 write_le producer mutation");
+    }
+    const consumerGeneration = integer(target.consumerGeneration, "dataflowTarget.consumerGeneration", 1);
+    const consumerCallSeq = integer(target.consumerCallSeq, "dataflowTarget.consumerCallSeq");
+    const consumerSelectorOrdinal = integer(target.consumerSelectorOrdinal, "dataflowTarget.consumerSelectorOrdinal");
+    integer(target.consumerSelectorSeq, "dataflowTarget.consumerSelectorSeq");
+    const consumerParamIndex = integer(target.consumerParamIndex, "dataflowTarget.consumerParamIndex");
+    const consumerByteOffset = integer(target.consumerByteOffset, "dataflowTarget.consumerByteOffset");
+    const consumerWidth = widthBytes(target.consumerWidthBytes, "dataflowTarget.consumerWidthBytes");
+    const bufferByteLength = integer(target.bufferByteLength, "dataflowTarget.bufferByteLength", 1);
+    integer(target.elementSize, "dataflowTarget.elementSize", 1);
+    if (consumerGeneration !== generation ||
+        consumerSelectorOrdinal >= 64 || consumerParamIndex >= 64 ||
+        consumerByteOffset > 0xffffffff || bufferByteLength > 0xffffffff ||
+        target.elementSize > 0xffffffff ||
+        consumerCallSeq === 0 ||
+        consumerWidth !== rule.widthBytes ||
+        consumerByteOffset !== rule.byteOffset ||
+        consumerByteOffset > bufferByteLength - consumerWidth) {
+      fail("dataflowTarget is outside the producer mutation's verified buffer");
+    }
+    validateBits(target.baselineBits, consumerWidth, "dataflowTarget.baselineBits");
+    validateBits(target.propagatedBits, consumerWidth, "dataflowTarget.propagatedBits");
+    if (target.baselineBits !== rule.expectedBits ||
+        target.propagatedBits !== rule.replacementBits) {
+      fail("dataflowTarget values differ from the producer mutation");
+    }
+  }
 }
 
 export function encodeMutationSpec(binding: MutationBinding, rule: ScalarMutationRule): Uint8Array {
@@ -201,12 +335,15 @@ export function encodeMutationSpec(binding: MutationBinding, rule: ScalarMutatio
   digestBytes(binding.marshalLayoutSha256, "marshalLayoutSha256");
   validateMutationRule(rule);
 
-  const ruleRecordBytes = MUTATION_SPEC_RULE_BYTES + MUTATION_SPEC_SCALAR_OP_BYTES;
+  const prefixes = rule.prefixMutations ?? [];
+  const ruleRecordBytes = MUTATION_SPEC_RULE_BYTES + MUTATION_SPEC_SCALAR_OP_BYTES +
+    prefixes.length * MUTATION_SPEC_PREFIX_OP_BYTES +
+    (rule.expansionBudget ? MUTATION_SPEC_BUDGET_OP_BYTES : 0);
   const totalBytes = MUTATION_SPEC_HEADER_BYTES + ruleRecordBytes;
   const bytes = new Uint8Array(totalBytes);
   bytes.set(new TextEncoder().encode("ATFMUT\0\0"), 0);
   const view = new DataView(bytes.buffer);
-  putU16(view, 8, MUTATION_SPEC_VERSION);
+  putU16(view, 8, prefixes.length > 0 || rule.expansionBudget ? MUTATION_SPEC_VERSION : MUTATION_SPEC_VERSION_LEGACY);
   putU16(view, 10, MUTATION_SPEC_HEADER_BYTES);
   putU32(view, 12, totalBytes);
   putU32(view, 16, 1);
@@ -226,7 +363,7 @@ export function encodeMutationSpec(binding: MutationBinding, rule: ScalarMutatio
   putU16(view, ruleOffset + 6, ruleFlags);
   putU32(view, ruleOffset + 8, rule.selectorOrdinal);
   view.setBigUint64(ruleOffset + 12, BigInt(rule.selectorSeq), true);
-  putU16(view, ruleOffset + 20, 1);
+  putU16(view, ruleOffset + 20, 1 + prefixes.length + (rule.expansionBudget ? 1 : 0));
   putU16(view, ruleOffset + 22, 0);
 
   const opOffset = ruleOffset + MUTATION_SPEC_RULE_BYTES;
@@ -262,6 +399,28 @@ export function encodeMutationSpec(binding: MutationBinding, rule: ScalarMutatio
     putU64(view, opOffset + 16, bitsBigInt(rule.expectedBits, rule.widthBytes, "expectedBits"));
     putU64(view, opOffset + 24, bitsBigInt(rule.replacementBits, rule.widthBytes, "replacementBits"));
   }
+  for (const [index, prefix] of prefixes.entries()) {
+    const pOff = opOffset + MUTATION_SPEC_SCALAR_OP_BYTES + index * MUTATION_SPEC_PREFIX_OP_BYTES;
+    putU16(view, pOff, 4);
+    putU16(view, pOff + 2, 0);
+    putU32(view, pOff + 4, MUTATION_SPEC_PREFIX_OP_BYTES);
+    putU32(view, pOff + 8, prefix.selectorOrdinal);
+    view.setBigUint64(pOff + 12, BigInt(prefix.selectorSeq), true);
+    putU32(view, pOff + 20, prefix.paramIndex);
+    bytes[pOff + 24] = 0;
+    bytes[pOff + 25] = prefix.widthBytes;
+    putU16(view, pOff + 26, 0);
+    putU32(view, pOff + 28, prefix.byteOffset);
+    putU64(view, pOff + 32, bitsBigInt(prefix.expectedBits, prefix.widthBytes, "prefix.expectedBits"));
+    putU64(view, pOff + 40, bitsBigInt(prefix.replacementBits, prefix.widthBytes, "prefix.replacementBits"));
+  }
+  if (rule.expansionBudget) {
+    const offset = opOffset + MUTATION_SPEC_SCALAR_OP_BYTES + prefixes.length * MUTATION_SPEC_PREFIX_OP_BYTES;
+    putU16(view, offset, 5);
+    putU32(view, offset + 4, MUTATION_SPEC_BUDGET_OP_BYTES);
+    putU64(view, offset + 8, BigInt(rule.expansionBudget.perBufferBytes));
+    putU64(view, offset + 16, BigInt(rule.expansionBudget.totalBytes));
+  }
   return bytes;
 }
 
@@ -277,17 +436,23 @@ function parseCapturedScalar(value: unknown, label: string): CapturedScalarBits 
   return { paramIndex, widthBytes: width, signedness: item.signedness, bits };
 }
 
-function parseCapturedBufferInput(value: unknown, label: string): CapturedBufferInput {
+function parseCapturedBufferOutput(value: unknown, label: string): CapturedBufferOutput {
   const item = object(value, label);
-  exactKeys(item, ["param_index", "direction", "is_string", "element_size", "byte_length", "fnv1a64", "prefix_hex"], label);
+  exactKeys(item, ["param_index", "direction", "is_string", "element_size", "byte_length", "fnv1a64", "prefix_hex",
+    ...(item.sha256 !== undefined ? ["sha256"] : []),
+    ...(item.storage_address !== undefined ? ["storage_address"] : [])], label);
   const paramIndex = integer(item.param_index, label + ".param_index");
-  if (item.direction !== "in" && item.direction !== "inout") {
-    fail(label + ".direction must be in or inout");
+  if (item.direction !== "out" && item.direction !== "inout") {
+    fail(label + ".direction must be out or inout");
   }
   if (typeof item.is_string !== "boolean") fail(label + ".is_string must be boolean");
   const elementSize = integer(item.element_size, label + ".element_size", 1);
   const byteLength = integer(item.byte_length, label + ".byte_length", 1);
   const fnv1a64 = validateBits(item.fnv1a64, 8, label + ".fnv1a64");
+  if (item.sha256 !== undefined && (typeof item.sha256 !== "string" || !/^[0-9a-f]{64}$/.test(item.sha256))) {
+    fail(label + ".sha256 must be lowercase SHA-256 hex");
+  }
+  const sha256 = item.sha256 as string | undefined;
   if (typeof item.prefix_hex !== "string" || !/^[0-9a-f]*$/.test(item.prefix_hex) || item.prefix_hex.length % 2 !== 0) {
     fail(label + ".prefix_hex must be lowercase hex bytes");
   }
@@ -298,7 +463,42 @@ function parseCapturedBufferInput(value: unknown, label: string): CapturedBuffer
     elementSize,
     byteLength,
     fnv1a64,
+    ...(sha256 !== undefined ? { sha256 } : {}),
     prefixHex: item.prefix_hex,
+    ...(item.storage_address !== undefined ? { storageAddress: validateBits(item.storage_address, 8, label + ".storage_address") } : {}),
+  };
+}
+
+function parseCapturedBufferInput(value: unknown, label: string): CapturedBufferInput {
+  const item = object(value, label);
+  exactKeys(item, ["param_index", "direction", "is_string", "element_size", "byte_length", "fnv1a64", "prefix_hex",
+    ...(item.sha256 !== undefined ? ["sha256"] : []),
+    ...(item.storage_address !== undefined ? ["storage_address"] : [])], label);
+  const paramIndex = integer(item.param_index, label + ".param_index");
+  if (item.direction !== "in" && item.direction !== "inout") {
+    fail(label + ".direction must be in or inout");
+  }
+  if (typeof item.is_string !== "boolean") fail(label + ".is_string must be boolean");
+  const elementSize = integer(item.element_size, label + ".element_size", 1);
+  const byteLength = integer(item.byte_length, label + ".byte_length", 1);
+  const fnv1a64 = validateBits(item.fnv1a64, 8, label + ".fnv1a64");
+  if (item.sha256 !== undefined && (typeof item.sha256 !== "string" || !/^[0-9a-f]{64}$/.test(item.sha256))) {
+    fail(label + ".sha256 must be lowercase SHA-256 hex");
+  }
+  const sha256 = item.sha256 as string | undefined;
+  if (typeof item.prefix_hex !== "string" || !/^[0-9a-f]*$/.test(item.prefix_hex) || item.prefix_hex.length % 2 !== 0) {
+    fail(label + ".prefix_hex must be lowercase hex bytes");
+  }
+  return {
+    paramIndex,
+    direction: item.direction,
+    isString: item.is_string,
+    elementSize,
+    byteLength,
+    fnv1a64,
+    ...(sha256 !== undefined ? { sha256 } : {}),
+    prefixHex: item.prefix_hex,
+    ...(item.storage_address !== undefined ? { storageAddress: validateBits(item.storage_address, 8, label + ".storage_address") } : {}),
   };
 }
 
@@ -308,7 +508,7 @@ function parseCapturedMutation(value: unknown, label: string): CapturedMutation 
   exactKeys(
     mutation,
     ["param_index", "width_bytes", "signedness", "expected_bits", "observed_bits",
-      "replacement_bits", "applied", "reason"],
+      "replacement_bits", "applied", "reason", ...(mutation.byte_offset !== undefined ? ["byte_offset"] : [])],
     label,
   );
   const paramIndex = integer(mutation.param_index, label + ".param_index");
@@ -330,6 +530,7 @@ function parseCapturedMutation(value: unknown, label: string): CapturedMutation 
     replacementBits,
     applied: mutation.applied,
     reason: mutation.reason,
+    ...(mutation.byte_offset !== undefined ? { byteOffset: integer(mutation.byte_offset, label + ".byte_offset") } : {}),
   };
 }
 
@@ -352,6 +553,7 @@ function parseEvent(value: unknown, label: string): CallCaptureEvent {
   const allowed = [...required];
   if (raw.schema !== undefined) allowed.push("schema");
   if (raw.buffer_inputs !== undefined) allowed.push("buffer_inputs");
+  if (raw.buffer_outputs !== undefined) allowed.push("buffer_outputs");
   exactKeys(raw, allowed, label);
   if (raw.schema !== undefined && raw.schema !== CALL_CAPTURE_SCHEMA) {
     fail(label + ".schema must be " + CALL_CAPTURE_SCHEMA);
@@ -375,6 +577,12 @@ function parseEvent(value: unknown, label: string): CallCaptureEvent {
     bufferInputs = raw.buffer_inputs.map((entry, index) =>
       parseCapturedBufferInput(entry, label + ".buffer_inputs[" + index + "]"));
   }
+  let bufferOutputs: CapturedBufferOutput[] | undefined;
+  if (raw.buffer_outputs !== undefined) {
+    if (!Array.isArray(raw.buffer_outputs)) fail(label + ".buffer_outputs must be an array");
+    bufferOutputs = raw.buffer_outputs.map((entry, index) =>
+      parseCapturedBufferOutput(entry, label + ".buffer_outputs[" + index + "]"));
+  }
   const retval = raw.retval === null ? null : parseCapturedReturn(raw.retval, label + ".retval");
   return {
     generation: integer(raw.generation, label + ".generation", 1),
@@ -384,6 +592,7 @@ function parseEvent(value: unknown, label: string): CallCaptureEvent {
     transportStatus: integer(raw.transport_status, label + ".transport_status"),
     scalarInputs: inputs,
     ...(bufferInputs !== undefined ? { bufferInputs } : {}),
+    ...(bufferOutputs !== undefined ? { bufferOutputs } : {}),
     retval,
     scalarOutputs: outputs,
     mutation: parseCapturedMutation(raw.mutation, label + ".mutation"),
@@ -432,9 +641,17 @@ export function parseNativeCallCapture(text: string, expected: CaptureExpectatio
     fail("call capture is bound to different Profile bundle artifacts");
   }
   const events = records.slice(1).map((record, index) => parseEvent(record, "call capture ecall[" + index + "]"));
+  const plannedPrefixCalls = new Set(
+    (expected.mutation?.prefixMutations ?? []).map(
+      (pfx) => pfx.selectorOrdinal + ":" + pfx.selectorSeq,
+    ),
+  );
   for (const event of events) {
     const isTarget = expected.mutation !== undefined && matchesExpectedTarget(event, expected.mutation);
-    if (!isTarget && event.mutation !== null) {
+    const isPlannedPrefix = plannedPrefixCalls.has(
+      event.selectorOrdinal + ":" + event.selectorSeq,
+    );
+    if (!isTarget && !isPlannedPrefix && event.mutation !== null) {
       fail("call capture contains a mutation outside the selected ECALL occurrence");
     }
     if (!expected.mutation && event.mutation !== null) {
@@ -513,16 +730,26 @@ export function appendCallCaptureEnd(
   const mutationAppliedCount = mutationRecords.filter((mutation) => mutation.applied).length;
   const reasons = [...run.incompleteReasons];
   if (!sequenceMatches) reasons.push("native capture ECALL sequence differs from canonical trace");
+  const plannedMutationCount = rule ? 1 + (rule.prefixMutations?.length ?? 0) : 0;
   if (!rule && mutationRecords.length !== 0) reasons.push("baseline capture contains a mutation record");
   if (rule && targetMatchCount !== 1) reasons.push("candidate target occurrence is missing or duplicated");
-  if (rule && mutationRecords.length !== 1) reasons.push("candidate must contain exactly one mutation record");
-  if (rule && mutationAppliedCount !== 1) reasons.push("candidate mutation was not applied exactly once");
-  if (rule && mutationRecords.length === 1 && mutationRecords[0]!.reason !== "applied") reasons.push("candidate mutation reason is not applied");
+  if (rule && mutationRecords.length !== plannedMutationCount) {
+    reasons.push("candidate must contain exactly the planned mutation records");
+  }
+  if (rule && mutationAppliedCount !== plannedMutationCount) {
+    reasons.push("candidate mutations were not all applied");
+  }
+  if (rule && mutationRecords.some((m) => m.reason !== "applied")) {
+    reasons.push("candidate mutation reason is not applied");
+  }
   const mutationContractValid = rule
-    ? targetMatchCount === 1 && mutationRecords.length === 1 && mutationAppliedCount === 1 && mutationRecords[0]!.reason === "applied"
+    ? targetMatchCount === 1 && mutationRecords.length === plannedMutationCount &&
+      mutationAppliedCount === plannedMutationCount &&
+      mutationRecords.every((m) => m.reason === "applied")
     : mutationRecords.length === 0;
   const end: CallCaptureEnd = {
     processReturnCode: run.exitCode,
+    termination: run.termination,
     timedOut: run.timedOut,
     complete: isCompleteRun(run) && sequenceMatches && mutationContractValid,
     ecallCount: prefix.events.length,
@@ -534,6 +761,7 @@ export function appendCallCaptureEnd(
     type: "capture_end",
     schema: CALL_CAPTURE_SCHEMA,
     process_return_code: end.processReturnCode,
+    termination: end.termination,
     timed_out: end.timedOut,
     complete: end.complete,
     ecall_count: end.ecallCount,
@@ -552,17 +780,18 @@ export function parseCallCapture(text: string, expected: CaptureExpectation): Ca
   if (lines.length < 2 || lines.some((line) => line.length === 0)) fail("call capture must contain start and end records");
   const parsed = lines.map((line, index) => object(parseStrictJson(line, "call capture line " + (index + 1)), "call capture line " + (index + 1)));
   const endRaw = parsed.at(-1)!;
-  exactKeys(
-    endRaw,
-    ["type", "schema", "process_return_code", "timed_out", "complete", "ecall_count",
-      "target_match_count", "mutation_applied_count", "incomplete_reasons"],
-    "call capture end",
-  );
+  const endKeys = ["type", "schema", "process_return_code", "timed_out", "complete", "ecall_count",
+    "target_match_count", "mutation_applied_count", "incomplete_reasons"];
+  if (Object.hasOwn(endRaw, "termination")) endKeys.push("termination");
+  exactKeys(endRaw, endKeys, "call capture end");
   if (endRaw.type !== "capture_end" || endRaw.schema !== CALL_CAPTURE_SCHEMA) fail("invalid call capture end record");
+  const endTermination = endRaw.termination;
   const end: CallCaptureEnd = {
     processReturnCode: endRaw.process_return_code === null
       ? null
       : integer(endRaw.process_return_code, "call capture process_return_code"),
+    termination: endTermination === "exited" || endTermination === "signaled" ||
+        endTermination === "timeout" ? endTermination : "unknown",
     timedOut: typeof endRaw.timed_out === "boolean" ? endRaw.timed_out : fail("call capture timed_out must be boolean"),
     complete: typeof endRaw.complete === "boolean" ? endRaw.complete : fail("call capture complete must be boolean"),
     ecallCount: integer(endRaw.ecall_count, "call capture ecall_count"),
@@ -592,32 +821,85 @@ export function parseCallCapture(text: string, expected: CaptureExpectation): Ca
 export function captureHasExactlyOneMutation(
   capture: CallCaptureDocument,
   rule: ScalarMutationRule,
+  options?: { allowBusinessRejectionExit?: boolean },
 ): boolean {
-  if (!capture.end.complete || capture.end.timedOut || capture.end.processReturnCode !== 0 ||
-      capture.end.targetMatchCount !== 1 || capture.end.mutationAppliedCount !== 1) return false;
+  const plannedCount = 1 + (rule.prefixMutations?.length ?? 0);
+  if (capture.end.timedOut ||
+      capture.end.targetMatchCount !== 1 ||
+      capture.end.mutationAppliedCount !== plannedCount) return false;
+  const allowBizReject = options?.allowBusinessRejectionExit === true;
+  if (!capture.end.complete) {
+    if (!allowBizReject || capture.end.processReturnCode === null ||
+        capture.end.processReturnCode === 0 || capture.end.termination !== "exited") {
+      return false;
+    }
+    const expectedReason = "host process exit code was " + String(capture.end.processReturnCode);
+    if (capture.end.incompleteReasons.length === 0 ||
+        capture.end.incompleteReasons.some((r) => r !== expectedReason)) {
+      return false;
+    }
+  } else if (capture.end.processReturnCode !== 0) {
+    return false;
+  }
   const mutationEvents = capture.events.filter((event) => event.mutation !== null);
-  if (mutationEvents.length !== 1) return false;
-  const event = mutationEvents[0]!;
+  if (mutationEvents.length !== plannedCount) return false;
   const wantGen = rule.targetGeneration ?? 1;
-  if (event.generation !== wantGen ||
-      event.selectorOrdinal !== rule.selectorOrdinal ||
-      event.selectorSeq !== rule.selectorSeq) return false;
+  const target = mutationEvents.find((event) => event.generation === wantGen &&
+    event.selectorOrdinal === rule.selectorOrdinal && event.selectorSeq === rule.selectorSeq);
+  if (!target) return false;
+  /* Every planned prefix mutation must appear as an applied record on its
+     designated call — the executed inputs are fully accounted for. */
+  for (const pfx of rule.prefixMutations ?? []) {
+    const pEvent = mutationEvents.find((ev) =>
+      ev.generation === wantGen && ev.callSeq < target.callSeq &&
+      ev.selectorOrdinal === pfx.selectorOrdinal &&
+        BigInt(ev.selectorSeq) === BigInt(pfx.selectorSeq));
+    if (!pEvent) return false;
+    const pMut = pEvent.mutation!;
+    if (!pMut.applied || pMut.reason !== "applied" ||
+        pMut.paramIndex !== pfx.paramIndex ||
+        pMut.widthBytes !== pfx.widthBytes ||
+        pMut.byteOffset !== pfx.byteOffset ||
+        pMut.expectedBits !== pfx.expectedBits ||
+        pMut.replacementBits !== pfx.replacementBits ||
+        pMut.observedBits !== pfx.expectedBits) return false;
+  }
+  const event = mutationEvents.find((ev) =>
+    ev.generation === wantGen &&
+    ev.selectorOrdinal === rule.selectorOrdinal &&
+    ev.selectorSeq === rule.selectorSeq);
+  if (!event) return false;
   const mutation = event.mutation!;
   if (!mutation.applied || mutation.reason !== "applied" ||
       mutation.widthBytes !== rule.widthBytes ||
       mutation.signedness !== rule.signedness ||
-      mutation.expectedBits !== rule.expectedBits ||
-      mutation.observedBits !== rule.expectedBits ||
-      mutation.replacementBits !== rule.replacementBits) return false;
+      mutation.expectedBits !== rule.expectedBits) return false;
   const opKind = rule.opKind ?? "replace_scalar";
   if (opKind === "replace_scalar") {
+    if (mutation.observedBits !== rule.expectedBits ||
+        mutation.replacementBits !== rule.replacementBits) return false;
     const scalar = event.scalarInputs.find((input) => input.paramIndex === rule.paramIndex);
     return mutation.paramIndex === rule.paramIndex && scalar?.bits === rule.replacementBits;
   }
   if (opKind === "mutate_buffer") {
-    return mutation.paramIndex === rule.paramIndex;
+    if (mutation.paramIndex !== rule.paramIndex || mutation.observedBits === null || mutation.observedBits === undefined) return false;
+    if (mutation.observedBits === rule.expectedBits) {
+      return mutation.replacementBits === rule.replacementBits;
+    }
+    if (rule.bufferSubOp === "xor_byte") {
+      let xorMask = (BigInt(rule.expectedBits) ^ BigInt(rule.replacementBits)) & 0xffn;
+      if (xorMask === 0n) xorMask = 1n;
+      const wantRep = (BigInt(mutation.observedBits) ^ xorMask) & 0xffn;
+      return BigInt(mutation.replacementBits) === wantRep;
+    }
+    return mutation.replacementBits === rule.replacementBits;
   }
-  return true;
+  if (opKind === "extend_history") {
+    return mutation.replacementBits === rule.replacementBits &&
+      (mutation.observedBits === null || mutation.observedBits === undefined || mutation.observedBits === rule.expectedBits);
+  }
+  return mutation.observedBits === rule.expectedBits &&
+    mutation.replacementBits === rule.replacementBits;
 }
 
 export function sameCallInputsExceptMutation(
@@ -629,12 +911,20 @@ export function sameCallInputsExceptMutation(
   const wantGen = rule.targetGeneration ?? 1;
   const extraCalls = opKind === "extend_history"
     ? (rule.repeatCount ?? rule.execMode ?? 1)
-    : (rule.execMode ?? 0);
+    : 0;
 
   if (extraCalls === 0) {
-    if (baseline.events.length !== candidate.events.length) return false;
+    const targetIdx = baseline.events.findIndex((event) =>
+      event.generation === wantGen &&
+      event.selectorOrdinal === rule.selectorOrdinal &&
+      event.selectorSeq === rule.selectorSeq);
+    if (targetIdx < 0) return false;
+    if (candidate.events.length !== baseline.events.length &&
+        candidate.events.length !== targetIdx + 1) {
+      return false;
+    }
     let targetSeen = false;
-    for (let index = 0; index < baseline.events.length; index++) {
+    for (let index = 0; index < candidate.events.length; index++) {
       const before = baseline.events[index]!;
       const after = candidate.events[index]!;
       if (before.generation !== after.generation || before.callSeq !== after.callSeq ||
@@ -652,9 +942,11 @@ export function sameCallInputsExceptMutation(
         const right = after.scalarInputs[scalarIndex]!;
         if (left.paramIndex !== right.paramIndex || left.widthBytes !== right.widthBytes ||
             left.signedness !== right.signedness) return false;
+        const allowRuntimeBoundLength = opKind === "mutate_buffer" &&
+          (rule.execMode ?? 0) === 0 && index > targetIdx;
         if (opKind === "replace_scalar" && target && left.paramIndex === rule.paramIndex) {
           if (left.bits !== rule.expectedBits || right.bits !== rule.replacementBits) return false;
-        } else if (left.bits !== right.bits) {
+        } else if (left.bits !== right.bits && !allowRuntimeBoundLength) {
           return false;
         }
       }

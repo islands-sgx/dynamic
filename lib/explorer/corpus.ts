@@ -31,12 +31,29 @@ function validateRole(role: string): asserts role is TraceCorpusRole {
   if (role !== "main" && role !== "supplemental") fail("trace corpus role must be main or supplemental");
 }
 
-function completeTrace(run: CanonicalRun, bundle: ProfileBundle): ParsedTrace {
-  if (run.completion !== "complete" || run.timedOut || run.exitCode !== 0 || !run.parsedTrace) {
+function validatedCorpusTrace(
+  run: CanonicalRun,
+  bundle: ProfileBundle,
+  role: TraceCorpusRole,
+): ParsedTrace {
+  if (run.timedOut) {
     fail("only complete, non-timeout, successful canonical traces can enter the corpus");
   }
-  const parsed = parseCanonicalTrace(run.traceText, "canonical explorer corpus trace", bundle);
-  if (parsed.runId !== run.runId || parsed.traceSha256 !== run.parsedTrace.traceSha256) {
+  const allowBizReject = role === "supplemental" && run.committedTrace !== undefined;
+  const expectedTrace = allowBizReject ? run.committedTrace : run.parsedTrace;
+  if (!allowBizReject && (run.completion !== "complete" || run.exitCode !== 0 || !expectedTrace)) {
+    fail("only complete, non-timeout, successful canonical traces can enter the corpus");
+  }
+  if (!expectedTrace) {
+    fail("only complete, non-timeout, successful canonical traces can enter the corpus");
+  }
+  const parsed = parseCanonicalTrace(
+    run.traceText,
+    "canonical explorer corpus trace",
+    bundle,
+    { allowBusinessRejectionExit: allowBizReject },
+  );
+  if (parsed.runId !== run.runId || parsed.traceSha256 !== expectedTrace.traceSha256) {
     fail("canonical run trace identity differs from its parsed result");
   }
   if (parsed.mode !== "profile" && parsed.mode !== "explore") {
@@ -52,7 +69,7 @@ export function appendValidatedCorpusTrace(
   bundle: ProfileBundle,
 ): string {
   validateRole(role);
-  const parsed = completeTrace(run, bundle);
+  validatedCorpusTrace(run, bundle, role);
   mkdirSync(path.resolve(corpusDirectory), { recursive: true, mode: 0o700 });
   const root = realpathSync(path.resolve(corpusDirectory));
   const roleDirectory = path.join(root, role);
@@ -85,10 +102,14 @@ export function readFinalizableCorpus(
   if (!lstatSync(root).isDirectory()) fail("trace corpus path must be a directory");
   const bundle = loadProfileBundle(bundlePath);
   const roles: TraceCorpusRole[] = ["main", "supplemental"];
+  /* "rejected" holds preserved evidence from failed candidates — it is not a
+     corpus role and its contents are never validated into the corpus. */
+  const nonRoleEntries = new Set(["rejected", "runs"]);
   const traces: CorpusTrace[] = [];
   let mainCount = 0;
   const entries = readdirSync(root, { withFileTypes: true });
-  const unknownRole = entries.find((entry) => !roles.includes(entry.name as TraceCorpusRole));
+  const unknownRole = entries.find((entry) =>
+    !roles.includes(entry.name as TraceCorpusRole) && !nonRoleEntries.has(entry.name));
   if (unknownRole) fail("trace corpus contains unsupported entry " + unknownRole.name);
   for (const role of roles) {
     const roleDirectory = path.join(root, role);
@@ -105,7 +126,7 @@ export function readFinalizableCorpus(
         fail("trace corpus contains an unsupported file " + path.join(role, file.name));
       }
       const filename = path.join(roleDirectory, file.name);
-      const parsedTrace = readCanonicalTrace(filename, bundle);
+      const parsedTrace = readCanonicalTrace(filename, bundle, { allowBusinessRejectionExit: role === "supplemental" });
       const expectedId = file.name.slice(0, -".jsonl".length);
       if (parsedTrace.runId !== expectedId) fail("trace corpus filename does not match the canonical run id");
       traces.push({ role, path: filename, runId: parsedTrace.runId, traceSha256: parsedTrace.traceSha256, parsedTrace });

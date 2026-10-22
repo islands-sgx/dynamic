@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <openssl/sha.h>
 
 #define CHECK(x) do { if (!(x)) { \
     fprintf(stderr, "CHECK failed at %s:%d: %s\n", __FILE__, __LINE__, #x); \
@@ -560,9 +561,11 @@ static void test_buffer_mutation_and_capture(void) {
     CHECK(atfield_mutation_load_spec_bytes(&state, mutation, SPEC_SIZE, BUNDLE_SHA, LAYOUT_SHA) == 0);
     CHECK(atfield_mutation_bind_run(&state, 7, 1) == 0);
 
-    uint8_t in_buf[4] = {0x11, 0x22, 0x33, 0x44};
+    uint8_t in_buf[192];
+    for (size_t i = 0; i < sizeof(in_buf); i++) in_buf[i] = (uint8_t)i;
+    in_buf[0] = 0x11; in_buf[1] = 0x22; in_buf[2] = 0x33; in_buf[3] = 0x44;
     marshal_t ms;
-    init_ms(&ms, 42, 4, (int32_t *)in_buf);
+    init_ms(&ms, 42, sizeof(in_buf), (int32_t *)in_buf);
     marshal_t working;
     atfield_call_capture_record_t record;
     int rc = atfield_mutation_before_ecall(&state, 7, 1, 0, 0, 0, layout, &ms, &working, sizeof(working), &record);
@@ -574,9 +577,271 @@ static void test_buffer_mutation_and_capture(void) {
     CHECK(((uint8_t *)working.buffer)[1] == 0x23);
     CHECK(((uint8_t *)working.buffer)[2] == 0x33);
     CHECK(record.buffer_input_count == 1);
-    CHECK(record.buffer_inputs[0].parameter_index == 3 && record.buffer_inputs[0].byte_length == 4);
+    CHECK(record.buffer_inputs[0].parameter_index == 3 && record.buffer_inputs[0].byte_length == sizeof(in_buf));
+    CHECK(record.buffer_inputs[0].prefix_length == ATFIELD_CAPTURE_MAX_BUF_PREFIX_BYTES);
+    unsigned char expected_sha[SHA256_DIGEST_LENGTH];
+    static const char hex[] = "0123456789abcdef";
+    char expected_hex[65];
+    CHECK(SHA256((const unsigned char *)working.buffer, sizeof(in_buf), expected_sha) != NULL);
+    for (size_t i = 0; i < sizeof(expected_sha); i++) {
+        expected_hex[i * 2] = hex[expected_sha[i] >> 4];
+        expected_hex[i * 2 + 1] = hex[expected_sha[i] & 0x0f];
+    }
+    expected_hex[64] = '\0';
+    CHECK(strcmp(record.buffer_inputs[0].sha256, expected_hex) == 0);
     CHECK(atfield_mutation_after_ecall(&state, layout, &working, &ms, &record) == 0);
     CHECK(atfield_mutation_finalize(&state) == 0);
+}
+
+
+typedef struct {
+    uint32_t count;
+    uint32_t pad;
+    int32_t *in_arr;
+    int32_t *out_arr;
+    int32_t *in_slice;
+    int32_t retval;
+    uint32_t tail;
+} linked_ms_t;
+
+static void test_linked_expansion_and_alias_and_budget(void) {
+    /* Stage 2 acceptance scenario:
+     * One scalar length (param 0: count, element_size=4) simultaneously controls:
+     * - param 1: [in, count=count] int32_t *in_arr
+     * - param 2: [out, count=count] int32_t *out_arr
+     * - param 3: [in, count=1] int32_t *in_slice (aliased to &in_arr[1], offset 4 bytes)
+     */
+    uint8_t proj[512];
+    const uint16_t param_count = 4;
+    const uint32_t ecall_len = ECALL_HEADER_SIZE + param_count * PARAM_HEADER_SIZE;
+    const uint32_t total = PROJECTION_HEADER_SIZE + ecall_len;
+    memset(proj, 0, total);
+    memcpy(proj, "ATFMAR\0\0", 8);
+    put16(proj + 8, 1); put16(proj + 10, PROJECTION_HEADER_SIZE);
+    put32(proj + 12, total); put32(proj + 16, 1);
+    digest_bytes(proj + 24, 'a'); digest_bytes(proj + 56, 'b'); digest_bytes(proj + 88, 'c');
+
+    uint8_t *e = proj + PROJECTION_HEADER_SIZE;
+    put32(e, ecall_len); put32(e + 4, 0); put32(e + 8, sizeof(linked_ms_t));
+    put16(e + 12, param_count); put16(e + 14, 3);
+    put32(e + 16, offsetof(linked_ms_t, retval)); put16(e + 20, sizeof(int32_t));
+    e[22] = ATFIELD_MUTATION_CAT_INTEGER; e[23] = 1; e[24] = ATFIELD_MUTATION_TYPE_BUILTIN;
+
+    uint8_t *p = e + ECALL_HEADER_SIZE;
+    /* param 0: uint32_t count */
+    set_param(p + 0 * PARAM_HEADER_SIZE, 0, (1u << 2) | (1u << 6),
+        offsetof(linked_ms_t, count), sizeof(uint32_t), 0,
+        ATFIELD_MUTATION_DIR_IN, ATFIELD_MUTATION_CAT_INTEGER, 0, ATFIELD_MUTATION_TYPE_BUILTIN,
+        0, 0, 0, 0, 0, 0, UINT16_MAX, UINT16_MAX, 0, 0);
+    /* param 1: [in, count=param 0] int32_t *in_arr */
+    set_param(p + 1 * PARAM_HEADER_SIZE, 1, (1u << 0) | (1u << 2),
+        offsetof(linked_ms_t, in_arr), sizeof(void *), 4,
+        ATFIELD_MUTATION_DIR_IN, ATFIELD_MUTATION_CAT_POINTER, 255, ATFIELD_MUTATION_TYPE_POINTER,
+        1, ATFIELD_MUTATION_CAT_INTEGER, 1, ATFIELD_MUTATION_TYPE_BUILTIN,
+        0, ATFIELD_MUTATION_BOUND_SOURCE_PARAM, UINT16_MAX, 0, 0, 0);
+    /* param 2: [out, count=param 0] int32_t *out_arr */
+    set_param(p + 2 * PARAM_HEADER_SIZE, 2, (1u << 0) | (1u << 2),
+        offsetof(linked_ms_t, out_arr), sizeof(void *), 4,
+        ATFIELD_MUTATION_DIR_OUT, ATFIELD_MUTATION_CAT_POINTER, 255, ATFIELD_MUTATION_TYPE_POINTER,
+        1, ATFIELD_MUTATION_CAT_INTEGER, 1, ATFIELD_MUTATION_TYPE_BUILTIN,
+        0, ATFIELD_MUTATION_BOUND_SOURCE_PARAM, UINT16_MAX, 0, 0, 0);
+    /* param 3: [in, count=1] int32_t *in_slice */
+    set_param(p + 3 * PARAM_HEADER_SIZE, 3, (1u << 0) | (1u << 2),
+        offsetof(linked_ms_t, in_slice), sizeof(void *), 4,
+        ATFIELD_MUTATION_DIR_IN, ATFIELD_MUTATION_CAT_POINTER, 255, ATFIELD_MUTATION_TYPE_POINTER,
+        1, ATFIELD_MUTATION_CAT_INTEGER, 1, ATFIELD_MUTATION_TYPE_BUILTIN,
+        0, ATFIELD_MUTATION_BOUND_SOURCE_LITERAL, UINT16_MAX, UINT16_MAX, 0, 1);
+
+    atfield_marshal_spec_t spec;
+    char ppath[] = "/tmp/atfield-proj-linked-XXXXXX";
+    int pfd = mkstemp(ppath);
+    CHECK(pfd >= 0);
+    CHECK(write(pfd, proj, total) == (ssize_t)total);
+    CHECK(close(pfd) == 0);
+    CHECK(atfield_marshal_spec_load(&spec, ppath, BUNDLE_SHA, LAYOUT_SHA, ABI_SHA) == 0);
+    CHECK(unlink(ppath) == 0);
+    const atfield_mutation_layout_t *layout = atfield_marshal_spec_get(&spec, 0);
+    CHECK(layout != NULL);
+
+    /* 1. Mutate count: 2 -> 8 in exec_mode=1 (expands both in_arr and out_arr from 8B to 32B, preserves alias in_slice == in_arr + 1) */
+    uint8_t mutation[256];
+    make_mutation_spec(mutation, 0, 0, 0, 4, 2, 8);
+    /* Set rule flags: targetGen=1, execMode=1 -> 0x0101 at rule + 6 */
+    put16(mutation + ATFIELD_MUTATION_HEADER_BYTES + 6, 0x0101u);
+
+    atfield_mutation_state_t state;
+    CHECK(atfield_mutation_load_spec_bytes(&state, mutation, SPEC_SIZE, BUNDLE_SHA, LAYOUT_SHA) == 0);
+    CHECK(atfield_mutation_bind_run(&state, 7, 1) == 0);
+
+    int32_t orig_in[2] = {101, 202};
+    int32_t orig_out[2] = {7, 8};
+    linked_ms_t ms;
+    memset(&ms, 0, sizeof(ms));
+    ms.count = 2;
+    ms.in_arr = orig_in;
+    ms.out_arr = orig_out;
+    ms.in_slice = &orig_in[1]; /* alias slice at +4 bytes */
+
+    linked_ms_t working;
+    atfield_call_capture_record_t record;
+    int rc = atfield_mutation_before_ecall(&state, 7, 1, 0, 0, 0, layout, &ms, &working, sizeof(working), &record);
+    CHECK(rc == 1);
+    CHECK(working.count == 8);
+    CHECK(working.in_arr != orig_in);
+    CHECK(working.out_arr != orig_out);
+    /* Alias preserved in new allocation! */
+    CHECK(working.in_slice == working.in_arr + 1);
+    CHECK(working.in_arr[0] == 101 && working.in_arr[1] == 202);
+    CHECK(*working.in_slice == 202);
+    /* Extended tail is deterministically zero-filled */
+    for (int i = 2; i < 8; i++) CHECK(working.in_arr[i] == 0);
+    /* Simulated enclave writes 8 elements into expanded out_arr without overflowing orig_out[2] */
+    for (int i = 0; i < 8; i++) working.out_arr[i] = 1000 + i;
+    working.retval = 0;
+    /* Captured buffer input records expanded 32-byte length */
+    CHECK(record.buffer_input_count == 2);
+    CHECK(record.buffer_inputs[0].parameter_index == 1 && record.buffer_inputs[0].byte_length == 32);
+    CHECK(record.buffer_inputs[1].parameter_index == 3 && record.buffer_inputs[1].byte_length == 4);
+    CHECK(atfield_mutation_after_ecall(&state, layout, &working, &ms, &record) == 0);
+    /* Caller's smaller 2-element output buffer was NOT overwritten by the 8-element probe output */
+    CHECK(orig_out[0] == 7 && orig_out[1] == 8);
+    CHECK(atfield_mutation_finalize(&state) == 0);
+
+    /* 2. Over-budget candidate: count 2 -> 30000 (120,000 bytes > 64 KiB per-buffer budget) -> expansion_budget_exceeded */
+    make_mutation_spec(mutation, 0, 0, 0, 4, 2, 30000);
+    put16(mutation + ATFIELD_MUTATION_HEADER_BYTES + 6, 0x0101u);
+    CHECK(atfield_mutation_load_spec_bytes(&state, mutation, SPEC_SIZE, BUNDLE_SHA, LAYOUT_SHA) == 0);
+    CHECK(atfield_mutation_bind_run(&state, 7, 1) == 0);
+    rc = atfield_mutation_before_ecall(&state, 7, 1, 0, 0, 0, layout, &ms, &working, sizeof(working), &record);
+    CHECK(rc == -1);
+    CHECK(!record.mutation.applied);
+    CHECK(strcmp(record.mutation.reason, "expansion_budget_exceeded") == 0);
+}
+
+/* Stage: explicit, recorded prefix-call mutation (spec v2). */
+static size_t make_mutation_spec_v2(uint8_t *out,
+    uint32_t target_sel, uint64_t target_occ, uint32_t target_param,
+    uint64_t target_expected, uint64_t target_replacement,
+    uint32_t pre_sel, uint64_t pre_occ, uint32_t pre_param,
+    uint32_t pre_offset, uint8_t pre_width,
+    uint64_t pre_expected, uint64_t pre_replacement) {
+    const size_t total = ATFIELD_MUTATION_HEADER_BYTES + ATFIELD_MUTATION_RULE_HEADER_BYTES
+        + ATFIELD_MUTATION_SCALAR_TLV_BYTES + ATFIELD_MUTATION_PREFIX_TLV_BYTES;
+    memset(out, 0, total);
+    memcpy(out, "ATFMUT\0\0", 8);
+    put16(out + 8, 2); put16(out + 10, ATFIELD_MUTATION_HEADER_BYTES);
+    put32(out + 12, (uint32_t)total); put32(out + 16, 1);
+    digest_bytes(out + 24, 'a'); digest_bytes(out + 56, 'b');
+
+    const size_t rule = ATFIELD_MUTATION_HEADER_BYTES;
+    put32(out + rule, (uint32_t)(total - rule));
+    put16(out + rule + 4, 1);
+    put16(out + rule + 6, 0); /* target gen 1, exec_mode 0 */
+    put32(out + rule + 8, target_sel);
+    put64(out + rule + 12, target_occ);
+    put16(out + rule + 20, 2);
+    put16(out + rule + 22, 0);
+
+    const size_t op = rule + ATFIELD_MUTATION_RULE_HEADER_BYTES;
+    put16(out + op, 1); put16(out + op + 2, 0);
+    put32(out + op + 4, ATFIELD_MUTATION_SCALAR_TLV_BYTES);
+    put32(out + op + 8, target_param);
+    out[op + 12] = 0; out[op + 13] = 4; put16(out + op + 14, 0);
+    put64(out + op + 16, target_expected);
+    put64(out + op + 24, target_replacement);
+
+    const size_t pre = op + ATFIELD_MUTATION_SCALAR_TLV_BYTES;
+    put16(out + pre, ATFIELD_MUTATION_OP_PREFIX_MUTATE); put16(out + pre + 2, 0);
+    put32(out + pre + 4, ATFIELD_MUTATION_PREFIX_TLV_BYTES);
+    put32(out + pre + 8, pre_sel);
+    put64(out + pre + 12, pre_occ);
+    put32(out + pre + 20, pre_param);
+    out[pre + 24] = ATFIELD_MUTATION_SCALAR_UNSIGNED;
+    out[pre + 25] = pre_width;
+    put16(out + pre + 26, 0);
+    put32(out + pre + 28, pre_offset);
+    put64(out + pre + 32, pre_expected);
+    put64(out + pre + 40, pre_replacement);
+    return total;
+}
+
+static void test_explicit_prefix_mutation(void) {
+    atfield_marshal_spec_t spec;
+    uint8_t projection[512];
+    size_t projection_size;
+    load_projection(&spec, (projection_options_t){0,0,ATFIELD_MUTATION_TYPE_BUILTIN,ATFIELD_MUTATION_CAT_INTEGER,1},
+        projection, &projection_size);
+    const atfield_mutation_layout_t *layout = atfield_marshal_spec_get(&spec, 0);
+    CHECK(layout != NULL);
+    spec.parameters[0][3].direction = ATFIELD_MUTATION_DIR_INOUT;
+
+    uint8_t mutation[512];
+    const size_t n = make_mutation_spec_v2(mutation,
+        0, 1, 0, 42, 7,                    /* target: param0 42 -> 7 at occurrence 1 */
+        0, 0, 3, 0, 4, 0x11223344u, 0xAABBCCDDu); /* prefix: buffer param3 @occurrence 0 */
+    atfield_mutation_state_t state;
+    CHECK(atfield_mutation_load_spec_bytes(&state, mutation, n, BUNDLE_SHA, LAYOUT_SHA) == 0);
+    CHECK(state.rule.prefix_op_count == 1);
+    CHECK(atfield_mutation_bind_run(&state, 7, 1) == 0);
+
+    int32_t backing[2] = {(int32_t)0x11223344, 0x55667788};
+    marshal_t ms;
+    init_ms(&ms, 42, 8, backing);
+    marshal_t working;
+    atfield_call_capture_record_t record;
+
+    /* Prefix call (occurrence 0): pass-through marshal, recorded + applied write */
+    int rc = atfield_mutation_before_ecall(&state, 7, 1, 0, 0, 0, layout,
+        &ms, &working, sizeof(working), &record);
+    CHECK(rc == 0);
+    CHECK(backing[0] == (int32_t)0xAABBCCDDu);
+    CHECK(backing[1] == 0x55667788);
+    CHECK(record.mutation.matched == 1);
+    CHECK(record.mutation.target == 0);
+    CHECK(record.mutation.applied == 1);
+    CHECK(record.mutation.parameter_index == 3);
+    CHECK(record.mutation.observed_bits == 0x11223344u);
+    CHECK(record.mutation.replacement_bits == 0xAABBCCDDu);
+    CHECK(strcmp(record.mutation.reason, "applied") == 0);
+    CHECK(record.buffer_input_count == 1);
+    CHECK(memcmp(record.buffer_inputs[0].prefix_bytes, backing, sizeof(backing)) == 0);
+    CHECK(atfield_mutation_after_ecall(&state, layout, &ms, &ms, &record) == 0);
+
+    /* Target call (occurrence 1): scalar replacement applies */
+    ms.target = 42;
+    rc = atfield_mutation_before_ecall(&state, 7, 1, 1, 0, 1, layout,
+        &ms, &working, sizeof(working), &record);
+    CHECK(rc == 1);
+    CHECK(working.target == 7);
+    CHECK(record.mutation.target == 1);
+    CHECK(atfield_mutation_finalize(&state) == 0);
+
+    /* Unplanned calls are never written */
+    CHECK(backing[0] == (int32_t)0xAABBCCDDu && backing[1] == 0x55667788);
+
+    /* Mismatched expected value fails visibly, never silently */
+    CHECK(atfield_mutation_load_spec_bytes(&state, mutation, n, BUNDLE_SHA, LAYOUT_SHA) == 0);
+    CHECK(atfield_mutation_bind_run(&state, 7, 1) == 0);
+    backing[0] = 0x99999999;
+    init_ms(&ms, 42, 8, backing);
+    rc = atfield_mutation_before_ecall(&state, 7, 1, 0, 0, 0, layout,
+        &ms, &working, sizeof(working), &record);
+    CHECK(rc == -1);
+    CHECK(record.mutation.applied == 0);
+    CHECK(strcmp(record.mutation.reason, "expected_value_mismatch") == 0);
+    CHECK(backing[0] == (int32_t)0x99999999);
+
+    /* finalize requires every planned prefix op to have applied */
+    CHECK(atfield_mutation_load_spec_bytes(&state, mutation, n, BUNDLE_SHA, LAYOUT_SHA) == 0);
+    CHECK(atfield_mutation_bind_run(&state, 7, 1) == 0);
+    init_ms(&ms, 42, 8, backing);
+    backing[0] = (int32_t)0x11223344;
+    rc = atfield_mutation_before_ecall(&state, 7, 1, 1, 0, 1, layout,
+        &ms, &working, sizeof(working), &record);
+    CHECK(rc == -1);
+    CHECK(record.mutation.applied == 0);
+    CHECK(atfield_mutation_finalize(&state) == -1);
+    CHECK(strcmp(atfield_mutation_invalid_reason(&state), "prefix_mutation_missed") == 0);
 }
 
 int main(void) {
@@ -593,6 +858,8 @@ int main(void) {
     test_nonintegral_size_count_rejected();
     test_compiler_scalar_proof();
     test_buffer_mutation_and_capture();
+    test_linked_expansion_and_alias_and_budget();
+    test_explicit_prefix_mutation();
     puts("native mutation tests: PASS");
     return 0;
 }

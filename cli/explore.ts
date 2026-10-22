@@ -17,6 +17,8 @@ interface CliOptions {
   enclCpu?: number;
   watchCpu?: number;
   reportJsonPath?: string;
+  expansionBufferBudgetBytes?: bigint;
+  expansionTotalBudgetBytes?: bigint;
 }
 
 function fail(message: string): never { throw new TypeError(message); }
@@ -34,7 +36,7 @@ export function parseArgs(argv: string[]): CliOptions {
   const optionArgs = argv.slice(0, separator);
   const hostArgs = argv.slice(separator + 1);
   const values = new Map<string, string>();
-  const allowed = ["--bundle", "--corpus", "--role", "--collector", "--budget", "--timeout-ms", "--kill-grace-ms", "--encl-cpu", "--watch-cpu", "--report-json"];
+  const allowed = ["--bundle", "--corpus", "--role", "--collector", "--budget", "--timeout-ms", "--kill-grace-ms", "--encl-cpu", "--watch-cpu", "--report-json", "--expansion-buffer-bytes", "--expansion-total-bytes"];
   for (let i = 0; i < optionArgs.length; i++) {
     const key = optionArgs[i]!;
     if (!allowed.includes(key)) fail("unsupported option " + key);
@@ -62,6 +64,10 @@ export function parseArgs(argv: string[]): CliOptions {
     enclCpu: values.has("--encl-cpu") ? integer(values.get("--encl-cpu")!, "--encl-cpu", 0) : undefined,
     watchCpu: values.has("--watch-cpu") ? integer(values.get("--watch-cpu")!, "--watch-cpu", 0) : undefined,
     reportJsonPath: values.has("--report-json") ? path.resolve(values.get("--report-json")!) : undefined,
+    expansionBufferBudgetBytes: values.has("--expansion-buffer-bytes")
+      ? BigInt(integer(values.get("--expansion-buffer-bytes")!, "--expansion-buffer-bytes", 1, 0xffffffff)) : undefined,
+    expansionTotalBudgetBytes: values.has("--expansion-total-bytes")
+      ? BigInt(integer(values.get("--expansion-total-bytes")!, "--expansion-total-bytes", 1)) : undefined,
   };
 }
 
@@ -89,6 +95,8 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
     killGraceMs: options.killGraceMs,
     enclCpu: options.enclCpu,
     watchCpu: options.watchCpu,
+    expansionBufferBudgetBytes: options.expansionBufferBudgetBytes,
+    expansionTotalBudgetBytes: options.expansionTotalBudgetBytes,
   });
   const baselineRejected = result.seedResults.filter((entry) => !entry.baselineAccepted).length;
   const rejectedCandidates = result.seedResults.flatMap((entry) => entry.candidates)

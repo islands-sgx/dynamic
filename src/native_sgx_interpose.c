@@ -29,6 +29,24 @@ static void trace_note_io_failure(const char *reason) {
     trace_note_contract_failure(reason);
 }
 
+/* A separate, append-only cost journal survives capture parsing failures and
+ * records entry before an ECALL that may terminate the process. */
+static void journal_lifecycle(const char *event, int selector, uint64_t seq, uint64_t occurrence) {
+    const char *destination = getenv("ATFIELD_LIFECYCLE_PATH");
+    if (!destination || !*destination) return;
+    const int fd = open(destination, O_WRONLY | O_CREAT | O_APPEND | O_CLOEXEC, 0600);
+    if (fd < 0) { trace_note_io_failure("lifecycle_open_failed"); return; }
+    char line[256];
+    const int length = snprintf(line, sizeof(line),
+        "{\"event\":\"%s\",\"generation\":%" PRIu64 ",\"callSeq\":%" PRIu64
+        ",\"selectorOrdinal\":%d,\"selectorSeq\":%" PRIu64 "}\n",
+        event, instance_generation, seq, selector, occurrence);
+    if (length <= 0 || (size_t)length >= sizeof(line) ||
+        write(fd, line, (size_t)length) != length)
+        trace_note_io_failure("lifecycle_write_failed");
+    if (close(fd) != 0) trace_note_io_failure("lifecycle_close_failed");
+}
+
 static int trace_printf(const char *fmt, ...) {
     if (!trace_fp || trace_io_failed) return -1;
     va_list ap;
@@ -265,6 +283,7 @@ static void trace_note_successful_create(void) {
         return;
     }
     instance_generation++;
+    journal_lifecycle("enclave_created", -1, 0, 0);
     atfield_reset_selectors(selector_seq);
     const uint64_t want_gen = call_mutation_state.rule.target_generation
         ? call_mutation_state.rule.target_generation : 1u;
@@ -273,6 +292,28 @@ static void trace_note_successful_create(void) {
         const char *reason = atfield_mutation_invalid_reason(&call_mutation_state);
         mark_invalid(reason && *reason ? reason : "mutation_run_binding_failed");
     }
+}
+
+static void close_mutation_capture(void);
+
+static int make_current_stack_ready(void) {
+    volatile unsigned char stack_marker = 0;
+    const uintptr_t stack_addr = (uintptr_t)&stack_marker;
+    FILE *maps = fopen("/proc/self/maps", "r");
+    if (!maps) return -1;
+    char line[512];
+    int result = -1;
+    while (fgets(line, sizeof(line), maps)) {
+        unsigned long start = 0, end = 0;
+        char perms[8] = {0};
+        if (sscanf(line, "%lx-%lx %7s", &start, &end, perms) != 3 ||
+            strncmp(perms, "rw-p", 4) != 0 ||
+            stack_addr < start || stack_addr >= end) continue;
+        result = mlock((void *)(uintptr_t)start, (size_t)(end - start));
+        break;
+    }
+    fclose(maps);
+    return result;
 }
 
 sgx_status_t sgx_create_enclave(
@@ -294,6 +335,17 @@ sgx_status_t sgx_create_enclave(
         trace_note_contract_failure("second_live_enclave_rejected");
         pthread_mutex_unlock(&collector_mutex);
         return -1;
+    }
+    const uint16_t create_op_type = call_mutation_state.rule.operation_count > 0
+        ? call_mutation_state.rule.operations[0].op_type : 0u;
+    if (call_mutation_state.enabled &&
+        create_op_type != ATFIELD_MUTATION_OP_EXTEND_HISTORY &&
+        call_mutation_state.rule.exec_mode >= 1 &&
+        call_mutation_state.rule.hit_count > 0 &&
+        call_mutation_state.rule.applied) {
+        close_mutation_capture();
+        pthread_mutex_unlock(&collector_mutex);
+        _exit(0);
     }
     if (!real_sgx_create_enclave)
         real_sgx_create_enclave = (real_create_fn_t)dlsym(RTLD_NEXT, "sgx_create_enclave");
@@ -586,6 +638,11 @@ sgx_status_t sgx_create_enclave(
         }
     }
 
+    if (encl_cpu >= 0 && make_current_stack_ready() != 0) {
+        syscall_error_count++;
+        trace_note_contract_failure("host_stack_readiness_failed");
+        use_4gate = 0;
+    }
     if (encl_cpu >= 0) {
         cpu_set_t verify_set;
         CPU_ZERO(&set);
@@ -684,6 +741,9 @@ static sgx_status_t execute_one_measured_ecall(
     __atomic_store_n(&gate_c_ipi_aex_count, 0, __ATOMIC_RELEASE);
     __atomic_store_n(&unexpected_aex_count, 0, __ATOMIC_RELEASE);
     for (int si = 0; si < 5; si++) __atomic_store_n(&unexpected_stage_aex[si], 0, __ATOMIC_RELEASE);
+    __atomic_store_n(&outside_window_aex_count, 0, __ATOMIC_RELEASE);
+    for (int si = 0; si < 5; si++) __atomic_store_n(&outside_window_stage_aex[si], 0, __ATOMIC_RELEASE);
+
     g_shared->gate_enable = (use_4gate && enable_gate_for_this_call) ? 1 : 0;
     uint32_t required_gates = (use_4gate && enable_gate_for_this_call) ? 0x0fu : 0u;
     const char *ecall_mode_env = getenv("ATFIELD_MODE");
@@ -824,6 +884,7 @@ static sgx_status_t execute_one_measured_ecall(
             fclose(maps);
         }
     }
+    journal_lifecycle("ecall_enter", index, record_seq, (uint64_t)record_selector_seq);
     __atomic_store_n(&in_measured_ecall, 1, __ATOMIC_SEQ_CST);
     uint64_t t0 = monotonic_ns();
     sgx_status_t st = real_sgx_ecall(eid, index, ocall_table, call_ms);
@@ -836,6 +897,25 @@ static sgx_status_t execute_one_measured_ecall(
         host_gate_at_return = __atomic_load_n(&g_shared->host_gate, __ATOMIC_ACQUIRE);
     }
     __atomic_store_n(&in_measured_ecall, 0, __ATOMIC_SEQ_CST);
+    journal_lifecycle("ecall_return", index, record_seq, (uint64_t)record_selector_seq);
+    abi_outcome_t abi_pre = {0, 0};
+    int has_out_status_pre = 0;
+    int32_t out_status_pre = 0;
+    if (index >= 0 && index < MAX_SCHEMA_ECALLS && g_has_ecall_schema[index] && call_ms) {
+        const ecall_schema_t *es = &g_ecall_schemas[index];
+        read_ecall_abi_outcome((const uint8_t *)call_ms, es->ms_size, es, &abi_pre);
+        if (!es->has_retval && es->num_params > 0 && es->params[0].is_pointer &&
+            es->params[0].direction == DIR_OUT && es->params[0].elem_size == 4 && es->params[0].static_count == 1) {
+            int32_t *sptr = *(int32_t **)((uint8_t *)call_ms + es->params[0].ms_offset);
+            if (sptr) {
+                has_out_status_pre = 1;
+                out_status_pre = *sptr;
+            }
+        }
+    } else if (call_ms) {
+        abi_pre.has_retval = 1;
+        abi_pre.retval_i64 = *(int32_t *)call_ms;
+    }
     if (capture_active) {
         if (atfield_mutation_after_ecall(&call_mutation_state, capture_layout,
                 call_ms, ms, &capture_record) != 0)
@@ -896,25 +976,10 @@ static sgx_status_t execute_one_measured_ecall(
         if (cur_obs[f].heap_walk_truncated || cur_obs[f].heap_pread_failures) any_heap_err = 1;
     }
 
-    /* Read ABI return slot strictly according to g_ecall_schemas[index] */
-    abi_outcome_t abi = {0, 0};
-    int has_out_status_ptr = 0;
-    int32_t out_status_val = 0;
-    if (index >= 0 && index < MAX_SCHEMA_ECALLS && g_has_ecall_schema[index] && ms) {
-        const ecall_schema_t *es = &g_ecall_schemas[index];
-        read_ecall_abi_outcome((const uint8_t *)ms, es->ms_size, es, &abi);
-        if (!es->has_retval && es->num_params > 0 && es->params[0].is_pointer &&
-            es->params[0].direction == DIR_OUT && es->params[0].elem_size == 4 && es->params[0].static_count == 1) {
-            int32_t *sptr = *(int32_t **)((uint8_t *)ms + es->params[0].ms_offset);
-            if (sptr) {
-                has_out_status_ptr = 1;
-                out_status_val = *sptr;
-            }
-        }
-    } else if (ms) {
-        abi.has_retval = 1;
-        abi.retval_i64 = *(int32_t *)ms;
-    }
+    /* Use ABI return slot captured from call_ms before working_ms teardown */
+    abi_outcome_t abi = abi_pre;
+    int has_out_status_ptr = has_out_status_pre;
+    int32_t out_status_val = out_status_pre;
 
     char ms_ret_json[32];
     if (abi.has_retval) {
@@ -958,16 +1023,19 @@ static sgx_status_t execute_one_measured_ecall(
     uint32_t gate_b_aex = __atomic_load_n(&gate_b_ipi_aex_count, __ATOMIC_ACQUIRE);
     uint32_t gate_c_aex = __atomic_load_n(&gate_c_ipi_aex_count, __ATOMIC_ACQUIRE);
     uint32_t unexp_aex = __atomic_load_n(&unexpected_aex_count, __ATOMIC_ACQUIRE);
-    uint32_t unexp_stage[5];
-    uint32_t unexp_stage_sum = 0;
+    uint32_t outside_aex = __atomic_load_n(&outside_window_aex_count, __ATOMIC_ACQUIRE);
+    uint32_t unexp_stage[5], outside_stage[5];
+    uint32_t unexp_stage_sum = 0, outside_stage_sum = 0;
     for (int si = 0; si < 5; si++) {
         unexp_stage[si] = __atomic_load_n(&unexpected_stage_aex[si], __ATOMIC_ACQUIRE);
+        outside_stage[si] = __atomic_load_n(&outside_window_stage_aex[si], __ATOMIC_ACQUIRE);
         unexp_stage_sum += unexp_stage[si];
+        outside_stage_sum += outside_stage[si];
     }
-    if (unexp_aex > 0 || cur_fault_count > 0 ||
-        total_aex != gate_aex + unexp_aex ||
+    if (unexp_aex > 0 || cur_fault_count != (int)outside_aex ||
+        total_aex != gate_aex + unexp_aex + outside_aex ||
         gate_aex != gate_a_aex + gate_b_aex + gate_c_aex ||
-        unexp_aex != unexp_stage_sum ||
+        unexp_aex != unexp_stage_sum || outside_aex != outside_stage_sum ||
         (cur_obs_count == 0 && gate_aex > 0)) {
         mark_invalid("unexpected_aex_observed");
         measurement_invalid = 1;
@@ -1036,27 +1104,31 @@ static sgx_status_t execute_one_measured_ecall(
             }
             trace_printf("}}");
         }
-        trace_printf("],\"aex\":{\"count\":%u,\"protocol_gate_count\":%u,\"unexpected_count\":%u,"
+        trace_printf("],\"aex\":{\"count\":%u,\"protocol_gate_count\":%u,\"unexpected_count\":%u,\"outside_window_count\":%u,"
                      "\"by_gate\":{\"GATE_A\":%u,\"GATE_B\":%u,\"GATE_C\":%u},"
                      "\"by_stage\":{"
-                     "\"S0_BRIDGE\":{\"protocol_gate\":%u,\"unexpected\":%u},"
-                     "\"S1_ENTER\":{\"protocol_gate\":%u,\"unexpected\":%u},"
-                     "\"S2_PRETOUCH\":{\"protocol_gate\":%u,\"unexpected\":%u},"
-                     "\"S3_BODY\":{\"protocol_gate\":0,\"unexpected\":%u},"
-                     "\"POST_FIELD\":{\"protocol_gate\":0,\"unexpected\":%u}"
+                     "\"S0_BRIDGE\":{\"protocol_gate\":%u,\"unexpected\":%u,\"outside_window\":%u},"
+                     "\"S1_ENTER\":{\"protocol_gate\":%u,\"unexpected\":%u,\"outside_window\":%u},"
+                     "\"S2_PRETOUCH\":{\"protocol_gate\":%u,\"unexpected\":%u,\"outside_window\":%u},"
+                     "\"S3_BODY\":{\"protocol_gate\":0,\"unexpected\":%u,\"outside_window\":%u},"
+                     "\"POST_FIELD\":{\"protocol_gate\":0,\"unexpected\":%u,\"outside_window\":%u}"
                      "},\"fault_events\":[",
-                     total_aex, gate_aex, unexp_aex,
+                     total_aex, gate_aex, unexp_aex, outside_aex,
                      gate_a_aex, gate_b_aex, gate_c_aex,
-                     gate_a_aex, unexp_stage[0],
-                     gate_b_aex, unexp_stage[1],
-                     gate_c_aex, unexp_stage[2],
-                     unexp_stage[3],
-                     unexp_stage[4]);
+                     gate_a_aex, unexp_stage[0], outside_stage[0],
+                     gate_b_aex, unexp_stage[1], outside_stage[1],
+                     gate_c_aex, unexp_stage[2], outside_stage[2],
+                     unexp_stage[3], outside_stage[3],
+                     unexp_stage[4], outside_stage[4]);
         for (int fi = 0; fi < cur_fault_count; fi++) {
             fault_event_t *fe = &cur_faults[fi];
-            trace_printf("%s{\"aex_seq\":%u,\"page_rva\":\"0x%" PRIx64 "\",\"encl_rip_rva\":\"0x%" PRIx64 "\",\"effective_addr_rva\":\"0x%" PRIx64 "\",\"ea_verified\":%s,\"exitinfo\":\"0x%x\",\"active_flag\":%u,\"stage\":",
+            trace_printf("%s{\"aex_seq\":%u,\"page_rva\":\"0x%" PRIx64 "\",\"encl_rip_rva\":\"0x%" PRIx64 "\",\"effective_addr_rva\":\"0x%" PRIx64 "\",\"ea_verified\":%s,\"exitinfo\":\"0x%x\",\"active_flag\":%u,\"active_flag_valid\":%s,\"host_gate\":%u,\"watcher_slot_closed\":%s,\"strict_retractions_clear\":%s,\"outside_window\":%s,\"stage\":",
                          fi ? "," : "", fe->aex_seq, fe->page_rva, fe->encl_rip_rva, fe->effective_addr_rva,
-                         fe->ea_verified ? "true" : "false", fe->exitinfo, fe->active_flag);
+                         fe->ea_verified ? "true" : "false", fe->exitinfo, fe->active_flag,
+                         fe->active_flag_valid ? "true" : "false", fe->host_gate,
+                         fe->watcher_slot_closed ? "true" : "false",
+                         fe->strict_retractions_clear ? "true" : "false",
+                         fe->outside_window ? "true" : "false");
             trace_write_json_string(fe->stage);
             trace_printf(",\"pte_healed_observed\":%s,\"confirmed_access_kind\":",
                          fe->pte_healed_observed ? "true" : "false");
@@ -1113,14 +1185,30 @@ sgx_status_t sgx_ecall(
         int sb_idx = -1, sb_seq = -1;
         if (sscanf(stop_before_normal, "%d:%d", &sb_idx, &sb_seq) == 2 && index == sb_idx && sseq == sb_seq) {
             dump_enclave_vmas_if_requested();
+            close_mutation_capture();
             cleanup_interpose();
+            pthread_mutex_unlock(&collector_mutex);
             _exit(0);
         }
     }
 
     const uint64_t want_gen = call_mutation_state.rule.target_generation
         ? call_mutation_state.rule.target_generation : 1u;
+    const uint16_t rule_op_type = call_mutation_state.rule.operation_count > 0
+        ? call_mutation_state.rule.operations[0].op_type : 0u;
+    if (call_mutation_state.enabled &&
+        rule_op_type != ATFIELD_MUTATION_OP_EXTEND_HISTORY &&
+        call_mutation_state.rule.exec_mode >= 1 &&
+        call_mutation_state.rule.hit_count > 0 &&
+        call_mutation_state.rule.applied) {
+        dump_enclave_vmas_if_requested();
+        close_mutation_capture();
+        cleanup_interpose();
+        pthread_mutex_unlock(&collector_mutex);
+        _exit(0);
+    }
     if (!was_replaced && call_mutation_state.enabled &&
+        rule_op_type == ATFIELD_MUTATION_OP_EXTEND_HISTORY &&
         call_mutation_state.rule.exec_mode >= 1 &&
         instance_generation == want_gen &&
         index == call_mutation_state.rule.selector_ordinal &&
@@ -1349,6 +1437,7 @@ sgx_status_t sgx_destroy_enclave(sgx_enclave_id_t eid) {
     } else {
         trace_note_contract_failure("current_eid_destroy_failed");
     }
+
     pthread_mutex_unlock(&collector_mutex);
     return st;
 }

@@ -42,7 +42,8 @@ function parseArgs(argv: string[]): { bundle: string; corpus?: string; traces: s
   return { bundle, ...(corpus ? { corpus } : {}), traces, out };
 }
 
-export function makeWorksetFromFiles(bundlePath: string, tracePaths: string[], outputPath?: string) {
+export function makeWorksetFromFiles(bundlePath: string, tracePaths: string[], outputPath?: string,
+  supplementalTracePaths: ReadonlySet<string> = new Set()) {
   const bundle = loadProfileBundle(bundlePath);
   if (outputPath !== undefined) {
     const output = path.resolve(outputPath);
@@ -59,7 +60,7 @@ export function makeWorksetFromFiles(bundlePath: string, tracePaths: string[], o
   }
   const seenRunIds = new Set<string>();
   const traces = tracePaths.map((tracePath) => {
-    const trace = readCanonicalTrace(tracePath, bundle);
+    const trace = readCanonicalTrace(tracePath, bundle, { allowBusinessRejectionExit: supplementalTracePaths.has(tracePath) });
     if (seenRunIds.has(trace.runId)) throw new Error("duplicate trace run_id " + trace.runId);
     seenRunIds.add(trace.runId);
     return trace;
@@ -76,10 +77,11 @@ export function main(argv: string[] = process.argv.slice(2)): number {
   try {
     const parsed = parseArgs(argv);
     const output = path.resolve(parsed.out);
-    const corpusTracePaths = parsed.corpus
-      ? readFinalizableCorpus(parsed.corpus, parsed.bundle).map((entry) => entry.path)
+    const corpusTraces = parsed.corpus
+      ? readFinalizableCorpus(parsed.corpus, parsed.bundle)
       : [];
-    const result = makeWorksetFromFiles(parsed.bundle, [...corpusTracePaths, ...parsed.traces], output);
+    const supplementalTracePaths = new Set(corpusTraces.filter((entry) => entry.role === "supplemental").map((entry) => entry.path));
+    const result = makeWorksetFromFiles(parsed.bundle, [...corpusTraces.map((entry) => entry.path), ...parsed.traces], output, supplementalTracePaths);
     mkdirSync(path.dirname(output), { recursive: true });
     temporary = path.join(path.dirname(output), "." + path.basename(output) + "." + randomUUID() + ".tmp");
     writeFileSync(temporary, JSON.stringify(result, null, 2) + "\n", { encoding: "utf8", flag: "wx" });

@@ -89,8 +89,10 @@ export interface CanonicalRun {
   incompleteReasons: string[];
   timedOut: boolean;
   exitCode: number | null;
+  termination: ProcessTermination;
   traceSha256: string | null;
   parsedTrace?: ParsedTrace;
+  committedTrace?: ParsedTrace;
   traceText: string;
   stdout: string;
   stderr: string;
@@ -264,6 +266,7 @@ function runnerEnd(
   runId: string,
   bundle: ProfileBundle,
   exitCode: number | null,
+  termination: ProcessTermination,
   timedOut: boolean,
   completion: "complete" | "incomplete",
   reasons: string[],
@@ -280,12 +283,15 @@ function runnerEnd(
     bundle_manifest_sha256: bundle.manifestSha256,
     instance_generation: generation,
     process_return_code: exitCode ?? -1,
+    termination,
     timeout: timedOut,
     record_count: records.filter((record) => record.record_type === "ecall").length,
     completion,
     incomplete_reasons: reasons,
   };
 }
+
+export type ProcessTermination = "exited" | "signaled" | "timeout" | "unknown";
 
 function appendRunEnd(filename: string, rawText: string, end: JsonObject): void {
   const descriptor = openSync(filename, "a");
@@ -698,6 +704,7 @@ async function runOne(
     let timedOut = false;
     let outputTimedOut = false;
     let exitCode: number | null = null;
+    let signalCode: string | null = null;
     let stdout = "";
     let stderr = "";
     let childProcess: Bun.Subprocess | undefined;
@@ -708,7 +715,7 @@ async function runOne(
     let scan: PrefixScan = { records: [], prefixText: "", reasons: [] };
     try {
       verifyArtifacts(snapshot, collector && collectorLink ? { path: collectorLink, sha256: collector.sha256 } : undefined);
-      childProcess = Bun.spawn([snapshot.hostPath, ...argv], {
+      const spawned = Bun.spawn([snapshot.hostPath, ...argv], {
         cwd: stateDir,
         env,
         stdin: "ignore",
@@ -716,9 +723,10 @@ async function runOne(
         stderr: "pipe",
         detached: true,
       });
+      childProcess = spawned;
       completed = childProcess.exited;
-      stdoutCapture = captureStream(childProcess.stdout);
-      stderrCapture = captureStream(childProcess.stderr);
+      stdoutCapture = captureStream(spawned.stdout);
+      stderrCapture = captureStream(spawned.stderr);
       const outcome = await Promise.race([
         completed.then((code) => ({ code })),
         delay(options.timeoutMs).then(() => null),
@@ -754,6 +762,7 @@ async function runOne(
       }
       stdout = stdoutCapture.text();
       stderr = stderrCapture.text();
+      signalCode = childProcess.signalCode == null ? null : String(childProcess.signalCode);
     } catch (error) {
       if (childProcess && completed) {
         try {
@@ -776,19 +785,29 @@ async function runOne(
     scan = scanCollectorPrefix(rawText);
     if (decodingError) scan.reasons.push(decodingError);
     const traceError = stderr.split(/\r?\n/).some((line) => line.startsWith("ATFIELD_TRACE_ERROR:"));
+    const termination: ProcessTermination =
+      timedOut || outputTimedOut ? "timeout"
+      : signalCode !== null ? "signaled"
+      : exitCode !== null ? "exited"
+      : "unknown";
     const runReasons = [...scan.reasons];
     if (timedOut) runReasons.push("host process timed out");
     if (outputTimedOut) runReasons.push("host output pipes did not close before the final deadline");
-    if (exitCode !== 0) runReasons.push("host process exit code was " + String(exitCode));
+    if (termination === "signaled") {
+      runReasons.push("host process terminated by signal " + String(signalCode));
+    } else if (exitCode !== 0) {
+      runReasons.push("host process exit code was " + String(exitCode));
+    }
     if (traceError) runReasons.push("collector reported ATFIELD_TRACE_ERROR");
 
     let finalText = "";
     let parsedTrace: ParsedTrace | undefined;
+    let committedTrace: ParsedTrace | undefined;
     let completion: "complete" | "incomplete" = "incomplete";
     let incompleteReasons = [...new Set(runReasons)];
     const canComplete = incompleteReasons.length === 0 && scan.records.length > 0;
     if (canComplete) {
-      const candidateEnd = runnerEnd(scan.records, runId, artifacts.bundle, exitCode, false, "complete", []);
+      const candidateEnd = runnerEnd(scan.records, runId, artifacts.bundle, exitCode, termination, false, "complete", []);
       try {
         if (rawBytes.length) {
           appendRunEnd(rawTracePath, rawText, candidateEnd);
@@ -819,6 +838,7 @@ async function runOne(
         runId,
         artifacts.bundle,
         exitCode,
+        termination,
         timedOut || outputTimedOut,
         "incomplete",
         incompleteReasons.length ? incompleteReasons : ["collector trace was incomplete"],
@@ -830,12 +850,35 @@ async function runOne(
         } catch (error) {
           incompleteReasons.push("runner could not append run_end: " + String(error));
           finalText = scan.prefixText + JSON.stringify(runnerEnd(
-            scan.records, runId, artifacts.bundle, exitCode, timedOut || outputTimedOut,
+            scan.records, runId, artifacts.bundle, exitCode, termination, timedOut || outputTimedOut,
             "incomplete", incompleteReasons,
           )) + "\n";
         }
       } else {
         finalText = scan.prefixText + JSON.stringify(end) + "\n";
+      }
+      if (
+        !timedOut &&
+        !outputTimedOut &&
+        !traceError &&
+        scan.reasons.length === 0 &&
+        scan.records.length > 0 &&
+        exitCode !== null &&
+        exitCode !== 0
+      ) {
+        try {
+          const candidateCommitted = parseCanonicalTrace(
+            finalText,
+            "runner committed trace",
+            artifacts.bundle,
+            { allowBusinessRejectionExit: true },
+          );
+          if (candidateCommitted.runId === runId && candidateCommitted.ecallCount > 0) {
+            committedTrace = candidateCommitted;
+          }
+        } catch {
+          committedTrace = undefined;
+        }
       }
     }
 
@@ -859,8 +902,10 @@ async function runOne(
       incompleteReasons,
       timedOut: timedOut || outputTimedOut,
       exitCode,
+      termination,
       traceSha256: parsedTrace?.traceSha256 ?? (finalText ? sha256(new TextEncoder().encode(finalText)) : null),
       parsedTrace,
+      ...(committedTrace ? { committedTrace } : {}),
       traceText: finalText,
       stdout,
       stderr,
@@ -899,6 +944,7 @@ async function runOne(
         trace_path: traceOut,
         trace_sha256: result.traceSha256,
         exit_code: exitCode,
+        termination,
         timed_out: timedOut || outputTimedOut,
         completion,
         incomplete_reasons: incompleteReasons,

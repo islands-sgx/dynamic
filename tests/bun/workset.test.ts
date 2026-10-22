@@ -778,6 +778,51 @@ test("classifies protocol gate-spin AEXs within verified boundaries and rejects 
   const parsed = parseCanonicalTrace(validLines.join("\n") + "\n", "classified-aex-ok", bundle);
   expect(parsed.observedFieldIds).toEqual(["field-a", "field-b"]);
 
+  const postField = JSON.parse(validLines[1]!);
+  const postFieldEvent = {
+    aex_seq: 7,
+    page_rva: "0x8000",
+    encl_rip_rva: "0x8123",
+    effective_addr_rva: "0x0",
+    ea_verified: false,
+    exitinfo: "0x0",
+    active_flag: 0,
+    active_flag_valid: true,
+    host_gate: 80,
+    watcher_slot_closed: true,
+    strict_retractions_clear: true,
+    outside_window: true,
+    stage: "POST_FIELD",
+    pte_healed_observed: false,
+    confirmed_access_kind: "unexpected",
+    inferred_post_window_kind: "none",
+  };
+  postField.aex.count = 7;
+  postField.aex.outside_window_count = 1;
+  postField.aex.by_stage.POST_FIELD.outside_window = 1;
+  postField.aex.fault_events = [postFieldEvent];
+  const postFieldLines = [...baseLines];
+  postFieldLines[1] = JSON.stringify(postField);
+  expect(parseCanonicalTrace(postFieldLines.join("\n") + "\n", "closed-gate-d-post-field-aex", bundle)
+    .observedFieldIds).toEqual(["field-a", "field-b"]);
+
+  for (const [key, value] of [
+    ["active_flag", 1],
+    ["active_flag_valid", false],
+    ["host_gate", 70],
+    ["watcher_slot_closed", false],
+    ["strict_retractions_clear", false],
+    ["pte_healed_observed", true],
+    ["stage", "S3_BODY"],
+  ] as const) {
+    const bad = JSON.parse(JSON.stringify(postField));
+    bad.aex.fault_events[0][key] = value;
+    const lines = [...baseLines];
+    lines[1] = JSON.stringify(bad);
+    expect(() => parseCanonicalTrace(lines.join("\n") + "\n", "unsafe-outside-window-aex", bundle))
+      .toThrow(/completed Gate D outside-window proof/);
+  }
+
   const bodyAex = JSON.parse(validLines[1]!);
   bodyAex.aex.count = 7;
   bodyAex.aex.unexpected_count = 1;

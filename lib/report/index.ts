@@ -665,11 +665,11 @@ function emitSection5(lines: string[]): void {
   lines.push("python3 tools/edl_harness.py");
   lines.push("");
   lines.push("# 3. Compile the SGX-Step + AEP native interposer");
-  lines.push("gcc -shared -fPIC -O2 -Wno-unused-result -DLIBSGXSTEP_SILENT=1 \\");
-  lines.push("  -Isrc -Ivendor/sgxstep src/native_sgx_interpose.c \\");
+  lines.push("nix develop ../sample#real-ehsm-protect --command cc -shared -fPIC -O2 -Wno-unused-result -DLIBSGXSTEP_SILENT=1 \\");
+  lines.push("  -Isrc -Ivendor/sgxstep src/native_sgx_interpose.c src/interpose_mutation.c \\");
   lines.push("  vendor/sgxstep/libsgxstep/pt.c vendor/sgxstep/libsgxstep/file.c \\");
-  lines.push("  vendor/sgxstep/libsgxstep/debug.c -ldl -lpthread \\");
-  lines.push("  -o build/libatfield_native_sgx.so");
+  lines.push("  vendor/sgxstep/libsgxstep/debug.c -ldl -lpthread -lcrypto \\");
+  lines.push("  -Wl,--no-undefined -Wl,-z,defs -o build/libatfield_native_sgx.so");
   lines.push("");
   lines.push("# 4. Run 3-layer dynamic exploration & emit Group B (dynamic_xr) and Group C (dynamic) artifacts");
   lines.push("python3 controller.py qe3 signal-cds sgxwallet ehsm ehsm-opt-1 ehsm-opt-2");

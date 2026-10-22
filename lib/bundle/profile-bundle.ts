@@ -433,11 +433,12 @@ function parseSelectors(value: unknown, fields: ProfileField[]): ProfileSelector
     if (!Array.isArray(selector.reachable_fields)) {
       throw new ProfileBundleError("selector " + selector.name + ".reachable_fields must be an array");
     }
-    const reachableFields = selector.reachable_fields.map((id, fieldIndex) => {
+    const reachableEntries = selector.reachable_fields;
+    const reachableFields = reachableEntries.map((id, fieldIndex) => {
       if (typeof id !== "string" || !fieldIds.has(id)) {
         throw new ProfileBundleError("selector " + selector.name + " references unknown Field " + String(id));
       }
-      if (selector.reachable_fields.indexOf(id) !== fieldIndex) {
+      if (reachableEntries.indexOf(id) !== fieldIndex) {
         throw new ProfileBundleError("selector " + selector.name + " repeats Field " + id);
       }
       return id;
@@ -619,7 +620,7 @@ function validateEvidenceArtifacts(
   layout: JsonObject,
   fieldsValue: unknown,
   selectorsValue: unknown,
-): { marshalLayout: JsonObject; marshalLayoutSha256: string; collectorLayoutSpec: string } {
+): { marshalLayout: JsonObject; marshalLayoutSha256: string; collectorLayoutSpec: string; relroPages: Set<bigint> } {
   const fieldsDocument = requireObjectArtifact(artifactPaths, "fields");
   if (fieldsDocument.schema !== "atfield-fields-v1" || !Array.isArray(fieldsDocument.fields) ||
       !jsonEqual(fieldsDocument.fields, fieldsValue)) {

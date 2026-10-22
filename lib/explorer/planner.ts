@@ -2,9 +2,12 @@ import type {
   CallCaptureDocument,
   CallCaptureEvent,
   CapturedBufferInput,
+  CapturedBufferOutput,
+  DataflowTarget,
   ScalarMutationRule,
 } from "./contract.ts";
 import type { ExplorerProfile, MarshalEcall, MarshalParameter } from "./profile.ts";
+import { CALL_CAPTURE_MAX_BUF_PREFIX_BYTES } from "./contract.ts";
 import { generateProfileScalarCandidates } from "./profile.ts";
 
 export interface PlannedMutation {
@@ -17,6 +20,9 @@ export interface PlannedMutation {
 export interface DeriveCaseOptions {
   budget: number;
   depth?: number;
+  frontier?: FrontierEntry[];
+  expansionBufferBudgetBytes?: bigint;
+  expansionTotalBudgetBytes?: bigint;
   parentMutation?: PlannedMutation;
   includeBuffers?: boolean;
   includeHistory?: boolean;
@@ -48,38 +54,127 @@ function pointerDependencies(
   return marshal.params.filter((param) => param.isPointer && param.boundParameterIndex === scalarIndex);
 }
 
+export const DEFAULT_EXPANSION_BUFFER_BUDGET_BYTES = 64n * 1024n;
+export const DEFAULT_EXPANSION_TOTAL_BUDGET_BYTES = 256n * 1024n;
+
+export interface FrontierEntry {
+  reason: string;
+  selectorOrdinal: number;
+  selectorSeq: number;
+  paramIndex: number;
+  candidateValue: string;
+  affectedBuffers: Array<{ paramIndex: number; oldBytes: string; newBytes: string }>;
+  targetGeneration?: number;
+  candidateKey?: string;
+  seedId?: string;
+  stage?: "planning" | "execution";
+  rule?: ScalarMutationRule;
+}
+
+export interface LinkedExpansionCheckResult {
+  status: "in_place_ok" | "expanded_ok" | "expansion_budget_exceeded" | "unsupported";
+  reason: string | null;
+  affectedBuffers: Array<{ paramIndex: number; oldBytes: bigint; newBytes: bigint }>;
+}
+
+export function evaluateLinkedBufferExpansion(
+  profile: ExplorerProfile,
+  ordinal: number,
+  scalarIndex: number,
+  replacement: bigint,
+  baselineEvent: CallCaptureEvent,
+  perBufferBudgetBytes: bigint = DEFAULT_EXPANSION_BUFFER_BUDGET_BYTES,
+  totalBudgetBytes: bigint = DEFAULT_EXPANSION_TOTAL_BUDGET_BYTES,
+): LinkedExpansionCheckResult {
+  const marshal = profile.ecalls.get(ordinal);
+  if (!marshal || !marshal.replaySupported) {
+    return { status: "unsupported", reason: "unsupported_mutation_layout", affectedBuffers: [] };
+  }
+  const dependencies = pointerDependencies(scalarIndex, marshal);
+  if (dependencies.length === 0) {
+    return { status: "in_place_ok", reason: null, affectedBuffers: [] };
+  }
+  if (replacement < 0n) {
+    return { status: "unsupported", reason: "negative_bound_value", affectedBuffers: [] };
+  }
+  const affectedBuffers: Array<{ paramIndex: number; oldBytes: bigint; newBytes: bigint }> = [];
+  let anyExpanded = false;
+  let totalNewBytes = 0n;
+  const limit64 = (1n << 64n) - 1n;
+  for (const pointer of dependencies) {
+    if (!pointer.replaySupported || pointer.userCheck ||
+        (pointer.boundKind !== "size_bytes" && pointer.boundKind !== "count_elements")) {
+      return { status: "unsupported", reason: "pointer_bound_unproven", affectedBuffers: [] };
+    }
+    const oldValue = capturedValue(baselineEvent, scalarIndex);
+    if (oldValue === undefined || oldValue < 0n) {
+      return { status: "unsupported", reason: "pointer_bound_unproven", affectedBuffers: [] };
+    }
+    let oldBytes = oldValue;
+    let newBytes = replacement;
+    if (pointer.boundKind === "count_elements") {
+      if (pointer.elementSize === null || pointer.elementSize < 1) {
+        return { status: "unsupported", reason: "pointer_bound_unproven", affectedBuffers: [] };
+      }
+      const elementSize = BigInt(pointer.elementSize);
+      oldBytes *= elementSize;
+      newBytes *= elementSize;
+    } else if (pointer.boundKind === "size_bytes" && pointer.elementSize !== null && pointer.elementSize > 1) {
+      const elementSize = BigInt(pointer.elementSize);
+      if (oldBytes % elementSize === 0n && newBytes % elementSize !== 0n && pointer.elementTypeCategory !== "record") {
+        return { status: "unsupported", reason: "nonintegral_element_bound", affectedBuffers: [] };
+      }
+    }
+    if (oldBytes > limit64 || newBytes > limit64) {
+      return { status: "unsupported", reason: "bound_multiplication_overflow", affectedBuffers: [] };
+    }
+    if (newBytes > oldBytes) anyExpanded = true;
+    totalNewBytes += newBytes;
+    affectedBuffers.push({ paramIndex: pointer.paramIndex, oldBytes, newBytes });
+  }
+  for (const item of affectedBuffers) {
+    if (item.newBytes > perBufferBudgetBytes || totalNewBytes > totalBudgetBytes) {
+      return { status: "expansion_budget_exceeded", reason: "expansion_budget_exceeded", affectedBuffers };
+    }
+  }
+  return {
+    status: anyExpanded ? "expanded_ok" : "in_place_ok",
+    reason: null,
+    affectedBuffers,
+  };
+}
+
 function preservesDependentBufferBounds(
   profile: ExplorerProfile,
   ordinal: number,
   scalarIndex: number,
   replacement: bigint,
   baselineEvent: CallCaptureEvent,
+  allowLinkedExpansion: boolean = false,
+  frontier?: FrontierEntry[],
+  budgets?: { perBufferBytes?: bigint; totalBytes?: bigint },
 ): boolean {
-  const marshal = profile.ecalls.get(ordinal);
-  if (!marshal || !marshal.replaySupported) return false;
-  const dependencies = pointerDependencies(scalarIndex, marshal);
-  if (dependencies.length === 0) return true;
-  if (replacement < 0n) return false;
-  for (const pointer of dependencies) {
-    if (!pointer.replaySupported || pointer.userCheck ||
-        (pointer.boundKind !== "size_bytes" && pointer.boundKind !== "count_elements")) return false;
-    const oldValue = capturedValue(baselineEvent, scalarIndex);
-    if (oldValue === undefined || oldValue < 0n) return false;
-    let oldBytes = oldValue;
-    let newBytes = replacement;
-    if (pointer.boundKind === "count_elements") {
-      if (pointer.elementSize === null || pointer.elementSize < 1) return false;
-      const elementSize = BigInt(pointer.elementSize);
-      oldBytes *= elementSize;
-      newBytes *= elementSize;
-    } else if (pointer.boundKind === "size_bytes" && pointer.elementSize !== null && pointer.elementSize > 1) {
-      const elementSize = BigInt(pointer.elementSize);
-      if (oldBytes % elementSize === 0n && newBytes % elementSize !== 0n) return false;
-    }
-    const limit = (1n << 64n) - 1n;
-    if (oldBytes > limit || newBytes > limit || newBytes > oldBytes) return false;
+  const res = evaluateLinkedBufferExpansion(
+    profile, ordinal, scalarIndex, replacement, baselineEvent,
+    budgets?.perBufferBytes ?? DEFAULT_EXPANSION_BUFFER_BUDGET_BYTES,
+    budgets?.totalBytes ?? DEFAULT_EXPANSION_TOTAL_BUDGET_BYTES);
+  if (res.status === "in_place_ok") return true;
+  if (allowLinkedExpansion && res.status === "expanded_ok") return true;
+  if (res.status === "expansion_budget_exceeded" && frontier) {
+    frontier.push({
+      reason: res.reason ?? "expansion_budget_exceeded",
+      selectorOrdinal: ordinal,
+      selectorSeq: baselineEvent.selectorSeq,
+      paramIndex: scalarIndex,
+      candidateValue: replacement.toString(10),
+      affectedBuffers: res.affectedBuffers.map((b) => ({
+        paramIndex: b.paramIndex,
+        oldBytes: b.oldBytes.toString(10),
+        newBytes: b.newBytes.toString(10),
+      })),
+    });
   }
-  return true;
+  return false;
 }
 
 function bitsForValue(value: bigint, widthBits: number): string {
@@ -179,10 +274,56 @@ function sortedUnique(values: string[]): string[] {
   return [...new Set(values)].sort();
 }
 
+function recordCandidatePoolLimit(
+  frontier: FrontierEntry[] | undefined,
+  allPlans: readonly PlannedMutation[],
+  selectedPlans: readonly PlannedMutation[],
+): void {
+  if (!frontier) return;
+  const selectedKeys = new Set(selectedPlans.map((plan) => mutationRuleKey(plan.rule)));
+  for (const plan of allPlans) {
+    const candidateKey = mutationRuleKey(plan.rule);
+    if (selectedKeys.has(candidateKey)) continue;
+    frontier.push({
+      reason: "candidate_pool_limit",
+      selectorOrdinal: plan.rule.selectorOrdinal,
+      selectorSeq: plan.rule.selectorSeq,
+      paramIndex: plan.rule.paramIndex,
+      candidateValue: plan.value,
+      affectedBuffers: [],
+      targetGeneration: plan.rule.targetGeneration ?? 1,
+      candidateKey,
+      stage: "planning",
+      rule: plan.rule,
+    });
+  }
+}
+
 export function mutationRuleKey(rule: ScalarMutationRule): string {
   const opKind = rule.opKind ?? "replace_scalar";
   const gen = rule.targetGeneration ?? 1;
   const exec = rule.execMode ?? 0;
+  const prefixKey = (rule.prefixMutations ?? []).map((pfx) =>
+    [pfx.selectorOrdinal, pfx.selectorSeq, pfx.paramIndex, pfx.byteOffset,
+     pfx.widthBytes, pfx.expectedBits, pfx.replacementBits].join(",")).join("|");
+  const expansionBudgetKey = rule.expansionBudget
+    ? [rule.expansionBudget.perBufferBytes, rule.expansionBudget.totalBytes].join(",")
+    : "";
+  const dataflowTargetKey = rule.dataflowTarget
+    ? [
+        rule.dataflowTarget.consumerGeneration,
+        rule.dataflowTarget.consumerCallSeq,
+        rule.dataflowTarget.consumerSelectorOrdinal,
+        rule.dataflowTarget.consumerSelectorSeq,
+        rule.dataflowTarget.consumerParamIndex,
+        rule.dataflowTarget.consumerByteOffset,
+        rule.dataflowTarget.consumerWidthBytes,
+        rule.dataflowTarget.baselineBits,
+        rule.dataflowTarget.propagatedBits,
+        rule.dataflowTarget.bufferByteLength,
+        rule.dataflowTarget.elementSize,
+      ].join(",")
+    : "";
   return [
     opKind,
     gen,
@@ -194,8 +335,13 @@ export function mutationRuleKey(rule: ScalarMutationRule): string {
     rule.byteOffset ?? "",
     rule.sliceLength ?? "",
     rule.repeatCount ?? "",
+    rule.widthBytes,
+    rule.signedness,
     rule.expectedBits,
     rule.replacementBits,
+    prefixKey,
+    expansionBudgetKey,
+    dataflowTargetKey,
   ].join(":");
 }
 
@@ -203,6 +349,12 @@ export function planScalarMutations(
   profile: ExplorerProfile,
   baseline: CallCaptureDocument,
   budget: number,
+  options?: {
+    allowLinkedExpansion?: boolean;
+    frontier?: FrontierEntry[];
+    expansionBufferBudgetBytes?: bigint;
+    expansionTotalBudgetBytes?: bigint;
+  },
 ): PlannedMutation[] {
   if (!Number.isSafeInteger(budget) || budget < 0) fail("candidate budget must be a safe nonnegative integer");
   if (budget === 0) return [];
@@ -229,6 +381,9 @@ export function planScalarMutations(
         scalar.param_index,
         replacement,
         event,
+        options?.allowLinkedExpansion === true,
+        options?.frontier,
+        { perBufferBytes: options?.expansionBufferBudgetBytes, totalBytes: options?.expansionTotalBudgetBytes },
       )) continue;
       const rule: ScalarMutationRule = {
         ...(event.generation !== 1 ? { targetGeneration: event.generation } : {}),
@@ -282,6 +437,20 @@ function readLeUnsigned(bytes: Uint8Array, offset: number, width: 1 | 2 | 4 | 8)
     acc |= BigInt(bytes[offset + i]!) << BigInt(i * 8);
   }
   return acc;
+}
+
+function completeCapturedBufferBytes(
+  buffer: Pick<CapturedBufferInput | CapturedBufferOutput, "byteLength" | "prefixHex">,
+): Uint8Array | undefined {
+  const capturedBytes = buffer.prefixHex.length / 2;
+  if (buffer.byteLength <= 0 ||
+      capturedBytes > CALL_CAPTURE_MAX_BUF_PREFIX_BYTES ||
+      capturedBytes !== buffer.byteLength) return undefined;
+  return decodeHexBytes(buffer.prefixHex);
+}
+
+function equalBytes(left: Uint8Array, right: Uint8Array): boolean {
+  return left.length === right.length && left.every((value, index) => value === right[index]);
 }
 
 function candidateOffsetsForBuffer(
@@ -339,6 +508,7 @@ export function deriveCandidatesFromCase(
   };
 
   const hasNativeBufferCapture = parentCapture.events.some((ev) => ev.bufferInputs !== undefined);
+  const dataflowEdges = inferCaptureProducerConsumerFlow(parentCapture);
 
   const maxSeqByGenSelAll = new Map<string, number>();
   for (const ev of parentCapture.events) {
@@ -348,7 +518,12 @@ export function deriveCandidatesFromCase(
   }
 
   // 1. Base IR-guided & boundary scalar mutations across representative occurrences of every selector
-  for (const scalarPlan of planScalarMutations(profile, parentCapture, Math.max(budget * 16, 1024))) {
+  for (const scalarPlan of planScalarMutations(profile, parentCapture, Math.max(budget * 16, 1024), {
+    allowLinkedExpansion: hasNativeBufferCapture,
+    frontier: options.frontier,
+    expansionBufferBudgetBytes: options.expansionBufferBudgetBytes,
+    expansionTotalBudgetBytes: options.expansionTotalBudgetBytes,
+  })) {
     const gen = scalarPlan.rule.targetGeneration ?? 1;
     const maxSeq = maxSeqByGenSelAll.get(gen + ":" + scalarPlan.rule.selectorOrdinal) ?? 0;
     if (hasNativeBufferCapture && (!hasReachableFields(profile, scalarPlan.rule.selectorOrdinal) || isOneShotEcall(profile, scalarPlan.rule.selectorOrdinal, maxSeq) || (scalarPlan.rule.selectorSeq !== 0 && scalarPlan.rule.selectorSeq !== maxSeq))) {
@@ -393,12 +568,13 @@ export function deriveCandidatesFromCase(
         if (!captured) continue;
         for (const nextVal of neighbors) {
           if (nextVal < minValue || nextVal > maxValue) continue;
-          if (!preservesDependentBufferBounds(profile, scalar.ordinal, scalar.param_index, nextVal, event)) continue;
+          if (!preservesDependentBufferBounds(profile, scalar.ordinal, scalar.param_index, nextVal, event, hasNativeBufferCapture, options.frontier, { perBufferBytes: options.expansionBufferBudgetBytes, totalBytes: options.expansionTotalBudgetBytes })) continue;
           const repBits = bitsForValue(nextVal, scalar.width_bits);
           if (repBits === captured.bits) continue;
           addPlan({
             rule: {
               ...(event.generation !== 1 ? { targetGeneration: event.generation } : {}),
+              ...(hasNativeBufferCapture ? { execMode: 1 } : {}),
               selectorOrdinal: scalar.ordinal,
               selectorSeq: event.selectorSeq,
               paramIndex: scalar.param_index,
@@ -434,7 +610,6 @@ export function deriveCandidatesFromCase(
       if (buffers.length === 0) continue;
 
       const maxSeq = maxSeqByGenSel.get(event.generation + ":" + event.selectorOrdinal) ?? 0;
-      if (hasNativeBufferCapture && isOneShotEcall(profile, event.selectorOrdinal, maxSeq)) continue;
       const isLastOccurrence = event.selectorSeq === maxSeq;
       if (event.selectorSeq !== 0 && !isLastOccurrence) continue;
 
@@ -549,17 +724,24 @@ export function deriveCandidatesFromCase(
           }
           if (prefixBytes.length >= 2 * elemW) wordOffsets.add(elemW);
           const bufParam = marshal.params.find((param) => param.paramIndex === buf.paramIndex);
-          const switchWordVals = bufParam?.elementTypeCategory === "record"
+          const switchWordVals = (bufParam?.elementTypeCategory === "record" && (bufParam.elementSize ?? 0) > 8)
             ? reachableSwitchConstants(profile, event.selectorOrdinal, elemW * 8)
             : [];
           for (const wOff of wordOffsets) {
             if (wOff + elemW > prefixBytes.length) continue;
             const obsWord = readLeUnsigned(prefixBytes, wOff, elemW);
             const expWordHex = bitsForValue(obsWord, elemW * 8);
+            const isProducerBuf = buf.direction === "inout";
             for (const swVal of switchWordVals) {
               const repWordHex = bitsForValue(swVal, elemW * 8);
               if (repWordHex === expWordHex) continue;
-              for (const execMode of [1, 0]) {
+              const modes = isProducerBuf ? [0, 1] : [1, 0];
+              for (const execMode of modes) {
+                const prio = isProducerBuf && execMode === 0
+                  ? (event.selectorSeq === 0 ? 1005 : 1001)
+                  : execMode === 1
+                  ? 994
+                  : 955;
                 addPlan({
                   rule: {
                     opKind: "mutate_buffer",
@@ -577,9 +759,119 @@ export function deriveCandidatesFromCase(
                     replacementBits: repWordHex,
                   },
                   value: `buf_word_const(exec=${execMode}):p${buf.paramIndex}@${wOff}=${repWordHex}`,
-                  priority: execMode === 1 ? 974 : 927,
-                  evidenceSiteIds: [`buf_word_const:e${event.selectorOrdinal}:p${buf.paramIndex}:off${wOff}:${repWordHex}`],
+                  priority: prio,
+                  evidenceSiteIds: [`buf_word_const:e${event.selectorOrdinal}:p${buf.paramIndex}:off${wOff}:${repWordHex}:m${execMode}`],
                 });
+              }
+              if (!isProducerBuf) {
+                for (const edge of dataflowEdges) {
+                  if (!edge.identityVerified || edge.crossInstance ||
+                      edge.producer.generation !== event.generation ||
+                      edge.consumer.generation !== event.generation ||
+                      edge.consumer.callSeq !== event.callSeq ||
+                      edge.consumer.selectorOrdinal !== event.selectorOrdinal ||
+                      edge.consumer.selectorSeq !== event.selectorSeq ||
+                      edge.consumer.paramIndex !== buf.paramIndex ||
+                      edge.producer.callSeq >= event.callSeq ||
+                      edge.consumer.storageAddress !== buf.storageAddress ||
+                      edge.consumer.byteLength !== buf.byteLength ||
+                      edge.producer.byteLength !== edge.consumer.byteLength ||
+                      edge.producer.elementSize !== edge.consumer.elementSize ||
+                      edge.consumer.elementSize !== buf.elementSize) continue;
+                  const binding = validateProducerConsumerBinding(edge, {
+                    runId: parentCapture.runId,
+                    currentRunId: parentCapture.runId,
+                    instanceGeneration: event.generation,
+                    objectVersion: edge.producer.objectVersion,
+                    latestObjectVersion: edge.producer.objectVersion,
+                    byteLength: edge.producer.byteLength,
+                    elementSize: edge.producer.elementSize,
+                    verifiedIdentity: edge.identityVerified,
+                    storageAddress: edge.producer.storageAddress,
+                    producerCallSeq: edge.producer.callSeq,
+                    producerParamIndex: edge.producer.paramIndex,
+                  });
+                  if (!binding.valid) continue;
+                  const producerEvent = parentCapture.events.find((candidate) =>
+                    candidate.generation === edge.producer.generation &&
+                    candidate.callSeq === edge.producer.callSeq &&
+                    candidate.selectorOrdinal === edge.producer.selectorOrdinal &&
+                    candidate.selectorSeq === edge.producer.selectorSeq);
+                  if (!producerEvent) continue;
+                  const producerMarshal = profile.ecalls.get(edge.producer.selectorOrdinal);
+                  const producerParameter = producerMarshal?.params.find(
+                    (parameter) => parameter.paramIndex === edge.producer.paramIndex);
+                  const producerInput = producerEvent.bufferInputs?.find(
+                    (input) => input.paramIndex === edge.producer.paramIndex);
+                  const producerOutput = producerEvent.bufferOutputs?.find(
+                    (output) => output.paramIndex === edge.producer.paramIndex);
+                  if (!producerInput || !producerOutput ||
+                      producerInput.direction !== "inout" || producerOutput.direction !== "inout" ||
+                      producerInput.storageAddress !== edge.producer.storageAddress ||
+                      producerOutput.storageAddress !== edge.producer.storageAddress ||
+                      buf.storageAddress !== edge.consumer.storageAddress ||
+                      producerInput.byteLength !== edge.producer.byteLength ||
+                      producerOutput.byteLength !== edge.producer.byteLength ||
+                      buf.byteLength !== edge.consumer.byteLength ||
+                      producerInput.byteLength !== producerOutput.byteLength ||
+                      producerOutput.byteLength !== buf.byteLength ||
+                      producerInput.elementSize !== edge.producer.elementSize ||
+                      producerOutput.elementSize !== edge.producer.elementSize ||
+                      buf.elementSize !== edge.consumer.elementSize ||
+                      producerInput.elementSize !== producerOutput.elementSize ||
+                      producerOutput.elementSize !== buf.elementSize ||
+                      producerParameter?.elementTypeCategory !== "record" ||
+                      producerParameter.elementSize !== buf.elementSize ||
+                      (producerParameter.elementSize ?? 0) <= 8) continue;
+                  const producerConstants = reachableSwitchConstants(
+                    profile, edge.producer.selectorOrdinal, elemW * 8);
+                  if (!producerConstants.includes(swVal)) continue;
+                  const producerInputBytes = completeCapturedBufferBytes(producerInput);
+                  const producerOutputBytes = completeCapturedBufferBytes(producerOutput);
+                  const consumerInputBytes = completeCapturedBufferBytes(buf);
+                  if (!producerInputBytes || !producerOutputBytes || !consumerInputBytes ||
+                      !equalBytes(producerOutputBytes, consumerInputBytes) ||
+                      wOff + elemW > producerInputBytes.length) continue;
+                  const producerObserved = readLeUnsigned(producerInputBytes, wOff, elemW);
+                  if (!producerConstants.includes(producerObserved) ||
+                      producerObserved !== obsWord ||
+                      producerObserved === swVal) continue;
+                  const baselineBits = bitsForValue(producerObserved, elemW * 8);
+                  const dataflowTarget: DataflowTarget = {
+                    consumerGeneration: edge.consumer.generation,
+                    consumerCallSeq: edge.consumer.callSeq,
+                    consumerSelectorOrdinal: edge.consumer.selectorOrdinal,
+                    consumerSelectorSeq: edge.consumer.selectorSeq,
+                    consumerParamIndex: edge.consumer.paramIndex,
+                    consumerByteOffset: wOff,
+                    consumerWidthBytes: elemW,
+                    baselineBits,
+                    propagatedBits: repWordHex,
+                    bufferByteLength: producerInput.byteLength,
+                    elementSize: producerInput.elementSize,
+                  };
+                  addPlan({
+                    rule: {
+                      opKind: "mutate_buffer",
+                      bufferSubOp: "write_le",
+                      ...(event.generation !== 1 ? { targetGeneration: event.generation } : {}),
+                      execMode: 0,
+                      selectorOrdinal: edge.producer.selectorOrdinal,
+                      selectorSeq: edge.producer.selectorSeq,
+                      paramIndex: edge.producer.paramIndex,
+                      byteOffset: wOff,
+                      sliceLength: elemW,
+                      widthBytes: elemW,
+                      signedness: "unsigned",
+                      expectedBits: baselineBits,
+                      replacementBits: repWordHex,
+                      dataflowTarget,
+                    },
+                    value: `buf_word_linked(exec=0):p${edge.producer.paramIndex}@${wOff}=${repWordHex}->e${edge.consumer.selectorOrdinal}#${edge.consumer.selectorSeq}:p${edge.consumer.paramIndex}`,
+                    priority: isLastOccurrence ? 1004 : 1000,
+                    evidenceSiteIds: [`buf_word_linked:e${edge.consumer.selectorOrdinal}:p${edge.consumer.paramIndex}:off${wOff}:${repWordHex}:producer${edge.producer.callSeq}:p${edge.producer.paramIndex}`],
+                  });
+                }
               }
             }
             for (const wordVal of [0n, 1n, 2n, (1n << BigInt(elemW * 8)) - 1n]) {
@@ -656,17 +948,51 @@ export function deriveCandidatesFromCase(
     left.value.localeCompare(right.value),
   );
   if (!hasNativeBufferCapture) {
-    return sortedAll.slice(0, budget);
+    const selected = sortedAll.slice(0, budget);
+    recordCandidatePoolLimit(options.frontier, sortedAll, selected);
+    return selected;
   }
   const buckets = new Map<string, PlannedMutation[]>();
   for (const item of sortedAll) {
-    const bKey = item.rule.selectorOrdinal + ":" + (item.rule.opKind ?? "replace_scalar") + ":" + (item.rule.bufferSubOp ?? "");
+    const isExpand = (item.rule.opKind ?? "replace_scalar") === "replace_scalar" &&
+      BigInt(item.rule.replacementBits) > BigInt(item.rule.expectedBits);
+    const category = item.rule.dataflowTarget ? "linked" : "direct";
+    const bKey = category + ":" + item.rule.selectorOrdinal + ":" +
+      (item.rule.opKind ?? "replace_scalar") + ":" +
+      (item.rule.bufferSubOp ?? (isExpand ? "expand" : "base"));
     const list = buckets.get(bKey) ?? [];
     list.push(item);
     buckets.set(bKey, list);
   }
+  const linkedCandidate = sortedAll.find((item) => item.rule.dataflowTarget !== undefined);
+  const isDirectWriteLe = (item: PlannedMutation): boolean =>
+    item.rule.dataflowTarget === undefined &&
+    (item.rule.opKind ?? "replace_scalar") === "mutate_buffer" &&
+    item.rule.bufferSubOp === "write_le" &&
+    (item.rule.execMode ?? 0) === 0;
+  const directLinkedCounterpart = linkedCandidate
+    ? sortedAll.find((item) =>
+        isDirectWriteLe(item) &&
+        (item.rule.targetGeneration ?? 1) === (linkedCandidate.rule.targetGeneration ?? 1) &&
+        item.rule.selectorOrdinal === linkedCandidate.rule.selectorOrdinal &&
+        item.rule.selectorSeq === linkedCandidate.rule.selectorSeq &&
+        item.rule.paramIndex === linkedCandidate.rule.paramIndex)
+    : undefined;
+  const directCandidate = directLinkedCounterpart ?? sortedAll.find(isDirectWriteLe);
   const interleaved: PlannedMutation[] = [];
-  const bucketLists = [...buckets.values()];
+  const reserved = new Set<PlannedMutation>();
+  if (linkedCandidate) {
+    if (budget >= 2 && directCandidate) {
+      interleaved.push(directCandidate);
+      reserved.add(directCandidate);
+    }
+    if (interleaved.length < budget) {
+      interleaved.push(linkedCandidate);
+      reserved.add(linkedCandidate);
+    }
+  }
+  const bucketLists = [...buckets.values()]
+    .map((list) => list.filter((item) => !reserved.has(item)));
   let idx = 0;
   while (interleaved.length < budget) {
     let any = false;
@@ -680,6 +1006,7 @@ export function deriveCandidatesFromCase(
     if (!any) break;
     idx++;
   }
+  recordCandidatePoolLimit(options.frontier, sortedAll, interleaved);
   return interleaved;
 }
 
@@ -690,6 +1017,8 @@ export function deriveChildCandidatesFromFeedback(
   parentPlan: PlannedMutation,
   depth: number,
   budget: number,
+  frontier?: FrontierEntry[],
+  budgets?: { perBufferBytes?: bigint; totalBytes?: bigint },
 ): PlannedMutation[] {
   if (budget <= 0 || depth <= 0) return [];
   const hasNativeBufferCapture = discoveredCapture.events.some((ev) => ev.bufferInputs !== undefined);
@@ -745,7 +1074,7 @@ export function deriveChildCandidatesFromFeedback(
       if (captured) {
         for (const nextVal of neighbors) {
           if (nextVal < minValue || nextVal > maxValue) continue;
-          if (!preservesDependentBufferBounds(profile, scalar.ordinal, scalar.param_index, nextVal, baseEvent)) continue;
+          if (!preservesDependentBufferBounds(profile, scalar.ordinal, scalar.param_index, nextVal, baseEvent, parentExec > 0, frontier, budgets)) continue;
           const repBits = bitsForValue(nextVal, scalar.width_bits);
           if (repBits === captured.bits) continue;
           addPlan({
@@ -765,6 +1094,28 @@ export function deriveChildCandidatesFromFeedback(
             evidenceSiteIds: parentPlan.evidenceSiteIds,
           });
         }
+      }
+    }
+  }
+
+  // Case A2: Parent was a write_le buffer mutation -> immediately spawn sibling IR switch constants on the same buffer/offset/execMode
+  if (opKind === "mutate_buffer" && parentPlan.rule.bufferSubOp === "write_le" && baseEvent) {
+    const targetBuf = (baseEvent.bufferInputs ?? []).find((b) => b.paramIndex === parentPlan.rule.paramIndex);
+    if (targetBuf) {
+      const elemW = parentPlan.rule.widthBytes;
+      const swVals = reachableSwitchConstants(profile, parentPlan.rule.selectorOrdinal, elemW * 8);
+      for (const swVal of swVals) {
+        const repWordHex = bitsForValue(swVal, elemW * 8);
+        if (repWordHex === parentPlan.rule.expectedBits || repWordHex === parentPlan.rule.replacementBits) continue;
+        addPlan({
+          rule: {
+            ...parentPlan.rule,
+            replacementBits: repWordHex,
+          },
+          value: `derived_buf_word_const(d=${depth},exec=${parentExec}):p${targetBuf.paramIndex}@${parentPlan.rule.byteOffset ?? 0}=${repWordHex}`,
+          priority: 1008,
+          evidenceSiteIds: [`derived_buf_word_const:d${depth}:e${parentPlan.rule.selectorOrdinal}:p${targetBuf.paramIndex}:${repWordHex}:m${parentExec}`],
+        });
       }
     }
   }
@@ -962,7 +1313,7 @@ export function deriveChildCandidatesFromFeedback(
       if (obsVal === undefined) continue;
       const candidates = obsVal > 0n ? [0n, 1n, obsVal - 1n] : [1n, 2n];
       for (const nextVal of candidates) {
-        if (!preservesDependentBufferBounds(profile, scalar.ordinal, scalar.param_index, nextVal, baseEvent)) continue;
+        if (!preservesDependentBufferBounds(profile, scalar.ordinal, scalar.param_index, nextVal, baseEvent, parentExec > 0, frontier, budgets)) continue;
         const repBits = bitsForValue(nextVal, scalar.width_bits);
         if (repBits === scInput.bits) continue;
         addPlan({
@@ -989,13 +1340,266 @@ export function deriveChildCandidatesFromFeedback(
     }
   }
 
-  return [...plans.values()]
+  const sortedPlans = [...plans.values()]
     .sort((left, right) =>
       right.priority - left.priority ||
       left.rule.selectorOrdinal - right.rule.selectorOrdinal ||
       left.rule.selectorSeq - right.rule.selectorSeq ||
       left.rule.paramIndex - right.rule.paramIndex ||
       left.value.localeCompare(right.value),
-    )
-    .slice(0, budget);
+    );
+  const selected = sortedPlans.slice(0, budget);
+  recordCandidatePoolLimit(frontier, sortedPlans, selected);
+  return selected;
+}
+
+
+export interface CaptureDataflowEdge {
+  producer: {
+    generation: number;
+    callSeq: number;
+    selectorOrdinal: number;
+    selectorSeq: number;
+    paramIndex: number;
+    byteLength: number;
+    elementSize: number;
+    fnv1a64: string;
+    storageAddress?: string;
+    objectVersion: number;
+  };
+  consumer: {
+    generation: number;
+    callSeq: number;
+    selectorOrdinal: number;
+    selectorSeq: number;
+    paramIndex: number;
+    byteLength: number;
+    elementSize: number;
+    fnv1a64: string;
+    storageAddress?: string;
+  };
+  crossInstance: boolean;
+  identityVerified: boolean;
+}
+
+type CapturedBufferContent = Pick<CapturedBufferInput, "byteLength" | "fnv1a64" | "prefixHex">;
+
+interface CapturedObjectVersion {
+  generation: number;
+  callSeq: number;
+  selectorOrdinal: number;
+  selectorSeq: number;
+  paramIndex: number;
+  byteLength: number;
+  elementSize: number;
+  fnv1a64: string;
+  prefixHex: string;
+  storageAddress?: string;
+  objectVersion: number;
+}
+
+function sameCapturedContent(left: CapturedBufferContent, right: CapturedBufferContent): boolean {
+  return left.byteLength === right.byteLength &&
+    left.fnv1a64 === right.fnv1a64 &&
+    left.prefixHex === right.prefixHex;
+}
+
+function rangesOverlap(left: CapturedObjectVersion, right: CapturedBufferOutput): boolean {
+  if (!left.storageAddress || !right.storageAddress) return false;
+  const leftStart = BigInt(left.storageAddress);
+  const rightStart = BigInt(right.storageAddress);
+  const leftEnd = leftStart + BigInt(left.byteLength);
+  const rightEnd = rightStart + BigInt(right.byteLength);
+  return leftStart < rightEnd && rightStart < leftEnd;
+}
+
+export function inferCaptureProducerConsumerFlow(capture: CallCaptureDocument): CaptureDataflowEdge[] {
+  const edges: CaptureDataflowEdge[] = [];
+  const activeWrites: CapturedObjectVersion[] = [];
+  let nextObjectVersion = 1;
+  const orderedEvents = capture.events
+    .map((event, index) => ({ event, index }))
+    .sort((left, right) => left.event.callSeq - right.event.callSeq || left.index - right.index);
+
+  for (const { event } of orderedEvents) {
+    for (const inBuf of event.bufferInputs ?? []) {
+      if (inBuf.byteLength <= 0) continue;
+      const matchingWrites = activeWrites.filter((write) =>
+        write.generation === event.generation &&
+        write.callSeq < event.callSeq &&
+        sameCapturedContent(write, inBuf));
+      const exactIdentityWrites = inBuf.storageAddress
+        ? matchingWrites.filter((write) => write.storageAddress === inBuf.storageAddress)
+        : [];
+      const producers = exactIdentityWrites.length > 0 ? exactIdentityWrites : matchingWrites;
+      for (const producer of producers) {
+        const identityVerified = producer.storageAddress !== undefined &&
+          inBuf.storageAddress !== undefined &&
+          producer.storageAddress === inBuf.storageAddress &&
+          producer.byteLength === inBuf.byteLength &&
+          producer.elementSize === inBuf.elementSize;
+        edges.push({
+          producer: {
+            generation: producer.generation,
+            callSeq: producer.callSeq,
+            selectorOrdinal: producer.selectorOrdinal,
+            selectorSeq: producer.selectorSeq,
+            paramIndex: producer.paramIndex,
+            byteLength: producer.byteLength,
+            elementSize: producer.elementSize,
+            fnv1a64: producer.fnv1a64,
+            ...(producer.storageAddress === undefined ? {} : { storageAddress: producer.storageAddress }),
+            objectVersion: producer.objectVersion,
+          },
+          consumer: {
+            generation: event.generation,
+            callSeq: event.callSeq,
+            selectorOrdinal: event.selectorOrdinal,
+            selectorSeq: event.selectorSeq,
+            paramIndex: inBuf.paramIndex,
+            byteLength: inBuf.byteLength,
+            elementSize: inBuf.elementSize,
+            fnv1a64: inBuf.fnv1a64,
+            ...(inBuf.storageAddress === undefined ? {} : { storageAddress: inBuf.storageAddress }),
+          },
+          crossInstance: false,
+          identityVerified,
+        });
+      }
+    }
+    const orderedOutputs = [...(event.bufferOutputs ?? [])]
+      .sort((left, right) => left.paramIndex - right.paramIndex);
+    for (const outBuf of orderedOutputs) {
+      if (outBuf.byteLength <= 0) continue;
+      if (outBuf.storageAddress === undefined) {
+        for (let index = activeWrites.length - 1; index >= 0; index--) {
+          if (activeWrites[index]?.generation === event.generation) activeWrites.splice(index, 1);
+        }
+      } else {
+        for (let index = activeWrites.length - 1; index >= 0; index--) {
+          const previous = activeWrites[index];
+          if (previous?.generation === event.generation &&
+              (!previous.storageAddress || rangesOverlap(previous, outBuf))) {
+            activeWrites.splice(index, 1);
+          }
+        }
+      }
+      activeWrites.push({
+        generation: event.generation,
+        callSeq: event.callSeq,
+        selectorOrdinal: event.selectorOrdinal,
+        selectorSeq: event.selectorSeq,
+        paramIndex: outBuf.paramIndex,
+        byteLength: outBuf.byteLength,
+        elementSize: outBuf.elementSize,
+        fnv1a64: outBuf.fnv1a64,
+        prefixHex: outBuf.prefixHex,
+        ...(outBuf.storageAddress === undefined ? {} : { storageAddress: outBuf.storageAddress }),
+        objectVersion: nextObjectVersion,
+      });
+      nextObjectVersion++;
+    }
+  }
+  return edges;
+}
+
+export type ProducerConsumerFailureReason =
+  | "stale_producer_object"
+  | "producer_generation_mismatch"
+  | "producer_length_mismatch"
+  | "producer_element_size_mismatch"
+  | "producer_identity_unverified";
+
+export function validateProducerConsumerBinding(
+  edge: CaptureDataflowEdge,
+  candidateObject: {
+    runId: string;
+    currentRunId: string;
+    instanceGeneration: number;
+    objectVersion: number;
+    latestObjectVersion: number;
+    byteLength: number;
+    elementSize: number;
+    verifiedIdentity: boolean;
+    storageAddress?: string;
+    producerCallSeq?: number;
+    producerParamIndex?: number;
+  },
+): { valid: boolean; reason: ProducerConsumerFailureReason | null } {
+  if (!edge.identityVerified || !candidateObject.verifiedIdentity ||
+      !edge.producer.storageAddress ||
+      candidateObject.storageAddress !== edge.producer.storageAddress) {
+    return { valid: false, reason: "producer_identity_unverified" };
+  }
+  if (candidateObject.runId !== candidateObject.currentRunId ||
+      candidateObject.objectVersion !== candidateObject.latestObjectVersion ||
+      candidateObject.objectVersion !== edge.producer.objectVersion ||
+      candidateObject.producerCallSeq !== edge.producer.callSeq ||
+      candidateObject.producerParamIndex !== edge.producer.paramIndex) {
+    return { valid: false, reason: "stale_producer_object" };
+  }
+  if (edge.crossInstance ||
+      edge.producer.generation !== edge.consumer.generation ||
+      candidateObject.instanceGeneration !== edge.producer.generation) {
+    return { valid: false, reason: "producer_generation_mismatch" };
+  }
+  if (candidateObject.byteLength !== edge.producer.byteLength ||
+      edge.producer.byteLength !== edge.consumer.byteLength) {
+    return { valid: false, reason: "producer_length_mismatch" };
+  }
+  if (candidateObject.elementSize !== edge.producer.elementSize ||
+      edge.producer.elementSize !== edge.consumer.elementSize) {
+    return { valid: false, reason: "producer_element_size_mismatch" };
+  }
+  return { valid: true, reason: null };
+}
+
+export type ColdReorderFailureReason =
+  | "missing_initializer_or_restoration_prefix"
+  | "instance_bound_handle_not_transferable"
+  | "unverified_cross_instance_transfer";
+
+export function evaluateColdInstanceFirstCallReorder(
+  capture: CallCaptureDocument,
+  request: {
+    targetGeneration: number;
+    targetConsumerCallSeq: number;
+    preserveInitializerCalls: boolean;
+    inputPortability: "verified_portable_serialized" | "instance_bound_handle" | "unverified";
+  },
+): {
+  allowed: boolean;
+  reason: ColdReorderFailureReason | null;
+  requiredPrefixCallSeqs: number[];
+} {
+  const genEvents = capture.events.filter((ev) => ev.generation === request.targetGeneration);
+  const targetEvent = genEvents.find((ev) => ev.callSeq === request.targetConsumerCallSeq);
+  const prefixEvents = genEvents.filter((ev) => ev.callSeq < request.targetConsumerCallSeq);
+  const requiredPrefixCallSeqs = prefixEvents.map((ev) => ev.callSeq);
+  if (!targetEvent || !request.preserveInitializerCalls) {
+    return {
+      allowed: false,
+      reason: "missing_initializer_or_restoration_prefix",
+      requiredPrefixCallSeqs,
+    };
+  }
+  if (request.inputPortability === "instance_bound_handle") {
+    return {
+      allowed: false,
+      reason: "instance_bound_handle_not_transferable",
+      requiredPrefixCallSeqs,
+    };
+  }
+  if (request.inputPortability !== "verified_portable_serialized") {
+    return {
+      allowed: false,
+      reason: "unverified_cross_instance_transfer",
+      requiredPrefixCallSeqs,
+    };
+  }
+  return {
+    allowed: true,
+    reason: null,
+    requiredPrefixCallSeqs,
+  };
 }

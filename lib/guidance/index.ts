@@ -460,7 +460,7 @@ function scalarRange(parameter: ScalarParameter): [bigint, bigint] {
 function factRange(site: GuidanceSite): [bigint, bigint] | undefined {
   const width = site.width_bits;
   if (width === null) return undefined;
-  if (site.vector_lanes !== undefined && site.vector_lanes !== null && site.vector_lanes !== 1) return undefined;
+  if ("vector_lanes" in site && site.vector_lanes !== undefined && site.vector_lanes !== null && site.vector_lanes !== 1) return undefined;
   let signed: boolean;
   if (site.kind === "icmp") {
     signed = site.predicate.startsWith("s");

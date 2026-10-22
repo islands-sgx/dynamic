@@ -117,19 +117,36 @@ void on_aex_event(uint64_t tcs_va, uint64_t rax_mode) {
     }
 
     uint32_t active_val = 0;
+    int active_flag_valid = 0;
     if (atfield_active_rva && fd_self_mem >= 0 && encl_base) {
-        if (pread(fd_self_mem, &active_val, 4, encl_base + atfield_active_rva) != 4) {
+        if (pread(fd_self_mem, &active_val, 4, encl_base + atfield_active_rva) == 4) {
+            active_flag_valid = 1;
+        } else {
             syscall_error_count++;
             mark_invalid("pread_atfield_active_failed");
         }
     }
 
     unsigned stage_idx = atfield_stage_index_from_state(st_code, host_gate);
-    __atomic_add_fetch(&unexpected_aex_count, 1, __ATOMIC_SEQ_CST);
-    __atomic_add_fetch(&unexpected_stage_aex[stage_idx], 1, __ATOMIC_SEQ_CST);
-    mark_invalid("unexpected_aex_observed");
-    if (stage_idx == 3u) {
-        mark_invalid("s3_body_aex_observed");
+    pthread_mutex_lock(&phase_mutex);
+    int strict_retractions_clear = 1;
+    for (int i = 0; i < num_pages; i++) {
+        if (strict_retracted[i] != 0) { strict_retractions_clear = 0; break; }
+    }
+    int watcher_slot_closed = watcher_active_slot < 0;
+    int outside_window = atfield_proven_outside_field_window(
+        st_code, active_val, host_gate, active_flag_valid, watcher_slot_closed, strict_retractions_clear);
+    pthread_mutex_unlock(&phase_mutex);
+    if (outside_window) {
+        __atomic_add_fetch(&outside_window_aex_count, 1, __ATOMIC_SEQ_CST);
+        __atomic_add_fetch(&outside_window_stage_aex[stage_idx], 1, __ATOMIC_SEQ_CST);
+    } else {
+        __atomic_add_fetch(&unexpected_aex_count, 1, __ATOMIC_SEQ_CST);
+        __atomic_add_fetch(&unexpected_stage_aex[stage_idx], 1, __ATOMIC_SEQ_CST);
+        mark_invalid("unexpected_aex_observed");
+        if (stage_idx == 3u) {
+            mark_invalid("s3_body_aex_observed");
+        }
     }
 
     pthread_mutex_lock(&phase_mutex);
@@ -147,6 +164,11 @@ void on_aex_event(uint64_t tcs_va, uint64_t rax_mode) {
                     fe->encl_rip_rva = rip_rva;
                     fe->exitinfo = exitinfo;
                     fe->active_flag = active_val;
+                    fe->host_gate = host_gate;
+                    fe->active_flag_valid = active_flag_valid;
+                    fe->watcher_slot_closed = watcher_slot_closed;
+                    fe->strict_retractions_clear = strict_retractions_clear;
+                    fe->outside_window = outside_window;
                     snprintf(fe->stage, sizeof(fe->stage), "%s", stage_name_from_code(st_code, active_val, rip_rva));
                     fe->pte_healed_observed = 1;
                     fe->aep_pte = pte_now;
@@ -169,6 +191,11 @@ void on_aex_event(uint64_t tcs_va, uint64_t rax_mode) {
             fe->encl_rip_rva = rip_rva;
             fe->exitinfo = exitinfo;
             fe->active_flag = active_val;
+            fe->host_gate = host_gate;
+            fe->active_flag_valid = active_flag_valid;
+            fe->watcher_slot_closed = watcher_slot_closed;
+            fe->strict_retractions_clear = strict_retractions_clear;
+            fe->outside_window = outside_window;
             snprintf(fe->stage, sizeof(fe->stage), "%s", stage_name_from_code(st_code, active_val, rip_rva));
             fe->pte_healed_observed = 0;
             snprintf(fe->confirmed_access_kind, sizeof(fe->confirmed_access_kind), "unexpected");
@@ -502,6 +529,11 @@ static void disarm_and_check_strict_ptes(const char *fallback_stage) {
                     fe->encl_rip_rva = 0;
                     fe->exitinfo = 0;
                     fe->active_flag = 0;
+                    fe->host_gate = g_shared ? __atomic_load_n(&g_shared->host_gate, __ATOMIC_ACQUIRE) : 0;
+                    fe->active_flag_valid = 0;
+                    fe->watcher_slot_closed = 0;
+                    fe->strict_retractions_clear = 0;
+                    fe->outside_window = 0;
                     snprintf(fe->stage, sizeof(fe->stage), "%s", fallback_stage);
                     fe->pte_healed_observed = 1;
                     fe->aep_pte = pte_now;

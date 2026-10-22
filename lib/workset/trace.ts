@@ -25,6 +25,10 @@ export interface TraceObservation {
   effects: Effect[];
 }
 
+export interface ParseTraceOptions {
+  allowBusinessRejectionExit?: boolean;
+}
+
 export interface ParsedTrace {
   runId: string;
   mode: string;
@@ -35,6 +39,10 @@ export interface ParsedTrace {
   ecallCount: number;
   observedFieldIds: string[];
   observations: TraceObservation[];
+  runCompletion?: "complete" | "incomplete";
+  processReturnCode?: number;
+  termination?: "exited" | "signaled" | "timeout" | "unknown";
+  businessRejected?: boolean;
 }
 
 const RUN_START_KEYS = new Set([
@@ -88,6 +96,7 @@ const RUN_END_KEYS = new Set([
   "bundle_manifest_sha256",
   "instance_generation",
   "process_return_code",
+  "termination",
   "timed_out",
   "timeout",
   "ecall_count",
@@ -100,6 +109,7 @@ const AEX_KEYS = new Set([
   "count",
   "protocol_gate_count",
   "unexpected_count",
+  "outside_window_count",
   "by_gate",
   "by_stage",
   "fault_events",
@@ -259,27 +269,24 @@ function validateAex(
   if (!isObject(aexValue)) fail(lineLabel + ".aex must be an object");
   assertAllowedKeys(aexValue, AEX_KEYS, lineLabel + ".aex");
   const count = integer(aexValue.count, lineLabel + ".aex.count");
-  if (aexValue.fault_events !== undefined) {
-    if (!Array.isArray(aexValue.fault_events)) {
-      fail(lineLabel + ".aex.fault_events must be an array");
-    }
-    if (aexValue.fault_events.length > 0) {
-      fail(lineLabel + " has AEX fault_events and is incomplete");
-    }
-  }
+  const faultEvents = aexValue.fault_events === undefined ? [] : aexValue.fault_events;
+  if (!Array.isArray(faultEvents)) fail(lineLabel + ".aex.fault_events must be an array");
   const hasClassification =
     aexValue.protocol_gate_count !== undefined ||
     aexValue.unexpected_count !== undefined ||
+    aexValue.outside_window_count !== undefined ||
     aexValue.by_gate !== undefined ||
     aexValue.by_stage !== undefined;
   if (!hasClassification) {
-    if (count > 0) fail(lineLabel + " has nonzero AEX count and is incomplete");
+    if (count > 0 || faultEvents.length > 0) fail(lineLabel + " has nonzero AEX count or unclassified fault_events and is incomplete");
     return;
   }
   const protocolGateCount = integer(aexValue.protocol_gate_count, lineLabel + ".aex.protocol_gate_count");
   const unexpectedCount = integer(aexValue.unexpected_count, lineLabel + ".aex.unexpected_count");
-  if (count !== protocolGateCount + unexpectedCount) {
-    fail(lineLabel + ".aex.count does not equal protocol_gate_count + unexpected_count");
+  const outsideWindowCount = aexValue.outside_window_count === undefined ? 0 :
+    integer(aexValue.outside_window_count, lineLabel + ".aex.outside_window_count");
+  if (count !== protocolGateCount + unexpectedCount + outsideWindowCount) {
+    fail(lineLabel + ".aex.count does not equal protocol_gate_count + unexpected_count + outside_window_count");
   }
   if (!isObject(aexValue.by_gate)) fail(lineLabel + ".aex.by_gate must be an object");
   assertAllowedKeys(aexValue.by_gate, new Set(AEX_GATES), lineLabel + ".aex.by_gate");
@@ -299,12 +306,19 @@ function validateAex(
     POST_FIELD: 0,
   };
   let stageUnexpectedSum = 0;
+  let stageOutsideWindowSum = 0;
   for (const stage of AEX_STAGES) {
     const stageObj = aexValue.by_stage[stage];
     if (!isObject(stageObj)) fail(lineLabel + ".aex.by_stage." + stage + " must be an object");
-    assertAllowedKeys(stageObj, new Set(["protocol_gate", "unexpected"]), lineLabel + ".aex.by_stage." + stage);
+    assertAllowedKeys(stageObj, new Set(["protocol_gate", "unexpected", "outside_window"]), lineLabel + ".aex.by_stage." + stage);
     const stageProto = integer(stageObj.protocol_gate, lineLabel + ".aex.by_stage." + stage + ".protocol_gate");
     const stageUnexp = integer(stageObj.unexpected, lineLabel + ".aex.by_stage." + stage + ".unexpected");
+    const stageOutside = stageObj.outside_window === undefined ? 0 :
+      integer(stageObj.outside_window, lineLabel + ".aex.by_stage." + stage + ".outside_window");
+    if (stageOutside > 0 && stage !== "POST_FIELD") {
+      fail(lineLabel + ".aex.by_stage." + stage + " cannot classify an AEX outside the Field window");
+    }
+    stageOutsideWindowSum += stageOutside;
     if (stageProto !== stageProtocolExpected[stage]) {
       fail(lineLabel + ".aex.by_stage." + stage + ".protocol_gate does not match verified gate boundary count");
     }
@@ -312,6 +326,26 @@ function validateAex(
   }
   if (stageUnexpectedSum !== unexpectedCount) {
     fail(lineLabel + ".aex.by_stage unexpected sum does not equal unexpected_count");
+  }
+  if (stageOutsideWindowSum !== outsideWindowCount) {
+    fail(lineLabel + ".aex.by_stage outside_window sum does not equal outside_window_count");
+  }
+  if (faultEvents.length !== outsideWindowCount) {
+    fail(lineLabel + ".aex.fault_events must preserve every outside_window AEX and no other event");
+  }
+  for (let i = 0; i < faultEvents.length; i++) {
+    const event = faultEvents[i];
+    if (!isObject(event) ||
+        event.outside_window !== true ||
+        event.stage !== "POST_FIELD" ||
+        event.active_flag !== 0 ||
+        event.active_flag_valid !== true ||
+        event.host_gate !== 80 ||
+        event.watcher_slot_closed !== true ||
+        event.strict_retractions_clear !== true ||
+        event.pte_healed_observed !== false) {
+      fail(lineLabel + ".aex.fault_events[" + i + "] lacks completed Gate D outside-window proof");
+    }
   }
   if (unexpectedCount > 0) {
     fail(lineLabel + " has nonzero AEX count and is incomplete");
@@ -333,7 +367,12 @@ function validateAex(
   }
 }
 
-export function parseCanonicalTrace(source: string, label: string, bundle: ProfileBundle): ParsedTrace {
+export function parseCanonicalTrace(
+  source: string,
+  label: string,
+  bundle: ProfileBundle,
+  options?: ParseTraceOptions,
+): ParsedTrace {
   if (source.startsWith("\uFEFF")) fail(label + " must not start with a UTF-8 BOM");
   const rawLines = source.split(/\r?\n/);
   if (rawLines.at(-1) === "") rawLines.pop();
@@ -377,14 +416,46 @@ export function parseCanonicalTrace(source: string, label: string, bundle: Profi
   if (last.record_type !== "run_end") fail(label + " last record must be run_end");
   assertAllowedKeys(last, RUN_END_KEYS, label + " run_end");
   validateCommonEnvelope(last, runId, bundle, label + " run_end");
-  if (last.completion !== "complete") fail(label + " completion is not complete");
   const timedOutRaw = last.timed_out ?? last.timeout;
   if (booleanField(timedOutRaw, label + " run_end.timed_out")) fail(label + " timed out");
-  if (signedInteger(last.process_return_code, label + " run_end.process_return_code") !== 0) {
-    fail(label + " process_return_code is nonzero");
+  const procRc = signedInteger(last.process_return_code, label + " run_end.process_return_code");
+  const terminationRaw = last.termination === undefined ? "unknown" : last.termination;
+  if (terminationRaw !== "exited" && terminationRaw !== "signaled" &&
+      terminationRaw !== "timeout" && terminationRaw !== "unknown") {
+    fail(label + " run_end.termination must be exited, signaled, timeout, or unknown");
   }
-  if (!Array.isArray(last.incomplete_reasons) || last.incomplete_reasons.length > 0) {
-    fail(label + " has incomplete_reasons in run_end");
+  const termination = terminationRaw as "exited" | "signaled" | "timeout" | "unknown";
+  const allowBizReject = options?.allowBusinessRejectionExit === true;
+  if (!allowBizReject) {
+    if (last.completion !== "complete") fail(label + " completion is not complete");
+    if (procRc !== 0) {
+      fail(label + " process_return_code is nonzero");
+    }
+    if (!Array.isArray(last.incomplete_reasons) || last.incomplete_reasons.length > 0) {
+      fail(label + " has incomplete_reasons in run_end");
+    }
+  } else {
+    if (last.completion !== "complete" && last.completion !== "incomplete") {
+      fail(label + " completion must be complete or incomplete");
+    }
+    if (!Array.isArray(last.incomplete_reasons) ||
+        !last.incomplete_reasons.every((r) => typeof r === "string")) {
+      fail(label + " incomplete_reasons must be a string array");
+    }
+    if (last.completion === "complete") {
+      if (procRc !== 0) fail(label + " process_return_code is nonzero");
+      if (last.incomplete_reasons.length > 0) fail(label + " has incomplete_reasons in run_end");
+    } else {
+      if (termination !== "exited") {
+        fail(label + " business-rejection runs must exit cleanly (termination=" + termination + ")");
+      }
+      if (procRc === 0) fail(label + " completion is not complete");
+      const expectedReason = "host process exit code was " + String(procRc);
+      if (last.incomplete_reasons.length === 0 ||
+          last.incomplete_reasons.some((r) => r !== expectedReason)) {
+        fail(label + " incomplete run has non-business-exit incomplete_reasons");
+      }
+    }
   }
 
   const ecallRecords = records.slice(1, -1);
@@ -515,6 +586,18 @@ export function parseCanonicalTrace(source: string, label: string, bundle: Profi
     }
   }
 
+  const anyEcallRejected = ecallRecords.some((rec) => {
+    if (typeof rec.sgx_status === "number" && rec.sgx_status !== 0) return true;
+    if (typeof rec.out_status_i32 === "number" && rec.out_status_i32 !== 0) return true;
+    if (typeof rec.abi_return_value === "number" && rec.abi_return_value !== 0) return true;
+    if (typeof rec.abi_return_value === "string" && rec.abi_return_value !== "0") return true;
+    if (isObject(rec.business_result)) {
+      if (typeof rec.business_result.status === "number" && rec.business_result.status !== 0) return true;
+      if (typeof rec.business_result.value === "number" && rec.business_result.value !== 0) return true;
+      if (typeof rec.business_result.value === "string" && rec.business_result.value !== "0") return true;
+    }
+    return false;
+  });
   return {
     runId,
     mode: runMode,
@@ -525,10 +608,18 @@ export function parseCanonicalTrace(source: string, label: string, bundle: Profi
     ecallCount: ecallRecords.length,
     observedFieldIds: [...observedFieldIds],
     observations,
+    runCompletion: last.completion === "complete" ? "complete" : "incomplete",
+    processReturnCode: procRc,
+    termination,
+    businessRejected: (termination === "exited" && procRc !== 0) || anyEcallRejected,
   };
 }
 
-export function readCanonicalTrace(filename: string, bundle: ProfileBundle): ParsedTrace {
+export function readCanonicalTrace(
+  filename: string,
+  bundle: ProfileBundle,
+  options?: ParseTraceOptions,
+): ParsedTrace {
   let bytes: Uint8Array;
   try {
     bytes = readFileSync(filename);
@@ -544,5 +635,5 @@ export function readCanonicalTrace(filename: string, bundle: ProfileBundle): Par
   } catch {
     fail("trace " + filename + " is not valid UTF-8");
   }
-  return parseCanonicalTrace(text, filename, bundle);
+  return parseCanonicalTrace(text, filename, bundle, options);
 }

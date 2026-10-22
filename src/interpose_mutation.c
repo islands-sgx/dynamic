@@ -8,6 +8,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <openssl/sha.h>
 
 #if !defined(__BYTE_ORDER__) || __BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__
 #error "native SGX mutation requires the x86 little-endian ABI"
@@ -515,6 +516,8 @@ int atfield_mutation_load_spec_bytes(
     if (!state) return -1;
     atfield_mutation_init_disabled(state);
     state->configured = 1;
+    state->rule.expansion_buffer_budget = ATFIELD_MUTATION_MAX_EXPANDED_BUFFER_BYTES;
+    state->rule.expansion_total_budget = ATFIELD_MUTATION_MAX_TOTAL_EXPANDED_BYTES;
     if (!digest_valid(bundle_manifest_sha256) || !digest_valid(marshal_layout_sha256) ||
         digest_to_bytes(bundle_manifest_sha256, expected_bundle) ||
         digest_to_bytes(marshal_layout_sha256, expected_layout))
@@ -522,8 +525,10 @@ int atfield_mutation_load_spec_bytes(
     if (!bytes || length < ATFIELD_MUTATION_HEADER_BYTES ||
         length > ATFIELD_MUTATION_MAX_SPEC_BYTES)
         return mutation_parse_error(state, "spec_size_invalid");
+    const uint16_t spec_version = read_le16(bytes + 8);
     if (memcmp(bytes, magic, sizeof(magic)) != 0 ||
-        read_le16(bytes + 8) != ATFIELD_MUTATION_SPEC_VERSION ||
+        (spec_version != ATFIELD_MUTATION_SPEC_VERSION &&
+         spec_version != ATFIELD_MUTATION_SPEC_VERSION_LEGACY) ||
         read_le16(bytes + 10) != ATFIELD_MUTATION_HEADER_BYTES ||
         read_le32(bytes + 12) != length ||
         read_le32(bytes + 16) != 1 ||
@@ -534,8 +539,12 @@ int atfield_mutation_load_spec_bytes(
         return mutation_parse_error(state, "abi_digest_mismatch");
 
     const size_t rule_at = ATFIELD_MUTATION_HEADER_BYTES;
-    if (length - rule_at != ATFIELD_MUTATION_RULE_HEADER_BYTES +
-                            ATFIELD_MUTATION_SCALAR_TLV_BYTES)
+    if (length - rule_at < ATFIELD_MUTATION_RULE_HEADER_BYTES +
+                           ATFIELD_MUTATION_SCALAR_TLV_BYTES)
+        return mutation_parse_error(state, "spec_rule_length_invalid");
+    if (spec_version == ATFIELD_MUTATION_SPEC_VERSION_LEGACY &&
+        length - rule_at != ATFIELD_MUTATION_RULE_HEADER_BYTES +
+                           ATFIELD_MUTATION_SCALAR_TLV_BYTES)
         return mutation_parse_error(state, "spec_rule_length_invalid");
     const uint32_t rule_len = read_le32(bytes + rule_at);
     const uint16_t rule_type = read_le16(bytes + rule_at + 4);
@@ -547,7 +556,10 @@ int atfield_mutation_load_spec_bytes(
     const uint64_t target_gen = (rule_flags & 0x00ffu) ? (uint64_t)(rule_flags & 0x00ffu) : 1u;
     const uint8_t exec_mode = (uint8_t)((rule_flags >> 8) & 0x00ffu);
     if (rule_len != length - rule_at || rule_type != MUTATION_RULE_TYPE ||
-        exec_mode > 4u || rule_reserved || selector >= 64 || op_count != 1)
+        exec_mode > 4u || rule_reserved || selector >= 64 || op_count < 1 ||
+        op_count > 2 + ATFIELD_MUTATION_MAX_PREFIX_OPS)
+        return mutation_parse_error(state, "spec_rule_invalid");
+    if (spec_version == ATFIELD_MUTATION_SPEC_VERSION_LEGACY && op_count != 1)
         return mutation_parse_error(state, "spec_rule_invalid");
 
     const size_t op_at = rule_at + ATFIELD_MUTATION_RULE_HEADER_BYTES;
@@ -625,6 +637,77 @@ int atfield_mutation_load_spec_bytes(
         parsed_op.replacement_bits = replacement_bits;
     } else {
         return mutation_parse_error(state, "spec_operation_invalid");
+    }
+
+    if (op_count > 1) {
+        size_t cursor = op_at + ATFIELD_MUTATION_SCALAR_TLV_BYTES;
+        int budget_seen = 0;
+        for (uint16_t oi = 0; oi < op_count - 1; oi++) {
+            if (length - cursor < 8u)
+                return mutation_parse_error(state, "spec_prefix_tlv_truncated");
+            if (read_le16(bytes + cursor) == ATFIELD_MUTATION_OP_EXPANSION_BUDGET) {
+                if (budget_seen || length - cursor < ATFIELD_MUTATION_BUDGET_TLV_BYTES ||
+                    read_le16(bytes + cursor + 2) != 0 ||
+                    read_le32(bytes + cursor + 4) != ATFIELD_MUTATION_BUDGET_TLV_BYTES)
+                    return mutation_parse_error(state, "spec_expansion_budget_invalid");
+                const uint64_t per_buffer = read_le64(bytes + cursor + 8);
+                const uint64_t total = read_le64(bytes + cursor + 16);
+                if (!per_buffer || per_buffer > UINT32_MAX || !total || total > SIZE_MAX)
+                    return mutation_parse_error(state, "spec_expansion_budget_invalid");
+                state->rule.expansion_buffer_budget = (size_t)per_buffer;
+                state->rule.expansion_total_budget = (size_t)total;
+                budget_seen = 1;
+                cursor += ATFIELD_MUTATION_BUDGET_TLV_BYTES;
+                continue;
+            }
+            const uint16_t pi = state->rule.prefix_op_count;
+            if (pi >= ATFIELD_MUTATION_MAX_PREFIX_OPS)
+                return mutation_parse_error(state, "spec_prefix_op_invalid");
+            if (cursor + ATFIELD_MUTATION_PREFIX_TLV_BYTES > length)
+                return mutation_parse_error(state, "spec_prefix_tlv_truncated");
+            const uint16_t p_type = read_le16(bytes + cursor);
+            const uint16_t p_flags = read_le16(bytes + cursor + 2);
+            const uint32_t p_len = read_le32(bytes + cursor + 4);
+            const uint32_t call_selector = read_le32(bytes + cursor + 8);
+            const uint64_t call_occurrence = read_le64(bytes + cursor + 12);
+            const uint32_t p_param = read_le32(bytes + cursor + 20);
+            const uint8_t p_kind = bytes[cursor + 24];
+            const uint8_t p_width = bytes[cursor + 25];
+            const uint16_t p_reserved = read_le16(bytes + cursor + 26);
+            const uint32_t p_offset = read_le32(bytes + cursor + 28);
+            const uint64_t p_expected = read_le64(bytes + cursor + 32);
+            const uint64_t p_replacement = read_le64(bytes + cursor + 40);
+            if (p_type != ATFIELD_MUTATION_OP_PREFIX_MUTATE || p_flags ||
+                p_len != ATFIELD_MUTATION_PREFIX_TLV_BYTES || p_reserved ||
+                call_selector >= 64 || p_param >= ATFIELD_MUTATION_MAX_PARAMS ||
+                (p_width != 1u && p_width != 2u && p_width != 4u && p_width != 8u) ||
+                !scalar_bits_canonical(p_kind, p_width, p_expected) ||
+                !scalar_bits_canonical(p_kind, p_width, p_replacement))
+                return mutation_parse_error(state, "spec_prefix_op_invalid");
+            if (call_selector == selector && call_occurrence == occurrence)
+                return mutation_parse_error(state, "spec_prefix_targets_target");
+            for (uint16_t q = 0; q < pi; q++) {
+                if (state->rule.prefix_ops[q].selector_ordinal == (int)call_selector &&
+                    state->rule.prefix_ops[q].occurrence == call_occurrence)
+                    return mutation_parse_error(state, "spec_prefix_duplicate");
+            }
+            atfield_mutation_prefix_op_t *dst = &state->rule.prefix_ops[pi];
+            memset(dst, 0, sizeof(*dst));
+            dst->selector_ordinal = (int)call_selector;
+            dst->occurrence = call_occurrence;
+            dst->parameter_index = p_param;
+            dst->kind = p_kind;
+            dst->width_bytes = p_width;
+            dst->byte_offset = p_offset;
+            dst->expected_bits = p_expected;
+            dst->replacement_bits = p_replacement;
+            state->rule.prefix_op_count++;
+            cursor += ATFIELD_MUTATION_PREFIX_TLV_BYTES;
+        }
+        if (cursor != length)
+            return mutation_parse_error(state, "spec_rule_length_invalid");
+    } else if (op_at + ATFIELD_MUTATION_SCALAR_TLV_BYTES != length) {
+        return mutation_parse_error(state, "spec_rule_length_invalid");
     }
 
     state->rule.target_generation = target_gen;
@@ -803,15 +886,15 @@ int atfield_call_capture_write_ecall(
         if ((i && fputc(',', fp) == EOF) || write_scalar_json(fp, &record->outputs[i], 1) != 0) goto failed;
     }
     if (fputs("],\"mutation\":", fp) < 0) goto failed;
-    if (record->mutation.target) {
+    if (record->mutation.matched) {
         char expected[19], observed[19], replacement[19];
         if (format_hex_bits(record->mutation.width_bytes, record->mutation.expected_bits, expected) != 0 ||
             format_hex_bits(record->mutation.width_bytes, record->mutation.replacement_bits, replacement) != 0 ||
             !reason_code_safe(record->mutation.reason)) goto failed;
         const char *sign = record->mutation.kind == ATFIELD_MUTATION_SCALAR_SIGNED ? "signed" : "unsigned";
-        if (fprintf(fp, "{\"param_index\":%u,\"width_bytes\":%u,\"signedness\":\"%s\","
+        if (fprintf(fp, "{\"param_index\":%u,\"width_bytes\":%u,\"byte_offset\":%u,\"signedness\":\"%s\","
                     "\"expected_bits\":\"%s\",\"observed_bits\":",
-                    record->mutation.parameter_index, record->mutation.width_bytes,
+                    record->mutation.parameter_index, record->mutation.width_bytes, record->mutation.byte_offset,
                     sign, expected) < 0) goto failed;
         if (record->mutation.has_observed) {
             if (format_hex_bits(record->mutation.width_bytes, record->mutation.observed_bits, observed) != 0 ||
@@ -829,18 +912,36 @@ int atfield_call_capture_write_ecall(
         for (size_t bi = 0; bi < record->buffer_input_count; bi++) {
             const atfield_captured_buffer_t *b = &record->buffer_inputs[bi];
             const char *dir_s = b->direction == ATFIELD_MUTATION_DIR_INOUT ? "inout" : "in";
-            if ((bi && fputc(',', fp) == EOF) ||
+            if (strlen(b->sha256) != 64 || (bi && fputc(',', fp) == EOF) ||
                 fprintf(fp, "{\"param_index\":%u,\"direction\":\"%s\",\"is_string\":%s,"
                             "\"element_size\":%u,\"byte_length\":%u,\"fnv1a64\":\"0x%016" PRIx64 "\","
-                            "\"prefix_hex\":\"",
+                            "\"sha256\":\"%s\",\"storage_address\":\"0x%016" PRIx64 "\",\"prefix_hex\":\"",
                         b->parameter_index, dir_s, b->is_string ? "true" : "false",
-                        b->element_size, b->byte_length, b->fnv1a64) < 0) goto failed;
+                        b->element_size, b->byte_length, b->fnv1a64, b->sha256, b->storage_address) < 0) goto failed;
             for (uint32_t k = 0; k < b->prefix_length; k++) {
                 if (fprintf(fp, "%02x", b->prefix_bytes[k]) < 0) goto failed;
             }
             if (fputs("\"}", fp) < 0) goto failed;
         }
         if (fputc(']', fp) == EOF) goto failed;
+        if (record->buffer_output_count > 0) {
+            if (fputs(",\"buffer_outputs\":[", fp) < 0) goto failed;
+            for (size_t bo = 0; bo < record->buffer_output_count; bo++) {
+                const atfield_captured_buffer_t *b = &record->buffer_outputs[bo];
+                const char *dir_s = b->direction == ATFIELD_MUTATION_DIR_OUT ? "out" : "inout";
+                if (strlen(b->sha256) != 64 || (bo && fputc(',', fp) == EOF) ||
+                    fprintf(fp, "{\"param_index\":%u,\"direction\":\"%s\",\"is_string\":%s,"
+                                "\"element_size\":%u,\"byte_length\":%u,\"fnv1a64\":\"0x%016" PRIx64 "\","
+                                "\"sha256\":\"%s\",\"storage_address\":\"0x%016" PRIx64 "\",\"prefix_hex\":\"",
+                            b->parameter_index, dir_s, b->is_string ? "true" : "false",
+                            b->element_size, b->byte_length, b->fnv1a64, b->sha256, b->storage_address) < 0) goto failed;
+                for (uint32_t k = 0; k < b->prefix_length; k++) {
+                    if (fprintf(fp, "%02x", b->prefix_bytes[k]) < 0) goto failed;
+                }
+                if (fputs("\"}", fp) < 0) goto failed;
+            }
+            if (fputc(']', fp) == EOF) goto failed;
+        }
     }
     if (fputs("}\n", fp) < 0 || fflush(fp) != 0) goto failed;
     capture->ecall_count++;
@@ -1112,6 +1213,18 @@ static uint64_t fnv1a64_bytes(const uint8_t *data, size_t len) {
     return h;
 }
 
+static int sha256_hex_bytes(const uint8_t *data, size_t len, char out[65]) {
+    static const char hex[] = "0123456789abcdef";
+    unsigned char digest[SHA256_DIGEST_LENGTH];
+    if (!SHA256(data, len, digest)) return -1;
+    for (size_t i = 0; i < sizeof(digest); i++) {
+        out[i * 2] = hex[digest[i] >> 4];
+        out[i * 2 + 1] = hex[digest[i] & 0x0f];
+    }
+    out[64] = 0;
+    return 0;
+}
+
 static int resolve_buffer_extent(
     const atfield_mutation_layout_t *layout,
     const atfield_mutation_param_layout_t *p,
@@ -1170,6 +1283,8 @@ static void capture_inputs(
                 ? (uint32_t)bytes
                 : ATFIELD_CAPTURE_MAX_BUF_PREFIX_BYTES;
             b->fnv1a64 = fnv1a64_bytes(ptr, bytes);
+            if (sha256_hex_bytes(ptr, bytes, b->sha256) != 0) b->sha256[0] = 0;
+            b->storage_address = (uint64_t)(uintptr_t)ptr;
             memcpy(b->prefix_bytes, ptr, b->prefix_length);
         }
     }
@@ -1192,6 +1307,24 @@ static void capture_outputs(
             capture_add_value(v, p->parameter_index, ATFIELD_MUTATION_STORAGE_DIRECT,
                 kind, width, read_scalar(marshal, p->ms_offset, width));
             continue;
+        }
+        const uint8_t *bptr = NULL;
+        size_t bbytes = 0;
+        if (resolve_buffer_extent(layout, p, marshal, &bptr, &bbytes) == 0 && bptr && bbytes > 0) {
+            atfield_captured_buffer_t *b = &record->buffer_outputs[record->buffer_output_count++];
+            memset(b, 0, sizeof(*b));
+            b->parameter_index = p->parameter_index;
+            b->direction = p->direction;
+            b->is_string = p->is_string;
+            b->element_size = (uint32_t)(p->element_size ? p->element_size : 1u);
+            b->byte_length = (uint32_t)bbytes;
+            b->prefix_length = bbytes < ATFIELD_CAPTURE_MAX_BUF_PREFIX_BYTES
+                ? (uint32_t)bbytes
+                : ATFIELD_CAPTURE_MAX_BUF_PREFIX_BYTES;
+            b->fnv1a64 = fnv1a64_bytes(bptr, bbytes);
+            if (sha256_hex_bytes(bptr, bbytes, b->sha256) != 0) b->sha256[0] = 0;
+            b->storage_address = (uint64_t)(uintptr_t)bptr;
+            memcpy(b->prefix_bytes, bptr, b->prefix_length);
         }
         if (!p->replay_supported || p->is_user_check || p->is_string || p->is_wstring) continue;
         uint8_t kind = 0, width = 0;
@@ -1314,14 +1447,78 @@ int atfield_mutation_before_ecall(
 
     const atfield_mutation_scalar_op_t *op = &state->rule.operations[0];
     if (selector_ordinal != state->rule.selector_ordinal ||
-        selector_seq != state->rule.occurrence) return 0;
+        selector_seq != state->rule.occurrence) {
+        /* Explicit prefix mutation: a planned, recorded scalar write into a
+           buffer carried by THIS call's marshal block. The write only happens
+           when the spec names this (selector, occurrence) pair, and it is
+           captured on this call's own mutation record so the executed input is
+           always derivable from the trace. */
+        const atfield_mutation_prefix_op_t *pfx = NULL;
+        uint16_t pfx_index = 0;
+        for (uint16_t pi = 0; pi < state->rule.prefix_op_count; pi++) {
+            if (state->rule.prefix_ops[pi].selector_ordinal == selector_ordinal &&
+                state->rule.prefix_ops[pi].occurrence == selector_seq) {
+                pfx = &state->rule.prefix_ops[pi];
+                pfx_index = pi;
+                break;
+            }
+        }
+        if (!pfx) return 0;
+        record->mutation.matched = 1;
+        record->mutation.parameter_index = pfx->parameter_index;
+        record->mutation.kind = pfx->kind;
+        record->mutation.width_bytes = pfx->width_bytes;
+        record->mutation.byte_offset = pfx->byte_offset;
+        record->mutation.expected_bits = pfx->expected_bits;
+        record->mutation.replacement_bits = pfx->replacement_bits;
+        if (state->rule.prefix_applied & (uint8_t)(1u << pfx_index)) {
+            set_mutation_reason(state, record, "duplicate_prefix_hit");
+            return -1;
+        }
+        const atfield_mutation_param_layout_t *p = find_param(layout, pfx->parameter_index);
+        if (!p || !p->is_pointer || !original_ms ||
+            (p->direction != ATFIELD_MUTATION_DIR_IN && p->direction != ATFIELD_MUTATION_DIR_INOUT)) {
+            set_mutation_reason(state, record, "prefix_parameter_unavailable");
+            return -1;
+        }
+        const uint8_t *orig_ptr = NULL;
+        size_t orig_b = 0;
+        if (resolve_buffer_extent(layout, p, original_ms, &orig_ptr, &orig_b) != 0 ||
+            !orig_ptr || pfx->byte_offset + pfx->width_bytes > orig_b ||
+            pfx->byte_offset + pfx->width_bytes < pfx->byte_offset) {
+            set_mutation_reason(state, record, "prefix_buffer_extent_invalid");
+            return -1;
+        }
+        const uint64_t observed = normalize_bits(pfx->kind, pfx->width_bytes,
+            read_scalar(orig_ptr, pfx->byte_offset, pfx->width_bytes));
+        record->mutation.has_observed = 1;
+        record->mutation.observed_bits = observed;
+        if (observed != pfx->expected_bits) {
+            set_mutation_reason(state, record, "expected_value_mismatch");
+            return -1;
+        }
+        write_scalar((void *)orig_ptr, pfx->byte_offset, pfx->width_bytes, pfx->replacement_bits);
+        state->rule.prefix_applied |= (uint8_t)(1u << pfx_index);
+        record->mutation.applied = 1;
+        copy_text(record->mutation.reason, sizeof(record->mutation.reason), "applied");
+        record->input_count = 0;
+        record->buffer_input_count = 0;
+        capture_inputs(record, layout, original_ms);
+        return 0;
+    }
+
     record->mutation.target = 1;
     record->mutation.matched = 1;
     record->mutation.parameter_index = op->parameter_index == UINT32_MAX ? 0u : op->parameter_index;
     record->mutation.kind = op->kind;
     record->mutation.width_bytes = op->width_bytes ? op->width_bytes : 1u;
+    record->mutation.byte_offset = op->byte_offset;
     record->mutation.expected_bits = op->expected_bits;
     record->mutation.replacement_bits = op->replacement_bits;
+    if (state->rule.prefix_applied != (uint8_t)((1u << state->rule.prefix_op_count) - 1u)) {
+        set_mutation_reason(state, record, "prefix_mutation_missed");
+        return -1;
+    }
 
     if (state->rule.hit_count++) {
         set_mutation_reason(state, record, "duplicate_hit");
@@ -1352,36 +1549,159 @@ int atfield_mutation_before_ecall(
         }
         memcpy(working_ms, original_ms, layout->marshal_size);
         write_scalar(working_ms, param->ms_offset, op->width_bytes, op->replacement_bits);
-        int bound_rc = pointer_capacity_check(layout, original_ms, working_ms);
-        if (bound_rc == -2) {
-            set_mutation_reason(state, record, "pointer_bound_grew");
-            return -1;
-        }
-        if (bound_rc != 0) {
-            set_mutation_reason(state, record, "pointer_bound_unproven");
-            return -1;
-        }
-        if (state->rule.exec_mode >= 1) {
+        if (state->rule.exec_mode == 0) {
+            int bound_rc = pointer_capacity_check(layout, original_ms, working_ms);
+            if (bound_rc == -2) {
+                set_mutation_reason(state, record, "pointer_bound_grew");
+                return -1;
+            }
+            if (bound_rc != 0) {
+                set_mutation_reason(state, record, "pointer_bound_unproven");
+                return -1;
+            }
+        } else {
+            const uint8_t *orig_ptrs[ATFIELD_MUTATION_MAX_PARAMS] = {0};
+            size_t old_sizes[ATFIELD_MUTATION_MAX_PARAMS] = {0};
+            size_t new_sizes[ATFIELD_MUTATION_MAX_PARAMS] = {0};
+            size_t alloc_sizes[ATFIELD_MUTATION_MAX_PARAMS] = {0};
+            size_t alias_root[ATFIELD_MUTATION_MAX_PARAMS] = {0};
+            size_t alias_offset[ATFIELD_MUTATION_MAX_PARAMS] = {0};
+            size_t total_new_bytes = 0;
             for (size_t i = 0; i < layout->parameter_count; i++) {
+                alias_root[i] = i;
                 const atfield_mutation_param_layout_t *p = &layout->parameters[i];
                 if (!p->is_pointer) continue;
-                const uint8_t *orig_ptr = NULL;
-                size_t orig_b = 0;
-                if (resolve_buffer_extent(layout, p, original_ms, &orig_ptr, &orig_b) != 0) {
+                if (!mutation_pointer_supported(layout, p)) {
                     set_mutation_reason(state, record, "pointer_bound_unproven");
                     return -1;
                 }
-                if (orig_ptr && orig_b > 0) {
-                    void *clone = calloc(1, orig_b);
-                    if (!clone) {
-                        set_mutation_reason(state, record, "marshal_clone_unavailable");
+                const uint8_t *orig = NULL;
+                memcpy(&orig, (const uint8_t *)original_ms + p->ms_offset, sizeof(orig));
+                orig_ptrs[i] = orig;
+                if (p->is_string) {
+                    if (!orig) {
+                        old_sizes[i] = 0;
+                        new_sizes[i] = 0;
+                    } else {
+                        size_t slen = strnlen((const char *)orig, 65536u);
+                        if (slen >= 65536u) {
+                            set_mutation_reason(state, record, "pointer_bound_unproven");
+                            return -1;
+                        }
+                        old_sizes[i] = slen + 1u;
+                        new_sizes[i] = slen + 1u;
+                    }
+                } else {
+                    size_t ob = 0, nb = 0;
+                    if (pointer_bytes(layout, p, original_ms, &ob) != 0 ||
+                        pointer_bytes(layout, p, working_ms, &nb) != 0) {
+                        set_mutation_reason(state, record, "pointer_bound_unproven");
                         return -1;
                     }
-                    memcpy(clone, orig_ptr, orig_b);
-                    state->rule.cloned_buffers[i] = clone;
-                    state->rule.cloned_sizes[i] = orig_b;
-                    state->rule.orig_ptrs[i] = (void *)orig_ptr;
-                    memcpy((uint8_t *)working_ms + p->ms_offset, &clone, sizeof(clone));
+                    if (!orig && (ob > 0 || nb > 0)) {
+                        set_mutation_reason(state, record, "pointer_bound_unproven");
+                        return -1;
+                    }
+                    if (orig && ob > UINTPTR_MAX - (uintptr_t)orig) {
+                        set_mutation_reason(state, record, "pointer_bound_unproven");
+                        return -1;
+                    }
+                    old_sizes[i] = ob;
+                    new_sizes[i] = nb;
+                }
+                if (new_sizes[i] > state->rule.expansion_buffer_budget ||
+                    new_sizes[i] > state->rule.expansion_total_budget - total_new_bytes) {
+                    set_mutation_reason(state, record, "expansion_budget_exceeded");
+                    return -1;
+                }
+                total_new_bytes += new_sizes[i];
+                alloc_sizes[i] = new_sizes[i];
+            }
+            for (size_t i = 0; i < layout->parameter_count; i++) {
+                const atfield_mutation_param_layout_t *p = &layout->parameters[i];
+                if (!p->is_pointer || !orig_ptrs[i]) continue;
+                for (size_t j = 0; j < i; j++) {
+                    const atfield_mutation_param_layout_t *pj = &layout->parameters[j];
+                    if (!pj->is_pointer || !orig_ptrs[j] || alias_root[j] != j || old_sizes[j] == 0) continue;
+                    uintptr_t ui = (uintptr_t)orig_ptrs[i];
+                    uintptr_t uj = (uintptr_t)orig_ptrs[j];
+                    if (ui >= uj && ui - uj <= old_sizes[j] &&
+                        old_sizes[i] <= old_sizes[j] - (size_t)(ui - uj)) {
+                        size_t off = (size_t)(ui - uj);
+                        if (new_sizes[i] > state->rule.expansion_buffer_budget ||
+                            off > state->rule.expansion_buffer_budget - new_sizes[i]) {
+                            set_mutation_reason(state, record, "expansion_budget_exceeded");
+                            return -1;
+                        }
+                        alias_root[i] = j;
+                        alias_offset[i] = off;
+                        if (off + new_sizes[i] > alloc_sizes[j]) {
+                            alloc_sizes[j] = off + new_sizes[i];
+                        }
+                        break;
+                    }
+                }
+            }
+            size_t allocated_bytes = 0;
+            for (size_t i = 0; i < layout->parameter_count; i++) {
+                const atfield_mutation_param_layout_t *p = &layout->parameters[i];
+                if (!p->is_pointer || !orig_ptrs[i] || alias_root[i] != i) continue;
+                size_t cap = alloc_sizes[i] > 0 ? alloc_sizes[i] : 1u;
+                if (cap > state->rule.expansion_total_budget - allocated_bytes) {
+                    set_mutation_reason(state, record, "expansion_budget_exceeded");
+                    return -1;
+                }
+                allocated_bytes += cap;
+                void *clone = calloc(1, cap);
+                if (!clone) {
+                    set_mutation_reason(state, record, "marshal_clone_unavailable");
+                    return -1;
+                }
+                if ((p->direction == ATFIELD_MUTATION_DIR_IN ||
+                     p->direction == ATFIELD_MUTATION_DIR_INOUT) && old_sizes[i] > 0) {
+                    size_t copy_len = old_sizes[i] < alloc_sizes[i] ? old_sizes[i] : alloc_sizes[i];
+                    memcpy(clone, orig_ptrs[i], copy_len);
+                }
+                state->rule.cloned_buffers[i] = clone;
+                state->rule.cloned_sizes[i] = new_sizes[i];
+                state->rule.orig_sizes[i] = old_sizes[i];
+                state->rule.orig_ptrs[i] = (void *)orig_ptrs[i];
+                state->rule.is_alias_slice[i] = 0;
+                memcpy((uint8_t *)working_ms + p->ms_offset, &clone, sizeof(clone));
+            }
+            for (size_t i = 0; i < layout->parameter_count; i++) {
+                const atfield_mutation_param_layout_t *p = &layout->parameters[i];
+                if (!p->is_pointer || !orig_ptrs[i] || alias_root[i] == i) continue;
+                size_t root = alias_root[i];
+                void *slice_ptr = (uint8_t *)state->rule.cloned_buffers[root] + alias_offset[i];
+                state->rule.cloned_buffers[i] = slice_ptr;
+                state->rule.cloned_sizes[i] = new_sizes[i];
+                state->rule.orig_sizes[i] = old_sizes[i];
+                state->rule.orig_ptrs[i] = (void *)orig_ptrs[i];
+                state->rule.is_alias_slice[i] = 1;
+                memcpy((uint8_t *)working_ms + p->ms_offset, &slice_ptr, sizeof(slice_ptr));
+            }
+            record->buffer_input_count = 0;
+            for (size_t i = 0; i < layout->parameter_count; i++) {
+                const atfield_mutation_param_layout_t *p = &layout->parameters[i];
+                if (!p->is_pointer || p->direction == ATFIELD_MUTATION_DIR_OUT) continue;
+                const uint8_t *bptr = (const uint8_t *)state->rule.cloned_buffers[i];
+                size_t blen = state->rule.cloned_sizes[i];
+                if (bptr && blen > 0) {
+                    atfield_captured_buffer_t *b = &record->buffer_inputs[record->buffer_input_count++];
+                    memset(b, 0, sizeof(*b));
+                    b->parameter_index = p->parameter_index;
+                    b->direction = p->direction;
+                    b->is_string = p->is_string;
+                    b->element_size = (uint32_t)(p->element_size ? p->element_size : 1u);
+                    b->byte_length = (uint32_t)blen;
+                    b->prefix_length = blen < ATFIELD_CAPTURE_MAX_BUF_PREFIX_BYTES
+                        ? (uint32_t)blen
+                        : ATFIELD_CAPTURE_MAX_BUF_PREFIX_BYTES;
+                    b->fnv1a64 = fnv1a64_bytes(bptr, blen);
+                    if (sha256_hex_bytes(bptr, blen, b->sha256) != 0) b->sha256[0] = 0;
+                    b->storage_address = (uint64_t)(uintptr_t)bptr;
+                    memcpy(b->prefix_bytes, bptr, b->prefix_length);
                 }
             }
         }
@@ -1433,7 +1753,9 @@ int atfield_mutation_before_ecall(
                     memcpy(clone, orig_ptr, orig_b);
                     state->rule.cloned_buffers[i] = clone;
                     state->rule.cloned_sizes[i] = orig_b;
+                    state->rule.orig_sizes[i] = orig_b;
                     state->rule.orig_ptrs[i] = (void *)orig_ptr;
+                    state->rule.is_alias_slice[i] = 0;
                     memcpy((uint8_t *)working_ms + p->ms_offset, &clone, sizeof(clone));
                 }
             }
@@ -1473,10 +1795,15 @@ int atfield_mutation_before_ecall(
             set_mutation_reason(state, record, "expected_value_mismatch");
             return -1;
         }
+        if (op->sub_op != ATFIELD_BUF_OP_XOR_BYTE) {
+            set_mutation_reason(state, record, "expected_value_mismatch");
+            return -1;
+        }
         if (op->sub_op == ATFIELD_BUF_OP_XOR_BYTE) {
             uint8_t xor_mask = (uint8_t)((op->expected_bits ^ op->replacement_bits) & 0xffu);
             if (xor_mask == 0) xor_mask = 0x01u;
             eff_replacement_bits = (uint64_t)((observed ^ xor_mask) & 0xffu);
+            record->mutation.replacement_bits = eff_replacement_bits;
         }
     }
     if (!working_ms || !layout->marshal_size || working_capacity < layout->marshal_size) {
@@ -1504,7 +1831,9 @@ int atfield_mutation_before_ecall(
             memcpy(clone, orig_ptr, orig_b);
             state->rule.cloned_buffers[i] = clone;
             state->rule.cloned_sizes[i] = orig_b;
+            state->rule.orig_sizes[i] = orig_b;
             state->rule.orig_ptrs[i] = (void *)orig_ptr;
+            state->rule.is_alias_slice[i] = 0;
             memcpy((uint8_t *)working_ms + p->ms_offset, &clone, sizeof(clone));
         }
     }
@@ -1525,6 +1854,8 @@ int atfield_mutation_before_ecall(
     for (size_t bi = 0; bi < record->buffer_input_count; bi++) {
         if (record->buffer_inputs[bi].parameter_index == op->parameter_index) {
             record->buffer_inputs[bi].fnv1a64 = fnv1a64_bytes(mut_buf, target_bytes);
+            if (sha256_hex_bytes(mut_buf, target_bytes, record->buffer_inputs[bi].sha256) != 0)
+                record->buffer_inputs[bi].sha256[0] = 0;
             memcpy(record->buffer_inputs[bi].prefix_bytes, mut_buf, record->buffer_inputs[bi].prefix_length);
         }
     }
@@ -1537,20 +1868,28 @@ int atfield_mutation_before_ecall(
 static void cleanup_cloned_buffers(
     atfield_mutation_state_t *state,
     const atfield_mutation_layout_t *layout,
-    int copyback_inout)
+    int copyback_outputs)
 {
     if (!state) return;
     for (size_t i = 0; i < ATFIELD_MUTATION_MAX_PARAMS; i++) {
         if (!state->rule.cloned_buffers[i]) continue;
-        if (copyback_inout && layout && i < layout->parameter_count &&
-            layout->parameters[i].direction == ATFIELD_MUTATION_DIR_INOUT &&
-            state->rule.orig_ptrs[i] && state->rule.cloned_sizes[i] > 0) {
+        if (!state->rule.is_alias_slice[i] &&
+            copyback_outputs && layout && i < layout->parameter_count &&
+            (layout->parameters[i].direction == ATFIELD_MUTATION_DIR_OUT ||
+             layout->parameters[i].direction == ATFIELD_MUTATION_DIR_INOUT) &&
+            state->rule.orig_ptrs[i] &&
+            state->rule.cloned_sizes[i] > 0 &&
+            state->rule.cloned_sizes[i] <= state->rule.orig_sizes[i]) {
             memcpy(state->rule.orig_ptrs[i], state->rule.cloned_buffers[i], state->rule.cloned_sizes[i]);
         }
-        free(state->rule.cloned_buffers[i]);
+        if (!state->rule.is_alias_slice[i]) {
+            free(state->rule.cloned_buffers[i]);
+        }
         state->rule.cloned_buffers[i] = NULL;
         state->rule.cloned_sizes[i] = 0;
+        state->rule.orig_sizes[i] = 0;
         state->rule.orig_ptrs[i] = NULL;
+        state->rule.is_alias_slice[i] = 0;
     }
 }
 
@@ -1603,12 +1942,12 @@ int atfield_mutation_after_ecall(
         return 0;
     }
     capture_outputs(record, layout, completed_ms);
-    const int is_inplace = (!state || (state->rule.exec_mode == 0 &&
-        state->rule.operations[0].op_type != ATFIELD_MUTATION_OP_EXTEND_HISTORY));
-    if (record->mutation.applied && is_inplace) {
+    const int is_single_call = (!state ||
+        state->rule.operations[0].op_type != ATFIELD_MUTATION_OP_EXTEND_HISTORY);
+    if (record->mutation.applied && is_single_call) {
         copyback_direct_outputs(layout, completed_ms, original_ms);
     }
-    cleanup_cloned_buffers(state, layout, record->mutation.applied && is_inplace);
+    cleanup_cloned_buffers(state, layout, record->mutation.applied && is_single_call);
     return 0;
 }
 
@@ -1619,6 +1958,8 @@ int atfield_mutation_finalize(atfield_mutation_state_t *state) {
     if (state->rule.hit_count == 0) mutation_invalid(state, "target_occurrence_missed");
     else if (state->rule.hit_count != 1) mutation_invalid(state, "duplicate_hit");
     else if (!state->rule.applied && !state->invalid) mutation_invalid(state, "mutation_not_applied");
+    else if (state->rule.prefix_applied != (uint8_t)((1u << state->rule.prefix_op_count) - 1u))
+        mutation_invalid(state, "prefix_mutation_missed");
     return state->invalid ? -1 : 0;
 }
 

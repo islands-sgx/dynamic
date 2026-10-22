@@ -175,6 +175,14 @@ static int test_aex_classification_and_verified_phase_mask(void) {
         ATFIELD_AEX_UNEXPECTED) return 37;
     if (atfield_stage_index_from_state(3u, 60u) != 3u) return 38;
     if (atfield_stage_index_from_state(3u, 50u) != 2u) return 39;
+    /* Outside-window requires all independent Gate D closure evidence. */
+    if (!atfield_proven_outside_field_window(4u, 0u, 80u, 1, 1, 1)) return 45;
+    if (atfield_proven_outside_field_window(3u, 0u, 80u, 1, 1, 1)) return 46;
+    if (atfield_proven_outside_field_window(4u, 1u, 80u, 1, 1, 1)) return 47;
+    if (atfield_proven_outside_field_window(4u, 0u, 70u, 1, 1, 1)) return 48;
+    if (atfield_proven_outside_field_window(4u, 0u, 80u, 0, 1, 1)) return 49;
+    if (atfield_proven_outside_field_window(4u, 0u, 80u, 1, 0, 1)) return 50;
+    if (atfield_proven_outside_field_window(4u, 0u, 80u, 1, 1, 0)) return 51;
 
     /* Verified phase mask requires all gates, all required IPIs, 0 S3 AEXs, and no heap errors */
     if (atfield_verified_phase_mask(0x0fu, 0x07u, 0x07u, 0u, 0, 0) != 0x0fu) return 40;

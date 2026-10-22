@@ -9,17 +9,25 @@
 #define ATFIELD_MUTATION_MAX_OMITTED ATFIELD_MUTATION_MAX_PARAMS
 #define ATFIELD_MUTATION_DIGEST_HEX 64
 #define ATFIELD_MUTATION_MAX_SPEC_BYTES (1024u * 1024u)
-#define ATFIELD_MUTATION_SPEC_VERSION 1
+#define ATFIELD_MUTATION_SPEC_VERSION 2
+#define ATFIELD_MUTATION_SPEC_VERSION_LEGACY 1
 #define ATFIELD_MUTATION_HEADER_BYTES 88
 #define ATFIELD_MUTATION_RULE_HEADER_BYTES 24
-#define ATFIELD_MUTATION_SCALAR_TLV_BYTES 32
+#define ATFIELD_MUTATION_SCALAR_TLV_BYTES 32u
+#define ATFIELD_MUTATION_PREFIX_TLV_BYTES 48u
+#define ATFIELD_MUTATION_BUDGET_TLV_BYTES 24u
+#define ATFIELD_MUTATION_MAX_PREFIX_OPS 8u
 #define ATFIELD_MUTATION_OP_REPLACE_SCALAR 1u
 #define ATFIELD_MUTATION_OP_MUTATE_BUFFER 2u
 #define ATFIELD_MUTATION_OP_EXTEND_HISTORY 3u
+#define ATFIELD_MUTATION_OP_PREFIX_MUTATE 4u
+#define ATFIELD_MUTATION_OP_EXPANSION_BUDGET 5u
 #define ATFIELD_BUF_OP_XOR_BYTE 1u
 #define ATFIELD_BUF_OP_FILL_SLICE 2u
 #define ATFIELD_BUF_OP_WRITE_LE 3u
 #define ATFIELD_CAPTURE_MAX_BUF_PREFIX_BYTES 128u
+#define ATFIELD_MUTATION_MAX_EXPANDED_BUFFER_BYTES (64u * 1024u)
+#define ATFIELD_MUTATION_MAX_TOTAL_EXPANDED_BYTES (256u * 1024u)
 #define ATFIELD_MARSHAL_MAX_ECALLS 64
 #define ATFIELD_MARSHAL_MAX_TYPE_NAME 63
 #define ATFIELD_MARSHAL_MAX_SPEC_BYTES (1024u * 1024u)
@@ -94,6 +102,22 @@ typedef struct {
     uint64_t expected_bits;
     uint64_t replacement_bits;
 } atfield_mutation_scalar_op_t;
+
+/* Explicit prefix-call mutation: an auditable scalar write applied to a
+   specific earlier call's buffer contents, addressed by that call's
+   (selector_ordinal, occurrence). Unlike the target op, it is recorded on the
+   prefix call's own capture record so the executed input is always derivable. */
+typedef struct {
+    int selector_ordinal;
+    uint64_t occurrence;
+    uint32_t parameter_index;
+    uint8_t kind;
+    uint8_t width_bytes;
+    uint32_t byte_offset;
+    uint64_t expected_bits;
+    uint64_t replacement_bits;
+} atfield_mutation_prefix_op_t;
+
 typedef struct {
     uint64_t target_generation;
     uint8_t exec_mode;
@@ -103,9 +127,16 @@ typedef struct {
     uint8_t applied;
     uint8_t operation_count;
     atfield_mutation_scalar_op_t operations[ATFIELD_MUTATION_MAX_REPLACEMENTS];
+    uint8_t prefix_op_count;
+    uint8_t prefix_applied;
+    size_t expansion_buffer_budget;
+    size_t expansion_total_budget;
+    atfield_mutation_prefix_op_t prefix_ops[ATFIELD_MUTATION_MAX_PREFIX_OPS];
     void *cloned_buffers[ATFIELD_MUTATION_MAX_PARAMS];
     size_t cloned_sizes[ATFIELD_MUTATION_MAX_PARAMS];
+    size_t orig_sizes[ATFIELD_MUTATION_MAX_PARAMS];
     void *orig_ptrs[ATFIELD_MUTATION_MAX_PARAMS];
+    uint8_t is_alias_slice[ATFIELD_MUTATION_MAX_PARAMS];
 } atfield_mutation_rule_t;
 typedef struct {
     uint32_t parameter_index;
@@ -115,6 +146,8 @@ typedef struct {
     uint32_t byte_length;
     uint32_t prefix_length;
     uint64_t fnv1a64;
+    char sha256[65];
+    uint64_t storage_address;
     uint8_t prefix_bytes[ATFIELD_CAPTURE_MAX_BUF_PREFIX_BYTES];
 } atfield_captured_buffer_t;
 typedef struct {
@@ -139,6 +172,7 @@ typedef struct {
     uint8_t kind;
     uint8_t width_bytes;
     uint8_t has_observed;
+    uint32_t byte_offset;
     uint64_t expected_bits;
     uint64_t observed_bits;
     uint64_t replacement_bits;
@@ -166,6 +200,8 @@ typedef struct {
     atfield_mutation_result_t mutation;
     atfield_captured_buffer_t buffer_inputs[ATFIELD_MUTATION_MAX_PARAMS];
     size_t buffer_input_count;
+    atfield_captured_buffer_t buffer_outputs[ATFIELD_MUTATION_MAX_PARAMS];
+    size_t buffer_output_count;
 } atfield_call_capture_record_t;
 typedef struct {
     uint8_t enabled;
