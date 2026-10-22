@@ -1169,6 +1169,7 @@ static sgx_status_t execute_one_measured_ecall(
                 write_ad_json_array(trace_fp, (complete[gi] && any_snapshot) ? trace_merged_ad[gi] : NULL, 0);
                 trace_printf("}");
             }
+            trace_printf("}");
             if (gatec_postclear_diag_enabled) {
                 uint64_t *checkpoint_or = trace_merged_ad[0];
                 memset(checkpoint_or, 0, sizeof(uint64_t) * (size_t)num_pages);
@@ -1193,7 +1194,7 @@ static sgx_status_t execute_one_measured_ecall(
                         A_MASK, D_MASK) != 0)
                     trace_note_io_failure("trace_write_failed");
             }
-            trace_printf("}}");
+            trace_printf("}");
         }
         trace_printf("],\"aex\":{\"count\":%u,\"protocol_gate_count\":%u,\"unexpected_count\":%u,\"outside_window_count\":%u,"
                      "\"by_gate\":{\"GATE_A\":%u,\"GATE_B\":%u,\"GATE_C\":%u},"

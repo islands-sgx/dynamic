@@ -864,6 +864,34 @@ test("classifies protocol gate-spin AEXs within verified boundaries and rejects 
     .toThrow(/missing required GATE_A\/GATE_B\/GATE_C shootdowns/);
 });
 
+test("accepts Gate C post-clear diagnostics without treating them as S3 page effects", () => {
+  const { bundle } = writeFixture();
+  const lines = traceText(bundle, [{
+    callSeq: 0,
+    selectorSeq: 0,
+    fields: [
+      { id: "field-a", pages: [{ rva: "0x4000", a: true, d: true }] },
+      { id: "field-b", pages: EFFECTS_B },
+    ],
+  }]).trimEnd().split("\n");
+  const ecall = JSON.parse(lines[1]!);
+  ecall.fields[0].gate_c_postclear = {
+    page_size: PAGE,
+    checkpoint_scope: "ecall_field_or",
+    complete: true,
+    observation_count: 1,
+    checkpoint_count: 1,
+    checked_page_count_per_complete_checkpoint: 4,
+    nonzero_page_count: 1,
+    page_effects: [{ rva: "0x7000", a: true, d: false }],
+  };
+  lines[1] = JSON.stringify(ecall);
+  const trace = parseCanonicalTrace(lines.join("\n") + "\n", "gatec-postclear-diagnostic", bundle);
+  expect(trace.observations.filter((observation) => observation.fieldId === "field-a").map((observation) => [observation.pageRva, observation.accessed, observation.dirty]))
+    .toEqual([[0x4000n, true, true]]);
+  expect(trace.observations.some((observation) => observation.pageRva === 0x7000n)).toBe(false);
+});
+
 test("merges repeated Field invocations and never masks an incomplete repeated invocation", () => {
   const { bundle } = writeFixture();
   const baseLines = traceText(bundle, [{

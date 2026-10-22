@@ -534,7 +534,7 @@ export function parseCanonicalTrace(
     for (const [fieldIndex, rawField] of record.fields.entries()) {
       const fieldLabel = lineLabel + ".fields[" + fieldIndex + "]";
       if (!isObject(rawField)) fail(fieldLabel + " must be an object");
-      assertAllowedKeys(rawField, new Set(["field_id", "phases", "s0", "s1", "s2", "s3"]), fieldLabel);
+      assertAllowedKeys(rawField, new Set(["field_id", "phases", "s0", "s1", "s2", "s3", "gate_c_postclear"]), fieldLabel);
       const fieldId = nonemptyString(rawField.field_id, fieldLabel + ".field_id");
       if (!knownFields.has(fieldId)) fail(lineLabel + " references unknown Field " + fieldId);
       if (!selector.reachableFields.includes(fieldId)) {
