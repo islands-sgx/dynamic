@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { chmodSync, existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { canonicalJson } from "../../lib/bundle/profile-bundle.ts";
+import { canonicalJson, validateIrFactsAggregateV2 } from "../../lib/bundle/profile-bundle.ts";
 import {
   encodeMutationSpec,
   parseCallCapture,
@@ -223,19 +223,19 @@ function makeBundle(opts: { recordEcall?: boolean; includePage3000?: boolean; in
     }],
   };
   const irFacts = {
-    schema: "atfield-ir-facts-aggregate-v1",
+    schema: "atfield-ir-facts-aggregate-v2",
     facts: [{
-      schema: "atfield-ir-facts-v1",
+      schema: "atfield-ir-facts-v2",
       translation_unit: "fixture.o",
       module_id: "irtu_00000000000000000000000000000001",
       backend_ir_sha256: "11".repeat(32),
       object_sha256: "22".repeat(32),
-      compile_variant: { compiler: "fixture", flags: [] },
+      compile_variant: { target_triple: "x86_64-unknown-linux-gnu", optimization_level: "0", relocation_model: "pic", backend_flags: [] },
       source: { input_file: "fixture.c", ir_filename: "fixture.ll" },
       callgraph_complete: true,
       guidance_complete: true,
       diagnostics: [],
-      definitions: [{ symbol: "fixture_function", linkage: "external", source_file: "fixture.c", line: 1 }],
+      definitions: [{ symbol: "fixture_function", linkage: "external", source_file: "fixture.c", address_use: { address_taken: false, complete: true, reasons: [] }, line: 1 }],
       direct_calls: [],
       unknown_indirect: [],
       guidance_sites: [{
@@ -259,9 +259,15 @@ function makeBundle(opts: { recordEcall?: boolean; includePage3000?: boolean; in
   const irFact = irFacts.facts[0]!
   const reachability = {
     schema: "atfield-reachability-v1",
+    version: 1,
+    algorithm: "fixture-v1",
+    tool: { name: "atfield-reachability", version: "1" },
+    analysis: { kind: "fixture", profile_elf_sha256: digest("synthetic profile ELF") },
     input: {
+      profile_elf_sha256: digest("synthetic profile ELF"),
       edl_abi_sha256: digest(abiBytes),
       live_fields_sha256: digest(JSON.stringify(fieldsArtifact)),
+      expected_objects: [{ translation_unit: irFact.translation_unit, object_sha256: irFact.object_sha256 }],
       ir_facts_tus: [{
         translation_unit: irFact.translation_unit,
         module_id: irFact.module_id,
@@ -278,6 +284,14 @@ function makeBundle(opts: { recordEcall?: boolean; includePage3000?: boolean; in
       visibility: "public",
       switchless: false,
       status: "verified",
+      entry_symbol: "fixture_function",
+      private: false,
+      callgraph_complete: true,
+      guidance_complete: true,
+      field_reachability_complete: true,
+      reachable_function_instances: [],
+      reachability: "static-may-reach",
+      evidence: {},
       reachable_functions: ["fixture_function"],
       reachable_fields: ["field-1"],
       unknown_indirect: false,
@@ -346,7 +360,8 @@ function makeBundle(opts: { recordEcall?: boolean; includePage3000?: boolean; in
       ],
     });
     irFact.definitions.push({
-      symbol: "record_function", linkage: "external", source_file: "fixture.c", line: 2,
+      symbol: "record_function", linkage: "external", source_file: "fixture.c",
+      address_use: { address_taken: false, complete: true, reasons: [] }, line: 2,
     });
     irFact.guidance_sites.push({
       site_id: "irsite_00000000000000000000000000000002",
@@ -372,6 +387,14 @@ function makeBundle(opts: { recordEcall?: boolean; includePage3000?: boolean; in
       visibility: "public",
       switchless: false,
       status: "verified",
+      entry_symbol: "record_function",
+      private: false,
+      callgraph_complete: true,
+      guidance_complete: true,
+      field_reachability_complete: true,
+      reachable_function_instances: [],
+      reachability: "static-may-reach",
+      evidence: {},
       reachable_functions: ["record_function"],
       reachable_fields: ["field-1"],
       unknown_indirect: false,
@@ -508,6 +531,23 @@ afterEach(() => {
 });
 
 describe("Bun dynamic explorer", () => {
+  test("validates the captured WolfSSL v2 IR aggregate including address-use provenance", () => {
+    const fixture = path.join(import.meta.dir, "../../fixtures/profile-bundle-v2-wolfssl-ir-facts.json");
+    const aggregate = JSON.parse(readFileSync(fixture, "utf8"));
+    const facts = validateIrFactsAggregateV2(aggregate);
+    expect(facts.length).toBe(3);
+    const definition = (facts[0]!.definitions as Array<Record<string, unknown>>)
+      .find((item) => item.symbol === "sgx_fixture")!;
+    expect(definition.address_use).toMatchObject({
+      address_taken: true,
+      complete: true,
+      non_direct_uses: ["global:g_ecall_table"],
+    });
+    const malformed = structuredClone(aggregate);
+    malformed.facts[0].definitions[0].address_use.complete = "yes";
+    expect(() => validateIrFactsAggregateV2(malformed)).toThrow("address_use flags must be boolean");
+  });
+
   test("canonical runtime files use a tmpfs scratch and are copied to durable run artifacts", async () => {
     const fixture = makeBundle();
     const scratchRoot = mkdtempSync(path.join("/dev/shm", "explorer-tmpfs-test-"));

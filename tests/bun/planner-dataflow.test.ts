@@ -220,7 +220,7 @@ function profile(): ExplorerProfile {
     ],
   };
   const fact = {
-    schema: "atfield-ir-facts-v1",
+    schema: "atfield-ir-facts-v2",
     translation_unit: "planner-fixture.o",
     module_id: "irtu_" + "01".repeat(16),
     source: { input_file: "planner-fixture.c", ir_filename: "planner-fixture.ll" },

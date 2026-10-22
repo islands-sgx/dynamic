@@ -61,11 +61,11 @@ function makeBundle(): { root: string; manifest: string; observations: string } 
       },
     ],
   };
-  const compileVariant = { compiler: "clang", flags: ["-O2"] };
+  const compileVariant = { target_triple: "x86_64-unknown-linux-gnu", optimization_level: "2", relocation_model: "pic", backend_flags: ["-O2"] };
   const irFact = {
-    schema: "atfield-ir-facts-v1",
+    schema: "atfield-ir-facts-v2",
     translation_unit: "src/enclave.c",
-    module_id: "src/enclave.c",
+    module_id: "irtu_00000000000000000000000000000001",
     backend_ir_sha256: "33".repeat(32),
     object_sha256: "44".repeat(32),
     compile_variant: compileVariant,
@@ -74,17 +74,18 @@ function makeBundle(): { root: string; manifest: string; observations: string } 
     guidance_complete: true,
     diagnostics: [],
     definitions: [
-      { name: "fixture_ecall", linkage: "external", defined: true, address_taken: false },
+      { symbol: "fixture_ecall", linkage: "external", source_file: "src/enclave.c", address_use: { address_taken: false, complete: true, reasons: [] } },
     ],
     direct_calls: [],
-    unknown_indirect_calls: [],
-    unknown_external_calls: [],
+    unknown_indirect: [],
     guidance_sites: [],
   };
-  const irFactsObj = { schema: "atfield-ir-facts-aggregate-v1", facts: [irFact] };
+  const irFactsObj = { schema: "atfield-ir-facts-aggregate-v2", facts: [irFact] };
   const reachInput = {
+    profile_elf_sha256: digest(profileContent),
     edl_abi_sha256: digest(edlAbiText),
     live_fields_sha256: digest(fieldsText),
+    expected_objects: [{ translation_unit: irFact.translation_unit, object_sha256: irFact.object_sha256 }],
     ir_facts_tus: [{
       translation_unit: irFact.translation_unit,
       module_id: irFact.module_id,
@@ -100,6 +101,14 @@ function makeBundle(): { root: string; manifest: string; observations: string } 
     visibility: "public",
     switchless: false,
     status: "verified",
+    entry_symbol: "fixture_ecall",
+    private: false,
+    callgraph_complete: true,
+    guidance_complete: true,
+    field_reachability_complete: true,
+    reachable_function_instances: [],
+    reachability: "static-may-reach",
+    evidence: {},
     reachable_fields: ["field-1"],
     reachable_functions: ["fixture_ecall"],
     unknown_indirect: false,
@@ -108,6 +117,10 @@ function makeBundle(): { root: string; manifest: string; observations: string } 
   };
   const reachabilityObj = {
     schema: "atfield-reachability-v1",
+    version: 1,
+    algorithm: "fixture-v1",
+    tool: { name: "atfield-reachability", version: "1" },
+    analysis: { kind: "fixture", profile_elf_sha256: digest(profileContent) },
     input: reachInput,
     live_field_ids: ["field-1"],
     ecalls: [reachEcall],

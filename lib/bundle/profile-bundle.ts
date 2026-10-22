@@ -291,6 +291,101 @@ function assertKeys(value: JsonObject, required: string[], allowed: string[], la
   if (unknown.length) throw new ProfileBundleError(label + " has unsupported key " + unknown[0]);
 }
 
+function validateIrFactsV2(raw: unknown, index: number): JsonObject {
+  const label = "ir_facts.facts[" + index + "]";
+  const fact = assertObject(raw, label);
+  const required = [
+    "schema", "translation_unit", "module_id", "backend_ir_sha256", "object_sha256",
+    "compile_variant", "source", "callgraph_complete", "guidance_complete", "diagnostics",
+    "definitions", "direct_calls", "unknown_indirect", "guidance_sites",
+  ];
+  assertKeys(fact, required, [...required, "module_data_uses", "module_data_uses_complete"], label);
+  if (fact.schema !== IR_FACTS_SCHEMA) throw new ProfileBundleError(label + ".schema must be " + IR_FACTS_SCHEMA);
+  requireString(fact.translation_unit, label + ".translation_unit");
+  requireString(fact.module_id, label + ".module_id");
+  const variant = assertObject(fact.compile_variant, label + ".compile_variant");
+  const variantKeys = ["target_triple", "optimization_level", "relocation_model", "backend_flags"];
+  assertKeys(variant, variantKeys, variantKeys, label + ".compile_variant");
+  requireString(variant.target_triple, label + ".compile_variant.target_triple");
+  if (!["0", "1", "2", "3"].includes(String(variant.optimization_level)) || variant.relocation_model !== "pic") {
+    throw new ProfileBundleError(label + ".compile_variant has unsupported code generation settings");
+  }
+  if (!Array.isArray(variant.backend_flags) || !variant.backend_flags.every((item) => typeof item === "string")) {
+    throw new ProfileBundleError(label + ".compile_variant.backend_flags must be a string array");
+  }
+  const source = assertObject(fact.source, label + ".source");
+  assertKeys(source, ["input_file", "ir_filename"], ["input_file", "ir_filename"], label + ".source");
+  requireString(source.input_file, label + ".source.input_file");
+  requireString(source.ir_filename, label + ".source.ir_filename");
+  if (typeof fact.callgraph_complete !== "boolean" || typeof fact.guidance_complete !== "boolean") {
+    throw new ProfileBundleError(label + " completeness fields must be boolean");
+  }
+  if (!Array.isArray(fact.diagnostics) || !fact.diagnostics.every((item) => typeof item === "string")) {
+    throw new ProfileBundleError(label + ".diagnostics must be a string array");
+  }
+  if (!Array.isArray(fact.definitions) || !Array.isArray(fact.direct_calls) ||
+      !Array.isArray(fact.unknown_indirect) || !Array.isArray(fact.guidance_sites)) {
+    throw new ProfileBundleError(label + " definition and callgraph fields must be arrays");
+  }
+  fact.definitions.forEach((rawDefinition, definitionIndex) => {
+    const dlabel = label + ".definitions[" + definitionIndex + "]";
+    const definition = assertObject(rawDefinition, dlabel);
+    assertKeys(definition, ["symbol", "linkage", "source_file", "address_use"],
+      ["symbol", "linkage", "source_file", "address_use", "line"], dlabel);
+    requireString(definition.symbol, dlabel + ".symbol");
+    requireString(definition.linkage, dlabel + ".linkage");
+    requireString(definition.source_file, dlabel + ".source_file");
+    const use = assertObject(definition.address_use, dlabel + ".address_use");
+    const useRequired = ["address_taken", "complete", "reasons"];
+    const useOptional = ["non_direct_uses", "non_direct_metadata_uses", "inline_asm_summaries"];
+    assertKeys(use, useRequired, [...useRequired, ...useOptional], dlabel + ".address_use");
+    if (typeof use.address_taken !== "boolean" || typeof use.complete !== "boolean") {
+      throw new ProfileBundleError(dlabel + ".address_use flags must be boolean");
+    }
+    for (const key of ["reasons", ...useOptional]) {
+      if (use[key] !== undefined && (!Array.isArray(use[key]) || !(use[key] as unknown[]).every((item) => typeof item === "string"))) {
+        throw new ProfileBundleError(dlabel + ".address_use." + key + " must be a string array");
+      }
+    }
+    if (definition.line !== undefined && (typeof definition.line !== "number" ||
+        !Number.isSafeInteger(definition.line) || definition.line < 0)) {
+      throw new ProfileBundleError(dlabel + ".line must be a safe nonnegative integer");
+    }
+  });
+  if (fact.module_data_uses !== undefined) {
+    if (!Array.isArray(fact.module_data_uses)) throw new ProfileBundleError(label + ".module_data_uses must be an array");
+    fact.module_data_uses.forEach((rawUse, useIndex) => {
+      const ulabel = label + ".module_data_uses[" + useIndex + "]";
+      const use = assertObject(rawUse, ulabel);
+      assertKeys(use, ["symbol", "owner"], ["symbol", "owner"], ulabel);
+      requireString(use.symbol, ulabel + ".symbol");
+      requireString(use.owner, ulabel + ".owner");
+    });
+  }
+  if (fact.module_data_uses_complete !== undefined && typeof fact.module_data_uses_complete !== "boolean") {
+    throw new ProfileBundleError(label + ".module_data_uses_complete must be boolean");
+  }
+  if ((fact.module_data_uses === undefined) !== (fact.module_data_uses_complete === undefined)) {
+    throw new ProfileBundleError(label + " must provide module_data_uses and module_data_uses_complete together");
+  }
+  return fact;
+}
+
+export function validateIrFactsAggregateV2(raw: unknown): JsonObject[] {
+  const aggregate = assertObject(raw, "ir_facts");
+  assertKeys(aggregate, ["schema", "facts"], ["schema", "facts"], "ir_facts");
+  if (aggregate.schema !== IR_FACTS_AGGREGATE_SCHEMA || !Array.isArray(aggregate.facts)) {
+    throw new ProfileBundleError("expected " + IR_FACTS_AGGREGATE_SCHEMA);
+  }
+  const facts = aggregate.facts.map((fact, index) => validateIrFactsV2(fact, index));
+  const moduleIds = facts.map((fact) => fact.module_id as string);
+  if (new Set(moduleIds).size !== moduleIds.length ||
+      moduleIds.some((moduleId, index) => index > 0 && moduleIds[index - 1]! >= moduleId)) {
+    throw new ProfileBundleError("IR facts must be sorted by unique module_id");
+  }
+  return facts;
+}
+
 function safeArtifactPath(root: string, relativePath: unknown, label: string): string {
   if (typeof relativePath !== "string" || relativePath.length === 0 || path.isAbsolute(relativePath) ||
       /^[a-zA-Z]:[\\/]/.test(relativePath)) {
@@ -468,8 +563,8 @@ function parseSelectors(value: unknown, fields: ProfileField[]): ProfileSelector
 
 const EDL_ABI_SCHEMA = "atfield-edl-abi-v1";
 const MARSHAL_LAYOUT_SCHEMA = "atfield-marshal-layout-v1";
-const IR_FACTS_AGGREGATE_SCHEMA = "atfield-ir-facts-aggregate-v1";
-const IR_FACTS_SCHEMA = "atfield-ir-facts-v1";
+const IR_FACTS_AGGREGATE_SCHEMA = "atfield-ir-facts-aggregate-v2";
+const IR_FACTS_SCHEMA = "atfield-ir-facts-v2";
 const REACHABILITY_SCHEMA = "atfield-reachability-v1";
 const MEASUREMENT_PROFILE_SCHEMA = "atfield-measurement-profile-v1";
 
@@ -690,33 +785,26 @@ function validateEvidenceArtifacts(
   });
 
   const aggregate = requireObjectArtifact(artifactPaths, "ir_facts");
-  if (aggregate.schema !== IR_FACTS_AGGREGATE_SCHEMA || !Array.isArray(aggregate.facts)) {
-    throw new ProfileBundleError("expected " + IR_FACTS_AGGREGATE_SCHEMA);
-  }
-  const facts = aggregate.facts.map((raw, index) => {
-    const fact = assertObject(raw, "ir_facts.facts[" + index + "]");
-    if (fact.schema !== IR_FACTS_SCHEMA ||
-        typeof fact.module_id !== "string" || !fact.module_id ||
-        typeof fact.translation_unit !== "string" || !fact.translation_unit ||
+  const facts = validateIrFactsAggregateV2(aggregate);
+  facts.forEach((fact, index) => {
+    if (!/^irtu_[0-9a-f]{32}$/.test(String(fact.module_id)) ||
         normalizeDigest(fact.backend_ir_sha256, "IR backend digest") !== fact.backend_ir_sha256 ||
-        normalizeDigest(fact.object_sha256, "IR object digest") !== fact.object_sha256 ||
-        !isObject(fact.compile_variant)) {
+        normalizeDigest(fact.object_sha256, "IR object digest") !== fact.object_sha256) {
       throw new ProfileBundleError("invalid single-TU IR facts at index " + index);
     }
-    return fact;
   });
-  const moduleIds = facts.map((fact) => fact.module_id as string);
-  if (new Set(moduleIds).size !== moduleIds.length ||
-      moduleIds.some((moduleId, index) => index > 0 && moduleIds[index - 1]! >= moduleId)) {
-    throw new ProfileBundleError("IR facts must be sorted by unique module_id");
-  }
 
   const reachability = requireObjectArtifact(artifactPaths, "reachability");
   if (reachability.schema !== REACHABILITY_SCHEMA) throw new ProfileBundleError("expected " + REACHABILITY_SCHEMA);
   const reachInput = assertObject(reachability.input, "reachability.input");
-  if (normalizeDigest(reachInput.edl_abi_sha256, "reachability.input.edl_abi_sha256") !== identity.edlAbiSha256 ||
+  if (normalizeDigest(reachInput.profile_elf_sha256, "reachability.input.profile_elf_sha256") !== identity.profileElfSha256 ||
+      normalizeDigest(reachInput.edl_abi_sha256, "reachability.input.edl_abi_sha256") !== identity.edlAbiSha256 ||
       normalizeDigest(reachInput.live_fields_sha256, "reachability.input.live_fields_sha256") !== identity.fieldsSha256) {
-    throw new ProfileBundleError("reachability input does not bind the bundled ABI and fields");
+    throw new ProfileBundleError("reachability input does not bind the bundled Profile ELF, ABI, and fields");
+  }
+  const analysis = assertObject(reachability.analysis, "reachability.analysis");
+  if (normalizeDigest(analysis.profile_elf_sha256, "reachability.analysis.profile_elf_sha256") !== identity.profileElfSha256) {
+    throw new ProfileBundleError("reachability analysis does not bind the bundled Profile ELF");
   }
   if (!Array.isArray(reachInput.ir_facts_tus) || reachInput.ir_facts_tus.length !== facts.length) {
     throw new ProfileBundleError("reachability IR fact set differs from the aggregate");
@@ -724,6 +812,25 @@ function validateEvidenceArtifacts(
   const factsByModule = new Map<string, Record<string, unknown>>();
   for (const fact of facts) {
     factsByModule.set(fact.module_id as string, fact);
+  }
+  const expectedObjects = reachInput.expected_objects;
+  if (!Array.isArray(expectedObjects) || expectedObjects.length !== facts.length) {
+    throw new ProfileBundleError("reachability expected_objects must cover the aggregate objects");
+  }
+  const expectedByTu = new Map<string, string>();
+  expectedObjects.forEach((raw, index) => {
+    const expected = assertObject(raw, "reachability.input.expected_objects[" + index + "]");
+    assertKeys(expected, ["translation_unit", "object_sha256"], ["translation_unit", "object_sha256"],
+      "reachability.input.expected_objects[" + index + "]");
+    const tu = requireString(expected.translation_unit, "reachability expected object translation_unit");
+    const objectDigest = normalizeDigest(expected.object_sha256, "reachability expected object digest");
+    if (expectedByTu.has(tu)) throw new ProfileBundleError("reachability expected_objects repeats a translation unit");
+    expectedByTu.set(tu, objectDigest);
+  });
+  for (const fact of facts) {
+    if (expectedByTu.get(String(fact.translation_unit)) !== fact.object_sha256) {
+      throw new ProfileBundleError("reachability expected_objects does not bind aggregate object " + fact.translation_unit);
+    }
   }
   const seenEvidenceModules = new Set<string>();
   reachInput.ir_facts_tus.forEach((raw, index) => {
@@ -761,10 +868,37 @@ function validateEvidenceArtifacts(
         parseInteger(selector.ordinal, "selector ordinal") !== index) {
       throw new ProfileBundleError("reachability selector identity differs from the SDK ABI at ordinal " + index);
     }
+    const ecallKeys = [
+      "ordinal", "name", "entry_symbol", "visibility", "private", "switchless", "status",
+      "callgraph_complete", "guidance_complete", "function_closure_complete", "field_reachability_complete",
+      "reachable_fields", "reachable_functions", "reachable_function_instances", "unknown_indirect",
+      "unknown_external", "reachability", "evidence",
+    ];
+    assertKeys(ecall, ecallKeys, ecallKeys, "reachability.ecalls[" + index + "]");
+    if (ecall.status !== "verified" && ecall.status !== "unknown") {
+      throw new ProfileBundleError("reachability status must be verified or unknown");
+    }
+    for (const key of ["private", "callgraph_complete", "guidance_complete", "function_closure_complete",
+      "field_reachability_complete", "unknown_indirect", "unknown_external"]) {
+      if (typeof ecall[key] !== "boolean") throw new ProfileBundleError("reachability " + key + " must be boolean");
+    }
+    if (typeof ecall.entry_symbol !== "string" || typeof ecall.reachability !== "string" ||
+        !Array.isArray(ecall.reachable_functions) ||
+        !ecall.reachable_functions.every((name: unknown) => typeof name === "string") ||
+        !Array.isArray(ecall.reachable_function_instances) || !isObject(ecall.evidence)) {
+      throw new ProfileBundleError("reachability ECALL analyzer evidence is malformed");
+    }
     if (!Array.isArray(ecall.reachable_fields) ||
         ecall.reachable_fields.some((id: unknown) => typeof id !== "string" || !fieldIds.includes(id)) ||
         new Set(ecall.reachable_fields).size !== ecall.reachable_fields.length) {
       throw new ProfileBundleError("reachability contains unknown or repeated live Field ids");
+    }
+    const uncertain = ecall.status === "unknown" || !ecall.callgraph_complete ||
+      !ecall.function_closure_complete || !ecall.field_reachability_complete ||
+      ecall.unknown_indirect || ecall.unknown_external;
+    if (uncertain && (ecall.reachable_fields.length !== fieldIds.length ||
+        fieldIds.some((id) => !ecall.reachable_fields.includes(id)))) {
+      throw new ProfileBundleError("unknown reachability must conservatively include all live Fields");
     }
   });
 

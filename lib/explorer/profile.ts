@@ -271,10 +271,10 @@ function parseMarshalLayout(value: unknown, abi: Record<string, unknown>): {
   return { ecalls, scalarParameters, scalarParameterByKey };
 }
 
-function legacyGuidanceFacts(value: unknown): unknown[] {
+function guidanceFactsV2(value: unknown): unknown[] {
   const aggregate = record(value, "ir_facts");
   exactKeys(aggregate, ["schema", "facts"], ["schema", "facts"], "ir_facts");
-  if (aggregate.schema !== "atfield-ir-facts-aggregate-v1") fail("ir_facts schema is unsupported");
+  if (aggregate.schema !== "atfield-ir-facts-aggregate-v2") fail("ir_facts schema is unsupported");
   return array(aggregate.facts, "ir_facts.facts").map((raw, index) => {
     const fact = record(raw, "ir_facts.facts[" + index + "]");
     const required = [
@@ -282,23 +282,33 @@ function legacyGuidanceFacts(value: unknown): unknown[] {
       "compile_variant", "source", "callgraph_complete", "guidance_complete", "diagnostics",
       "definitions", "direct_calls", "unknown_indirect", "guidance_sites",
     ];
-    exactKeys(fact, required, required, "ir_facts.facts[" + index + "]");
-    if (fact.schema !== "atfield-ir-facts-v1") fail("IR fact schema is unsupported");
+    exactKeys(fact, required, [...required, "module_data_uses", "module_data_uses_complete"], "ir_facts.facts[" + index + "]");
+    if (fact.schema !== "atfield-ir-facts-v2") fail("IR fact schema is unsupported");
     const source = record(fact.source, "IR fact source");
     exactKeys(source, ["input_file", "ir_filename"], ["input_file", "ir_filename"], "IR fact source");
     const diagnostics = array(fact.diagnostics, "IR fact diagnostics");
     if (!diagnostics.every((entry) => typeof entry === "string")) fail("IR fact diagnostics must contain strings");
+    const moduleId = nonempty(fact.module_id, "IR fact module_id");
+    if (!/^irtu_[0-9a-f]{32}$/.test(moduleId)) fail("IR fact module_id is invalid");
     return {
       schema: fact.schema,
       translation_unit: nonempty(fact.translation_unit, "IR fact translation_unit"),
-      module_id: nonempty(fact.module_id, "IR fact module_id"),
+      module_id: moduleId,
       source: {
         input_file: nonempty(source.input_file, "IR fact source.input_file"),
         ir_filename: nonempty(source.ir_filename, "IR fact source.ir_filename"),
       },
       complete: boolean(fact.callgraph_complete, "IR fact callgraph_complete") &&
         boolean(fact.guidance_complete, "IR fact guidance_complete"),
-      definitions: array(fact.definitions, "IR fact definitions"),
+      definitions: array(fact.definitions, "IR fact definitions").map((rawDefinition, definitionIndex) => {
+        const definition = record(rawDefinition, "IR fact definition[" + definitionIndex + "]");
+        return {
+          symbol: nonempty(definition.symbol, "IR fact definition.symbol"),
+          linkage: nonempty(definition.linkage, "IR fact definition.linkage"),
+          source_file: nonempty(definition.source_file, "IR fact definition.source_file"),
+          ...(definition.line === undefined ? {} : { line: nonnegative(definition.line, "IR fact definition.line") }),
+        };
+      }),
       direct_calls: array(fact.direct_calls, "IR fact direct_calls"),
       unknown_indirect: array(fact.unknown_indirect, "IR fact unknown_indirect"),
       guidance_sites: array(fact.guidance_sites, "IR fact guidance_sites"),
@@ -309,6 +319,9 @@ function legacyGuidanceFacts(value: unknown): unknown[] {
 function guidanceReachability(value: unknown): unknown[] {
   const root = record(value, "reachability");
   if (root.schema !== "atfield-reachability-v1") fail("reachability schema is unsupported");
+  const liveFieldIds = array(root.live_field_ids, "reachability.live_field_ids")
+    .map((item, index) => nonempty(item, "reachability.live_field_ids[" + index + "]"));
+  if (new Set(liveFieldIds).size !== liveFieldIds.length) fail("reachability live_field_ids contains duplicates");
   const ecalls = array(root.ecalls, "reachability.ecalls");
   const seen = new Set<number>();
   return ecalls.map((raw, index) => {
@@ -319,13 +332,25 @@ function guidanceReachability(value: unknown): unknown[] {
     if (item.status !== "verified" && item.status !== "unknown") {
       fail("reachability status must be verified or unknown");
     }
+    const reachableFields = array(item.reachable_fields, "reachability reachable_fields")
+      .map((field, fieldIndex) => nonempty(field, "reachability reachable_fields[" + fieldIndex + "]"));
+    if (new Set(reachableFields).size !== reachableFields.length ||
+        reachableFields.some((field) => !liveFieldIds.includes(field))) fail("reachability contains unknown or repeated live Field ids");
     if (!Array.isArray(item.reachable_functions) ||
         !item.reachable_functions.every((entry) => typeof entry === "string")) {
       fail("reachability reachable_functions must be a string array");
     }
+    const unknown = item.status === "unknown" ||
+      boolean(item.unknown_indirect, "reachability unknown_indirect") ||
+      boolean(item.unknown_external, "reachability unknown_external") ||
+      !boolean(item.function_closure_complete, "reachability function_closure_complete");
+    if (unknown && (reachableFields.length !== liveFieldIds.length ||
+        liveFieldIds.some((field) => !reachableFields.includes(field)))) {
+      fail("unknown reachability must conservatively include all live Fields");
+    }
     return {
       ordinal,
-      reachable_fields: Array.isArray(item.reachable_fields) ? item.reachable_fields : undefined,
+      reachable_fields: reachableFields,
       reachable_functions: item.reachable_functions,
       unknown_indirect: boolean(item.unknown_indirect, "reachability unknown_indirect"),
       unknown_external: boolean(item.unknown_external, "reachability unknown_external"),
@@ -343,7 +368,7 @@ export function loadExplorerProfile(bundlePath: string): ExplorerProfile {
   const abi = record(abiArtifact.value, "edl_abi");
   if (abi.schema !== "atfield-edl-abi-v1") fail("edl_abi schema is unsupported");
   const layout = parseMarshalLayout(marshalArtifact.value, abi);
-  const irFacts = legacyGuidanceFacts(irArtifact.value);
+  const irFacts = guidanceFactsV2(irArtifact.value);
   const reachability = guidanceReachability(reachabilityArtifact.value);
 
 function hexDigestBytes(hex: string): Buffer {

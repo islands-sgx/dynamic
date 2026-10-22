@@ -1,0 +1,3076 @@
+{
+  "schema": "atfield-ir-facts-aggregate-v2",
+  "facts": [
+    {
+      "schema": "atfield-ir-facts-v2",
+      "translation_unit": "wolfssl_pbkdf2_sha256_enclave_edl_trusted/bench_t.c.o",
+      "module_id": "irtu_9f731d3bfa98f9099923f604b3aa73ed",
+      "backend_ir_sha256": "663900aabb73b3d6d5d3d110318b83ca27c508d7110935fd2773d49841623632",
+      "object_sha256": "500645c2a49d63320759f7434926d98662a958042426864b2f5832efe11c7258",
+      "compile_variant": {
+        "target_triple": "x86_64-unknown-linux-gnu",
+        "optimization_level": "0",
+        "relocation_model": "pic",
+        "backend_flags": [
+          "-filetype=obj",
+          "-relocation-model=pic",
+          "-function-sections",
+          "-data-sections",
+          "-atfield-anchor-preparation",
+          "-atfield-payload-ordinal=15512393765989895543"
+        ]
+      },
+      "source": {
+        "input_file": "external/b8ec9e221d89622b/bench_t.c",
+        "ir_filename": "external/b8ec9e221d89622b/bench_t.c"
+      },
+      "callgraph_complete": true,
+      "guidance_complete": true,
+      "diagnostics": [],
+      "definitions": [
+        {
+          "symbol": "sgx_fixture",
+          "linkage": "internal",
+          "source_file": "external/b8ec9e221d89622b/bench_t.c",
+          "address_use": {
+            "address_taken": true,
+            "complete": true,
+            "reasons": [
+              "non-direct-global-use"
+            ],
+            "non_direct_uses": [
+              "global:g_ecall_table"
+            ]
+          },
+          "line": 64
+        },
+        {
+          "symbol": "sgx_secret",
+          "linkage": "internal",
+          "source_file": "external/b8ec9e221d89622b/bench_t.c",
+          "address_use": {
+            "address_taken": true,
+            "complete": true,
+            "reasons": [
+              "non-direct-global-use"
+            ],
+            "non_direct_uses": [
+              "global:g_ecall_table"
+            ]
+          },
+          "line": 90
+        },
+        {
+          "symbol": "sgx_verification",
+          "linkage": "internal",
+          "source_file": "external/b8ec9e221d89622b/bench_t.c",
+          "address_use": {
+            "address_taken": true,
+            "complete": true,
+            "reasons": [
+              "non-direct-global-use"
+            ],
+            "non_direct_uses": [
+              "global:g_ecall_table"
+            ]
+          },
+          "line": 116
+        },
+        {
+          "symbol": "sgx_warmup",
+          "linkage": "internal",
+          "source_file": "external/b8ec9e221d89622b/bench_t.c",
+          "address_use": {
+            "address_taken": true,
+            "complete": true,
+            "reasons": [
+              "non-direct-global-use"
+            ],
+            "non_direct_uses": [
+              "global:g_ecall_table"
+            ]
+          },
+          "line": 196
+        },
+        {
+          "symbol": "sgx_input",
+          "linkage": "internal",
+          "source_file": "external/b8ec9e221d89622b/bench_t.c",
+          "address_use": {
+            "address_taken": true,
+            "complete": true,
+            "reasons": [
+              "non-direct-global-use"
+            ],
+            "non_direct_uses": [
+              "global:g_ecall_table"
+            ]
+          },
+          "line": 222
+        },
+        {
+          "symbol": "sgx_timing",
+          "linkage": "internal",
+          "source_file": "external/b8ec9e221d89622b/bench_t.c",
+          "address_use": {
+            "address_taken": true,
+            "complete": true,
+            "reasons": [
+              "non-direct-global-use"
+            ],
+            "non_direct_uses": [
+              "global:g_ecall_table"
+            ]
+          },
+          "line": 248
+        },
+        {
+          "symbol": "sgx_release",
+          "linkage": "internal",
+          "source_file": "external/b8ec9e221d89622b/bench_t.c",
+          "address_use": {
+            "address_taken": true,
+            "complete": true,
+            "reasons": [
+              "non-direct-global-use"
+            ],
+            "non_direct_uses": [
+              "global:g_ecall_table"
+            ]
+          },
+          "line": 303
+        }
+      ],
+      "module_data_uses": [],
+      "module_data_uses_complete": true,
+      "direct_calls": [
+        {
+          "caller": "sgx_fixture",
+          "callee": "sgx_is_outside_enclave",
+          "site_id": "irsite_e8b4c14fce2addcf6d0768e584dad967",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 66,
+            "column": 2
+          }
+        },
+        {
+          "caller": "sgx_fixture",
+          "callee": "memcpy_s",
+          "site_id": "irsite_eab444d0fdf0a5ac02878c67f39fac72",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 73,
+            "column": 6
+          }
+        },
+        {
+          "caller": "sgx_fixture",
+          "callee": "fixture",
+          "site_id": "irsite_d534a57a90729b26aa51c956fe2b6b26",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 80,
+            "column": 15
+          }
+        },
+        {
+          "caller": "sgx_fixture",
+          "callee": "memcpy_verw_s",
+          "site_id": "irsite_fd9d919a6d24045fd004050ebc223513",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 81,
+            "column": 6
+          }
+        },
+        {
+          "caller": "sgx_secret",
+          "callee": "sgx_is_outside_enclave",
+          "site_id": "irsite_93383a14667907338452492dcd3953b3",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 92,
+            "column": 2
+          }
+        },
+        {
+          "caller": "sgx_secret",
+          "callee": "memcpy_s",
+          "site_id": "irsite_2a58f6800dc42fa6651c64983647435b",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 99,
+            "column": 6
+          }
+        },
+        {
+          "caller": "sgx_secret",
+          "callee": "secret",
+          "site_id": "irsite_41724c3fd8be523a1f184c42c31dade2",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 106,
+            "column": 15
+          }
+        },
+        {
+          "caller": "sgx_secret",
+          "callee": "memcpy_verw_s",
+          "site_id": "irsite_42ff07fb5834edadff43b826dc9512f2",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 107,
+            "column": 6
+          }
+        },
+        {
+          "caller": "sgx_verification",
+          "callee": "sgx_is_outside_enclave",
+          "site_id": "irsite_9b67f6a496dce560e2d5484a2dc01bc7",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 118,
+            "column": 2
+          }
+        },
+        {
+          "caller": "sgx_verification",
+          "callee": "memcpy_s",
+          "site_id": "irsite_dbf115743fa34c81a460ed7c203b68ff",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 125,
+            "column": 6
+          }
+        },
+        {
+          "caller": "sgx_verification",
+          "callee": "sgx_is_outside_enclave",
+          "site_id": "irsite_63a4ff785e9404a6bf226a641022730c",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 138,
+            "column": 2
+          }
+        },
+        {
+          "caller": "sgx_verification",
+          "callee": "sgx_is_outside_enclave",
+          "site_id": "irsite_b3d846f5e10f28504b2719088dfc4fa2",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 139,
+            "column": 2
+          }
+        },
+        {
+          "caller": "sgx_verification",
+          "callee": "malloc",
+          "site_id": "irsite_e60fded35bb0728ae1484d0ec4eaf312",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 152,
+            "column": 31
+          }
+        },
+        {
+          "caller": "sgx_verification",
+          "callee": "memset",
+          "site_id": "irsite_6f2cd1f0396ec9698b37923c371bcd82",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 157,
+            "column": 3
+          }
+        },
+        {
+          "caller": "sgx_verification",
+          "callee": "malloc",
+          "site_id": "irsite_783083dae82de638f3f241513f51acd4",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 165,
+            "column": 28
+          }
+        },
+        {
+          "caller": "sgx_verification",
+          "callee": "memset",
+          "site_id": "irsite_cd28775ded024807f44821c63acd0a1d",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 170,
+            "column": 3
+          }
+        },
+        {
+          "caller": "sgx_verification",
+          "callee": "verification",
+          "site_id": "irsite_0760a89eb6074afa327b545d127a20da",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 172,
+            "column": 15
+          }
+        },
+        {
+          "caller": "sgx_verification",
+          "callee": "memcpy_verw_s",
+          "site_id": "irsite_fe45e6e2222ef8bf7e6cff39d6e3a254",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 173,
+            "column": 6
+          }
+        },
+        {
+          "caller": "sgx_verification",
+          "callee": "memcpy_verw_s",
+          "site_id": "irsite_9db4ac19f9c1d310d2ad0ee23ff294e4",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 178,
+            "column": 7
+          }
+        },
+        {
+          "caller": "sgx_verification",
+          "callee": "memcpy_verw_s",
+          "site_id": "irsite_ea9cef6c36bcac824fd6f1e128aaecb1",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 184,
+            "column": 7
+          }
+        },
+        {
+          "caller": "sgx_verification",
+          "callee": "free",
+          "site_id": "irsite_f45453568cacfd3ce68c601cdfbdb157",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 191,
+            "column": 18
+          }
+        },
+        {
+          "caller": "sgx_verification",
+          "callee": "free",
+          "site_id": "irsite_a0e1ebb243bb85cff5db1de85ee8f1f6",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 192,
+            "column": 16
+          }
+        },
+        {
+          "caller": "sgx_warmup",
+          "callee": "sgx_is_outside_enclave",
+          "site_id": "irsite_b049122b9cb1c3e9308b2c356f6cb7a1",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 198,
+            "column": 2
+          }
+        },
+        {
+          "caller": "sgx_warmup",
+          "callee": "memcpy_s",
+          "site_id": "irsite_885e8150e6413a6d0e33c694630fece0",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 205,
+            "column": 6
+          }
+        },
+        {
+          "caller": "sgx_warmup",
+          "callee": "warmup",
+          "site_id": "irsite_61975893f84d3092ea6eec5b76b5be5d",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 212,
+            "column": 15
+          }
+        },
+        {
+          "caller": "sgx_warmup",
+          "callee": "memcpy_verw_s",
+          "site_id": "irsite_28a5d4b07c71a61e460f98e55996950e",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 213,
+            "column": 6
+          }
+        },
+        {
+          "caller": "sgx_input",
+          "callee": "sgx_is_outside_enclave",
+          "site_id": "irsite_44936bcbf2838ed77065712eec96fc69",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 224,
+            "column": 2
+          }
+        },
+        {
+          "caller": "sgx_input",
+          "callee": "memcpy_s",
+          "site_id": "irsite_c3d21f519fae0adf9a5925773cc4daad",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 231,
+            "column": 6
+          }
+        },
+        {
+          "caller": "sgx_input",
+          "callee": "input",
+          "site_id": "irsite_8092226a5a5f1647a64465fb33984891",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 238,
+            "column": 15
+          }
+        },
+        {
+          "caller": "sgx_input",
+          "callee": "memcpy_verw_s",
+          "site_id": "irsite_6793378125b3362cf62a84c4abe8ebf8",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 239,
+            "column": 6
+          }
+        },
+        {
+          "caller": "sgx_timing",
+          "callee": "sgx_is_outside_enclave",
+          "site_id": "irsite_6fc63cf05a0845af9cf51cce3a77cc52",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 250,
+            "column": 2
+          }
+        },
+        {
+          "caller": "sgx_timing",
+          "callee": "memcpy_s",
+          "site_id": "irsite_877f9b4aecf3c5ca54cdbd7bbaf94fa5",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 257,
+            "column": 6
+          }
+        },
+        {
+          "caller": "sgx_timing",
+          "callee": "sgx_is_outside_enclave",
+          "site_id": "irsite_2dfcf34049ba68083d9d22af5051a51b",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 266,
+            "column": 2
+          }
+        },
+        {
+          "caller": "sgx_timing",
+          "callee": "malloc",
+          "site_id": "irsite_912401810b6fdb5cf8ec608be29d9690",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 279,
+            "column": 32
+          }
+        },
+        {
+          "caller": "sgx_timing",
+          "callee": "memset",
+          "site_id": "irsite_b2eea790a310df296bcd784fdb7453c9",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 284,
+            "column": 3
+          }
+        },
+        {
+          "caller": "sgx_timing",
+          "callee": "timing",
+          "site_id": "irsite_504cfed65000d271c3703c56738714a3",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 286,
+            "column": 15
+          }
+        },
+        {
+          "caller": "sgx_timing",
+          "callee": "memcpy_verw_s",
+          "site_id": "irsite_20de306d9d30df0d3c72fa3860735a90",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 287,
+            "column": 6
+          }
+        },
+        {
+          "caller": "sgx_timing",
+          "callee": "memcpy_verw_s",
+          "site_id": "irsite_d42951c0741e410f8519d1be90dfecbc",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 292,
+            "column": 7
+          }
+        },
+        {
+          "caller": "sgx_timing",
+          "callee": "free",
+          "site_id": "irsite_253a16b4d31d5ff952ce77eb27508bea",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 299,
+            "column": 18
+          }
+        },
+        {
+          "caller": "sgx_release",
+          "callee": "sgx_is_outside_enclave",
+          "site_id": "irsite_400a3cf76d91caf9d173e9c6cefc4563",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 305,
+            "column": 2
+          }
+        },
+        {
+          "caller": "sgx_release",
+          "callee": "memcpy_s",
+          "site_id": "irsite_d9d81fd660ac2ceb218c5252b0216d3d",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 312,
+            "column": 6
+          }
+        },
+        {
+          "caller": "sgx_release",
+          "callee": "release",
+          "site_id": "irsite_76f479b1ead2ed9c1012766cc344dbc2",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 319,
+            "column": 15
+          }
+        },
+        {
+          "caller": "sgx_release",
+          "callee": "memcpy_verw_s",
+          "site_id": "irsite_898f32a5067d921886ac32d6cb1f4633",
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 320,
+            "column": 6
+          }
+        }
+      ],
+      "unknown_indirect": [],
+      "guidance_sites": [
+        {
+          "site_id": "irsite_f7da504178f5d2a03bea0361a3a45108",
+          "function": "sgx_fixture",
+          "function_linkage": "internal",
+          "block_ordinal": 0,
+          "instruction_ordinal": 10,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 66,
+            "column": 2
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%9"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_1735e917d6ab127e75206da862217db8",
+          "function": "sgx_fixture",
+          "function_linkage": "internal",
+          "block_ordinal": 1,
+          "instruction_ordinal": 14,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 66,
+            "column": 2
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%13"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_1728f2a9011a8720ceaffbea34fa4426",
+          "function": "sgx_fixture",
+          "function_linkage": "internal",
+          "block_ordinal": 4,
+          "instruction_ordinal": 26,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 73,
+            "column": 6
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%20"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_43ccbeb660dca02dd3276052000ba815",
+          "function": "sgx_fixture",
+          "function_linkage": "internal",
+          "block_ordinal": 6,
+          "instruction_ordinal": 38,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 81,
+            "column": 6
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%27"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_a26ea1b74f4f95ceb7929d9cafb76e4f",
+          "function": "sgx_secret",
+          "function_linkage": "internal",
+          "block_ordinal": 0,
+          "instruction_ordinal": 10,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 92,
+            "column": 2
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%9"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_2f48734592f9dd499143036509875142",
+          "function": "sgx_secret",
+          "function_linkage": "internal",
+          "block_ordinal": 1,
+          "instruction_ordinal": 14,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 92,
+            "column": 2
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%13"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_d2d76d886de7118a6d471719366c711c",
+          "function": "sgx_secret",
+          "function_linkage": "internal",
+          "block_ordinal": 4,
+          "instruction_ordinal": 26,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 99,
+            "column": 6
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%20"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_25ea8761e27c014b636ca46921426394",
+          "function": "sgx_secret",
+          "function_linkage": "internal",
+          "block_ordinal": 6,
+          "instruction_ordinal": 38,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 107,
+            "column": 6
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%27"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_00c24b4b819547e09cbe7967ad1fd84a",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 0,
+          "instruction_ordinal": 17,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 118,
+            "column": 2
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%16"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_f4c773f7c742a038f6378e89b300813b",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 1,
+          "instruction_ordinal": 21,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 118,
+            "column": 2
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%20"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_26370d9c3202d11148c85593a6e5dd26",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 4,
+          "instruction_ordinal": 33,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 125,
+            "column": 6
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%27"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_0d788bbafde9adbd192660b05a0060a2",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 7,
+          "instruction_ordinal": 63,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 138,
+            "column": 2
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%39"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_241993ba820adac84d1c3347e1739375",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 8,
+          "instruction_ordinal": 68,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 138,
+            "column": 2
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%44"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_85db125fb6ffdf534c57bbd0789d1727",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 12,
+          "instruction_ordinal": 75,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 139,
+            "column": 2
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%50"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_6a0d93ab8843259e75cdf55588b8722a",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 13,
+          "instruction_ordinal": 80,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 139,
+            "column": 2
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%55"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_ddf61a7bf15dfe26dde1ac7340583254",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 16,
+          "instruction_ordinal": 87,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 146,
+            "column": 18
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%60"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_dfdf7c1610a8bff6613e9bec88ed6ff1",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 17,
+          "instruction_ordinal": 90,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 146,
+            "column": 41
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 64,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%63"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_a6cb8ffac31074f1e3868deb4ea805ab",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 18,
+          "instruction_ordinal": 93,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 147,
+            "column": 20
+          },
+          "kind": "urem",
+          "width_bits": 64,
+          "signedness": "unsigned",
+          "divisor": {
+            "operand": 1,
+            "status": "constant",
+            "value": "1"
+          }
+        },
+        {
+          "site_id": "irsite_52ea2b2684a6ad9279e22d9f2739e11e",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 18,
+          "instruction_ordinal": 94,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 147,
+            "column": 43
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 64,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%67"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_e9616fd21612774a3e310a5d6c8d09b2",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 20,
+          "instruction_ordinal": 101,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 152,
+            "column": 52
+          },
+          "kind": "icmp",
+          "predicate": "eq",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%72"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_63d0218dfb0c9c2d8bf694a258198c7a",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 23,
+          "instruction_ordinal": 110,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 159,
+            "column": 16
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%80"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_17cb2a2dcbb33c83ba3a49d7237af3f0",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 24,
+          "instruction_ordinal": 113,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 159,
+            "column": 37
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 64,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%83"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_8404efd459e4ff020e8383ed5cb609ff",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 25,
+          "instruction_ordinal": 116,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 160,
+            "column": 18
+          },
+          "kind": "urem",
+          "width_bits": 64,
+          "signedness": "unsigned",
+          "divisor": {
+            "operand": 1,
+            "status": "constant",
+            "value": "8"
+          }
+        },
+        {
+          "site_id": "irsite_ecb81c3b53f8dd2820884a2632a7ca7d",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 25,
+          "instruction_ordinal": 117,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 160,
+            "column": 39
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 64,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%87"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_fd3730104286e0cd2c533a1998cf70f9",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 27,
+          "instruction_ordinal": 124,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 165,
+            "column": 47
+          },
+          "kind": "icmp",
+          "predicate": "eq",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%92"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_c698783c27fab4332c5aa51a416de8ca",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 30,
+          "instruction_ordinal": 140,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 173,
+            "column": 6
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%106"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_c47fcc29fb533c1a21e8b2dfdfd5f933",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 32,
+          "instruction_ordinal": 145,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 177,
+            "column": 6
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%110"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_c5faa4880def5738c2ddb68cc980893c",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 33,
+          "instruction_ordinal": 152,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 178,
+            "column": 7
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%117"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_1feada571603868099bd89afbebdd3a2",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 36,
+          "instruction_ordinal": 158,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 183,
+            "column": 6
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%122"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_5b2ac4029e2f03230ae2d8b0f1704f92",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 37,
+          "instruction_ordinal": 165,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 184,
+            "column": 7
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%129"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_8ef186b2d1bffae5fe017fe7dbf69e5d",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 41,
+          "instruction_ordinal": 173,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 191,
+            "column": 6
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%135"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_089a921d243ad86c8528c8dce41abd8a",
+          "function": "sgx_verification",
+          "function_linkage": "internal",
+          "block_ordinal": 43,
+          "instruction_ordinal": 179,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 192,
+            "column": 6
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%140"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_f004fb5bb38f91c181faa638f9d02811",
+          "function": "sgx_warmup",
+          "function_linkage": "internal",
+          "block_ordinal": 0,
+          "instruction_ordinal": 10,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 198,
+            "column": 2
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%9"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_cac4a214f0e9feb913e3451ae04b0bb1",
+          "function": "sgx_warmup",
+          "function_linkage": "internal",
+          "block_ordinal": 1,
+          "instruction_ordinal": 14,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 198,
+            "column": 2
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%13"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_d5ebc334ccb69332cb9ee5f6b70c22b9",
+          "function": "sgx_warmup",
+          "function_linkage": "internal",
+          "block_ordinal": 4,
+          "instruction_ordinal": 26,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 205,
+            "column": 6
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%20"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_67f99327058a7e38e9658d77683256b4",
+          "function": "sgx_warmup",
+          "function_linkage": "internal",
+          "block_ordinal": 6,
+          "instruction_ordinal": 40,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 213,
+            "column": 6
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%29"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_7aba74d43f440d608c938428f3714b76",
+          "function": "sgx_input",
+          "function_linkage": "internal",
+          "block_ordinal": 0,
+          "instruction_ordinal": 10,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 224,
+            "column": 2
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%9"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_1358f1e213069fc779fac6aae18b9231",
+          "function": "sgx_input",
+          "function_linkage": "internal",
+          "block_ordinal": 1,
+          "instruction_ordinal": 14,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 224,
+            "column": 2
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%13"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_a7d178f8f0bbdffcba451f800ef0310f",
+          "function": "sgx_input",
+          "function_linkage": "internal",
+          "block_ordinal": 4,
+          "instruction_ordinal": 26,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 231,
+            "column": 6
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%20"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_9a148a59c9270a0f961eab6b5d367cee",
+          "function": "sgx_input",
+          "function_linkage": "internal",
+          "block_ordinal": 6,
+          "instruction_ordinal": 40,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 239,
+            "column": 6
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%29"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_840a442a01d5ade35f20a5b12251b7dd",
+          "function": "sgx_timing",
+          "function_linkage": "internal",
+          "block_ordinal": 0,
+          "instruction_ordinal": 13,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 250,
+            "column": 2
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%12"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_3e5425415cba89192a0825e14aa10845",
+          "function": "sgx_timing",
+          "function_linkage": "internal",
+          "block_ordinal": 1,
+          "instruction_ordinal": 17,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 250,
+            "column": 2
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%16"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_558cddface589c9e35459ecc97675da2",
+          "function": "sgx_timing",
+          "function_linkage": "internal",
+          "block_ordinal": 4,
+          "instruction_ordinal": 29,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 257,
+            "column": 6
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%23"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_912a677af62f4b5cce563a8f234c2d85",
+          "function": "sgx_timing",
+          "function_linkage": "internal",
+          "block_ordinal": 7,
+          "instruction_ordinal": 46,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 266,
+            "column": 2
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%30"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_e30743db11d025c39498b932c43cb58f",
+          "function": "sgx_timing",
+          "function_linkage": "internal",
+          "block_ordinal": 8,
+          "instruction_ordinal": 51,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 266,
+            "column": 2
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%35"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_019b51cbb5f47f492d5abdf645525e2c",
+          "function": "sgx_timing",
+          "function_linkage": "internal",
+          "block_ordinal": 11,
+          "instruction_ordinal": 58,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 273,
+            "column": 18
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%40"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_0734d48017f037b3b9c632807a2d6f6b",
+          "function": "sgx_timing",
+          "function_linkage": "internal",
+          "block_ordinal": 12,
+          "instruction_ordinal": 61,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 273,
+            "column": 41
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 64,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%43"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_2b8f3a7cba918a2732df07a1a284f759",
+          "function": "sgx_timing",
+          "function_linkage": "internal",
+          "block_ordinal": 13,
+          "instruction_ordinal": 64,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 274,
+            "column": 20
+          },
+          "kind": "urem",
+          "width_bits": 64,
+          "signedness": "unsigned",
+          "divisor": {
+            "operand": 1,
+            "status": "constant",
+            "value": "8"
+          }
+        },
+        {
+          "site_id": "irsite_5e155359e9db09ade1285e9e64207663",
+          "function": "sgx_timing",
+          "function_linkage": "internal",
+          "block_ordinal": 13,
+          "instruction_ordinal": 65,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 274,
+            "column": 43
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 64,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%47"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_de0a463131e8c22ef4a0c6897c6eb30d",
+          "function": "sgx_timing",
+          "function_linkage": "internal",
+          "block_ordinal": 15,
+          "instruction_ordinal": 72,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 279,
+            "column": 53
+          },
+          "kind": "icmp",
+          "predicate": "eq",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%52"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_0278a1d99b6ee1c921e980752587ad50",
+          "function": "sgx_timing",
+          "function_linkage": "internal",
+          "block_ordinal": 18,
+          "instruction_ordinal": 86,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 287,
+            "column": 6
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%64"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_06db45de864bc877b1ea4f7a5a8bb6c0",
+          "function": "sgx_timing",
+          "function_linkage": "internal",
+          "block_ordinal": 20,
+          "instruction_ordinal": 91,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 291,
+            "column": 6
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%68"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_85897bd7d442f3ce3b91a585fb51b54b",
+          "function": "sgx_timing",
+          "function_linkage": "internal",
+          "block_ordinal": 21,
+          "instruction_ordinal": 98,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 292,
+            "column": 7
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%75"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_c314433b029c208f75989dbf57c9987b",
+          "function": "sgx_timing",
+          "function_linkage": "internal",
+          "block_ordinal": 25,
+          "instruction_ordinal": 106,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 299,
+            "column": 6
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%81"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_e35fe930e9efdeb23cbc2eb80ec757d5",
+          "function": "sgx_release",
+          "function_linkage": "internal",
+          "block_ordinal": 0,
+          "instruction_ordinal": 10,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 305,
+            "column": 2
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%9"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_9c500347e4f2591f5c517f5951f3bd07",
+          "function": "sgx_release",
+          "function_linkage": "internal",
+          "block_ordinal": 1,
+          "instruction_ordinal": 14,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 305,
+            "column": 2
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%13"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_788849a065231031382be895cb5e2771",
+          "function": "sgx_release",
+          "function_linkage": "internal",
+          "block_ordinal": 4,
+          "instruction_ordinal": 26,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 312,
+            "column": 6
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%20"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_f3333739d84bfb671cd5a2e38194d4ee",
+          "function": "sgx_release",
+          "function_linkage": "internal",
+          "block_ordinal": 6,
+          "instruction_ordinal": 38,
+          "source": {
+            "file": "external/b8ec9e221d89622b/bench_t.c",
+            "line": 320,
+            "column": 6
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%27"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema": "atfield-ir-facts-v2",
+      "translation_unit": "__/common/enclave.c.o",
+      "module_id": "irtu_aac592a1a80774d9f7c42e885a4feb6c",
+      "backend_ir_sha256": "8bd3bac70cc229b6031c275e61b9e71be52a0c6548d3af5ce87ffaef01eef482",
+      "object_sha256": "34fb320331e76061ad9815c6cc666532a529e881eeed6e79274def2f63aea001",
+      "compile_variant": {
+        "target_triple": "x86_64-unknown-linux-gnu",
+        "optimization_level": "0",
+        "relocation_model": "pic",
+        "backend_flags": [
+          "-filetype=asm",
+          "-relocation-model=pic",
+          "-function-sections",
+          "-data-sections",
+          "-atfield-anchor-preparation",
+          "-atfield-payload-ordinal=353264934848966027",
+          "atfield-field asm"
+        ]
+      },
+      "source": {
+        "input_file": "external/7e92b4322c952807/enclave.c",
+        "ir_filename": "external/7e92b4322c952807/enclave.c"
+      },
+      "callgraph_complete": true,
+      "guidance_complete": true,
+      "diagnostics": [],
+      "definitions": [
+        {
+          "symbol": "fixture",
+          "linkage": "external",
+          "source_file": "external/7e92b4322c952807/enclave.c",
+          "address_use": {
+            "address_taken": false,
+            "complete": true,
+            "reasons": [],
+            "non_direct_uses": []
+          },
+          "line": 34
+        },
+        {
+          "symbol": "secret",
+          "linkage": "external",
+          "source_file": "external/7e92b4322c952807/enclave.c",
+          "address_use": {
+            "address_taken": false,
+            "complete": true,
+            "reasons": [],
+            "non_direct_uses": []
+          },
+          "line": 39
+        },
+        {
+          "symbol": "verification",
+          "linkage": "external",
+          "source_file": "external/7e92b4322c952807/enclave.c",
+          "address_use": {
+            "address_taken": false,
+            "complete": true,
+            "reasons": [],
+            "non_direct_uses": []
+          },
+          "line": 44
+        },
+        {
+          "symbol": "warmup",
+          "linkage": "external",
+          "source_file": "external/7e92b4322c952807/enclave.c",
+          "address_use": {
+            "address_taken": false,
+            "complete": true,
+            "reasons": [],
+            "non_direct_uses": []
+          },
+          "line": 59
+        },
+        {
+          "symbol": "input",
+          "linkage": "external",
+          "source_file": "external/7e92b4322c952807/enclave.c",
+          "address_use": {
+            "address_taken": false,
+            "complete": true,
+            "reasons": [],
+            "non_direct_uses": []
+          },
+          "line": 77
+        },
+        {
+          "symbol": "timing",
+          "linkage": "external",
+          "source_file": "external/7e92b4322c952807/enclave.c",
+          "address_use": {
+            "address_taken": false,
+            "complete": true,
+            "reasons": [],
+            "non_direct_uses": []
+          },
+          "line": 82
+        },
+        {
+          "symbol": "cycles_before",
+          "linkage": "internal",
+          "source_file": "external/7e92b4322c952807/enclave.c",
+          "address_use": {
+            "address_taken": false,
+            "complete": true,
+            "reasons": [],
+            "non_direct_uses": [],
+            "inline_asm_summaries": [
+              "x86-no-memory-no-control-inline-asm-v1:c0e38f981b837685668ce14c1ab5d2183d27b4ace3394895e162436414fdd899"
+            ]
+          },
+          "line": 10
+        },
+        {
+          "symbol": "protected_sample_workload",
+          "linkage": "internal",
+          "source_file": "external/7e92b4322c952807/enclave.c",
+          "address_use": {
+            "address_taken": true,
+            "complete": true,
+            "reasons": [
+              "non-direct-global-use"
+            ],
+            "non_direct_uses": [
+              "global:llvm.global.annotations"
+            ],
+            "non_direct_metadata_uses": [
+              "global:llvm.global.annotations"
+            ],
+            "inline_asm_summaries": [
+              "x86-field-boundary-labels-only-inline-asm-v1:43e6be6f9970f5d36211a2bf1cd4e0480a15ec7ad9fc683ff35c92ee6deb6b72",
+              "x86-field-boundary-labels-only-inline-asm-v1:4e5cdc481c310a4dc68ab64a7cd1a59d5ad132fdb6a7c29abe953c7800e9101d",
+              "x86-field-boundary-labels-only-inline-asm-v1:e1f15f4cf2ad1e2c020a190853260a75f700a097a68745840ba0cf69482966ea",
+              "x86-field-boundary-labels-only-inline-asm-v1:e4ff199029432c790df1e0cfaba5f7c865aad583ca8161e72adcc9d11d8447af"
+            ]
+          },
+          "line": 29
+        },
+        {
+          "symbol": "cycles_after",
+          "linkage": "internal",
+          "source_file": "external/7e92b4322c952807/enclave.c",
+          "address_use": {
+            "address_taken": false,
+            "complete": true,
+            "reasons": [],
+            "non_direct_uses": [],
+            "inline_asm_summaries": [
+              "x86-no-memory-no-control-inline-asm-v1:5762605915153a5e64bd42eb4263479b6d2acb1bd8b4f7e0355ec3640c60d51b"
+            ]
+          },
+          "line": 19
+        },
+        {
+          "symbol": "release",
+          "linkage": "external",
+          "source_file": "external/7e92b4322c952807/enclave.c",
+          "address_use": {
+            "address_taken": false,
+            "complete": true,
+            "reasons": [],
+            "non_direct_uses": []
+          },
+          "line": 95
+        }
+      ],
+      "module_data_uses": [
+        {
+          "symbol": ".str",
+          "owner": "global:llvm.global.annotations"
+        },
+        {
+          "symbol": ".str.1",
+          "owner": "global:llvm.global.annotations"
+        }
+      ],
+      "module_data_uses_complete": true,
+      "direct_calls": [
+        {
+          "caller": "fixture",
+          "callee": "sample_fixture",
+          "site_id": "irsite_692389b48becd68b7a416fc7ff1c797d",
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 36,
+            "column": 12
+          }
+        },
+        {
+          "caller": "secret",
+          "callee": "sample_secret",
+          "site_id": "irsite_41c8a8170f46e66622b15e91fcb46448",
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 41,
+            "column": 12
+          }
+        },
+        {
+          "caller": "verification",
+          "callee": "sample_vector",
+          "site_id": "irsite_ebf3c50d2c28329d20e565702ae97283",
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 50,
+            "column": 14
+          }
+        },
+        {
+          "caller": "verification",
+          "callee": "sample_workload",
+          "site_id": "irsite_f652da032561d4d98e275aec95ada0a1",
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 53,
+            "column": 14
+          }
+        },
+        {
+          "caller": "verification",
+          "callee": "sample_output",
+          "site_id": "irsite_5069f9cb2726cf2e9c86e4f5a8352d14",
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 56,
+            "column": 12
+          }
+        },
+        {
+          "caller": "warmup",
+          "callee": "sample_input",
+          "site_id": "irsite_40f27b99773e7242717fcef9086cb8ad",
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 67,
+            "column": 18
+          }
+        },
+        {
+          "caller": "warmup",
+          "callee": "sample_workload",
+          "site_id": "irsite_662dc362895b2133f6146b37206344c9",
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 70,
+            "column": 18
+          }
+        },
+        {
+          "caller": "input",
+          "callee": "sample_input",
+          "site_id": "irsite_a01610d51b48d0bcb18bdb51dba33a4f",
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 79,
+            "column": 12
+          }
+        },
+        {
+          "caller": "timing",
+          "callee": "cycles_before",
+          "site_id": "irsite_ac385ec93987202ff3ae390c26488ea7",
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 89,
+            "column": 13
+          }
+        },
+        {
+          "caller": "timing",
+          "callee": "protected_sample_workload",
+          "site_id": "irsite_e86e49aa80d81b26572792ea77cea65a",
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 90,
+            "column": 14
+          }
+        },
+        {
+          "caller": "timing",
+          "callee": "cycles_after",
+          "site_id": "irsite_d04b2d73975b3bebb873cd3a1b615f47",
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 91,
+            "column": 15
+          }
+        },
+        {
+          "caller": "protected_sample_workload",
+          "callee": "field_enter",
+          "site_id": "irsite_07d440e4a1f426a895ad4093643dae5f",
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c"
+          }
+        },
+        {
+          "caller": "protected_sample_workload",
+          "callee": "__atfield_marker_3054376312323283422",
+          "site_id": "irsite_761c54e720c8b744937d84189429789a",
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c"
+          }
+        },
+        {
+          "caller": "protected_sample_workload",
+          "callee": "sample_workload",
+          "site_id": "irsite_52c4228f5f97a62e3593b8b3565fb1a0",
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 31,
+            "column": 12
+          }
+        },
+        {
+          "caller": "protected_sample_workload",
+          "callee": "field_exit",
+          "site_id": "irsite_6784b3043a2037e7bbef62ae1ddc2f54",
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c"
+          }
+        },
+        {
+          "caller": "release",
+          "callee": "sample_release",
+          "site_id": "irsite_9c7659e64301d9e2b1aa74acaf6eb6a7",
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 97,
+            "column": 5
+          }
+        }
+      ],
+      "unknown_indirect": [],
+      "guidance_sites": [
+        {
+          "site_id": "irsite_2a62a016984fe78ee3dad57d66c558af",
+          "function": "verification",
+          "function_linkage": "external",
+          "block_ordinal": 0,
+          "instruction_ordinal": 13,
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 48,
+            "column": 16
+          },
+          "kind": "icmp",
+          "predicate": "eq",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%9"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_4b3a8b7585a1a65fe6b8d04342ce69cf",
+          "function": "verification",
+          "function_linkage": "external",
+          "block_ordinal": 0,
+          "instruction_ordinal": 16,
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 48,
+            "column": 32
+          },
+          "kind": "icmp",
+          "predicate": "eq",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%12"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_51f0d1c49eafde6221772d60ea709b78",
+          "function": "verification",
+          "function_linkage": "external",
+          "block_ordinal": 1,
+          "instruction_ordinal": 19,
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 48,
+            "column": 52
+          },
+          "kind": "icmp",
+          "predicate": "eq",
+          "width_bits": 64,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%15"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_11cb49b004cfe42be1a6c06f263ab7f8",
+          "function": "verification",
+          "function_linkage": "external",
+          "block_ordinal": 2,
+          "instruction_ordinal": 22,
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 48,
+            "column": 69
+          },
+          "kind": "icmp",
+          "predicate": "ugt",
+          "width_bits": 64,
+          "signedness": "unsigned",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%18"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "4096"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_8c3565917fa6606f325e5598babb04c0",
+          "function": "verification",
+          "function_linkage": "external",
+          "block_ordinal": 4,
+          "instruction_ordinal": 29,
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 51,
+            "column": 16
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%23"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_aa6f53fb89a50fb0b963ec66ddba23da",
+          "function": "verification",
+          "function_linkage": "external",
+          "block_ordinal": 6,
+          "instruction_ordinal": 37,
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 54,
+            "column": 16
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%29"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_5f7d5a8160d21d3f6bbe2a02047da240",
+          "function": "warmup",
+          "function_linkage": "external",
+          "block_ordinal": 0,
+          "instruction_ordinal": 9,
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 64,
+            "column": 16
+          },
+          "kind": "icmp",
+          "predicate": "ugt",
+          "width_bits": 64,
+          "signedness": "unsigned",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%6"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "10000"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_ce02016a293d928c4e6194718c8335da",
+          "function": "warmup",
+          "function_linkage": "external",
+          "block_ordinal": 2,
+          "instruction_ordinal": 17,
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 66,
+            "column": 27
+          },
+          "kind": "icmp",
+          "predicate": "ult",
+          "width_bits": 64,
+          "signedness": "unsigned",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%11"
+            },
+            {
+              "operand": 1,
+              "status": "dynamic",
+              "value_ref": "%12"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_0e45bf4c68bff3c243af5aee6430efac",
+          "function": "warmup",
+          "function_linkage": "external",
+          "block_ordinal": 3,
+          "instruction_ordinal": 23,
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 68,
+            "column": 20
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%17"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_93f4e8fcdfbc12941b15185463fa1705",
+          "function": "warmup",
+          "function_linkage": "external",
+          "block_ordinal": 5,
+          "instruction_ordinal": 31,
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 71,
+            "column": 20
+          },
+          "kind": "icmp",
+          "predicate": "ne",
+          "width_bits": 32,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%23"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_99d1640a991598a478e38500aa19a7d3",
+          "function": "timing",
+          "function_linkage": "external",
+          "block_ordinal": 0,
+          "instruction_ordinal": 9,
+          "source": {
+            "file": "external/7e92b4322c952807/enclave.c",
+            "line": 87,
+            "column": 16
+          },
+          "kind": "icmp",
+          "predicate": "eq",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%6"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema": "atfield-ir-facts-v2",
+      "translation_unit": "sample.c.o",
+      "module_id": "irtu_f484a11d18a2fbdd4b2050756d286496",
+      "backend_ir_sha256": "317e76bf05ac37b2185edc725c95cec1b2a024746de3074d5debf2d1f1acdb43",
+      "object_sha256": "4b0a210bcea4c759f6683b8dfab6777e5da74832b42e6945cccf5b1896694072",
+      "compile_variant": {
+        "target_triple": "x86_64-unknown-linux-gnu",
+        "optimization_level": "0",
+        "relocation_model": "pic",
+        "backend_flags": [
+          "-filetype=obj",
+          "-relocation-model=pic",
+          "-function-sections",
+          "-data-sections",
+          "-atfield-anchor-preparation",
+          "-atfield-payload-ordinal=44475052629562102"
+        ]
+      },
+      "source": {
+        "input_file": "sample.c",
+        "ir_filename": "sample.c"
+      },
+      "callgraph_complete": true,
+      "guidance_complete": true,
+      "diagnostics": [],
+      "definitions": [
+        {
+          "symbol": "sample_fixture",
+          "linkage": "external",
+          "source_file": "sample.c",
+          "address_use": {
+            "address_taken": false,
+            "complete": true,
+            "reasons": [],
+            "non_direct_uses": []
+          },
+          "line": 24
+        },
+        {
+          "symbol": "sample_secret",
+          "linkage": "external",
+          "source_file": "sample.c",
+          "address_use": {
+            "address_taken": false,
+            "complete": true,
+            "reasons": [],
+            "non_direct_uses": []
+          },
+          "line": 29
+        },
+        {
+          "symbol": "sample_vector",
+          "linkage": "external",
+          "source_file": "sample.c",
+          "address_use": {
+            "address_taken": false,
+            "complete": true,
+            "reasons": [],
+            "non_direct_uses": []
+          },
+          "line": 35
+        },
+        {
+          "symbol": "sample_input",
+          "linkage": "external",
+          "source_file": "sample.c",
+          "address_use": {
+            "address_taken": false,
+            "complete": true,
+            "reasons": [],
+            "non_direct_uses": []
+          },
+          "line": 40
+        },
+        {
+          "symbol": "sample_workload",
+          "linkage": "external",
+          "source_file": "sample.c",
+          "address_use": {
+            "address_taken": false,
+            "complete": true,
+            "reasons": [],
+            "non_direct_uses": []
+          },
+          "line": 46
+        },
+        {
+          "symbol": "sample_output",
+          "linkage": "external",
+          "source_file": "sample.c",
+          "address_use": {
+            "address_taken": false,
+            "complete": true,
+            "reasons": [],
+            "non_direct_uses": []
+          },
+          "line": 52
+        },
+        {
+          "symbol": "sample_release",
+          "linkage": "external",
+          "source_file": "sample.c",
+          "address_use": {
+            "address_taken": false,
+            "complete": true,
+            "reasons": [],
+            "non_direct_uses": []
+          },
+          "line": 61
+        }
+      ],
+      "module_data_uses": [
+        {
+          "symbol": "active_password",
+          "owner": "function:sample_release"
+        },
+        {
+          "symbol": "active_password",
+          "owner": "function:sample_secret"
+        },
+        {
+          "symbol": "active_password",
+          "owner": "function:sample_workload"
+        },
+        {
+          "symbol": "derived",
+          "owner": "function:sample_output"
+        },
+        {
+          "symbol": "derived",
+          "owner": "function:sample_workload"
+        },
+        {
+          "symbol": "salt",
+          "owner": "function:sample_workload"
+        },
+        {
+          "symbol": "secret_password",
+          "owner": "function:sample_secret"
+        }
+      ],
+      "module_data_uses_complete": true,
+      "direct_calls": [
+        {
+          "caller": "sample_secret",
+          "callee": "memcpy",
+          "site_id": "irsite_a9be0593d42baf13f962cbb881142685",
+          "source": {
+            "file": "sample.c",
+            "line": 31,
+            "column": 5
+          }
+        },
+        {
+          "caller": "sample_workload",
+          "callee": "wc_PBKDF2",
+          "site_id": "irsite_7d5a5e21f4f7a806e57296dd5528d2ff",
+          "source": {
+            "file": "sample.c",
+            "line": 48,
+            "column": 12
+          }
+        },
+        {
+          "caller": "sample_output",
+          "callee": "memcpy",
+          "site_id": "irsite_e663f155e9849c92f5f74edd30d6f739",
+          "source": {
+            "file": "sample.c",
+            "line": 56,
+            "column": 5
+          }
+        },
+        {
+          "caller": "sample_release",
+          "callee": "memset",
+          "site_id": "irsite_29b811d91aa5f946b1cb96e50c5c99b6",
+          "source": {
+            "file": "sample.c",
+            "line": 63,
+            "column": 5
+          }
+        }
+      ],
+      "unknown_indirect": [],
+      "guidance_sites": [
+        {
+          "site_id": "irsite_b4a054958436bfe896ab470dc79db844",
+          "function": "sample_output",
+          "function_linkage": "external",
+          "block_ordinal": 0,
+          "instruction_ordinal": 11,
+          "source": {
+            "file": "sample.c",
+            "line": 54,
+            "column": 16
+          },
+          "kind": "icmp",
+          "predicate": "eq",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%8"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_f61eb551c2c95c312d3ec88d0426e2c4",
+          "function": "sample_output",
+          "function_linkage": "external",
+          "block_ordinal": 0,
+          "instruction_ordinal": 14,
+          "source": {
+            "file": "sample.c",
+            "line": 54,
+            "column": 32
+          },
+          "kind": "icmp",
+          "predicate": "eq",
+          "width_bits": null,
+          "signedness": "signless",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%11"
+            },
+            {
+              "operand": 1,
+              "status": "unknown"
+            }
+          ]
+        },
+        {
+          "site_id": "irsite_3b7924c34aa5e80c9fb81414db261bd9",
+          "function": "sample_output",
+          "function_linkage": "external",
+          "block_ordinal": 1,
+          "instruction_ordinal": 17,
+          "source": {
+            "file": "sample.c",
+            "line": 54,
+            "column": 52
+          },
+          "kind": "icmp",
+          "predicate": "ult",
+          "width_bits": 64,
+          "signedness": "unsigned",
+          "operands": [
+            {
+              "operand": 0,
+              "status": "dynamic",
+              "value_ref": "%14"
+            },
+            {
+              "operand": 1,
+              "status": "constant",
+              "value": "32"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

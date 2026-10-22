@@ -1,4 +1,4 @@
-export const IR_FACTS_SCHEMA = "atfield-ir-facts-v1" as const;
+export const IR_FACTS_SCHEMA = "atfield-ir-facts-v2" as const;
 
 type IRStatus = "constant" | "dynamic" | "unknown";
 type IRSignedness = "signed" | "unsigned" | "signless";
@@ -52,7 +52,7 @@ interface RemainderSite extends SiteBase {
 
 type GuidanceSite = IcmpSite | SwitchSite | RemainderSite;
 
-interface IRFactsV1 {
+interface IRFactsV2 {
   schema: typeof IR_FACTS_SCHEMA;
   translation_unit: string;
   module_id: string;
@@ -312,7 +312,7 @@ function validateSite(value: unknown, index: number, definitions: Map<string, st
   return fail(label + ".kind is unsupported");
 }
 
-function validateFacts(value: unknown, index: number, seenSiteIds: Set<string>): IRFactsV1 {
+function validateFacts(value: unknown, index: number, seenSiteIds: Set<string>): IRFactsV2 {
   const label = "ir_facts[" + index + "]";
   const facts = object(value, label);
   keys(facts, [
@@ -373,8 +373,8 @@ function validateFacts(value: unknown, index: number, seenSiteIds: Set<string>):
       : { caller, callee: call.callee as string, site_id: siteId, source: callSource };
   };
 
-  const directCalls = facts.direct_calls.map((item, callIndex) => validateCall(item, callIndex, false)) as IRFactsV1["direct_calls"];
-  const unknownIndirect = facts.unknown_indirect.map((item, callIndex) => validateCall(item, callIndex, true)) as IRFactsV1["unknown_indirect"];
+  const directCalls = facts.direct_calls.map((item, callIndex) => validateCall(item, callIndex, false)) as IRFactsV2["direct_calls"];
+  const unknownIndirect = facts.unknown_indirect.map((item, callIndex) => validateCall(item, callIndex, true)) as IRFactsV2["unknown_indirect"];
   const sites = facts.guidance_sites.map((item, siteIndex) => validateSite(item, siteIndex, definitions, seenSiteIds));
 
   return {
@@ -390,8 +390,8 @@ function validateFacts(value: unknown, index: number, seenSiteIds: Set<string>):
   };
 }
 
-function parseFactsInput(value: unknown): IRFactsV1[] {
-  if (!Array.isArray(value)) fail("ir_facts must be an array of atfield-ir-facts-v1 objects");
+function parseFactsInput(value: unknown): IRFactsV2[] {
+  if (!Array.isArray(value)) fail("ir_facts must be an array of atfield-ir-facts-v2 objects");
   const seenSiteIds = new Set<string>();
   return value.map((facts, index) => validateFacts(facts, index, seenSiteIds));
 }

@@ -8,7 +8,7 @@ function siteId(number: number): string {
 const location = { file: "src/wallet.c", line: 19, column: 7 };
 const facts = [
   {
-    schema: "atfield-ir-facts-v1",
+    schema: "atfield-ir-facts-v2",
     translation_unit: "objects/wallet.o",
     module_id: "irtu_00000000000000000000000000000001",
     source: { input_file: "src/wallet.c", ir_filename: "objects/wallet.ll" },
@@ -255,7 +255,7 @@ function candidateFor(
 }
 
 describe("static scalar replacement guidance", () => {
-  test("strictly accepts the extractor's atfield-ir-facts-v1 JSON shape", () => {
+  test("strictly accepts the explorer's v2 guidance projection", () => {
     expect(() => generate()).not.toThrow();
 
     const wrongSchema = structuredClone(facts) as unknown as Array<Record<string, unknown>>;
