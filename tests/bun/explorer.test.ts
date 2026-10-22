@@ -65,7 +65,7 @@ function makeFakeHostSource(): string {
     "if (env.TEST_WRITE_LIFECYCLE) fs.writeFileSync(env.ATFIELD_LIFECYCLE_PATH, [{ event: 'enclave_created', generation: 1, callSeq: 0, selectorOrdinal: 0, selectorSeq: 0 }, { event: 'ecall_enter', generation: 1, callSeq: 0, selectorOrdinal: 0, selectorSeq: 0 }, { event: 'ecall_return', generation: 1, callSeq: 0, selectorOrdinal: 0, selectorSeq: 0 }].map(JSON.stringify).join('\\n') + '\\n');",
     "const numeric = Number(BigInt(inputBits));",
     "const isBizReject = Boolean(mutation && process.argv.includes('--call-once') && numeric === 8);",
-    "const selectedPage = mutation && numeric === 7 ? '0x2000' : (isBizReject ? '0x3000' : '0x1000');",
+    "const selectedPage = mutation && numeric === 7 ? '0x2000' : (mutation && numeric === 10 ? '0x4000' : (isBizReject ? '0x3000' : '0x1000'));",
     "const phase = (rva) => ({ page_size: 4096, complete: true, page_effects: [{ rva, a: true, d: false }] });",
     "const traceStart = {",
     "  schema: 'atfield-canonical-trace-v1', record_type: 'run_start',",
@@ -112,7 +112,7 @@ function makeFakeHostSource(): string {
   return lines.join("\n") + "\n";
 }
 
-function makeBundle(opts: { recordEcall?: boolean; includePage3000?: boolean } = {}): { root: string; manifestPath: string; hostPath: string } {
+function makeBundle(opts: { recordEcall?: boolean; includePage3000?: boolean; includePage4000?: boolean } = {}): { root: string; manifestPath: string; hostPath: string } {
   const root = mkdtempSync(path.join(os.tmpdir(), "dynamic-explorer-test-"));
   temporaryRoots.push(root);
   const artifactsDir = path.join(root, "bundle");
@@ -492,6 +492,7 @@ function makeBundle(opts: { recordEcall?: boolean; includePage3000?: boolean } =
       { rva: "0x1000", max_permissions: "R-X", region_kind: "text" },
       { rva: "0x2000", max_permissions: "R-X", region_kind: "text" },
       ...(opts.includePage3000 ? [{ rva: "0x3000", max_permissions: "R-X", region_kind: "text" }] : []),
+      ...(opts.includePage4000 ? [{ rva: "0x4000", max_permissions: "R-X", region_kind: "text" }] : []),
     ],
   };
   const manifestPath = path.join(artifactsDir, "bundle.json");
@@ -738,6 +739,12 @@ describe("Bun dynamic explorer", () => {
       effects: ["R", "X"],
     }]);
     expect(result.seedResults[0]!.candidates[1]!.reason).toMatch(/AEX|measurement|incomplete/i);
+    expect(result.seedResults[0]!.candidates[1]!.committedCorpusRole).toBeNull();
+    expect(new Set(result.seedResults[0]!.candidates.map((candidate) => candidate.candidateKey)).size)
+      .toBe(result.seedResults[0]!.candidates.length);
+    const finalizedRunIds = new Set(readFinalizableCorpus(path.join(fixture.root, "corpus"), fixture.manifestPath)
+      .map((trace) => trace.runId));
+    expect(finalizedRunIds.has(result.seedResults[0]!.candidates[1]!.runId!)).toBe(false);
 
     const runs = readFileSync(observationsPath, "utf8").trim().split("\n")
       .map((line) => JSON.parse(line) as {
@@ -1101,6 +1108,28 @@ describe("Bun dynamic explorer", () => {
     expect(out).not.toContain("undefined symbol");
   });
 
+  test("online scalar feedback schedules a post-measurement value that reaches a new Field page effect", async () => {
+    const fixture = makeBundle({ includePage4000: true });
+    const corpusPath = path.join(fixture.root, "corpus-online-feedback");
+    const result = await exploreSeeds({
+      bundlePath: fixture.manifestPath,
+      corpusPath,
+      role: "main",
+      seeds: [{ id: "online-feedback-seed", args: ["--early-return"], env: {} }],
+      candidateBudget: 2,
+      timeoutMs: 2000,
+    });
+    const attempts = result.seedResults[0]!.candidates;
+    expect(attempts.map((item) => item.value)).toEqual(["7", "10"]);
+    expect(attempts[0]!.accepted).toBe(true);
+    expect(attempts[0]!.newFieldEntry).toBe(true);
+    expect(attempts[0]!.spawnedChildrenCount).toBeGreaterThan(0);
+    expect(attempts[1]!.accepted).toBe(true);
+    expect(attempts[1]!.pageDelta.some((item) => item.pageRva === "0x4000")).toBe(true);
+    const committedRunIds = new Set(readFinalizableCorpus(corpusPath, fixture.manifestPath).map((trace) => trace.runId));
+    expect(committedRunIds.has(attempts[1]!.runId!)).toBe(true);
+  });
+
   test("Stage 1: CALL_ONCE probes in fresh instances distinguish normal completion from business-rejection exit while committing valid 4-gate observations", async () => {
     const fixture = makeBundle({ includePage3000: true });
     const corpusPath = path.join(fixture.root, "corpus-call-once");
@@ -1130,7 +1159,7 @@ describe("Bun dynamic explorer", () => {
     expect(rejectProbe.businessOutcome).toBe("rejected");
     expect(rejectProbe.runTerminalState).toBe("business_rejection_exit");
     expect(rejectProbe.processReturnCode).toBe(1);
-    expect(rejectProbe.pageDelta.some((p) => p.pageRva === "0x3000")).toBe(true);
+    expect(rejectProbe.pageDelta).toEqual([]);
 
     if (aexProbe) {
       expect(aexProbe.accepted).toBe(false);
@@ -1142,11 +1171,10 @@ describe("Bun dynamic explorer", () => {
     const mainTraces = finalized.filter((tr) => tr.role === "main");
     const suppTraces = finalized.filter((tr) => tr.role === "supplemental");
     expect(mainTraces.length).toBeGreaterThanOrEqual(2);
-    expect(suppTraces.length).toBe(1);
-    expect(suppTraces[0]!.parsedTrace.runCompletion).toBe("incomplete");
-    expect(suppTraces[0]!.parsedTrace.processReturnCode).toBe(1);
-    expect(suppTraces[0]!.parsedTrace.businessRejected).toBe(true);
-    expect(suppTraces[0]!.parsedTrace.observations.some((o) => o.pageRva === 0x3000n)).toBe(true);
+    expect(suppTraces).toHaveLength(0);
+    expect(rejectProbe.pageDelta).toEqual([]);
+    expect(rejectProbe.committedCorpusRole).toBeNull();
+    expect(finalized.some((trace) => trace.parsedTrace.observations.some((o) => o.pageRva === 0x3000n))).toBe(false);
     const { main: worksetCliMain } = await import("../../cli/atfield-workset.ts");
     expect(worksetCliMain(["--bundle", fixture.manifestPath, "--corpus", corpusPath,
       "--out", path.join(fixture.root, "with-business-rejection.workset.json")])).toBe(0);

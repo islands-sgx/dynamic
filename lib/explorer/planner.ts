@@ -1650,3 +1650,111 @@ export function evaluateColdInstanceFirstCallReorder(
     requiredPrefixCallSeqs,
   };
 }
+
+export interface OnlineScalarFeedback {
+  measurementComplete: boolean;
+  accepted: boolean;
+  businessOutcome: "ok" | "rejected";
+  pageDeltaCount: number;
+  newFieldEntry: boolean;
+}
+
+/** Derive a small next-step scalar batch from one canonical replay outcome.
+ * Values come from the observed scalar and the ABI's actual size/count bindings;
+ * the baseline capture remains the source of expected bits and call positions.
+ */
+export function deriveOnlineScalarCandidates(
+  profile: ExplorerProfile,
+  baselineCapture: CallCaptureDocument,
+  observedCapture: CallCaptureDocument,
+  parentPlan: PlannedMutation,
+  feedback: OnlineScalarFeedback,
+  budgets?: { perBufferBytes?: bigint; totalBytes?: bigint },
+): PlannedMutation[] {
+  if (!feedback.measurementComplete || !observedCapture.end.complete ||
+      (parentPlan.rule.opKind ?? "replace_scalar") !== "replace_scalar") return [];
+
+  const ordinal = parentPlan.rule.selectorOrdinal;
+  const paramIndex = parentPlan.rule.paramIndex;
+  const generation = parentPlan.rule.targetGeneration ?? 1;
+  const selectorSeq = parentPlan.rule.selectorSeq;
+  const baseEvent = baselineCapture.events.find((event) => event.generation === generation &&
+    event.selectorOrdinal === ordinal && event.selectorSeq === selectorSeq);
+  const observedEvent = observedCapture.events.find((event) => event.generation === generation &&
+    event.selectorOrdinal === ordinal && event.selectorSeq === selectorSeq &&
+    event.mutation?.applied === true && event.mutation.paramIndex === paramIndex);
+  const scalar = profile.scalarParameterByKey.get(ordinal + ":" + paramIndex);
+  const marshal = profile.ecalls.get(ordinal);
+  if (!baseEvent || !observedEvent || !scalar || !marshal || !marshal.replaySupported) return [];
+  const baselineInput = baseEvent.scalarInputs.find((item) => item.paramIndex === paramIndex);
+  const observedInput = observedEvent.scalarInputs.find((item) => item.paramIndex === paramIndex);
+  if (!baselineInput || !observedInput ||
+      baselineInput.widthBytes * 8 !== scalar.width_bits ||
+      baselineInput.signedness !== scalar.signedness ||
+      observedInput.widthBytes !== baselineInput.widthBytes ||
+      observedInput.signedness !== baselineInput.signedness) return [];
+
+  const current = capturedValue(observedEvent, paramIndex);
+  if (current === undefined) return [];
+  const signBit = 1n << BigInt(scalar.width_bits - 1);
+  const minValue = scalar.signedness === "signed" ? -signBit : 0n;
+  const maxValue = scalar.signedness === "signed" ? signBit - 1n : (signBit << 1n) - 1n;
+  const values = new Set<bigint>();
+  const dependencies = pointerDependencies(paramIndex, marshal);
+
+  // Ground size/count probes in the observed marshaled extent. This can expose
+  // legal bounds from later call histories without inventing ABI offsets.
+  for (const dependency of dependencies) {
+    if (!dependency.replaySupported || dependency.userCheck ||
+        (dependency.boundKind !== "size_bytes" && dependency.boundKind !== "count_elements")) continue;
+    const buffer = observedEvent.bufferInputs?.find((item) => item.paramIndex === dependency.paramIndex);
+    if (!buffer) continue;
+    const unit = dependency.boundKind === "count_elements" ? dependency.elementSize : 1;
+    if (unit === null || unit < 1 || buffer.byteLength % unit !== 0) continue;
+    const observedBound = BigInt(buffer.byteLength / unit);
+    values.add(observedBound);
+    values.add(observedBound + 1n);
+  }
+
+  if (feedback.businessOutcome === "rejected") {
+    values.add(current - 1n);
+  } else if (feedback.pageDeltaCount > 0 || feedback.newFieldEntry) {
+    const step = 1n + BigInt(Math.min(feedback.pageDeltaCount, 7)) +
+      (feedback.newFieldEntry ? 1n : 0n);
+    values.add(current + step);
+    values.add(current - 1n);
+  } else {
+    const step = current === 0n ? 1n : (current < 0n ? -current : current);
+    values.add(current + step);
+    values.add(current - step);
+  }
+
+  const plans = new Map<string, PlannedMutation>();
+  for (const value of values) {
+    if (value < minValue || value > maxValue || value === current ||
+        !preservesDependentBufferBounds(profile, ordinal, paramIndex, value, baseEvent,
+          (parentPlan.rule.execMode ?? 0) > 0, undefined, budgets)) continue;
+    const rule: ScalarMutationRule = {
+      ...(generation !== 1 ? { targetGeneration: generation } : {}),
+      ...(parentPlan.rule.execMode !== undefined ? { execMode: parentPlan.rule.execMode } : {}),
+      ...(parentPlan.rule.prefixMutations ? { prefixMutations: parentPlan.rule.prefixMutations } : {}),
+      selectorOrdinal: ordinal,
+      selectorSeq,
+      paramIndex,
+      widthBytes: baselineInput.widthBytes,
+      signedness: scalar.signedness,
+      expectedBits: baselineInput.bits,
+      replacementBits: bitsForValue(value, scalar.width_bits),
+    };
+    const plan: PlannedMutation = {
+      rule,
+      value: value.toString(10),
+      priority: parentPlan.priority + 120 + feedback.pageDeltaCount * 10 +
+        (feedback.newFieldEntry ? 20 : 0) + (feedback.accepted ? 0 : -20),
+      evidenceSiteIds: sortedUnique([...parentPlan.evidenceSiteIds,
+        `online:${feedback.businessOutcome}:field${feedback.newFieldEntry ? 1 : 0}:pages${feedback.pageDeltaCount}`]),
+    };
+    plans.set(mutationRuleKey(rule), plan);
+  }
+  return [...plans.values()].slice(0, 4);
+}

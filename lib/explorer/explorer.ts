@@ -26,6 +26,7 @@ import {
 import {
   deriveCandidatesFromCase,
   deriveChildCandidatesFromFeedback,
+  deriveOnlineScalarCandidates,
   linkedConsumerCallKey,
   reserveLinkedConsumerCallKeys,
   mutationRuleKey,
@@ -841,26 +842,27 @@ export async function exploreSeeds(options: ExplorerOptions): Promise<ExplorerRe
               paramIndex: plan.rule.paramIndex, candidateValue: plan.value, affectedBuffers: [] });
           }
           if (!verdict.accepted) failedProbes++;
-          const candidatePages = verdict.accepted && candidate.capture
+          const businessOk = verdict.businessOutcome === "ok";
+          const candidatePages = verdict.accepted && businessOk && candidate.capture
             ? observationKeys(candidate.run)
             : new Set<string>();
           const delta = verdict.accepted && candidate.capture
             ? pageDelta(cumulativePages, candidatePages)
             : [];
-          const digest = verdict.accepted && candidate.capture
+          const digest = verdict.accepted && businessOk && candidate.capture
             ? stateDigest(candidate.capture, plan.rule, candidatePages, plan.evidenceSiteIds)
             : null;
-          const histDigest = verdict.accepted && candidate.capture
+          const histDigest = verdict.accepted && businessOk && candidate.capture
             ? callHistoryDigest(candidate.capture)
             : null;
           const novelState = digest !== null && !seenStates.has(digest);
           const novelHistory = histDigest !== null && !seenHistories.has(histDigest);
           // Distinct histories and a first measured target-Field call are useful even when page effects match.
-          const candidateTargetFieldCalls = verdict.accepted
+          const candidateTargetFieldCalls = verdict.accepted && businessOk
             ? targetFieldCallKeys(candidate.run.traceText, plan.rule) : new Set<string>();
           const targetEnteredField = candidateTargetFieldCalls.size > 0;
           const newFieldEntry = [...candidateTargetFieldCalls].some((key) => !enteredFieldCallKeys.has(key));
-          if (verdict.accepted && verdict.measurementComplete) {
+          if (verdict.accepted && businessOk && verdict.measurementComplete) {
             for (const key of candidateTargetFieldCalls) enteredFieldCallKeys.add(key);
           }
           const novel = novelState || novelHistory || delta.length > 0 || newFieldEntry;
@@ -897,6 +899,34 @@ export async function exploreSeeds(options: ExplorerOptions): Promise<ExplorerRe
               candidate.run.runId,
             );
           }
+          // Derive the next scalar step only after this fresh-process replay
+          // passes the canonical measurement gate. Complete business rejections
+          // still inform backoff; incomplete runs cannot influence scheduling.
+          if (verdict.measurementComplete && candidate.capture && depth < maxDerivationDepth) {
+            const onlinePlans = deriveOnlineScalarCandidates(
+              profile,
+              baseline.capture,
+              candidate.capture,
+              plan,
+              {
+                measurementComplete: verdict.measurementComplete,
+                accepted: verdict.accepted,
+                businessOutcome: verdict.businessOutcome,
+                pageDeltaCount: delta.length,
+                newFieldEntry,
+              },
+              {
+                perBufferBytes: options.expansionBufferBudgetBytes,
+                totalBytes: options.expansionTotalBudgetBytes,
+              },
+            );
+            spawnedChildrenCount += enqueuePlans(
+              onlinePlans,
+              depth + 1,
+              candidateIndex,
+              candidate.run.runId,
+            );
+          }
 
           const tKey = targetKey(plan.rule);
           const tPrev = targetFeedbackScore.get(tKey) ?? 0;
@@ -914,7 +944,7 @@ export async function exploreSeeds(options: ExplorerOptions): Promise<ExplorerRe
           if (fieldTargetKey && targetEnteredField && verdict.measurementComplete) {
             fieldTargetCounts.set(fieldTargetKey, (fieldTargetCounts.get(fieldTargetKey) ?? 0) + 1);
           }
-          const shouldCommit = verdict.accepted && (novel || delta.length > 0) &&
+          const shouldCommit = verdict.accepted && businessOk && (novel || delta.length > 0) &&
             (candidate.run.completion === "complete" || targetEnteredField || delta.length > 0);
           const commitRole: TraceCorpusRole | null = shouldCommit
             ? (candidate.run.completion === "complete" ? options.role : "supplemental")
