@@ -10,9 +10,12 @@ import {
   parseNativeCallCapture,
   appendCallCaptureEnd,
   captureHasExactlyOneMutation,
+  type CallCaptureDocument,
+  type CallCaptureEvent,
   type ScalarMutationRule,
 } from "../../lib/explorer/contract.ts";
 import { exploreSeeds } from "../../lib/explorer/explorer.ts";
+import { deriveOnlineScalarCandidates } from "../../lib/explorer/planner.ts";
 import { readFinalizableCorpus } from "../../lib/explorer/corpus.ts";
 import { parseArgs } from "../../cli/explore.ts";
 import { loadExplorerProfile } from "../../lib/explorer/profile.ts";
@@ -670,10 +673,50 @@ describe("Bun dynamic explorer", () => {
     expect(bytes[125]).toBe(4);
     expect(view.getBigUint64(128, true)).toBe(5n);
     expect(view.getBigUint64(136, true)).toBe(7n);
+    const binding = { bundleManifestSha256: "11".repeat(32), marshalLayoutSha256: "22".repeat(32) };
+    expect(() => encodeMutationSpec(binding, { ...rule, replacementBits: rule.expectedBits }))
+      .toThrow(/no-op/);
+    const historyBytes = encodeMutationSpec(binding, {
+      ...rule, opKind: "extend_history", repeatCount: 1, replacementBits: rule.expectedBits,
+    });
+    expect(new DataView(historyBytes.buffer, historyBytes.byteOffset, historyBytes.byteLength)
+      .getUint16(112, true)).toBe(3);
     expect(() => encodeMutationSpec({
       bundleManifestSha256: "11".repeat(32),
       marshalLayoutSha256: "22".repeat(32),
     }, { ...rule, replacementBits: "0x7" })).toThrow();
+  });
+
+  test("online feedback skips a scalar candidate that returns to baseline bits", () => {
+    const fixture = makeBundle();
+    const profile = loadExplorerProfile(fixture.manifestPath);
+    const baselineEvent: CallCaptureEvent = {
+      generation: 1, callSeq: 0, selectorOrdinal: 0, selectorSeq: 0, transportStatus: 0,
+      scalarInputs: [{ paramIndex: 0, widthBytes: 4, signedness: "signed", bits: "0x00000005" }],
+      retval: null, scalarOutputs: [], mutation: null,
+    };
+    const observedEvent: CallCaptureEvent = {
+      ...baselineEvent,
+      scalarInputs: [{ paramIndex: 0, widthBytes: 4, signedness: "signed", bits: "0x00000006" }],
+      mutation: { paramIndex: 0, widthBytes: 4, signedness: "signed",
+        expectedBits: "0x00000005", observedBits: "0x00000005", replacementBits: "0x00000006",
+        applied: true, reason: "applied" },
+    };
+    const capture = (event: CallCaptureEvent, runId: string): CallCaptureDocument => ({
+      ...profile.binding, runId, events: [event], end: { processReturnCode: 0, termination: "exited",
+        timedOut: false, complete: true, ecallCount: 1, targetMatchCount: 1,
+        mutationAppliedCount: event.mutation?.applied ? 1 : 0, incompleteReasons: [] },
+    });
+    const baseline = capture(baselineEvent, "11111111-1111-4111-8111-111111111111");
+    const observed = capture(observedEvent, "22222222-2222-4222-8222-222222222222");
+    const plans = deriveOnlineScalarCandidates(profile, baseline, observed, {
+      rule: { selectorOrdinal: 0, selectorSeq: 0, paramIndex: 0, widthBytes: 4,
+        signedness: "signed", expectedBits: "0x00000005", replacementBits: "0x00000006", execMode: 1 },
+      value: "6", priority: 500, evidenceSiteIds: ["fixture"],
+    }, { measurementComplete: true, accepted: true, businessOutcome: "ok",
+      pageDeltaCount: 1, newFieldEntry: true });
+    expect(plans.map((plan) => plan.value)).not.toContain("5");
+    expect(plans.every((plan) => plan.rule.replacementBits !== "0x00000005")).toBe(true);
   });
 
   test("splits explorer options from direct host arguments", () => {

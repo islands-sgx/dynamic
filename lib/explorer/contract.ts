@@ -254,9 +254,13 @@ function validateMutationRule(rule: ScalarMutationRule): void {
   }
   const width = rule.widthBytes;
   const max = 1n << BigInt(width * 8);
-  if (bitsBigInt(rule.expectedBits, width, "expectedBits") >= max ||
-      bitsBigInt(rule.replacementBits, width, "replacementBits") >= max) {
+  const expectedBits = bitsBigInt(rule.expectedBits, width, "expectedBits");
+  const replacementBits = bitsBigInt(rule.replacementBits, width, "replacementBits");
+  if (expectedBits >= max || replacementBits >= max) {
     fail("mutation bits exceed the scalar width");
+  }
+  if ((rule.opKind ?? "replace_scalar") === "replace_scalar" && expectedBits === replacementBits) {
+    fail("scalar replacement is a no-op");
   }
   const prefixes = rule.prefixMutations ?? [];
   if (prefixes.length > MUTATION_SPEC_MAX_PREFIX_OPS) {

@@ -900,8 +900,8 @@ export async function exploreSeeds(options: ExplorerOptions): Promise<ExplorerRe
             );
           }
           // Derive the next scalar step only after this fresh-process replay
-          // passes the canonical measurement gate. Complete business rejections
-          // still inform backoff; incomplete runs cannot influence scheduling.
+          // passes the canonical measurement gate. A complete business rejection
+          // may offer an adjacent search value, but earns no Field/page feedback.
           if (verdict.measurementComplete && candidate.capture && depth < maxDerivationDepth) {
             const onlinePlans = deriveOnlineScalarCandidates(
               profile,

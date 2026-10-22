@@ -1717,6 +1717,7 @@ export function deriveOnlineScalarCandidates(
   }
 
   if (feedback.businessOutcome === "rejected") {
+    // A lower neighbor is only a bounded search step, not evidence of monotonic validity.
     values.add(current - 1n);
   } else if (feedback.pageDeltaCount > 0 || feedback.newFieldEntry) {
     const step = 1n + BigInt(Math.min(feedback.pageDeltaCount, 7)) +
@@ -1734,6 +1735,8 @@ export function deriveOnlineScalarCandidates(
     if (value < minValue || value > maxValue || value === current ||
         !preservesDependentBufferBounds(profile, ordinal, paramIndex, value, baseEvent,
           (parentPlan.rule.execMode ?? 0) > 0, undefined, budgets)) continue;
+    const replacementBits = bitsForValue(value, scalar.width_bits);
+    if (BigInt(replacementBits) === BigInt(baselineInput.bits)) continue;
     const rule: ScalarMutationRule = {
       ...(generation !== 1 ? { targetGeneration: generation } : {}),
       ...(parentPlan.rule.execMode !== undefined ? { execMode: parentPlan.rule.execMode } : {}),
@@ -1744,7 +1747,7 @@ export function deriveOnlineScalarCandidates(
       widthBytes: baselineInput.widthBytes,
       signedness: scalar.signedness,
       expectedBits: baselineInput.bits,
-      replacementBits: bitsForValue(value, scalar.width_bits),
+      replacementBits,
     };
     const plan: PlannedMutation = {
       rule,
