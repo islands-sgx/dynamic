@@ -70,7 +70,8 @@ function makeFakeHostSource(): string {
     "const traceStart = {",
     "  schema: 'atfield-canonical-trace-v1', record_type: 'run_start',",
     "  run_id: env.ATFIELD_RUN_ID, layout_epoch: env.ATFIELD_LAYOUT_EPOCH,",
-    "  instance_generation: null, sample: env.ATFIELD_SAMPLE, mode: env.ATFIELD_MODE,",
+    "  instance_generation: null, seed_id: env.ATFIELD_SEED_ID, argv: JSON.parse(env.ATFIELD_SEED_ARGV_JSON),",
+    "  sample: env.ATFIELD_SAMPLE, mode: env.ATFIELD_MODE,",
     "  start_time: new Date().toISOString(), selected_enclave_sha256: env.ATFIELD_ENCLAVE_SHA256,",
     "  bundle_manifest_sha256: env.ATFIELD_BUNDLE_MANIFEST_SHA256,",
     "};",
@@ -570,7 +571,7 @@ describe("Bun dynamic explorer", () => {
     expect(existsSync(path.join(artifactDir, "mutation.spec"))).toBe(true);
     expect(existsSync(path.join(artifactDir, "stdout.log"))).toBe(true);
     expect(existsSync(path.join(artifactDir, "stderr.log"))).toBe(true);
-    const metadata = readFileSync(path.join(artifactDir, "canonical-host-" + attempt.runId + ".meta.json"), "utf8");
+    const metadata = readFileSync(path.join(artifactDir, "signal-exit-" + attempt.runId + ".meta.json"), "utf8");
     expect(metadata).toContain('"termination": "signaled"');
     expect(readFinalizableCorpus(corpusPath, fixture.manifestPath).some((trace) => trace.runId === attempt.runId)).toBe(false);
   });
@@ -709,11 +710,28 @@ describe("Bun dynamic explorer", () => {
     expect(result.candidateRuns).toBe(3);
     expect(result.acceptedCandidates).toBe(2);
     expect(result.seedResults[0]!.baselineAccepted).toBe(true);
+    const baselineDir = result.seedResults[0]!.baselineArtifactPath!;
+    const evidenceDirs = [baselineDir, ...result.seedResults[0]!.candidates.map((candidate) => candidate.artifactPath!)];
+    expect(evidenceDirs).toHaveLength(4);
+    for (const directory of evidenceDirs) {
+      const manifest = JSON.parse(readFileSync(path.join(directory, "attempt.json"), "utf8"));
+      const runMeta = JSON.parse(readFileSync(manifest.artifactPaths.meta, "utf8"));
+      const runStart = JSON.parse(readFileSync(manifest.artifactPaths.trace, "utf8").split("\n")[0]!);
+      expect(manifest.seed).toEqual(seeds[0]);
+      expect(runMeta.seed_id).toBe(seeds[0]!.id);
+      expect(runMeta.argv).toEqual(seeds[0]!.args);
+      expect(runStart.seed_id).toBe(seeds[0]!.id);
+      expect(runStart.argv).toEqual(seeds[0]!.args);
+    }
     expect(result.seedResults[0]!.candidates.map((candidate) => candidate.value)).toEqual(["7", "6", "8"]);
     expect(result.seedResults[0]!.candidates.map((candidate) => candidate.accepted)).toEqual([true, false, true]);
-    expect(result.seedResults[0]!.feedback).toHaveLength(1);
-    expect(result.seedResults[0]!.feedback[0]!.value).toBe("7");
-    expect(readFinalizableCorpus(path.join(fixture.root, "corpus"), fixture.manifestPath)).toHaveLength(2);
+    expect(result.seedResults[0]!.feedback.map((item) => item.value)).toEqual(["7", "8"]);
+    expect(result.seedResults[0]!.candidates[2]!.novel).toBe(true);
+    expect(result.seedResults[0]!.candidates[2]!.targetEnteredField).toBe(true);
+    expect(result.seedResults[0]!.candidates[2]!.newFieldEntry).toBe(false);
+    expect(result.seedResults[0]!.candidates[2]!.pageDelta).toEqual([]);
+    expect(result.seedResults[0]!.candidates[2]!.committedCorpusRole).toBe("main");
+    expect(readFinalizableCorpus(path.join(fixture.root, "corpus"), fixture.manifestPath)).toHaveLength(3);
     expect(result.seedResults[0]!.feedback[0]!.pageDelta).toEqual([{
       fieldId: "field-1",
       pageRva: "0x2000",
@@ -833,6 +851,7 @@ describe("Bun dynamic explorer", () => {
     });
     expect(mutatedRes.seedResults[0]?.baselineAccepted).toBe(true);
     expect(mutatedRes.acceptedCandidates).toBeGreaterThan(0);
+    expect(mutatedRes.seedResults[0]?.candidates.some((candidate) => candidate.newFieldEntry)).toBe(true);
     const finalized = readFinalizableCorpus(coveredCorpus, fixture.manifestPath);
     expect(finalized.length).toBeGreaterThanOrEqual(2);
   });

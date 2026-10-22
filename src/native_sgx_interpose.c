@@ -83,6 +83,20 @@ static int trace_write_json_env(const char *name) {
     return trace_write_json_string(value);
 }
 
+static int trace_write_json_argv(void) {
+    if (!trace_fp || trace_io_failed) return -1;
+    const char *json = getenv("ATFIELD_SEED_ARGV_JSON");
+    if (!json) {
+        if (getenv("ATFIELD_SEED_ID")) trace_note_contract_failure("seed_argv_missing");
+        return trace_printf("[]") < 0 ? -1 : 0;
+    }
+    if (atfield_json_write_string_array(trace_fp, json) != 0) {
+        trace_note_contract_failure("seed_argv_invalid");
+        if (trace_printf("[]") < 0) return -1;
+    }
+    return 0;
+}
+
 static int trace_write_reasons(void) {
     char copy[MAX_TRACE_INCOMPLETE_REASONS][128];
     pthread_mutex_lock(&reason_mutex);
@@ -189,6 +203,10 @@ static int trace_metadata_check(void) {
 
 static void trace_emit_run_start(void) {
     if (!trace_fp || trace_started) return;
+    pthread_mutex_lock(&reason_mutex);
+    trace_reason_count = 0;
+    last_invalid_reason[0] = '\0';
+    pthread_mutex_unlock(&reason_mutex);
     trace_metadata_check();
     struct timespec ts = {0, 0};
     char start_time[64] = "";
@@ -220,13 +238,11 @@ static void trace_emit_run_start(void) {
         trace_printf(",\"seed_id\":");
         trace_write_json_string(seed_id);
     }
-    trace_printf(",\"argv\":[]}\n");
+    trace_printf(",\"argv\":");
+    trace_write_json_argv();
+    trace_printf("}\n");
     trace_started = 1;
     trace_flush_checked();
-    pthread_mutex_lock(&reason_mutex);
-    trace_reason_count = 0;
-    last_invalid_reason[0] = '\0';
-    pthread_mutex_unlock(&reason_mutex);
 }
 
 static int ensure_shared_mapping(void) {

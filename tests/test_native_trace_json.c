@@ -4,6 +4,8 @@
 #include "../src/native_trace_state.h"
 #include <limits.h>
 
+static int test_json_string_array(void);
+
 static int stream_matches(FILE *fp, const char *expected) {
     if (fflush(fp) != 0 || fseek(fp, 0, SEEK_SET) != 0) return 0;
     char actual[1024];
@@ -197,6 +199,8 @@ static int test_aex_classification_and_verified_phase_mask(void) {
 int main(void) {
     int rc = test_string_escaping();
     if (rc) return rc;
+    rc = test_json_string_array();
+    if (rc) return rc;
     rc = test_page_effect_keeps_both_ad_bits();
     if (rc) return rc;
     rc = test_canonical_field_phase_fixture();
@@ -214,4 +218,30 @@ int main(void) {
     rc = test_repeated_field_or_and_completeness();
     if (rc) return rc;
     return test_aex_classification_and_verified_phase_mask();
+}
+static int test_json_string_array(void) {
+    const char input[] = "[\"--sm4-check\",\"a b\",\"quote:\\\"\",\"slash:\\\\\",\"unicode:\\u4f60\\u597d\"]";
+    FILE *fp = tmpfile();
+    if (!fp) return 60;
+    int ok = atfield_json_write_string_array(fp, input) == 0 && stream_matches(fp, input);
+    if (fclose(fp) != 0) return 61;
+    if (!ok) return 62;
+
+    fp = tmpfile();
+    if (!fp) return 63;
+    ok = atfield_json_write_string_array(fp, NULL) == 0 && stream_matches(fp, "[]");
+    if (fclose(fp) != 0) return 64;
+    if (!ok) return 65;
+
+    static const char *const invalid[] = {
+        "[--sm4-check]", "[\"trailing\",]", "[\"bad\\q\"]", "[\"truncated\\u]", "[\"x\"] false",
+    };
+    for (size_t i = 0; i < sizeof(invalid) / sizeof(invalid[0]); i++) {
+        fp = tmpfile();
+        if (!fp) return 66;
+        ok = atfield_json_write_string_array(fp, invalid[i]) != 0 && stream_matches(fp, "");
+        if (fclose(fp) != 0) return 67;
+        if (!ok) return 68;
+    }
+    return 0;
 }

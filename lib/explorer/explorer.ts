@@ -86,6 +86,7 @@ export interface CandidateAttempt {
   traceSha256?: string | null;
   committedCorpusRole?: TraceCorpusRole | null;
   targetEnteredField?: boolean;
+  newFieldEntry?: boolean;
   measurementComplete?: boolean;
   businessOutcome?: "ok" | "rejected";
   runTerminalState?: "complete" | "business_rejection_exit" | "incomplete";
@@ -277,6 +278,7 @@ async function canonicalReplay(
         runCanonicalHost({
           bundlePath: profile.bundle.manifestPath,
           args: seed.args,
+          seedId: seed.id,
           collectorPath,
           timeoutMs,
           killGraceMs,
@@ -395,6 +397,18 @@ function pageDelta(baseline: Set<string>, candidate: Set<string>): PageEffectDel
     );
 }
 
+function stableBufferState(buffers: CallCaptureEvent["bufferInputs"] | CallCaptureEvent["bufferOutputs"]): unknown {
+  return (buffers ?? []).map((buffer) => ({
+    param_index: buffer.paramIndex,
+    direction: buffer.direction,
+    byte_length: buffer.byteLength,
+    element_size: buffer.elementSize,
+    is_string: buffer.isString,
+    fnv1a64: buffer.fnv1a64,
+    ...(buffer.sha256 ? { sha256: buffer.sha256 } : {}),
+  }));
+}
+
 function scalarState(event: CallCaptureEvent | undefined): unknown {
   if (!event) return null;
   return {
@@ -403,8 +417,11 @@ function scalarState(event: CallCaptureEvent | undefined): unknown {
     selector_ordinal: event.selectorOrdinal,
     selector_seq: event.selectorSeq,
     transport_status: event.transportStatus,
+    scalar_inputs: event.scalarInputs,
     retval: event.retval,
     scalar_outputs: event.scalarOutputs,
+    buffer_inputs: stableBufferState(event.bufferInputs),
+    buffer_outputs: stableBufferState(event.bufferOutputs),
   };
 }
 
@@ -416,9 +433,11 @@ function callHistoryDigest(capture: CallCaptureDocument): string {
       selector_ordinal: event.selectorOrdinal,
       selector_seq: event.selectorSeq,
       transport_status: event.transportStatus,
+      scalar_inputs: event.scalarInputs,
       retval: event.retval,
       scalar_outputs: event.scalarOutputs,
-      buffer_fnv1a64: (event.bufferInputs ?? []).map((b) => [b.paramIndex, b.byteLength, b.fnv1a64]),
+      buffer_inputs: stableBufferState(event.bufferInputs),
+      buffer_outputs: stableBufferState(event.bufferOutputs),
     })),
   );
   return createHash("sha256").update(history).digest("hex");
@@ -459,21 +478,44 @@ function measuredFieldCallKeys(traceText: string): Set<string> {
   return keys;
 }
 
-function didTargetEcallEnterField(traceText: string, rule: ScalarMutationRule): boolean {
-  const wantGen = rule.targetGeneration ?? 1;
+function measuredFieldSelectors(traceText: string): Set<string> {
+  const keys = new Set<string>();
   for (const line of traceText.split(/\r?\n/)) {
     if (!line) continue;
     try {
       const rec = JSON.parse(line) as Record<string, unknown>;
-      if (rec.record_type === "ecall" &&
-          rec.instance_generation === wantGen &&
-          rec.selector_ordinal === rule.selectorOrdinal &&
-          rec.selector_seq === rule.selectorSeq) {
-        return Array.isArray(rec.fields) && rec.fields.length > 0;
+      if (rec.record_type === "ecall" && rec.measurement_valid === true &&
+          Array.isArray(rec.fields) && rec.fields.length > 0) {
+        keys.add([rec.instance_generation, rec.selector_ordinal, rec.selector_seq].join(":"));
       }
     } catch {}
   }
-  return false;
+  return keys;
+}
+
+function ruleFieldSelectorKeys(rule: ScalarMutationRule): string[] {
+  const generation = rule.targetGeneration ?? 1;
+  const keys = [generation + ":" + rule.selectorOrdinal + ":" + rule.selectorSeq];
+  const consumer = rule.dataflowTarget;
+  if (consumer) keys.push(consumer.consumerGeneration + ":" + consumer.consumerSelectorOrdinal + ":" + consumer.consumerSelectorSeq);
+  return keys;
+}
+
+function targetFieldCallKeys(traceText: string, rule: ScalarMutationRule): Set<string> {
+  const targetKeys = new Set(ruleFieldSelectorKeys(rule));
+  const calls = new Set<string>();
+  for (const line of traceText.split(/\r?\n/)) {
+    if (!line) continue;
+    try {
+      const rec = JSON.parse(line) as Record<string, unknown>;
+      if (rec.record_type !== "ecall" || rec.measurement_valid !== true ||
+          !Array.isArray(rec.fields) || rec.fields.length === 0) continue;
+      const selectorKey = [rec.instance_generation, rec.selector_ordinal, rec.selector_seq].join(":");
+      if (targetKeys.has(selectorKey))
+        calls.add([rec.instance_generation, rec.call_seq, rec.selector_ordinal, rec.selector_seq].join(":"));
+    } catch {}
+  }
+  return calls;
 }
 
 function acceptedCandidateFeedback(
@@ -624,6 +666,8 @@ export async function exploreSeeds(options: ExplorerOptions): Promise<ExplorerRe
       if (baselineAccepted && baseline.capture && remainingBudget > 0) {
         const baselineHistory = callHistoryDigest(baseline.capture);
         const baselineFieldCalls = measuredFieldCallKeys(baseline.run.traceText);
+        const enteredFieldCallKeys = new Set(baselineFieldCalls);
+        const baselineFieldSelectors = measuredFieldSelectors(baseline.run.traceText);
         seenHistories.add(baselineHistory);
 
         const seenCandidateKeys = new Set<string>();
@@ -671,6 +715,7 @@ export async function exploreSeeds(options: ExplorerOptions): Promise<ExplorerRe
         const siteFeedbackScore = new Map<string, number>();
         const opKindCounts = new Map<string, number>();
         const selectorCounts = new Map<string, number>();
+        const fieldTargetCounts = new Map<string, number>();
         const hasNativeBuffersInBaseline = baseline.capture.events.some((ev) => ev.bufferInputs !== undefined);
         const exploredSites = new Set<string>();
         const targetKey = (rule: ScalarMutationRule): string =>
@@ -706,8 +751,12 @@ export async function exploreSeeds(options: ExplorerOptions): Promise<ExplorerRe
             target.consumerGeneration, target.consumerCallSeq,
             target.consumerSelectorOrdinal, target.consumerSelectorSeq,
           ].join(":")) ? 150 : 0;
+          const fieldTargetKey = ruleFieldSelectorKeys(plan.rule)
+            .find((key) => baselineFieldSelectors.has(key));
+          const fieldTargetCount = fieldTargetKey ? fieldTargetCounts.get(fieldTargetKey) ?? 0 : 0;
+          const fieldTargetBonus = fieldTargetKey ? (fieldTargetCount === 0 ? 480 : -90 * fieldTargetCount) : 0;
           return plan.priority + cappedTScore + cappedSScore + cappedUncovered +
-            familyBonus + selectorBonus + childBonus + measuredConsumerBonus;
+            familyBonus + selectorBonus + childBonus + measuredConsumerBonus + fieldTargetBonus;
         };
 
         const maxDerivationDepth = 3;
@@ -791,9 +840,15 @@ export async function exploreSeeds(options: ExplorerOptions): Promise<ExplorerRe
             : null;
           const novelState = digest !== null && !seenStates.has(digest);
           const novelHistory = histDigest !== null && !seenHistories.has(histDigest);
-          // Distinct call histories continue exploration even when their current page set is identical
-          const hasNativeBufferCapture = candidate.capture?.events.some((ev) => ev.bufferInputs !== undefined) ?? false;
-          const novel = novelState || (hasNativeBufferCapture && novelHistory) || delta.length > 0;
+          // Distinct histories and a first measured target-Field call are useful even when page effects match.
+          const candidateTargetFieldCalls = verdict.accepted
+            ? targetFieldCallKeys(candidate.run.traceText, plan.rule) : new Set<string>();
+          const targetEnteredField = candidateTargetFieldCalls.size > 0;
+          const newFieldEntry = [...candidateTargetFieldCalls].some((key) => !enteredFieldCallKeys.has(key));
+          if (verdict.accepted && verdict.measurementComplete) {
+            for (const key of candidateTargetFieldCalls) enteredFieldCallKeys.add(key);
+          }
+          const novel = novelState || novelHistory || delta.length > 0 || newFieldEntry;
           if (digest !== null && novelState) {
             seenStates.add(digest);
             uniqueFeedback.add(digest);
@@ -839,9 +894,11 @@ export async function exploreSeeds(options: ExplorerOptions): Promise<ExplorerRe
             const sDelta = delta.length > 0 ? 150 : rewardNovelOnly ? 60 : -15;
             siteFeedbackScore.set(siteId, sPrev + sDelta);
           }
-          const targetEnteredField = verdict.accepted
-            ? didTargetEcallEnterField(candidate.run.traceText, plan.rule)
-            : false;
+          const fieldTargetKey = ruleFieldSelectorKeys(plan.rule)
+            .find((key) => baselineFieldSelectors.has(key));
+          if (fieldTargetKey && targetEnteredField && verdict.measurementComplete) {
+            fieldTargetCounts.set(fieldTargetKey, (fieldTargetCounts.get(fieldTargetKey) ?? 0) + 1);
+          }
           const shouldCommit = verdict.accepted && (novel || delta.length > 0) &&
             (candidate.run.completion === "complete" || targetEnteredField || delta.length > 0);
           const commitRole: TraceCorpusRole | null = shouldCommit
@@ -856,6 +913,7 @@ export async function exploreSeeds(options: ExplorerOptions): Promise<ExplorerRe
             traceSha256: candTraceSha256,
             committedCorpusRole: commitRole,
             targetEnteredField,
+            newFieldEntry,
             opKind: plan.rule.opKind ?? "replace_scalar",
             depth,
             parentCandidateIndex,

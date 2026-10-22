@@ -75,4 +75,66 @@ static int atfield_json_write_page_effect(FILE *out, uint64_t rva, int a, int d)
     return 0;
 }
 
+static const char *atfield_json_skip_space(const char *p) {
+    while (*p == ' ' || *p == '\t' || *p == '\r' || *p == '\n') p++;
+    return p;
+}
+
+static int atfield_json_write_string_array(FILE *out, const char *json) {
+    if (!out) return -1;
+    if (!json) return fputs("[]", out) == EOF ? -1 : 0;
+
+    const char *p = atfield_json_skip_space(json);
+    if (*p != '[') return -1;
+    p++;
+    p = atfield_json_skip_space(p);
+    if (*p == ']') {
+        p++;
+    } else {
+        for (;;) {
+            if (*p != '"') return -1;
+            p++;
+            for (;;) {
+                const unsigned char c = (unsigned char)*p;
+                if (c == '\0') return -1;
+                if (c == '"') {
+                    p++;
+                    break;
+                }
+                if (c < 0x20) return -1;
+                if (c != '\\') {
+                    p++;
+                    continue;
+                }
+                p++;
+                if (*p == '\0') return -1;
+                if (*p == '"' || *p == '\\' || *p == '/' || *p == 'b' ||
+                    *p == 'f' || *p == 'n' || *p == 'r' || *p == 't') {
+                    p++;
+                    continue;
+                }
+                if (*p != 'u') return -1;
+                p++;
+                for (int i = 0; i < 4; i++) {
+                    if (*p == '\0') return -1;
+                    const char h = *p++;
+                    if (!((h >= '0' && h <= '9') || (h >= 'a' && h <= 'f') ||
+                          (h >= 'A' && h <= 'F'))) return -1;
+                }
+            }
+            p = atfield_json_skip_space(p);
+            if (*p == ']') {
+                p++;
+                break;
+            }
+            if (*p != ',') return -1;
+            p++;
+            p = atfield_json_skip_space(p);
+        }
+    }
+    p = atfield_json_skip_space(p);
+    if (*p != '\0') return -1;
+    return fputs(json, out) == EOF ? -1 : 0;
+}
+
 #endif /* ATFIELD_NATIVE_TRACE_JSON_H */

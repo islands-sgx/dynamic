@@ -60,6 +60,7 @@ export interface RunnerCpuConfig {
 export interface RunOptions {
   bundlePath: string;
   args: string[];
+  seedId?: string;
   collectorPath?: string;
   timeoutMs?: number;
   killGraceMs?: number;
@@ -965,6 +966,10 @@ async function runOne(
 
 export async function runCanonicalHost(options: RunOptions): Promise<CanonicalRun> {
   validateHostArgs(options.args);
+  const seedId = options.seedId ?? "canonical-host";
+  if (seedId.trim() === "" || seedId.includes("\0")) {
+    throw new Error("seedId must be a nonempty NUL-free string");
+  }
   const timeoutMs = options.timeoutMs ?? 30_000;
   const killGraceMs = options.killGraceMs ?? 500;
   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1) {
@@ -976,7 +981,7 @@ export async function runCanonicalHost(options: RunOptions): Promise<CanonicalRu
   const artifacts = readBundleArtifacts(options.bundlePath);
   const collector = readCollector(options.collectorPath);
   const normalizedOptions = { ...options, timeoutMs, killGraceMs };
-  return await runOne(artifacts, collector, { seed_id: "canonical-host", argv: options.args }, normalizedOptions);
+  return await runOne(artifacts, collector, { seed_id: seedId, argv: options.args }, normalizedOptions);
 }
 
 export async function runSeedCommands(options: RunSeedCommandsOptions): Promise<CanonicalRun[]> {
