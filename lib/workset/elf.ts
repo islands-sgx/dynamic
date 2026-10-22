@@ -297,6 +297,8 @@ export function parseSignedMetadata(elf: ElfFile): Record<string, unknown> {
   const metadataSize = desc.readUInt32LE(16);
   const ssaFramePages = desc.readUInt32LE(24);
   const enclaveSize = Number(desc.readBigUInt64LE(40));
+  const attributesFlags = Number(desc.readBigUInt64LE(48));
+  const attributesXfrm = Number(desc.readBigUInt64LE(56));
   if (magic !== MAGIC)
     throw new WorksetError(`bad .note.sgxmeta magic in ${elf.path}: 0x${magic.toString(16)}`);
   if (metadataSize < 0x750 || metadataSize > desc.length)
@@ -333,7 +335,7 @@ export function parseSignedMetadata(elf: ElfFile): Record<string, unknown> {
     const siFlags = Number(desc.readBigUInt64LE(offset + 24));
     entries.push({ id: identity, name: LAYOUT_NAMES[identity] ?? `LAYOUT_${identity}`, attributes, pages, rva, content_size: contentSize, content_offset: contentOffset, si_flags: siFlags });
   }
-  return { version: Number(version), metadata_size: metadataSize, ssa_frame_pages: ssaFramePages, enclave_size: enclaveSize, layout_entries: entries };
+  return { version: Number(version), metadata_size: metadataSize, ssa_frame_pages: ssaFramePages, enclave_size: enclaveSize, attributes_flags: attributesFlags, attributes_xfrm: attributesXfrm, layout_entries: entries };
 }
 
 export function signerPatchPayloads(signed: ElfFile): Array<[number, Buffer]> {

@@ -87,7 +87,7 @@ export interface CanonicalRun {
   gateMode: GateMode;
   targetKind: "profile" | "final-v2";
   selectedEnclaveSha256: string;
-  finalV2Target?: { manifestSha256: string; worksetSha256: string; capacityQ: number; signedFinalElfSha256: string; readyTableSha256: string; signedMeasurementFinalElfSha256: string; manifestFieldCount: number };
+  finalV2Target?: { manifestSha256: string; worksetSha256: string; capacityQ: number; signedFinalElfSha256: string; readyTableSha256: string; signedMeasurementFinalElfSha256: string; manifestFieldCount: number; productionConfigSha256: string; measurementConfigSha256: string; productionAexNotify: true; measurementAexNotify: false };
   cpuConfig: RunnerCpuConfig;
   seedId: string;
   argv: string[];
@@ -948,6 +948,10 @@ async function runOne(
         readyTableSha256: finalTarget.identity.ready_table_sha256,
         signedMeasurementFinalElfSha256: finalTarget.identity.signed_measurement_final_elf_sha256,
         manifestFieldCount: finalTarget.manifestFieldCount,
+        productionConfigSha256: finalTarget.identity.production_config_sha256,
+        measurementConfigSha256: finalTarget.identity.measurement_config_sha256,
+        productionAexNotify: finalTarget.identity.production_aex_notify,
+        measurementAexNotify: finalTarget.identity.measurement_aex_notify,
       } } : {}),
       cpuConfig: finalCpuConfig,
       seedId: command.seed_id,
@@ -989,6 +993,11 @@ async function runOne(
           production_signed_final_sha256: finalTarget.identity.signed_final_elf_sha256,
           ready_table_sha256: finalTarget.identity.ready_table_sha256,
           signed_measurement_final_sha256: finalTarget.identity.signed_measurement_final_elf_sha256,
+          production_config_sha256: finalTarget.identity.production_config_sha256,
+          measurement_config_sha256: finalTarget.identity.measurement_config_sha256,
+          production_aex_notify: finalTarget.identity.production_aex_notify,
+          measurement_aex_notify: finalTarget.identity.measurement_aex_notify,
+          measurement_signing_metadata_delta: finalTarget.identity.measurement_signing_metadata_delta,
         } : null,
         use_4gate: true,
         ipi_mask: Number(ipiMask),

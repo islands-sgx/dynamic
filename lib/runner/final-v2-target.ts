@@ -2,11 +2,11 @@ import { mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, statSync, w
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { isObject, normalizeDigest, parseStrictJson, sha256, type JsonObject, type ProfileBundle } from "../bundle/profile-bundle.ts";
-import { ElfFile, elfLoadEquivalence } from "../workset/elf.ts";
+import { ElfFile, elfLoadEquivalence, parseSignedMetadata } from "../workset/elf.ts";
 import { patchElf4gate } from "../workset/patch-4gate.ts";
 
-export const FINAL_V2_TARGET_SCHEMA = "atfield-final-v2-run-target-v1";
-const NAMES = ["workset", "fields", "final_elf", "signed_final_elf", "pretouch_verified", "ready_table_json", "ready_table", "measurement_patch_json", "measurement_final_elf", "signed_measurement_final_elf"] as const;
+export const FINAL_V2_TARGET_SCHEMA = "atfield-final-v2-run-target-v2";
+const NAMES = ["workset", "fields", "final_elf", "signed_final_elf", "pretouch_verified", "ready_table_json", "ready_table", "measurement_patch_json", "measurement_final_elf", "signed_measurement_final_elf", "production_config_xml", "measurement_config_xml"] as const;
 type Name = (typeof NAMES)[number];
 type Ref = { path: string; sha256: string };
 type Identity = {
@@ -14,7 +14,8 @@ type Identity = {
   workset_sha256: string; fields_sha256: string; capacity_q: number; final_elf_sha256: string;
   signed_final_elf_sha256: string; pretouch_verified_sha256: string; ready_table_manifest_sha256: string;
   ready_table_sha256: string; measurement_patch_sha256: string; measurement_final_elf_sha256: string;
-  signed_measurement_final_elf_sha256: string;
+  signed_measurement_final_elf_sha256: string; production_config_sha256: string; measurement_config_sha256: string;
+  production_aex_notify: true; measurement_aex_notify: false; measurement_signing_metadata_delta: "aex-notify-only";
 };
 type Manifest = { schema: string; identity: Identity; artifacts: Record<Name, Ref> };
 export interface FinalV2RunTarget {
@@ -55,12 +56,36 @@ function sameLoadGeometry(a: ElfFile, b: ElfFile): boolean {
   });
   return geometry(a) === geometry(b);
 }
+const SGX_FLAGS_AEX_NOTIFY = 0x400;
+export function deriveMeasurementConfigXml(productionConfigXml: string): string {
+  if (!/<EnclaveConfiguration\s*>/.test(productionConfigXml) || !/<\/EnclaveConfiguration\s*>/.test(productionConfigXml)) fail("production SGX config must be an EnclaveConfiguration document");
+  const tagCount = productionConfigXml.match(/<EnableAEXNotify\b/g)?.length ?? 0;
+  const matches = [...productionConfigXml.matchAll(/^([ \t]*<EnableAEXNotify>[ \t]*)1([ \t]*<\/EnableAEXNotify>[ \t]*)(\r?)$/gm)];
+  if (tagCount !== 1 || matches.length !== 1) fail("production SGX config must have one explicit EnableAEXNotify=1 element");
+  const match = matches[0]!;
+  return productionConfigXml.replace(match[0], match[1]! + "0" + match[2]! + match[3]!);
+}
+export function assertMeasurementConfigDerived(productionConfigXml: string, measurementConfigXml: string): void {
+  if (deriveMeasurementConfigXml(productionConfigXml) !== measurementConfigXml) fail("measurement SGX config must differ from the production config only by EnableAEXNotify=0");
+}
+export function assertFinalV2AexMetadata(production: Record<string, unknown>, measurement: Record<string, unknown>): void {
+  const prodFlags = production.attributes_flags, measureFlags = measurement.attributes_flags;
+  if (typeof prodFlags !== "number" || !Number.isSafeInteger(prodFlags) || typeof measureFlags !== "number" || !Number.isSafeInteger(measureFlags)) fail("signed SGX metadata is missing valid attributes.flags");
+  if ((prodFlags & SGX_FLAGS_AEX_NOTIFY) === 0 || (measureFlags & SGX_FLAGS_AEX_NOTIFY) !== 0 || (prodFlags ^ measureFlags) !== SGX_FLAGS_AEX_NOTIFY) fail("signed measurement Final must differ from production Final only by disabling AEX_NOTIFY");
+  const stable = (meta: Record<string, unknown>, flags: number) => ({
+    version: meta.version, metadata_size: meta.metadata_size, ssa_frame_pages: meta.ssa_frame_pages,
+    enclave_size: meta.enclave_size, attributes_flags: flags & ~SGX_FLAGS_AEX_NOTIFY,
+    attributes_xfrm: meta.attributes_xfrm, layout_entries: meta.layout_entries,
+  });
+  if (JSON.stringify(stable(production, prodFlags)) !== JSON.stringify(stable(measurement, measureFlags))) fail("production and measurement signed SGX metadata layout differs beyond the AEX_NOTIFY bit");
+}
 export function assertWorksetDigestBound(expectedSha256: string, claimedSha256: unknown, label: string): void {
   if (digest(claimedSha256, label) !== digest(expectedSha256, "frozen workset SHA-256")) fail(label + " does not match the frozen workset digest");
 }
 export function assertFinalV2BundleIdentity(bundle: ProfileBundle, id: Identity): void {
   if (digest(id.profile_bundle_manifest_sha256, "identity.profile_bundle_manifest_sha256") !== bundle.manifestSha256) fail("target belongs to a different Profile bundle");
   if (norm(id.layout_epoch) !== norm(bundle.layoutEpoch) || id.workset_schema !== "atfield-workset-v2" || !Number.isSafeInteger(id.capacity_q) || id.capacity_q !== bundle.capacityQ) fail("target layout/Q does not match the frozen v2 Profile bundle");
+  if (id.production_aex_notify !== true || id.measurement_aex_notify !== false || id.measurement_signing_metadata_delta !== "aex-notify-only") fail("target must declare production AEX_NOTIFY=1 and diagnostic measurement AEX_NOTIFY=0");
 }
 function validate(bundle: ProfileBundle, base: string, raw: Manifest): FinalV2RunTarget {
   if (raw.schema !== FINAL_V2_TARGET_SCHEMA || !isObject(raw.identity) || !isObject(raw.artifacts)) fail("expected " + FINAL_V2_TARGET_SCHEMA);
@@ -75,8 +100,13 @@ function validate(bundle: ProfileBundle, base: string, raw: Manifest): FinalV2Ru
     [id.ready_table_manifest_sha256, "ready_table_json", "ReadyTable manifest"], [id.ready_table_sha256, "ready_table", "ReadyTable binary"],
     [id.measurement_patch_sha256, "measurement_patch_json", "measurement patch manifest"], [id.measurement_final_elf_sha256, "measurement_final_elf", "measurement Final"],
     [id.signed_measurement_final_elf_sha256, "signed_measurement_final_elf", "signed measurement Final"],
+    [id.production_config_sha256, "production_config_xml", "production SGX config"],
+    [id.measurement_config_sha256, "measurement_config_xml", "diagnostic SGX config"],
   ];
   for (const [claim, name, label] of claims) if (digest(claim, "identity." + label) !== sha(name)) fail(label + " SHA does not match frozen bytes");
+  const productionConfig = new TextDecoder("utf-8", { fatal: true }).decode(readFileSync(files.production_config_xml.path));
+  const measurementConfig = new TextDecoder("utf-8", { fatal: true }).decode(readFileSync(files.measurement_config_xml.path));
+  assertMeasurementConfigDerived(productionConfig, measurementConfig);
   const workset = json(files.workset.path, "workset");
   if (workset.schema !== "atfield-workset-v2" || norm(workset.layout_epoch) !== norm(bundle.layoutEpoch) || digest(workset.bundle_manifest_sha256, "workset.bundle_manifest_sha256") !== bundle.manifestSha256 || workset.capacity_q !== bundle.capacityQ) fail("workset is not the frozen v2 workset for this Profile bundle/layout");
   if (sha("fields") !== bundle.identity.fieldsSha256) fail("fields differ from the Profile bundle");
@@ -93,6 +123,7 @@ function validate(bundle: ProfileBundle, base: string, raw: Manifest): FinalV2Ru
   if (!sameLoadGeometry(production, signedProduction) || !sameLoadGeometry(production, measurement) || !sameLoadGeometry(production, signedMeasurement)) fail("PT_LOAD/PT_GNU_RELRO geometry differs across production and measurement Final images");
   elfLoadEquivalence(production, signedProduction);
   elfLoadEquivalence(measurement, signedMeasurement);
+  assertFinalV2AexMetadata(parseSignedMetadata(signedProduction), parseSignedMetadata(signedMeasurement));
   const temp = mkdtempSync(path.join(tmpdir(), "atfield-final-v2-patch-check-"));
   try {
     const reproduced = path.join(temp, "measurement.elf");
@@ -109,7 +140,7 @@ export function loadFinalV2RunTarget(filename: string, bundle: ProfileBundle): F
 export interface FreezeFinalV2Input {
   bundle: ProfileBundle; workset: string; fields: string; finalElf: string; signedFinalElf: string;
   pretouchVerified: string; readyTableJson: string; readyTable: string; measurementPatchJson: string;
-  measurementFinalElf: string; signedMeasurementFinalElf: string; output: string;
+  measurementFinalElf: string; signedMeasurementFinalElf: string; productionConfigXml: string; measurementConfigXml: string; output: string;
 }
 export function freezeFinalV2RunTarget(input: FreezeFinalV2Input): FinalV2RunTarget {
   const output = path.resolve(input.output), root = path.dirname(output);
@@ -120,6 +151,7 @@ export function freezeFinalV2RunTarget(input: FreezeFinalV2Input): FinalV2RunTar
     ready_table_json: freezeArtifact(input.readyTableJson), ready_table: freezeArtifact(input.readyTable),
     measurement_patch_json: freezeArtifact(input.measurementPatchJson), measurement_final_elf: freezeArtifact(input.measurementFinalElf),
     signed_measurement_final_elf: freezeArtifact(input.signedMeasurementFinalElf),
+    production_config_xml: freezeArtifact(input.productionConfigXml), measurement_config_xml: freezeArtifact(input.measurementConfigXml),
   } satisfies Record<Name, Ref>;
   const identity: Identity = {
     profile_bundle_manifest_sha256: input.bundle.manifestSha256, layout_epoch: input.bundle.layoutEpoch, workset_schema: "atfield-workset-v2",
@@ -128,6 +160,8 @@ export function freezeFinalV2RunTarget(input: FreezeFinalV2Input): FinalV2RunTar
     pretouch_verified_sha256: artifacts.pretouch_verified.sha256, ready_table_manifest_sha256: artifacts.ready_table_json.sha256,
     ready_table_sha256: artifacts.ready_table.sha256, measurement_patch_sha256: artifacts.measurement_patch_json.sha256,
     measurement_final_elf_sha256: artifacts.measurement_final_elf.sha256, signed_measurement_final_elf_sha256: artifacts.signed_measurement_final_elf.sha256,
+    production_config_sha256: artifacts.production_config_xml.sha256, measurement_config_sha256: artifacts.measurement_config_xml.sha256,
+    production_aex_notify: true, measurement_aex_notify: false, measurement_signing_metadata_delta: "aex-notify-only",
   };
   writeFileSync(output, JSON.stringify({ schema: FINAL_V2_TARGET_SCHEMA, identity, artifacts }, null, 2) + "\n", { mode: 0o600, flag: "wx" });
   try { return loadFinalV2RunTarget(output, input.bundle); }

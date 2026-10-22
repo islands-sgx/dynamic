@@ -233,8 +233,8 @@ async function main(): Promise<number> {
       exit_code: run.exitCode,
       trace_sha256: run.traceSha256,
       ecall_count: run.parsedTrace?.ecallCount ?? null,
-      observed_fields: run.parsedTrace?.observedFieldIds ?? [],
-      measured_fields: run.parsedTrace?.measuredFieldIds ?? [],
+      s3_page_effect_field_ids: run.parsedTrace?.observedFieldIds ?? [],
+      measured_field_ids: run.parsedTrace?.measuredFieldIds ?? [],
       artifact_paths: run.artifactPaths ?? null,
       child_stderr_excerpt: shortOutput(run.stderr),
     };

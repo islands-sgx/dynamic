@@ -6,7 +6,7 @@ import { freezeFinalV2RunTarget } from "../lib/runner/final-v2-target.ts";
 const FLAGS = new Set([
   "--bundle", "--workset", "--fields", "--final-elf", "--signed-final-elf", "--pretouch-verified",
   "--ready-table-json", "--ready-table", "--measurement-patch-json", "--measurement-final-elf",
-  "--signed-measurement-final-elf", "--out",
+  "--signed-measurement-final-elf", "--production-config-xml", "--measurement-config-xml", "--out",
 ]);
 function usage(): string {
   return [
@@ -16,7 +16,8 @@ function usage(): string {
     "  --final-elf FINAL --signed-final-elf SIGNED_FINAL --pretouch-verified VERIFIED",
     "  --ready-table-json READY_JSON --ready-table READY_BIN",
     "  --measurement-patch-json PATCH_JSON --measurement-final-elf GATED_FINAL",
-    "  --signed-measurement-final-elf SIGNED_GATED_FINAL --out TARGET_JSON",
+    "  --signed-measurement-final-elf SIGNED_GATED_FINAL",
+    "  --production-config-xml PROD_XML --measurement-config-xml DIAGNOSTIC_XML --out TARGET_JSON",
     "",
     "Artifact paths are frozen as absolute paths and may be in separate directories.",
   ].join("\n");
@@ -52,6 +53,8 @@ async function main(): Promise<number> {
       measurementPatchJson: args["--measurement-patch-json"]!,
       measurementFinalElf: args["--measurement-final-elf"]!,
       signedMeasurementFinalElf: args["--signed-measurement-final-elf"]!,
+      productionConfigXml: args["--production-config-xml"]!,
+      measurementConfigXml: args["--measurement-config-xml"]!,
       output: args["--out"]!,
     });
     console.log(JSON.stringify({
@@ -65,6 +68,11 @@ async function main(): Promise<number> {
       signed_final_elf_sha256: target.identity.signed_final_elf_sha256,
       ready_table_sha256: target.identity.ready_table_sha256,
       selected_signed_measurement_final_sha256: target.identity.signed_measurement_final_elf_sha256,
+      production_config_sha256: target.identity.production_config_sha256,
+      measurement_config_sha256: target.identity.measurement_config_sha256,
+      production_aex_notify: target.identity.production_aex_notify,
+      measurement_aex_notify: target.identity.measurement_aex_notify,
+      measurement_signing_metadata_delta: target.identity.measurement_signing_metadata_delta,
       verdict: "PASS",
     }, null, 2));
     return 0;
