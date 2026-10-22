@@ -453,6 +453,8 @@ sgx_status_t sgx_create_enclave(
     if (pure_prod_mode) use_4gate = 0;
     else use_4gate = 1;
     if (getenv("ATFIELD_USE_4GATE")) use_4gate = atoi(getenv("ATFIELD_USE_4GATE"));
+    const char *postclear_diag_env = getenv("ATFIELD_GATEC_POSTCLEAR_TRACE");
+    gatec_postclear_diag_enabled = postclear_diag_env && strcmp(postclear_diag_env, "1") == 0;
     const char *mode_env = getenv("ATFIELD_MODE");
     if (mode_env && strcmp(mode_env, "verify-pretouch") == 0) {
         ipi_mask = 3;
@@ -651,6 +653,10 @@ sgx_status_t sgx_create_enclave(
             if (!o->s1_ad) o->s1_ad = (uint64_t *)calloc(MAX_TRACKED_PAGES, sizeof(uint64_t));
             if (!o->s2_ad) o->s2_ad = (uint64_t *)calloc(MAX_TRACKED_PAGES, sizeof(uint64_t));
             if (!o->s3_ad) o->s3_ad = (uint64_t *)calloc(MAX_TRACKED_PAGES, sizeof(uint64_t));
+            if (gatec_postclear_diag_enabled && !o->gate_c_postclear_ad) {
+                o->gate_c_postclear_ad = (uint64_t *)calloc(MAX_TRACKED_PAGES, sizeof(uint64_t));
+                if (o->gate_c_postclear_ad) o->gate_c_postclear_capacity = MAX_TRACKED_PAGES;
+            }
             const void *obs_buffers[] = {o->s0_ad, o->s1_ad, o->s2_ad, o->s3_ad};
             if (!atfield_buffers_ready(obs_buffers, sizeof(obs_buffers) / sizeof(obs_buffers[0]))) gate_buffers_ready = 0;
         }
@@ -1163,6 +1169,30 @@ static sgx_status_t execute_one_measured_ecall(
                 write_ad_json_array(trace_fp, (complete[gi] && any_snapshot) ? trace_merged_ad[gi] : NULL, 0);
                 trace_printf("}");
             }
+            if (gatec_postclear_diag_enabled) {
+                uint64_t *checkpoint_or = trace_merged_ad[0];
+                memset(checkpoint_or, 0, sizeof(uint64_t) * (size_t)num_pages);
+                atfield_gatec_checkpoint_summary_t checkpoint_summary;
+                atfield_gatec_checkpoint_summary_init(&checkpoint_summary, (size_t)num_pages);
+                for (int j = f; j < cur_obs_count; j++) {
+                    field_obs_t *obs = &cur_obs[j];
+                    if (obs->field_id != first->field_id) continue;
+                    atfield_gatec_checkpoint_summary_add(&checkpoint_summary,
+                        obs->gate_c_postclear_captured,
+                        obs->gate_c_postclear_checked_pages);
+                    if (obs->gate_c_postclear_captured && obs->gate_c_postclear_ad &&
+                        obs->gate_c_postclear_checked_pages == (size_t)num_pages)
+                        atfield_or_words(checkpoint_or, obs->gate_c_postclear_ad, (size_t)num_pages);
+                }
+                if (fputs(",\"gate_c_postclear\":", trace_fp) == EOF ||
+                    atfield_json_write_gatec_postclear(trace_fp, page_rvas, checkpoint_or,
+                        (size_t)num_pages, checkpoint_summary.observation_count,
+                        checkpoint_summary.checkpoint_count,
+                        checkpoint_summary.checkpoint_count ? (size_t)num_pages : 0,
+                        atfield_gatec_checkpoint_summary_complete(&checkpoint_summary),
+                        A_MASK, D_MASK) != 0)
+                    trace_note_io_failure("trace_write_failed");
+            }
             trace_printf("}}");
         }
         trace_printf("],\"aex\":{\"count\":%u,\"protocol_gate_count\":%u,\"unexpected_count\":%u,\"outside_window_count\":%u,"
@@ -1459,6 +1489,7 @@ static void cleanup_interpose(void) {
     g_shared_owned = 0;
     for (int i = 0; i < MAX_FIELD_OBS_PER_ECALL; i++) {
         free(cur_obs[i].s0_ad); free(cur_obs[i].s1_ad); free(cur_obs[i].s2_ad); free(cur_obs[i].s3_ad);
+        free(cur_obs[i].gate_c_postclear_ad);
         memset(&cur_obs[i], 0, sizeof(cur_obs[i]));
     }
     cur_obs_count = 0;

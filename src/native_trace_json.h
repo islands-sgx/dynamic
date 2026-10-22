@@ -137,4 +137,39 @@ static int atfield_json_write_string_array(FILE *out, const char *json) {
     return fputs(json, out) == EOF ? -1 : 0;
 }
 
+/* Diagnostic-only Gate C post-clear checkpoint. Sparse effects are raw A/D values;
+ * omitted tracked pages are zero only when complete is true. */
+static int atfield_json_write_gatec_postclear(FILE *out,
+                                               const uint64_t *rvas,
+                                               const uint64_t *ad,
+                                               size_t page_count,
+                                               size_t observation_count,
+                                               size_t checkpoint_count,
+                                               size_t checked_page_count,
+                                               int complete,
+                                               uint64_t a_mask,
+                                               uint64_t d_mask) {
+    if (!out || (page_count && (!rvas || !ad))) return -1;
+    if (fprintf(out, "{\"page_size\":4096,\"checkpoint_scope\":\"ecall_field_or\","
+                     "\"complete\":%s,\"observation_count\":%zu,"
+                     "\"checkpoint_count\":%zu,\"checked_page_count_per_complete_checkpoint\":%zu,"
+                     "\"nonzero_page_count\":",
+                complete ? "true" : "false", observation_count, checkpoint_count,
+                complete ? page_count : checked_page_count) < 0) return -1;
+    size_t nonzero = 0;
+    for (size_t i = 0; i < page_count; i++)
+        if (ad[i] & (a_mask | d_mask)) nonzero++;
+    if (fprintf(out, "%zu,\"page_effects\":[", nonzero) < 0) return -1;
+    int first = 1;
+    for (size_t i = 0; i < page_count; i++) {
+        int a = (ad[i] & a_mask) != 0;
+        int d = (ad[i] & d_mask) != 0;
+        if (!a && !d) continue;
+        if ((!first && fputc(',', out) == EOF) ||
+            atfield_json_write_page_effect(out, rvas[i], a, d) != 0) return -1;
+        first = 0;
+    }
+    return fputs("]}", out) == EOF ? -1 : 0;
+}
+
 #endif /* ATFIELD_NATIVE_TRACE_JSON_H */

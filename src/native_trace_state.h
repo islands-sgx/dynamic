@@ -17,6 +17,42 @@ static const char *const atfield_ecall_record_keys[] = {
     "abi_return_type", "abi_return_value", "out_status_i32", "measurement_valid",
     "measurement_invalid_reasons", "fields", "aex", "business_result"
 };
+typedef struct {
+    size_t observation_count;
+    size_t checkpoint_count;
+    size_t page_count;
+    int complete;
+} atfield_gatec_checkpoint_summary_t;
+
+static inline void atfield_gatec_checkpoint_summary_init(
+    atfield_gatec_checkpoint_summary_t *summary, size_t page_count)
+{
+    if (!summary) return;
+    summary->observation_count = 0;
+    summary->checkpoint_count = 0;
+    summary->page_count = page_count;
+    summary->complete = 1;
+}
+
+static inline void atfield_gatec_checkpoint_summary_add(
+    atfield_gatec_checkpoint_summary_t *summary, int captured, size_t checked_page_count)
+{
+    if (!summary) return;
+    summary->observation_count++;
+    if (!captured || checked_page_count != summary->page_count) {
+        summary->complete = 0;
+        return;
+    }
+    summary->checkpoint_count++;
+}
+
+static inline int atfield_gatec_checkpoint_summary_complete(
+    const atfield_gatec_checkpoint_summary_t *summary)
+{
+    return summary && summary->observation_count > 0 && summary->complete &&
+        summary->checkpoint_count == summary->observation_count;
+}
+
 static inline int atfield_parse_hex_range(const char *text, uint64_t *start, uint64_t *end) {
     if (!text || !start || !end) return -1;
     const char *p = text;

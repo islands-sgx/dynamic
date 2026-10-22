@@ -206,6 +206,41 @@ static int test_aex_classification_and_verified_phase_mask(void) {
     return 0;
 }
 
+static int test_gatec_postclear_checkpoint(void) {
+    const uint64_t rvas[] = {0x1000, 0x2000, 0x3000, 0x4000};
+    const uint64_t ad[] = {0, 1u, 2u, 3u};
+    atfield_gatec_checkpoint_summary_t summary;
+    atfield_gatec_checkpoint_summary_init(&summary, 4);
+    atfield_gatec_checkpoint_summary_add(&summary, 1, 4);
+    atfield_gatec_checkpoint_summary_add(&summary, 1, 4);
+    if (!atfield_gatec_checkpoint_summary_complete(&summary) ||
+        summary.observation_count != 2 || summary.checkpoint_count != 2) return 70;
+    FILE *fp = tmpfile();
+    if (!fp) return 71;
+    const char expected[] = "{\"page_size\":4096,\"checkpoint_scope\":\"ecall_field_or\",\"complete\":true,\"observation_count\":2,\"checkpoint_count\":2,\"checked_page_count_per_complete_checkpoint\":4,\"nonzero_page_count\":3,\"page_effects\":[{\"rva\":\"0x2000\",\"a\":true,\"d\":false},{\"rva\":\"0x3000\",\"a\":false,\"d\":true},{\"rva\":\"0x4000\",\"a\":true,\"d\":true}]}";
+    int ok = atfield_json_write_gatec_postclear(fp, rvas, ad, 4,
+        summary.observation_count, summary.checkpoint_count, 4,
+        atfield_gatec_checkpoint_summary_complete(&summary), 1u, 2u) == 0 &&
+        stream_matches(fp, expected);
+    if (fclose(fp) != 0) return 72;
+    if (!ok) return 73;
+    /* A missing page scan makes the whole sparse checkpoint explicitly incomplete. */
+    atfield_gatec_checkpoint_summary_init(&summary, 4);
+    atfield_gatec_checkpoint_summary_add(&summary, 1, 4);
+    atfield_gatec_checkpoint_summary_add(&summary, 0, 0);
+    if (atfield_gatec_checkpoint_summary_complete(&summary) ||
+        summary.checkpoint_count != 1 || summary.observation_count != 2) return 74;
+    fp = tmpfile();
+    if (!fp) return 75;
+    const char incomplete[] = "{\"page_size\":4096,\"checkpoint_scope\":\"ecall_field_or\",\"complete\":false,\"observation_count\":2,\"checkpoint_count\":1,\"checked_page_count_per_complete_checkpoint\":4,\"nonzero_page_count\":3,\"page_effects\":[{\"rva\":\"0x2000\",\"a\":true,\"d\":false},{\"rva\":\"0x3000\",\"a\":false,\"d\":true},{\"rva\":\"0x4000\",\"a\":true,\"d\":true}]}";
+    ok = atfield_json_write_gatec_postclear(fp, rvas, ad, 4,
+        summary.observation_count, summary.checkpoint_count, 4,
+        atfield_gatec_checkpoint_summary_complete(&summary), 1u, 2u) == 0 &&
+        stream_matches(fp, incomplete);
+    if (fclose(fp) != 0) return 76;
+    return ok ? 0 : 77;
+}
+
 int main(void) {
     int rc = test_readiness_sha_policy();
     if (rc) return rc;
@@ -228,6 +263,8 @@ int main(void) {
     rc = test_eid_and_concurrency_rejection();
     if (rc) return rc;
     rc = test_repeated_field_or_and_completeness();
+    if (rc) return rc;
+    rc = test_gatec_postclear_checkpoint();
     if (rc) return rc;
     return test_aex_classification_and_verified_phase_mask();
 }

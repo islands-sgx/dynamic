@@ -557,8 +557,12 @@ static field_obs_t *watcher_current_observation_locked(void) {
         int slot = cur_obs_count++;
         field_obs_t *o = &cur_obs[slot];
         uint64_t *s0 = o->s0_ad, *s1 = o->s1_ad, *s2 = o->s2_ad, *s3 = o->s3_ad;
+        uint64_t *postclear = o->gate_c_postclear_ad;
+        size_t postclear_capacity = o->gate_c_postclear_capacity;
         memset(o, 0, sizeof(*o));
         o->s0_ad = s0; o->s1_ad = s1; o->s2_ad = s2; o->s3_ad = s3;
+        o->gate_c_postclear_ad = postclear;
+        o->gate_c_postclear_capacity = postclear_capacity;
         if (!s0 || !s1 || !s2 || !s3) {
             obs_truncated = 1;
             mark_invalid("field_observation_buffers_unavailable");
@@ -664,6 +668,20 @@ static void *watcher_loop(void *arg) {
             if (ipi_mask & 4) {
                 if (trigger_tlb_shootdown_ipi_verified(50u)) cur_ipi_ok_mask |= 4;
                 clear_ad_only();
+            }
+            if (gatec_postclear_diag_enabled) {
+                pthread_mutex_lock(&phase_mutex);
+                if (watcher_active_slot >= 0) {
+                    field_obs_t *diag_obs = &cur_obs[watcher_active_slot];
+                    if (diag_obs->field_id == g_shared->active_field_id &&
+                        diag_obs->gate_c_postclear_ad &&
+                        diag_obs->gate_c_postclear_capacity >= (size_t)num_pages) {
+                        snapshot_ad(diag_obs->gate_c_postclear_ad);
+                        diag_obs->gate_c_postclear_checked_pages = (size_t)num_pages;
+                        diag_obs->gate_c_postclear_captured = 1;
+                    }
+                }
+                pthread_mutex_unlock(&phase_mutex);
             }
             if (s3_arm_any) {
                 for (int i = 0; i < num_pages; i++) {

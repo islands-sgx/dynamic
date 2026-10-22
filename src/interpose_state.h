@@ -93,6 +93,10 @@ typedef struct {
     uint64_t *s1_ad;
     uint64_t *s2_ad;
     uint64_t *s3_ad;
+    uint64_t *gate_c_postclear_ad;
+    size_t gate_c_postclear_capacity;
+    size_t gate_c_postclear_checked_pages;
+    int gate_c_postclear_captured;
     uint64_t heap_lo_rva;
     uint64_t heap_hi_rva;
     int num_live_chunks;
@@ -174,6 +178,7 @@ static int ipi_flush_failure_count = 0;
 static int mutation_oob_rejected_count = 0;
 static char last_invalid_reason[128] = "";
 
+static int gatec_postclear_diag_enabled = 0;
 static int strict_mode = 0;
 static int strict_config_invalid = 0;
 static uint8_t strict_selector_has_map[64];
