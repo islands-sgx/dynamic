@@ -21,11 +21,42 @@ export interface DeriveCaseOptions {
   budget: number;
   depth?: number;
   frontier?: FrontierEntry[];
+  measuredFieldCallKeys?: ReadonlySet<string>;
   expansionBufferBudgetBytes?: bigint;
   expansionTotalBudgetBytes?: bigint;
   parentMutation?: PlannedMutation;
   includeBuffers?: boolean;
   includeHistory?: boolean;
+}
+
+export function linkedConsumerCallKey(rule: ScalarMutationRule): string | null {
+  const target = rule.dataflowTarget;
+  return target
+    ? [target.consumerGeneration, target.consumerCallSeq,
+        target.consumerSelectorOrdinal, target.consumerSelectorSeq].join(":")
+    : null;
+}
+
+export function reserveLinkedConsumerCallKeys(
+  plans: readonly PlannedMutation[],
+  measuredFieldCallKeys: ReadonlySet<string>,
+  candidateBudget: number,
+): string[] {
+  if (!Number.isSafeInteger(candidateBudget) || candidateBudget < 0) {
+    fail("linked consumer reservation budget must be a safe nonnegative integer");
+  }
+  const seen = new Set<string>();
+  const measured: string[] = [];
+  const unmeasured: string[] = [];
+  for (const plan of plans) {
+    const key = linkedConsumerCallKey(plan.rule);
+    if (key === null || seen.has(key)) continue;
+    seen.add(key);
+    (measuredFieldCallKeys.has(key) ? measured : unmeasured).push(key);
+  }
+  const reserved = measured.slice(0, candidateBudget);
+  if (reserved.length < candidateBudget && unmeasured.length > 0) reserved.push(unmeasured[0]!);
+  return reserved;
 }
 
 function fail(message: string): never {
@@ -964,7 +995,11 @@ export function deriveCandidatesFromCase(
     list.push(item);
     buckets.set(bKey, list);
   }
-  const linkedCandidate = sortedAll.find((item) => item.rule.dataflowTarget !== undefined);
+  const linkedPlans = sortedAll.filter((item) => item.rule.dataflowTarget !== undefined);
+  const linkedCandidate = linkedPlans.find((item) => {
+    const key = linkedConsumerCallKey(item.rule);
+    return key !== null && options.measuredFieldCallKeys?.has(key) === true;
+  }) ?? linkedPlans[0];
   const isDirectWriteLe = (item: PlannedMutation): boolean =>
     item.rule.dataflowTarget === undefined &&
     (item.rule.opKind ?? "replace_scalar") === "mutate_buffer" &&
@@ -981,7 +1016,19 @@ export function deriveCandidatesFromCase(
   const directCandidate = directLinkedCounterpart ?? sortedAll.find(isDirectWriteLe);
   const interleaved: PlannedMutation[] = [];
   const reserved = new Set<PlannedMutation>();
-  if (linkedCandidate) {
+  if (options.measuredFieldCallKeys && options.measuredFieldCallKeys.size > 0) {
+    for (const key of reserveLinkedConsumerCallKeys(linkedPlans, options.measuredFieldCallKeys, budget)) {
+      const plan = linkedPlans.find((item) => linkedConsumerCallKey(item.rule) === key);
+      if (plan && interleaved.length < budget) {
+        interleaved.push(plan);
+        reserved.add(plan);
+      }
+    }
+    if (interleaved.length < budget && directCandidate) {
+      interleaved.push(directCandidate);
+      reserved.add(directCandidate);
+    }
+  } else if (linkedCandidate) {
     if (budget >= 2 && directCandidate) {
       interleaved.push(directCandidate);
       reserved.add(directCandidate);

@@ -14,7 +14,9 @@ import {
 import {
   deriveCandidatesFromCase,
   inferCaptureProducerConsumerFlow,
+  linkedConsumerCallKey,
   mutationRuleKey,
+  reserveLinkedConsumerCallKeys,
   validateProducerConsumerBinding,
 } from "../../lib/explorer/planner.ts";
 import type { ExplorerProfile, MarshalEcall, MarshalParameter } from "../../lib/explorer/profile.ts";
@@ -366,6 +368,74 @@ test("planner emits one producer write with a verified consumer dataflow target"
     "0x00000004",
   ]);
   expect(new Set(linked.map((plan) => mutationRuleKey(plan.rule))).size).toBe(3);
+
+  const additionalGenerationEvents = Array.from({ length: 6 }, (_, index) => {
+    const generation = index + 2;
+    const producerCallSeq = 5 + index * 2;
+    return [
+      event({
+        generation,
+        callSeq: producerCallSeq,
+        selectorOrdinal: SELECTOR.producer,
+        selectorSeq: 0,
+        bufferInputs: [inputBuffer({ address: ADDRESS_A, direction: "inout", paramIndex: 5, word: 2 })],
+        bufferOutputs: [outputBuffer({ address: ADDRESS_A, paramIndex: 5, word: 2 })],
+      }),
+      event({
+        generation,
+        callSeq: producerCallSeq + 1,
+        selectorOrdinal: SELECTOR.consumer,
+        selectorSeq: 0,
+        bufferInputs: [inputBuffer({ address: ADDRESS_A, direction: "in", paramIndex: 1, word: 2 })],
+      }),
+    ];
+  }).flat();
+  const reservationBaseline = capture([...baseline.events, ...additionalGenerationEvents]);
+  const reservationPlans = deriveCandidatesFromCase(profileValue, reservationBaseline, {
+    budget: 10000,
+    includeHistory: false,
+  });
+  const linkedKeyForConsumer = (generation: number, selectorSeq: number): string => {
+    const plan = reservationPlans.find((item) =>
+      item.rule.dataflowTarget?.consumerGeneration === generation &&
+      item.rule.dataflowTarget.consumerSelectorSeq === selectorSeq);
+    const key = plan ? linkedConsumerCallKey(plan.rule) : null;
+    if (!key) throw new Error("expected a linked plan for consumer generation " + generation);
+    return key;
+  };
+  const measuredConsumerKeys = new Set([
+    linkedKeyForConsumer(1, 1),
+    ...Array.from({ length: 4 }, (_, index) => linkedKeyForConsumer(index + 2, 0)),
+  ]);
+  const prioritizedPlans = deriveCandidatesFromCase(profileValue, reservationBaseline, {
+    budget: 6,
+    includeHistory: false,
+    measuredFieldCallKeys: measuredConsumerKeys,
+  });
+  const unreservedPlans = deriveCandidatesFromCase(profileValue, reservationBaseline, {
+    budget: 6,
+    includeHistory: false,
+  });
+  const unreservedLinkedKeys = new Set(unreservedPlans.flatMap((plan) => {
+    const key = linkedConsumerCallKey(plan.rule);
+    return key === null ? [] : [key];
+  }));
+  const prioritizedLinkedKeys = prioritizedPlans.flatMap((plan) => {
+    const key = linkedConsumerCallKey(plan.rule);
+    return key === null ? [] : [key];
+  });
+  expect(prioritizedLinkedKeys).toHaveLength(6);
+  expect(prioritizedLinkedKeys.slice(0, 5).every((key) => measuredConsumerKeys.has(key))).toBe(true);
+  expect(new Set(prioritizedLinkedKeys.slice(0, 5))).toEqual(measuredConsumerKeys);
+  expect(measuredConsumerKeys.has(prioritizedLinkedKeys[5]!)).toBe(false);
+  expect([...measuredConsumerKeys].some((key) => !unreservedLinkedKeys.has(key))).toBe(true);
+  expect(reserveLinkedConsumerCallKeys(prioritizedPlans, measuredConsumerKeys, 1))
+    .toEqual(prioritizedLinkedKeys.slice(0, 1));
+  expect(reserveLinkedConsumerCallKeys(prioritizedPlans, measuredConsumerKeys, 5))
+    .toEqual(prioritizedLinkedKeys.slice(0, 5));
+  expect(reserveLinkedConsumerCallKeys(prioritizedPlans, measuredConsumerKeys, 6))
+    .toEqual(prioritizedLinkedKeys);
+
   for (const plan of linked) {
     expect(plan.rule.opKind).toBe("mutate_buffer");
     expect(plan.rule.bufferSubOp).toBe("write_le");

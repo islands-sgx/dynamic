@@ -401,6 +401,23 @@ function readVerifiedRunArtifacts(
   if (!capture.end.complete || capture.events.length === 0) throw new TypeError("native call capture is incomplete or empty");
   return { manifest, meta, capture, trace, traceText: new TextDecoder("utf-8", { fatal: true }).decode(traceBytes) };
 }
+export function linkedCandidateVerdictFailure(
+  resultAccepted: boolean,
+  resultMeasurementComplete: boolean,
+  verdictAccepted: boolean,
+  verdictMeasurementComplete: boolean,
+  reason: unknown,
+): string | null {
+  const detail = typeof reason === "string" && reason.trim() !== "" ? reason.trim() : null;
+  const suffix = detail ? ": " + detail : "";
+  if (resultAccepted !== verdictAccepted || resultMeasurementComplete !== verdictMeasurementComplete) {
+    return "candidate result and verdict disagree" + suffix;
+  }
+  if (!verdictMeasurementComplete) return "candidate measurement is incomplete" + suffix;
+  if (!verdictAccepted) return "candidate measurement completed but was rejected" + suffix;
+  return null;
+}
+
 function inspectLinkedCandidate(
   baselineDirectory: string, baselineRunId: string, candidateDirectory: string,
   candidateRunId: string | undefined, candidateAccepted: boolean, candidateMeasurementComplete: boolean,
@@ -414,13 +431,16 @@ function inspectLinkedCandidate(
     linked = true;
     if (!baselineDirectory || !baselineRunId) throw new TypeError("baseline run artifacts are unavailable");
     if (!candidateRunId || raw.runId !== candidateRunId) throw new TypeError("candidate result and attempt run IDs differ");
-    if (candidateAccepted !== true || candidateMeasurementComplete !== true) {
-      throw new TypeError("explorer did not accept this candidate as a complete measurement");
-    }
     const verdict = asRecord(JSON.parse(readFileSync(path.join(candidateDirectory, "verdict.json"), "utf8")), "candidate verdict");
-    if (verdict.runId !== candidateRunId || verdict.accepted !== true || verdict.measurementComplete !== true) {
-      throw new TypeError("candidate verdict is not accepted and complete");
+    if (verdict.runId !== candidateRunId) throw new TypeError("candidate verdict run ID differs");
+    if (typeof verdict.accepted !== "boolean" || typeof verdict.measurementComplete !== "boolean") {
+      throw new TypeError("candidate verdict acceptance fields are invalid");
     }
+    const statusFailure = linkedCandidateVerdictFailure(
+      candidateAccepted, candidateMeasurementComplete,
+      verdict.accepted, verdict.measurementComplete, verdict.reason,
+    );
+    if (statusFailure) throw new TypeError(statusFailure);
     encodeMutationSpec(binding, rule);
     const baseline = readVerifiedRunArtifacts(baselineDirectory, baselineRunId, bundle, binding);
     const candidate = readVerifiedRunArtifacts(candidateDirectory, candidateRunId, bundle, binding, rule);

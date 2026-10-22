@@ -2,7 +2,8 @@ import { describe, expect, test } from "bun:test";
 import {
   FORMAL_SAMPLES, captureFormalRegistrySnapshot, compareS3HoldoutCoverage,
   formalPhaseSpecsForSample, formalSeedEvidenceFailure, formalTargetsAccepted,
-  hasAppliedCoupledEvidence, loadFormalHostSeeds, resolveFormalHoldoutContract, validateSampleSelection,
+  hasAppliedCoupledEvidence, linkedCandidateVerdictFailure, loadFormalHostSeeds,
+  resolveFormalHoldoutContract, validateSampleSelection,
 } from "../../tools/validate-milestone.ts";
 import { linkedDataflowFailure } from "../../lib/explorer/linked-proof.ts";
 import type { CallCaptureDocument, CallCaptureEvent, ScalarMutationRule } from "../../lib/explorer/contract.ts";
@@ -149,6 +150,18 @@ function targetEvidence(sample: string, candidateRuns = 16, acceptedCompleteCand
 }
 
 describe("formal milestone acceptance gates", () => {
+  test("complete rejected linked measurements retain their semantic reason", () => {
+    expect(linkedCandidateVerdictFailure(false, true, false, true,
+      "linked consumer did not enter a valid measured Field"))
+      .toBe("candidate measurement completed but was rejected: linked consumer did not enter a valid measured Field");
+    expect(linkedCandidateVerdictFailure(false, false, false, false, "collector exited early"))
+      .toBe("candidate measurement is incomplete: collector exited early");
+    expect(linkedCandidateVerdictFailure(true, true, true, true, null)).toBeNull();
+    expect(linkedCandidateVerdictFailure(false, true, true, true,
+      "linked consumer did not enter a valid measured Field"))
+      .toBe("candidate result and verdict disagree: linked consumer did not enter a valid measured Field");
+  });
+
   test("formal target lists require executed candidate budget and opportunity-driven linked proof", () => {
     expect(FORMAL_SAMPLES).toHaveLength(6);
     expect(() => validateSampleSelection([], false)).toThrow(/at least one/);

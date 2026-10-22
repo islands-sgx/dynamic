@@ -26,6 +26,8 @@ import {
 import {
   deriveCandidatesFromCase,
   deriveChildCandidatesFromFeedback,
+  linkedConsumerCallKey,
+  reserveLinkedConsumerCallKeys,
   mutationRuleKey,
   type FrontierEntry,
   type PlannedMutation,
@@ -702,9 +704,14 @@ export async function exploreSeeds(options: ExplorerOptions): Promise<ExplorerRe
           budget: rootPoolBudget,
           depth: 0,
           frontier: seedFrontier,
+          measuredFieldCallKeys: baselineFieldCalls,
           expansionBufferBudgetBytes: options.expansionBufferBudgetBytes,
           expansionTotalBudgetBytes: options.expansionTotalBudgetBytes,
         });
+        const reservedLinkedConsumerKeys = reserveLinkedConsumerCallKeys(
+          rootPlans, baselineFieldCalls, remainingBudget,
+        );
+        let nextLinkedConsumerReservation = 0;
         for (const plan of rootPlans) {
           seenStates.add(stateDigest(baseline.capture, plan.rule, baselinePages, plan.evidenceSiteIds));
         }
@@ -762,16 +769,24 @@ export async function exploreSeeds(options: ExplorerOptions): Promise<ExplorerRe
         const maxDerivationDepth = 3;
         let candidateIndex = 0;
         while (remainingBudget > 0 && pendingQueue.length > 0) {
-          let bestIdx = 0;
-          let bestScore = onlineScore(pendingQueue[0]!);
-          for (let i = 1; i < pendingQueue.length; i++) {
-            const score = onlineScore(pendingQueue[i]!);
-            if (score > bestScore ||
-                (score === bestScore && pendingQueue[i]!.initialOrder < pendingQueue[bestIdx]!.initialOrder)) {
-              bestIdx = i;
-              bestScore = score;
+          let bestIdx = -1;
+          while (nextLinkedConsumerReservation < reservedLinkedConsumerKeys.length && bestIdx < 0) {
+            const key = reservedLinkedConsumerKeys[nextLinkedConsumerReservation++]!;
+            bestIdx = pendingQueue.findIndex((item) => linkedConsumerCallKey(item.plan.rule) === key);
+          }
+          if (bestIdx < 0) {
+            bestIdx = 0;
+            let bestScore = onlineScore(pendingQueue[0]!);
+            for (let i = 1; i < pendingQueue.length; i++) {
+              const score = onlineScore(pendingQueue[i]!);
+              if (score > bestScore ||
+                  (score === bestScore && pendingQueue[i]!.initialOrder < pendingQueue[bestIdx]!.initialOrder)) {
+                bestIdx = i;
+                bestScore = score;
+              }
             }
           }
+          const bestScore = onlineScore(pendingQueue[bestIdx]!);
           const [queued] = pendingQueue.splice(bestIdx, 1);
           const { plan, depth, parentCandidateIndex, parentRunId } = queued!;
           remainingBudget--;
