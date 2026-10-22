@@ -17,6 +17,48 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..")
 const T = (rel: string) => path.join(root, rel);
 const tmp = (name: string) => path.join(`/tmp/elfport-${process.pid}-${name}`);
 
+function sha256(file: string): string {
+  return createHash("sha256").update(readFileSync(file)).digest("hex");
+}
+
+function resolveQe3Profile(): { path?: string; skipReason?: string; error?: string; expectedSha: string } {
+  const patch = JSON.parse(readFileSync(T("targets/qe3/enclave.profile.4gate.json"), "utf8"));
+  const expectedSha = patch.input_elf_sha256 as string;
+  const local = T("targets/qe3/enclave.profile.so");
+
+  if (existsSync(local)) {
+    const actualSha = sha256(local);
+    if (actualSha !== expectedSha) {
+      return {
+        expectedSha,
+        error: "local qe3 profile SHA256 mismatch: expected " + expectedSha + ", got " + actualSha + " (" + local + ")",
+      };
+    }
+    return { path: local, expectedSha };
+  }
+
+  const manifestPath = T("targets/qe3/target_manifest.json");
+  const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+  const sampleProfile = typeof manifest.profile_elf === "string" ? manifest.profile_elf : undefined;
+  if (!sampleProfile || !existsSync(sampleProfile)) {
+    return {
+      expectedSha,
+      skipReason: sampleProfile
+        ? "local qe3 profile is absent and sample manifest profile is unavailable: " + sampleProfile
+        : "local qe3 profile is absent and " + manifestPath + " has no profile_elf",
+    };
+  }
+
+  const actualSha = sha256(sampleProfile);
+  if (actualSha !== expectedSha) {
+    return {
+      expectedSha,
+      skipReason: "local qe3 profile is absent and sample profile SHA256 does not match recorded patch input: expected " + expectedSha + ", got " + actualSha + " (" + sampleProfile + ")",
+    };
+  }
+  return { path: sampleProfile, expectedSha };
+}
+
 describe("helpers", () => {
   test("alignDown/alignUp", () => {
     expect(alignDown(0x212345)).toBe(0x212000);
@@ -63,25 +105,32 @@ describe("patch-4gate byte vectors", () => {
   // Golden bytes extracted from the Python-generated enclave.profile.4gate.so
   // gate stubs (qe3, gate page rva 0x214000) — pinned, not derived from the
   // implementation under test.
-  test("gate page contents match Python-generated stub bytes", () => {
-    const pySo = "/tmp/py_qe3.profile.4gate.so";
-    const tsSo = tmp("qe3.4gate.so");
-    const tsJson = tmp("qe3.4gate.json");
-    if (!existsSync(pySo)) {
-      console.warn("skipping: python golden not present");
-      return;
-    }
-    patchElf4gate(T("targets/qe3/enclave.profile.so"), T("targets/qe3/fields.json"), 12288, tsSo, tsJson);
-    const a = readFileSync(pySo), b = readFileSync(tsSo);
-    expect(b.equals(a)).toBe(true);
-    const js = JSON.parse(readFileSync(tsJson, "utf-8"));
-    expect(js.schema).toBe("atfield-4gate-patch-v1");
-    expect(js.gate_helper_page_rva).toBe(0x214000);
-    expect(js.fields[0].gate_a_rva).toBe(0x214000);
-    expect(js.fields[0].gate_d_rva).toBeGreaterThan(js.fields[0].gate_c_rva);
-    expect(js.fields[0].gate_c_rva).toBeGreaterThan(js.fields[0].gate_b_rva);
-    expect(js.fields[0].gate_b_rva).toBeGreaterThan(js.fields[0].gate_a_rva);
-  });
+  const pySo = "/tmp/py_qe3.profile.4gate.so";
+  const input = resolveQe3Profile();
+  const skipReason = !existsSync(pySo)
+    ? "Python-generated qe3 4gate golden is absent: " + pySo
+    : input.skipReason;
+
+  test.skipIf(Boolean(skipReason))(
+    "gate page contents match Python-generated stub bytes" + (skipReason ? " (skipped: " + skipReason + ")" : ""),
+    () => {
+      const tsSo = tmp("qe3.4gate.so");
+      const tsJson = tmp("qe3.4gate.json");
+      if (input.error) throw new Error(input.error);
+      const profile = input.path!;
+      expect(sha256(profile)).toBe(input.expectedSha);
+      patchElf4gate(profile, T("targets/qe3/fields.json"), 12288, tsSo, tsJson);
+      const a = readFileSync(pySo), b = readFileSync(tsSo);
+      expect(b.equals(a)).toBe(true);
+      const js = JSON.parse(readFileSync(tsJson, "utf-8"));
+      expect(js.schema).toBe("atfield-4gate-patch-v1");
+      expect(js.gate_helper_page_rva).toBe(0x214000);
+      expect(js.fields[0].gate_a_rva).toBe(0x214000);
+      expect(js.fields[0].gate_d_rva).toBeGreaterThan(js.fields[0].gate_c_rva);
+      expect(js.fields[0].gate_c_rva).toBeGreaterThan(js.fields[0].gate_b_rva);
+      expect(js.fields[0].gate_b_rva).toBeGreaterThan(js.fields[0].gate_a_rva);
+    },
+  );
 });
 
 describe("produceWorkset golden (requires local ELF artifacts)", () => {
