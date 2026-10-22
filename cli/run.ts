@@ -112,6 +112,11 @@ export function summarizeTraceEcalls(traceText: string): {
   return { total_ecalls: total, valid_empty_s3_ecalls: validEmptyS3, abnormal_ecalls: abnormal };
 }
 
+function shortOutput(value: string): string | null {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  return trimmed.length > 512 ? trimmed.slice(-512) : trimmed;
+}
 function parsePositiveInt(value: string, flag: string): number {
   if (!/^[0-9]+$/.test(value)) throw new Error("invalid integer for " + flag);
   const parsed = Number(value);
@@ -231,6 +236,7 @@ async function main(): Promise<number> {
       observed_fields: run.parsedTrace?.observedFieldIds ?? [],
       measured_fields: run.parsedTrace?.measuredFieldIds ?? [],
       artifact_paths: run.artifactPaths ?? null,
+      child_stderr_excerpt: shortOutput(run.stderr),
     };
     console.log(JSON.stringify(summary, null, 2));
     return run.completion === "complete" && (run.targetKind !== "final-v2" || s3Verdict === "PASS") ? 0 : 1;

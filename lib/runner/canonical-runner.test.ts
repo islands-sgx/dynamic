@@ -181,7 +181,7 @@ function makeBundle(): { root: string; manifest: string; observations: string } 
     "const fs = require('node:fs');",
     "const path = require('node:path');",
     "const mode = process.argv[2] || 'ok';",
-    "if (mode === 'collector-error') process.stderr.write('ATFIELD_TRACE_ERROR: injected collector fault\\n');",
+    "if (mode === 'collector-error') { process.stdout.write('fixture child stdout\\n'); process.stderr.write('ATFIELD_TRACE_ERROR: injected collector fault\\n'); }",
     "const observation = {",
     "  seed_id: process.env.ATFIELD_SEED_ID,",
     "  pid: process.pid,",
@@ -387,6 +387,24 @@ describe("canonical Bun runner", () => {
     expect(validRecords[2]!.process_return_code).toBe(0);
   });
 
+  test("persists exact child stdout and stderr for incomplete runs", async () => {
+    const fixture = makeBundle();
+    const artifactDir = path.join(fixture.root, "child-output");
+    const runs = await runSeedCommands({
+      bundlePath: fixture.manifest,
+      artifactDir,
+      commands: [{ seed_id: "collector-error", argv: ["collector-error"] }],
+    });
+    expect(runs[0]!.completion).toBe("incomplete");
+    expect(runs[0]!.artifactPaths?.stdout).toBeDefined();
+    expect(runs[0]!.artifactPaths?.stderr).toBeDefined();
+    expect(readFileSync(runs[0]!.artifactPaths!.stdout!, "utf8")).toBe("fixture child stdout\n");
+    expect(readFileSync(runs[0]!.artifactPaths!.stderr!, "utf8")).toBe("ATFIELD_TRACE_ERROR: injected collector fault\n");
+    const meta = JSON.parse(readFileSync(runs[0]!.artifactPaths!.meta!, "utf8"));
+    expect(meta.stdout_path).toBe(runs[0]!.artifactPaths!.stdout);
+    expect(meta.stderr_path).toBe(runs[0]!.artifactPaths!.stderr);
+    expect(meta.stderr_bytes).toBe(new TextEncoder().encode("ATFIELD_TRACE_ERROR: injected collector fault\n").length);
+  });
   test("marks AEX and timeout incomplete and terminates a hung host", async () => {
     const fixture = makeBundle();
     const aex = await runSeedCommands({

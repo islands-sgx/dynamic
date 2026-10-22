@@ -102,7 +102,7 @@ export interface CanonicalRun {
   traceText: string;
   stdout: string;
   stderr: string;
-  artifactPaths?: { trace: string; meta?: string; partial?: string };
+  artifactPaths?: { trace: string; meta?: string; partial?: string; stdout?: string; stderr?: string };
 }
 
 interface ArtifactEntry {
@@ -970,6 +970,10 @@ async function runOne(
       const token = safeFileToken(command.seed_id) + "-" + runId;
       const traceOut = path.join(options.artifactDir, token + ".trace.jsonl");
       const metaOut = path.join(options.artifactDir, token + ".meta.json");
+      const stdoutOut = path.join(options.artifactDir, token + ".stdout.log");
+      const stderrOut = path.join(options.artifactDir, token + ".stderr.log");
+      writeFileSync(stdoutOut, stdout, { mode: 0o600 });
+      writeFileSync(stderrOut, stderr, { mode: 0o600 });
       writeFileSync(traceOut, finalText, { mode: 0o600 });
       const meta = {
         schema: "atfield-canonical-run-meta-v1",
@@ -1006,6 +1010,12 @@ async function runOne(
         seed_id: command.seed_id,
         argv,
         trace_path: traceOut,
+        stdout_path: stdoutOut,
+        stdout_bytes: new TextEncoder().encode(stdout).length,
+        stdout_sha256: sha256(new TextEncoder().encode(stdout)),
+        stderr_path: stderrOut,
+        stderr_bytes: new TextEncoder().encode(stderr).length,
+        stderr_sha256: sha256(new TextEncoder().encode(stderr)),
         trace_sha256: result.traceSha256,
         exit_code: exitCode,
         termination,
@@ -1014,7 +1024,7 @@ async function runOne(
         incomplete_reasons: incompleteReasons,
       };
       writeFileSync(metaOut, JSON.stringify(meta, null, 2) + "\n", { mode: 0o600 });
-      result.artifactPaths = { trace: traceOut, meta: metaOut };
+      result.artifactPaths = { trace: traceOut, meta: metaOut, stdout: stdoutOut, stderr: stderrOut };
       if (rawBytes.length && completion === "incomplete") {
         const partialOut = traceOut + ".partial";
         writeFileSync(partialOut, rawBytes, { mode: 0o600 });
