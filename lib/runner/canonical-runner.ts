@@ -25,6 +25,7 @@ import {
   type ProfileBundle,
 } from "../bundle/profile-bundle.ts";
 import { parseCanonicalTrace, type ParsedTrace } from "../workset/trace.ts";
+import { loadFinalV2RunTarget, type FinalV2RunTarget } from "./final-v2-target.ts";
 
 const TRACE_SCHEMA = "atfield-canonical-trace-v1";
 
@@ -61,6 +62,7 @@ export interface RunOptions {
   bundlePath: string;
   args: string[];
   seedId?: string;
+  finalV2TargetPath?: string;
   collectorPath?: string;
   timeoutMs?: number;
   killGraceMs?: number;
@@ -83,6 +85,9 @@ export interface CanonicalRun {
   runId: string;
   mode: string;
   gateMode: GateMode;
+  targetKind: "profile" | "final-v2";
+  selectedEnclaveSha256: string;
+  finalV2Target?: { manifestSha256: string; worksetSha256: string; capacityQ: number; signedFinalElfSha256: string; readyTableSha256: string; signedMeasurementFinalElfSha256: string; manifestFieldCount: number };
   cpuConfig: RunnerCpuConfig;
   seedId: string;
   argv: string[];
@@ -619,6 +624,7 @@ async function runOne(
   collector: CollectorArtifact | undefined,
   command: HostCommand,
   options: Required<Pick<RunOptions, "timeoutMs" | "killGraceMs">> & RunOptions,
+  finalTarget?: FinalV2RunTarget,
 ): Promise<CanonicalRun> {
   const runId = randomUUID();
   const root = mkdtempSync(path.join(options.tempRoot ?? tmpdir(), "atfield-run-"));
@@ -632,6 +638,14 @@ async function runOne(
       mkdirSync(directory, { recursive: true, mode: 0o700 });
     }
     const snapshot = makeBundleSnapshot(artifacts, root);
+    let selectedImagePath = snapshot.enclavePath;
+    let selectedReadyTablePath: string | undefined;
+    if (finalTarget) {
+      selectedImagePath = path.join(snapshot.bundleRoot, "final-v2-measurement.signed.so");
+      selectedReadyTablePath = path.join(snapshot.bundleRoot, "final-v2-ready-table.bin");
+      copyFileSync(finalTarget.selectedImagePath, selectedImagePath);
+      copyFileSync(finalTarget.readyTablePath, selectedReadyTablePath);
+    }
     const rawTracePath = path.join(root, "collector.trace.jsonl");
     const partialPath = path.join(root, "collector.trace.jsonl.partial");
     const collectorLink = collector ? path.join(root, "collector.so") : undefined;
@@ -642,7 +656,10 @@ async function runOne(
     const preload = collector
       ? [collectorLink!, inheritedPreload].filter(Boolean).join(":")
       : inheritedPreload;
-    let resolvedMode = options.mode;
+    if (finalTarget && options.mode !== undefined && options.mode !== "verify-pretouch") {
+      throw new Error("a Final v2 target requires mode verify-pretouch");
+    }
+    let resolvedMode = finalTarget ? "verify-pretouch" : options.mode;
     let resolvedGateMode: GateMode;
     if (options.gateMode === "c-preserve-tlb" || resolvedMode === "verify-pretouch") {
       if (resolvedMode !== undefined && resolvedMode !== "verify-pretouch") {
@@ -683,8 +700,8 @@ async function runOne(
       ATFIELD_SEED_ARGV_JSON: JSON.stringify(argv),
       ATFIELD_BUNDLE_MANIFEST_SHA256: artifacts.bundleSha256,
       ATFIELD_LAYOUT_EPOCH: artifacts.bundle.layoutEpoch,
-      ATFIELD_ENCLAVE_SHA256: artifacts.bundle.identity.signedProfileElfSha256,
-      ATFIELD_ENCLAVE_PATH: snapshot.enclavePath,
+      ATFIELD_ENCLAVE_SHA256: finalTarget?.identity.signed_measurement_final_elf_sha256 ?? artifacts.bundle.identity.signedProfileElfSha256,
+      ATFIELD_ENCLAVE_PATH: selectedImagePath,
       ATFIELD_BUNDLE_ROOT: snapshot.bundleRoot,
       ATFIELD_SAMPLE: options.sample ?? path.basename(artifacts.bundle.root),
       ATFIELD_MODE: resolvedMode,
@@ -696,6 +713,13 @@ async function runOne(
       ATFIELD_LAYOUT_SPEC: artifacts.bundle.collectorLayoutSpec,
       ATFIELD_TRACE_PATH: rawTracePath,
       ATFIELD_STATE_DIR: stateDir,
+      ATFIELD_TARGET_KIND: finalTarget ? "final-v2" : "profile",
+      ...(finalTarget && selectedReadyTablePath ? {
+        ATFIELD_FINAL_V2_TARGET_SHA256: finalTarget.manifestSha256,
+        ATFIELD_READY_TABLE: selectedReadyTablePath,
+        ATFIELD_READY_TABLE_SHA256: finalTarget.identity.ready_table_sha256,
+        ATFIELD_REQUIRE_READINESS: "1",
+      } : {}),
     };
     if (collector && collectorLink) {
       env.LD_PRELOAD = preload!;
@@ -716,6 +740,20 @@ async function runOne(
     let scan: PrefixScan = { records: [], prefixText: "", reasons: [] };
     try {
       verifyArtifacts(snapshot, collector && collectorLink ? { path: collectorLink, sha256: collector.sha256 } : undefined);
+      if (finalTarget) {
+        if (sha256(readFileSync(finalTarget.manifestPath)) !== finalTarget.manifestSha256) {
+          throw new Error("Final v2 target manifest digest changed after validation");
+        }
+        for (const artifact of Object.values(finalTarget.artifacts)) {
+          if (sha256(readFileSync(artifact.path)) !== artifact.sha256) {
+            throw new Error("Final v2 target artifact digest changed after validation: " + artifact.path);
+          }
+        }
+        if (sha256(readFileSync(selectedImagePath)) !== finalTarget.identity.signed_measurement_final_elf_sha256 ||
+            !selectedReadyTablePath || sha256(readFileSync(selectedReadyTablePath)) !== finalTarget.identity.ready_table_sha256) {
+          throw new Error("Final v2 snapshot image or ReadyTable differs from the frozen target");
+        }
+      }
       const spawned = Bun.spawn([snapshot.hostPath, ...argv], {
         cwd: stateDir,
         env,
@@ -822,7 +860,8 @@ async function runOne(
       }
       if (incompleteReasons.length === 0) {
         try {
-          parsedTrace = parseCanonicalTrace(finalText, "runner final trace", artifacts.bundle);
+          parsedTrace = parseCanonicalTrace(finalText, "runner final trace", artifacts.bundle,
+            finalTarget ? { expectedSelectedEnclaveSha256: finalTarget.identity.signed_measurement_final_elf_sha256, requireReadinessInstalled: true } : undefined);
           if (parsedTrace.runId !== runId) throw new Error("trace run_id differs from runner run_id");
           completion = "complete";
           incompleteReasons = [];
@@ -872,7 +911,10 @@ async function runOne(
             finalText,
             "runner committed trace",
             artifacts.bundle,
-            { allowBusinessRejectionExit: true },
+            {
+              allowBusinessRejectionExit: true,
+              ...(finalTarget ? { expectedSelectedEnclaveSha256: finalTarget.identity.signed_measurement_final_elf_sha256, requireReadinessInstalled: true } : {}),
+            },
           );
           if (candidateCommitted.runId === runId && candidateCommitted.ecallCount > 0) {
             committedTrace = candidateCommitted;
@@ -896,6 +938,17 @@ async function runOne(
       runId,
       mode: resolvedMode,
       gateMode: resolvedGateMode,
+      targetKind: finalTarget ? "final-v2" : "profile",
+      selectedEnclaveSha256: finalTarget?.identity.signed_measurement_final_elf_sha256 ?? artifacts.bundle.identity.signedProfileElfSha256,
+      ...(finalTarget ? { finalV2Target: {
+        manifestSha256: finalTarget.manifestSha256,
+        worksetSha256: finalTarget.identity.workset_sha256,
+        capacityQ: finalTarget.identity.capacity_q,
+        signedFinalElfSha256: finalTarget.identity.signed_final_elf_sha256,
+        readyTableSha256: finalTarget.identity.ready_table_sha256,
+        signedMeasurementFinalElfSha256: finalTarget.identity.signed_measurement_final_elf_sha256,
+        manifestFieldCount: finalTarget.manifestFieldCount,
+      } } : {}),
       cpuConfig: finalCpuConfig,
       seedId: command.seed_id,
       argv,
@@ -923,6 +976,16 @@ async function runOne(
         run_id: runId,
         mode: resolvedMode,
         gate_mode: resolvedGateMode,
+        target_kind: finalTarget ? "final-v2" : "profile",
+        selected_enclave_sha256: finalTarget?.identity.signed_measurement_final_elf_sha256 ?? artifacts.bundle.identity.signedProfileElfSha256,
+        final_v2_target: finalTarget ? {
+          manifest_sha256: finalTarget.manifestSha256,
+          workset_sha256: finalTarget.identity.workset_sha256,
+          capacity_q: finalTarget.identity.capacity_q,
+          production_signed_final_sha256: finalTarget.identity.signed_final_elf_sha256,
+          ready_table_sha256: finalTarget.identity.ready_table_sha256,
+          signed_measurement_final_sha256: finalTarget.identity.signed_measurement_final_elf_sha256,
+        } : null,
         use_4gate: true,
         ipi_mask: Number(ipiMask),
         cpu_config: {
@@ -979,9 +1042,10 @@ export async function runCanonicalHost(options: RunOptions): Promise<CanonicalRu
     throw new Error("killGraceMs must be a nonnegative safe integer");
   }
   const artifacts = readBundleArtifacts(options.bundlePath);
+  const finalTarget = options.finalV2TargetPath ? loadFinalV2RunTarget(options.finalV2TargetPath, artifacts.bundle) : undefined;
   const collector = readCollector(options.collectorPath);
   const normalizedOptions = { ...options, timeoutMs, killGraceMs };
-  return await runOne(artifacts, collector, { seed_id: seedId, argv: options.args }, normalizedOptions);
+  return await runOne(artifacts, collector, { seed_id: seedId, argv: options.args }, normalizedOptions, finalTarget);
 }
 
 export async function runSeedCommands(options: RunSeedCommandsOptions): Promise<CanonicalRun[]> {
@@ -1008,6 +1072,7 @@ export async function runSeedCommands(options: RunSeedCommandsOptions): Promise<
     throw new Error("killGraceMs must be a nonnegative safe integer");
   }
   const artifacts = readBundleArtifacts(options.bundlePath);
+  const finalTarget = options.finalV2TargetPath ? loadFinalV2RunTarget(options.finalV2TargetPath, artifacts.bundle) : undefined;
   const collector = readCollector(options.collectorPath);
   const results: CanonicalRun[] = [];
   for (const cmd of options.commands) {
@@ -1017,7 +1082,7 @@ export async function runSeedCommands(options: RunSeedCommandsOptions): Promise<
       timeoutMs,
       killGraceMs,
     };
-    results.push(await runOne(artifacts, collector, cmd, normalizedOptions));
+    results.push(await runOne(artifacts, collector, cmd, normalizedOptions, finalTarget));
   }
   return results;
 }

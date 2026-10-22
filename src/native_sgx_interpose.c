@@ -3,6 +3,9 @@
 #include "interpose_interventions.h"
 #include "native_trace_json.h"
 #include "interpose_mutation.h"
+#include "readiness_contract.h"
+#include <openssl/sha.h>
+#include <strings.h>
 
 static int readiness_installed = 0;
 static atfield_marshal_spec_t call_marshal_spec;
@@ -310,6 +313,77 @@ static void trace_note_successful_create(void) {
     }
 }
 
+static void readiness_install_fail(const char *reason) {
+    syscall_error_count++;
+    trace_note_contract_failure(reason);
+    if (trace_fp) trace_flush_checked();
+    _exit(71);
+}
+
+static int install_readiness_table_for_enclave(sgx_enclave_id_t enclave_id) {
+    const char *req_env = getenv("ATFIELD_REQUIRE_READINESS");
+    const int required = req_env && atoi(req_env) != 0;
+    const char *ready_path = getenv("ATFIELD_READY_TABLE");
+    const char *expected_sha = getenv("ATFIELD_READY_TABLE_SHA256");
+    if (!ready_path || !*ready_path) {
+        __atomic_store_n(&readiness_installed, 0, __ATOMIC_SEQ_CST);
+        if (!required) return 0;
+        readiness_install_fail("required_ready_table_env_missing");
+    }
+    const int verify_sha = expected_sha && *expected_sha;
+    if (atfield_readiness_sha_invalid(required, expected_sha))
+        readiness_install_fail("readiness_sha256_missing");
+
+    set_ready_table_fn_t fn_tbl = (set_ready_table_fn_t)dlsym(RTLD_DEFAULT, "sgx_set_ecall_page_readiness_table");
+    set_ready_backend_fn_t fn_be = (set_ready_backend_fn_t)dlsym(RTLD_DEFAULT, "atfield_sgx_set_ecall_page_readiness_backend");
+    FILE *rf = fopen(ready_path, "rb");
+    if (!rf || !fn_tbl || !fn_be) {
+        if (rf) fclose(rf);
+        readiness_install_fail("readiness_open_or_dlsym_failed");
+    }
+    if (fseek(rf, 0, SEEK_END) != 0) {
+        fclose(rf);
+        readiness_install_fail("readiness_seek_failed");
+    }
+    long rsz = ftell(rf);
+    if (rsz < 32 || rsz > 64 * 1024 * 1024 || fseek(rf, 0, SEEK_SET) != 0) {
+        fclose(rf);
+        readiness_install_fail("readiness_size_invalid");
+    }
+    uint8_t *rbuf = (uint8_t *)malloc((size_t)rsz);
+    if (!rbuf || fread(rbuf, 1, (size_t)rsz, rf) != (size_t)rsz || fgetc(rf) != EOF || ferror(rf)) {
+        free(rbuf);
+        fclose(rf);
+        readiness_install_fail("readiness_fread_failed");
+    }
+    fclose(rf);
+
+    unsigned char digest[SHA256_DIGEST_LENGTH];
+    char digest_hex[SHA256_DIGEST_LENGTH * 2 + 1];
+    static const char digits[] = "0123456789abcdef";
+    if (!SHA256(rbuf, (size_t)rsz, digest)) {
+        free(rbuf);
+        readiness_install_fail("readiness_sha256_failed");
+    }
+    for (size_t i = 0; i < SHA256_DIGEST_LENGTH; ++i) {
+        digest_hex[i * 2] = digits[digest[i] >> 4];
+        digest_hex[i * 2 + 1] = digits[digest[i] & 0x0f];
+    }
+    digest_hex[sizeof(digest_hex) - 1] = '\0';
+    if (verify_sha && strcasecmp(digest_hex, expected_sha) != 0) {
+        free(rbuf);
+        readiness_install_fail("readiness_sha256_mismatch");
+    }
+
+    sgx_page_readiness_table_t table = { .data = rbuf, .size = (size_t)rsz };
+    if (fn_tbl(enclave_id, &table) != 0 || fn_be(enclave_id, 0U) != 0) {
+        free(rbuf);
+        readiness_install_fail("readiness_install_ioctl_failed");
+    }
+    free(rbuf);
+    __atomic_store_n(&readiness_installed, 1, __ATOMIC_SEQ_CST);
+    return 0;
+}
 static void close_mutation_capture(void);
 
 static int make_current_stack_ready(void) {
@@ -494,51 +568,10 @@ sgx_status_t sgx_create_enclave(
             }
         }
 
-        const char *req_ready_env = getenv("ATFIELD_REQUIRE_READINESS");
-        int readiness_req = (req_ready_env && atoi(req_ready_env) != 0);
-        const char *ready_path = getenv("ATFIELD_READY_TABLE");
-        if (readiness_req && (!ready_path || !*ready_path)) {
-            syscall_error_count++;
-            mark_invalid("required_ready_table_env_missing");
-            if (trace_fp) trace_flush_checked();
-            _exit(71);
-        }
-        if (ready_path && *ready_path) {
-            set_ready_table_fn_t fn_tbl = (set_ready_table_fn_t)dlsym(RTLD_DEFAULT, "sgx_set_ecall_page_readiness_table");
-            set_ready_backend_fn_t fn_be = (set_ready_backend_fn_t)dlsym(RTLD_DEFAULT, "atfield_sgx_set_ecall_page_readiness_backend");
-            FILE *rf = fopen(ready_path, "rb");
-            if (!rf || !fn_tbl || !fn_be) {
-                syscall_error_count++;
-                mark_invalid("readiness_open_or_dlsym_failed");
-                if (rf) fclose(rf);
-                if (trace_fp) trace_flush_checked();
-                _exit(71);
-            }
-            fseek(rf, 0, SEEK_END);
-            long rsz = ftell(rf);
-            fseek(rf, 0, SEEK_SET);
-            uint8_t *rbuf = (rsz > 0) ? (uint8_t *)malloc((size_t)rsz) : NULL;
-            if (!rbuf || fread(rbuf, 1, (size_t)rsz, rf) != (size_t)rsz) {
-                free(rbuf);
-                fclose(rf);
-                syscall_error_count++;
-                mark_invalid("readiness_fread_failed");
-                if (trace_fp) trace_flush_checked();
-                _exit(71);
-            }
-            fclose(rf);
-            sgx_page_readiness_table_t tbl = { .data = rbuf, .size = (size_t)rsz };
-            if (fn_tbl(*enclave_id, &tbl) != 0 || fn_be(*enclave_id, 0U /* ATFIELD_READINESS_BACKEND_KERNEL */) != 0) {
-                free(rbuf);
-                syscall_error_count++;
-                mark_invalid("readiness_install_ioctl_failed");
-                if (trace_fp) trace_flush_checked();
-                _exit(71);
-            }
-            free(rbuf);
-            __atomic_store_n(&readiness_installed, 1, __ATOMIC_SEQ_CST);
-        } else {
-            __atomic_store_n(&readiness_installed, 0, __ATOMIC_SEQ_CST);
+        if (install_readiness_table_for_enclave(*enclave_id) != 0) {
+            cleanup_interpose();
+            pthread_mutex_unlock(&collector_mutex);
+            return -1;
         }
         pthread_mutex_unlock(&collector_mutex);
         return st_prod;
@@ -594,6 +627,11 @@ sgx_status_t sgx_create_enclave(
     if (st != 0) { cleanup_interpose(); pthread_mutex_unlock(&collector_mutex); return st; }
     live_enclave = 1; live_enclave_id = *enclave_id;
     trace_note_successful_create();
+    if (install_readiness_table_for_enclave(*enclave_id) != 0) {
+        cleanup_interpose();
+        pthread_mutex_unlock(&collector_mutex);
+        return -1;
+    }
 
     setup_enclave_ptes();
 
@@ -1056,6 +1094,13 @@ static sgx_status_t execute_one_measured_ecall(
         mark_invalid("unexpected_aex_observed");
         measurement_invalid = 1;
     }
+    const char *readiness_required_env = getenv("ATFIELD_REQUIRE_READINESS");
+    const int readiness_required = readiness_required_env && atoi(readiness_required_env) != 0;
+    const int readiness_is_installed = __atomic_load_n(&readiness_installed, __ATOMIC_SEQ_CST);
+    if (readiness_required && !readiness_is_installed) {
+        mark_invalid("required_readiness_not_installed");
+        measurement_invalid = 1;
+    }
     pthread_mutex_lock(&reason_mutex);
     int has_invalid_reasons = trace_reason_count != 0;
     pthread_mutex_unlock(&reason_mutex);
@@ -1074,8 +1119,8 @@ static sgx_status_t execute_one_measured_ecall(
         trace_printf(",\"elapsed_ns\":%" PRIu64 ",\"sgx_status\":%d,\"abi_return_type\":\"%s\",\"abi_return_value\":%s,\"out_status_i32\":",
                      elapsed_ns, st, abi.has_retval ? "scalar" : "void", abi.has_retval ? ms_ret_json : "null");
         if (has_out_status_ptr) trace_printf("%d", out_status_val); else trace_printf("null");
-        trace_printf(",\"measurement_valid\":%s,\"measurement_invalid_reasons\":",
-                     measurement_invalid ? "false" : "true");
+        trace_printf(",\"readiness_installed\":%s,\"measurement_valid\":%s,\"measurement_invalid_reasons\":",
+                     readiness_is_installed ? "true" : "false", measurement_invalid ? "false" : "true");
         trace_write_reasons();
         trace_printf(",\"fields\":[");
         int first_field = 1;

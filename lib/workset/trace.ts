@@ -27,6 +27,8 @@ export interface TraceObservation {
 
 export interface ParseTraceOptions {
   allowBusinessRejectionExit?: boolean;
+  expectedSelectedEnclaveSha256?: string;
+  requireReadinessInstalled?: boolean;
 }
 
 export interface ParsedTrace {
@@ -38,6 +40,7 @@ export interface ParsedTrace {
   selectedEnclaveSha256: string;
   ecallCount: number;
   observedFieldIds: string[];
+  measuredFieldIds: string[];
   observations: TraceObservation[];
   runCompletion?: "complete" | "incomplete";
   processReturnCode?: number;
@@ -82,6 +85,7 @@ const ECALL_KEYS = new Set([
   "business_result",
   "measurement_valid",
   "measurement_invalid_reasons",
+  "readiness_installed",
   "fields",
   "ecall_ad",
   "aex",
@@ -123,6 +127,25 @@ export class TraceError extends Error {
     super(message);
     this.name = "TraceError";
   }
+}
+
+export function validateSelectedEnclaveSha256(
+  value: unknown,
+  bundle: ProfileBundle,
+  expectedSelectedEnclaveSha256?: string,
+  label = "trace selected_enclave_sha256",
+): string {
+  let selected: string;
+  try { selected = normalizeDigest(value, label); }
+  catch (error) { fail((error as Error).message); }
+  if (expectedSelectedEnclaveSha256 !== undefined) {
+    if (selected !== normalizeDigest(expectedSelectedEnclaveSha256, label + " expected frozen target SHA-256")) {
+      fail(label + " does not match the frozen run target");
+    }
+  } else if (selected !== bundle.identity.profileElfSha256 && selected !== bundle.identity.signedProfileElfSha256) {
+    fail(label + " does not match the Profile bundle");
+  }
+  return selected;
 }
 
 function fail(message: string): never {
@@ -398,16 +421,12 @@ export function parseCanonicalTrace(
   nonemptyString(first.sample, label + " run_start.sample");
   const runMode = nonemptyString(first.mode, label + " run_start.mode");
   nonemptyString(first.start_time, label + " run_start.start_time");
-  let selectedEnclaveSha256: string;
-  try {
-    selectedEnclaveSha256 = normalizeDigest(first.selected_enclave_sha256, label + " run_start.selected_enclave_sha256");
-  } catch (error) {
-    fail((error as Error).message);
-  }
-  if (selectedEnclaveSha256 !== bundle.identity.profileElfSha256 &&
-      selectedEnclaveSha256 !== bundle.identity.signedProfileElfSha256) {
-    fail(label + " selected_enclave_sha256 does not match the Profile bundle");
-  }
+  const selectedEnclaveSha256 = validateSelectedEnclaveSha256(
+    first.selected_enclave_sha256,
+    bundle,
+    options?.expectedSelectedEnclaveSha256,
+    label + " run_start.selected_enclave_sha256",
+  );
   if (first.argv !== undefined && (!Array.isArray(first.argv) || !first.argv.every((arg) => typeof arg === "string"))) {
     fail(label + " run_start.argv must be a string array");
   }
@@ -469,6 +488,7 @@ export function parseCanonicalTrace(
   const knownFields = new Set(bundle.fields.map((field) => field.id));
   const knownSelectors = new Map(bundle.selectors.map((selector) => [selector.ordinal, selector]));
   const observedFieldIds = new Set<string>();
+  const measuredFieldIds = new Set<string>();
   const observationsByFieldAndPage = new Map<string, Map<bigint, MutablePageObservation>>();
 
   for (const [index, record] of ecallRecords.entries()) {
@@ -497,6 +517,10 @@ export function parseCanonicalTrace(
     selectorCounts.set(selectorKey, expectedSelectorSeq + 1);
 
     signedInteger(record.sgx_status, lineLabel + ".sgx_status");
+    if (record.readiness_installed !== undefined) booleanField(record.readiness_installed, lineLabel + ".readiness_installed");
+    if (options?.requireReadinessInstalled && !booleanField(record.readiness_installed, lineLabel + ".readiness_installed")) {
+      fail(lineLabel + " ReadyTable was not installed for the measured ECALL");
+    }
     if (!booleanField(record.measurement_valid, lineLabel + ".measurement_valid")) {
       fail(lineLabel + " measurement is invalid");
     }
@@ -544,6 +568,7 @@ export function parseCanonicalTrace(
       if (runMode !== "verify-pretouch" && pagesByRva.size === 0) {
         fail(lineLabel + " Field " + fieldId + " S3_BODY has no observed page effects");
       }
+      measuredFieldIds.add(fieldId);
       if (pagesByRva.size > 0) {
         observedFieldIds.add(fieldId);
         let fieldMap = observationsByFieldAndPage.get(fieldId);
@@ -607,6 +632,7 @@ export function parseCanonicalTrace(
     selectedEnclaveSha256,
     ecallCount: ecallRecords.length,
     observedFieldIds: [...observedFieldIds],
+    measuredFieldIds: [...measuredFieldIds],
     observations,
     runCompletion: last.completion === "complete" ? "complete" : "incomplete",
     processReturnCode: procRc,

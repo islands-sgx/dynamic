@@ -2,6 +2,7 @@
 #include <string.h>
 #include "../src/native_trace_json.h"
 #include "../src/native_trace_state.h"
+#include "../src/readiness_contract.h"
 #include <limits.h>
 
 static int test_json_string_array(void);
@@ -13,6 +14,15 @@ static int stream_matches(FILE *fp, const char *expected) {
     return n == strlen(expected) && memcmp(actual, expected, n) == 0 && fgetc(fp) == EOF;
 }
 
+static int test_readiness_sha_policy(void) {
+    static const char valid_sha[] = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+    if (atfield_readiness_sha_invalid(0, NULL)) return 60;
+    if (!atfield_readiness_sha_invalid(1, NULL)) return 61;
+    if (atfield_readiness_sha_invalid(0, valid_sha)) return 62;
+    if (atfield_readiness_sha_invalid(1, valid_sha)) return 63;
+    if (!atfield_readiness_sha_invalid(0, "missing")) return 64;
+    return 0;
+}
 static int test_string_escaping(void) {
     const char input[] = "quote:\" backslash:\\ backspace:\b formfeed:\f newline:\n carriage:\r tab:\t control:\001 invalid_byte:\377";
     const char expected[] = "\"quote:\\\" backslash:\\\\ backspace:\\b formfeed:\\f newline:\\n carriage:\\r tab:\\t control:\\u0001 invalid_byte:\\u00ff\"";
@@ -197,7 +207,9 @@ static int test_aex_classification_and_verified_phase_mask(void) {
 }
 
 int main(void) {
-    int rc = test_string_escaping();
+    int rc = test_readiness_sha_policy();
+    if (rc) return rc;
+    rc = test_string_escaping();
     if (rc) return rc;
     rc = test_json_string_array();
     if (rc) return rc;
