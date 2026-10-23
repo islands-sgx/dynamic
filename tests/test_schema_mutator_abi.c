@@ -1,33 +1,9 @@
-#!/usr/bin/env python3
-"""Unit tests for src/schema_mutator_abi.h and tools/edl_harness.py covering:
-1. 4-byte guard-page-adjacent objects (is_exportable),
-2. Multiplication overflow (count * elem_size),
-3. Overlapping pointer aliasing (p and p + 4) preserved under both replay AND mutate_xor_in_snapshot,
-4. Coordinated scalar + bound-buffer reallocation (mutate_scalar_and_rebind_buffers: 3 -> 99 expands
-   both 8*99=792B [in] and 1*99=99B [inout] buffers so writing 99 bytes succeeds without overflow!),
-5. ms_size > 256 (MAX_MS_FRAME_BYTES) rejected with -EOVERFLOW,
-6. Unsupported EDL length expressions (count=a+b) rejected,
-7. void vs scalar ABI return reading.
-"""
-from __future__ import annotations
 
-import subprocess
-import sys
-import tempfile
-import unittest
-from pathlib import Path
-
-DYN_ROOT = Path("/home/meandssh/islands-sgx/dynamic")
-sys.path.insert(0, str(DYN_ROOT / "tools"))
-from edl_harness import parse_edl_trusted  # noqa: E402
-
-
-C_TEST_SRC = r"""
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/mman.h>
-#include "schema_mutator_abi.h"
+#include "../src/schema_mutator_abi.h"
 
 int main(void) {
     /* 1. 4-byte object (int[1], like sgxwallet is_exportable) placed right before a PROT_NONE guard page! */
@@ -174,32 +150,3 @@ int main(void) {
     puts("ALL_SCHEMA_MUTATOR_AND_ABI_TESTS_PASSED");
     return 0;
 }
-"""
-
-
-class TestSchemaMutatorAndAbi(unittest.TestCase):
-    def test_c_schema_mutator_and_abi_suite(self) -> None:
-        with tempfile.TemporaryDirectory() as td:
-            c_file = Path(td) / "test_abi.c"
-            bin_file = Path(td) / "test_abi"
-            c_file.write_text(C_TEST_SRC)
-            subprocess.run(
-                ["gcc", "-O2", "-Wall", "-Wextra", f"-I{DYN_ROOT / 'src'}", str(c_file), "-o", str(bin_file)],
-                check=True,
-            )
-            out = subprocess.check_output([str(bin_file)], text=True)
-            self.assertIn("ALL_SCHEMA_MUTATOR_AND_ABI_TESTS_PASSED", out)
-
-    def test_unsupported_edl_bound_expression_rejected(self) -> None:
-        with tempfile.TemporaryDirectory() as td:
-            edl = Path(td) / "bad.edl"
-            edl.write_text('enclave { trusted { public int foo([in, count=a+b] uint8_t *buf, int a, int b); }; };')
-            ecalls = parse_edl_trusted(edl)
-            self.assertEqual(len(ecalls), 1)
-            attrs = ecalls[0]["params"][0]["attributes"]
-            import re
-            self.assertIsNone(re.match(r"^(count|size)\s*=\s*(\w+)$", [a for a in attrs if a.startswith("count")][0]))
-
-
-if __name__ == "__main__":
-    unittest.main()

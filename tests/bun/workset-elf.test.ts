@@ -1,7 +1,5 @@
-// tests/bun/workset-elf.test.ts — regression tests for the elf_workset.py /
-// patch_4gate.py TypeScript ports. Byte vectors are pinned to the Python
-// implementation's documented encodings; the heavy golden checks run only
-// when the (gitignored) enclave ELF artifacts are present locally.
+// Regression tests for the ELF workset and 4-gate binary patch helpers.
+// Golden ELF checks run when gitignored enclave artifacts are available locally.
 import { describe, expect, test } from "bun:test";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";

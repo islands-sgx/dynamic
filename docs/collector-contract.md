@@ -1,32 +1,41 @@
-# Native collector trace contract
+# Canonical trace and workset contract
 
-## Canonical JSONL: `atfield-canonical-trace-v1`
+## Current flow
 
-One runner invocation writes UTF-8 JSONL: one `run_start`, zero or more `ecall`, then one `run_end`. Every record has `schema`, `record_type`, `run_id`, `layout_epoch`, and `instance_generation`; use null on `run_start` before the first successful create, then the assigned generation on ECALL records and the final generation on `run_end`. A consumer marks the run `complete` only if start/end exist once, every line parses, `ecall.call_seq` is contiguous, the process exits without timeout, and no required measurement is invalid. Otherwise mark `incomplete`, retain records and reasons, and exclude the run from complete measurements. Per-field required gates are mode-declared; a missing required gate makes that field incomplete.
+The current pipeline starts with a Profile bundle produced by the pinned implement build:
 
-- `run_start`: `schema="atfield-canonical-trace-v1"`, sample/mode, run ID, start time, and minimum bundle identity: SHA-256 for selected enclave, host, interposer, schema/manifest, plus their artifact paths or immutable IDs.
-- `ecall`: unique run-wide `call_seq` for every measured record; `instance_generation`; `ecall_index` (selector ordinal); `selector_seq` (zero-based invocation count for that index in the generation); tag; elapsed time; SGX transport status; validity and reasons; page effects; application result; diagnostics.
-- `run_end`: process return code, timeout, ECALL record count, `completion`, `incomplete_reasons`. The runner `.meta.json` stores full trace SHA-256, stdout/stderr or artifact paths, and the same completion decision. Do not put a hash of the whole JSONL inside itself.
+1. lib/bundle/profile-bundle.ts validates the Profile manifest, artifact paths, and SHA-256 identities.
+2. cli/run.ts calls lib/runner/canonical-runner.ts to run the selected host. The runner binds the trace to the bundle and records process completion, stdout/stderr, and artifact digests.
+3. The native interposer in src/native_sgx_interpose.c collects gate observations using the vendored SGX-Step collector under vendor/sgxstep/.
+4. cli/atfield-workset.ts checks canonical traces against the same Profile bundle and lib/workset/build.ts creates the per-Field workset. It rejects duplicate run IDs and preserves Field, page, and effect identity.
+5. The implement build runs pretouch verify as a build-time ELF/workset identity check, then readiness.ts emits the ReadyTable. Formal Final v2 hardware acceptance freezes all artifacts with cli/freeze-final-v2-target.ts and runs cli/run.ts in verify-pretouch mode with c-preserve-tlb gate mode and the native collector; its verdict evaluates raw S3 page effects across four gates.
 
-`call_seq` advances for every emitted measurement, including nested replay/intervention records. `selector_seq` belongs to the originating host ECALL and is inherited by nested records; the records still get distinct `call_seq` and tags. This preserves both global record order and selector identity.
+cli/explore.ts also provides online candidate exploration and validated corpus collection over the Profile and trace contract. The historical Python controller, evaluator, harness, scenario/oracle build path, and SQLite research fixture were retired from this checkout; the exact source, artifacts, and frozen tables remain at tag archive/python-acquisition-0446fc3. Current README examples describe the Bun path and make no claim that historical tables were recomputed.
+
+## Canonical JSONL: atfield-canonical-trace-v1
+
+A run contains one run_start, zero or more ecall records, then one run_end. Every record carries the schema, record type, run ID, layout epoch, and instance generation. A consumer accepts a run as complete only when its boundaries are present once, every line parses, ECALL call sequences are contiguous, the process exits without timeout, and all required measurements are valid. Otherwise it records an incomplete result and the reasons.
+
+- run_start binds sample and mode, run ID, start time, and Profile artifact identities.
+- ecall records use a run-wide call_seq, instance_generation, selector ordinal and invocation sequence, tag, elapsed time, SGX transport status, measurement validity, page effects, application result, and diagnostics.
+- run_end records process status, timeout, ECALL count, completion, and incomplete reasons. Persist the full trace digest and process output in run metadata. Do not include the digest of the entire JSONL inside the JSONL itself.
+
+call_seq advances for every emitted measurement, including nested replay/intervention records. selector_seq belongs to the originating host ECALL and is inherited by nested records. Distinct record sequences preserve both global ordering and selector identity.
 
 ## Evidence and semantics
 
-- `fields[]` carries `field_id`, named gate intervals `s0..s3`, interval durations, and `page_effects`. Boundaries follow host-gate snapshots: S0 at gate 10, S1 at 30, S2 at 50, S3 at 70. Each snapshot is followed by A/D clear except final S3. Encode each page as `{rva, a: bool, d: bool}`; keep A and D independently (D can coexist with A), state page size and set completeness. `ecall_ad` is only the post-call aggregate. A/D page effects are the primary access evidence.
-- `aex` is a diagnostic object with count and optional `fault_events`. AEX first-touch/healed-PTE observations are debug evidence only; they cannot establish page access, field completeness, or a business result. The AEP hook sees only some strict-retracted pages and can miss accesses.
-- `layout_epoch` is a stable fingerprint of effective signer/excluded ranges, TCS/SSA, stack, pretouch/gate RVAs, page size, and selected enclave SHA-256. A changed fingerprint is a new epoch; sample name alone does not identify layout.
-- `instance_generation` increments on each successful enclave creation. Scope selector sequence to generation; this prevents joining reused enclave IDs/RVAs across destroy/create.
-- Preserve separate `sgx_status`, ABI return type/value, and `out_status_i32`. Use `business_result: {status, value, source}` only when an application-specific adapter defines the meaning; otherwise set status to `unknown`. SGX success is transport status, not business success.
+- fields[] carries a field_id, named gate intervals s0..s3, interval durations, and page_effects. Boundaries follow the host-gate snapshots: S0 at gate 10, S1 at 30, S2 at 50, S3 at 70. Each snapshot is followed by A/D clear except final S3. Encode each page as {rva, a: bool, d: bool} and retain A and D independently.
+- aex is diagnostic evidence. AEP first-touch and healed-PTE observations cannot establish page access, Field completeness, or business success; the AEP hook can miss accesses.
+- layout_epoch fingerprints effective signer/excluded ranges, TCS/SSA, stack, pretouch/gate RVAs, page size, and selected enclave digest. A changed fingerprint is a new epoch.
+- instance_generation increments on successful enclave creation. Scope selector sequence to a generation so reused enclave IDs/RVAs cannot be joined across destroy/create.
+- Preserve SGX transport status, ABI return value, and application status separately. SGX success alone does not establish business success.
+- Final-v2 acceptance judges the raw S3_BODY.page_effects set. It does not subtract S2 observations or optional Gate C diagnostics.
 
-## Minimal implementation points
+## Code map
 
-1. `src/native_sgx_interpose.c:34-36`: trace currently opens in append mode. Use a fresh per-run file; check open/write/flush failures and JSON-escape every string.
-2. `src/native_sgx_interpose.c:311-398,427-503`: allocate record `call_seq` at measured-call entry; add schema, run/layout/generation IDs, explicit A/D booleans, result and diagnostics; mark missing required gates and collector failures incomplete.
-3. `src/native_sgx_interpose.c:517-579`: current `call_seq` and `selector_seq` advance only in the outer wrapper; nested measurements reuse both. Keep origin `selector_seq`, add a separate record sequence per emitted measurement.
-4. `src/interpose_state.h:157-159` stores process counters only. Add generation and layout fingerprint there; assign generation at successful create/destroy boundaries `src/native_sgx_interpose.c:7-48,652-658`.
-5. Four-gate page snapshots are collected at `src/interpose_4gate_aep.h:410-462`; AEX first-touch/debug observations at `src/interpose_4gate_aep.h:53-114`. Serialize them as distinct evidence.
-6. `tools/run_native_sgx.py:35-74,180-202`: compute/pass run ID and effective layout epoch; include bundle digests. `tools/run_native_sgx.py:218-277`: after process exit, append `run_end`, validate JSONL/sequence/completion, and persist full trace hash plus stdout/stderr and completion in `.meta.json`.
-
-## Opt-in Gate C post-clear checkpoint
-
-Set `ATFIELD_GATEC_POSTCLEAR_TRACE=1` to add `fields[].gate_c_postclear` to each ECALL field record. It is sampled after Gate C's A/D clear sequence (including the optional mask-4 IPI/second clear) and before S3-arm PTE changes and release to the enclave. The containing ECALL record binds it to `run_id`, `layout_epoch`, `instance_generation`, and `call_seq`; the field object supplies `field_id`. It records a raw OR over repeated observations of that field in the ECALL, with `observation_count`, `checkpoint_count`, and `complete`; sparse `page_effects` omit only zero-valued pages, and are interpretable as a complete scan only when `complete=true`. This diagnostic does not alter Final-v2 acceptance: `S3_BODY.page_effects` is still judged directly, with no subtraction against S2 or this checkpoint. When the variable is unset, no checkpoint buffers, scans, or JSON fields are produced.
+- Profile identity: lib/bundle/profile-bundle.ts
+- Host execution and trace artifacts: cli/run.ts, lib/runner/canonical-runner.ts
+- Trace parsing and bundle binding: lib/workset/trace.ts
+- Workset aggregation: cli/atfield-workset.ts, lib/workset/build.ts
+- Native measurement: src/native_sgx_interpose.c, src/interpose_4gate_aep.h, vendor/sgxstep/
+- Historical source and frozen tables: tag archive/python-acquisition-0446fc3
