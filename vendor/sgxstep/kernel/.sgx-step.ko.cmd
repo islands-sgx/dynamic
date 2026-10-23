@@ -1,1 +1,0 @@
-savedcmd_sgx-step.ko := ld -r -m elf_x86_64 -z noexecstack --no-warn-rwx-segments --build-id=sha1  -T /home/meandssh/.local/state/node2-qe3-closed-loop-20261020/sgxstep-build-7/hdr/usr/src/linux-headers-7.0.14-islands-sgx7/scripts/module.lds -o sgx-step.ko sgx-step.o sgx-step.mod.o .module-common.o

@@ -10,4 +10,9 @@ __pycache__/
 vendor/implement/build/field/.build*/
 vendor/implement/host/driver/.work/
 vendor/sgxstep/kernel/*.ko
+vendor/sgxstep/kernel/.*.cmd
+vendor/sgxstep/kernel/Module.symvers
+vendor/sgxstep/kernel/modules.order
+vendor/sgxstep/kernel/sgx-step.mod
+vendor/sgxstep/kernel/sgx-step.mod.c
 experiments/latest_traces_archive.tar.gz
