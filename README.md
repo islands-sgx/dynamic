@@ -2,7 +2,7 @@
 
 This checkout owns the current Bun/TypeScript trace and workset tools, online candidate explorer, and native SGX measurement collector. The canonical pipeline starts from an implement Profile bundle and produces a bundle-bound trace, a per-Field workset, and a formal Final v2 hardware verdict.
 
-The reported historical study was collected by the retired Python controller and SGX-Step evaluation chain. Its exact source, SQLite research fixture, frozen tables, and evidence remain at tag archive/python-acquisition-0446fc3 (commit 0446fc3f49c0b5eb17bc1db97368a76480531a6c). This checkout does not rerun or recompute those historical results. Retrieve the archived tables with:
+The reported historical study came from the retired Python acquisition chain and its companion test-only hidden evaluator. Their source, tracked fixtures, frozen tables, and checked-in evaluation JSON remain at tag archive/python-acquisition-0446fc3 (commit 0446fc3f49c0b5eb17bc1db97368a76480531a6c); raw per-run traces are not included in that tag. This checkout does not rerun or recompute those historical results. Retrieve the archived tables with:
 
 ```bash
 git show archive/python-acquisition-0446fc3:README.md
