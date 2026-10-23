@@ -45,10 +45,11 @@ export function finalV2S3Verdict(
   completion: "complete" | "incomplete",
   s3PageCount: number,
   measuredFieldCount: number,
+  verificationFailureCount: number,
 ): "NOT_APPLICABLE" | "INCOMPLETE" | "FAIL" | "PASS" {
   if (targetKind !== "final-v2") return "NOT_APPLICABLE";
   if (completion !== "complete") return "INCOMPLETE";
-  if (measuredFieldCount < 1 || s3PageCount > 0) return "FAIL";
+  if (measuredFieldCount < 1 || s3PageCount > 0 || verificationFailureCount > 0) return "FAIL";
   return "PASS";
 }
 
@@ -79,10 +80,12 @@ function hasNonzeroBusinessResult(record: JsonRecord): boolean {
 }
 export function summarizeTraceEcalls(traceText: string): {
   total_ecalls: number; valid_empty_s3_ecalls: number; abnormal_ecalls: JsonRecord[];
+  final_v2_verification_failures: JsonRecord[];
 } {
   let total = 0;
   let validEmptyS3 = 0;
   const abnormal: JsonRecord[] = [];
+  const verificationFailures: JsonRecord[] = [];
   for (const line of traceText.split(/\r?\n/)) {
     if (!line) continue;
     let value: unknown;
@@ -99,6 +102,18 @@ export function summarizeTraceEcalls(traceText: string): {
       value.readiness_installed !== true;
     const businessAnomaly = hasNonzeroBusinessResult(value);
     const anomalous = invalid || unexpectedAex || businessAnomaly || s3Nonempty;
+    const verificationReasons: string[] = [];
+    if (value.sgx_status !== 0) verificationReasons.push("nonzero SGX transport status");
+    if (value.measurement_valid !== true ||
+        !Array.isArray(value.measurement_invalid_reasons) ||
+        value.measurement_invalid_reasons.length !== 0) {
+      verificationReasons.push("invalid measurement");
+    }
+    if (value.readiness_installed !== true) verificationReasons.push("readiness not installed");
+    if (unexpectedAex) verificationReasons.push("missing or unexpected AEX classification");
+    if (verificationReasons.length > 0) {
+      verificationFailures.push({ call_seq: value.call_seq ?? null, reasons: verificationReasons });
+    }
     if (fields.length > 0 && !s3Nonempty && !invalid && !unexpectedAex && !businessAnomaly) validEmptyS3++;
     if (anomalous) {
       abnormal.push({
@@ -109,7 +124,12 @@ export function summarizeTraceEcalls(traceText: string): {
       });
     }
   }
-  return { total_ecalls: total, valid_empty_s3_ecalls: validEmptyS3, abnormal_ecalls: abnormal };
+  return {
+    total_ecalls: total,
+    valid_empty_s3_ecalls: validEmptyS3,
+    abnormal_ecalls: abnormal,
+    final_v2_verification_failures: verificationFailures,
+  };
 }
 
 function shortOutput(value: string): string | null {
@@ -186,8 +206,14 @@ async function main(): Promise<number> {
     const run = await runCanonicalHost(parsed);
     const s3PageCount = run.parsedTrace?.observations.length ?? 0;
     const measuredFieldCount = run.parsedTrace?.measuredFieldIds.length ?? 0;
-    const s3Verdict = finalV2S3Verdict(run.targetKind, run.completion, s3PageCount, measuredFieldCount);
     const callDiagnostics = summarizeTraceEcalls(run.traceText);
+    const s3Verdict = finalV2S3Verdict(
+      run.targetKind,
+      run.completion,
+      s3PageCount,
+      measuredFieldCount,
+      callDiagnostics.final_v2_verification_failures.length,
+    );
     const summary = {
       schema: "atfield-canonical-runner-v1",
       run_id: run.runId,
@@ -202,13 +228,16 @@ async function main(): Promise<number> {
         d: observation.dirty,
         effects: observation.effects,
       })) ?? [],
-      s3_body_rule: "raw S3_BODY page set must be empty for Final v2 PASS; S2 is never subtracted",
+      s3_body_rule: "raw S3_BODY page set for Fields measured in this run must be empty for Final v2 PASS; no all-Field coverage is claimed; S2 is never subtracted",
       final_v2_validation: run.targetKind === "final-v2" ? {
-        criterion: "at least one valid target Field is measured and the raw S3_BODY page set is empty; S2 is never subtracted",
+        criterion: "at least one Field measured in this run, no raw S3_BODY page observations for those measured Fields, and no SGX transport, measurement, readiness, or unexpected/out-of-window AEX failures; S2 is never subtracted",
+        field_coverage_scope: "measured_field_ids_only",
+        field_coverage_note: "No all-Field coverage contract is declared; PASS applies only to Fields measured in this run.",
         verdict: s3Verdict,
         observed_page_count: s3PageCount,
         measured_field_ids: run.parsedTrace?.measuredFieldIds ?? [],
         manifest_field_count: run.finalV2Target?.manifestFieldCount ?? null,
+        final_v2_verification_failure_count: callDiagnostics.final_v2_verification_failures.length,
         final_v2_target: run.finalV2Target ?? null,
         call_diagnostics: callDiagnostics,
       } : null,
