@@ -1,7 +1,6 @@
 // lib/workset/elf.ts
 // Build FieldTargetPages from a signed SGX layout and frozen ELF inputs.
-// Ported from tools/elf_workset.py — produces identical atfield-workset-v1
-// and atfield-signer-layout-v1 artifacts.
+// TypeScript producer for atfield-workset-v1 and atfield-signer-layout-v1 artifacts.
 
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, renameSync, unlinkSync, writeSync, fsyncSync, openSync, closeSync } from "node:fs";

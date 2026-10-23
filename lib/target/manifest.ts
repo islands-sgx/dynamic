@@ -1,6 +1,6 @@
 // lib/target/manifest.ts
 // Load build metadata and dynamic-owned scenario/oracle configurations.
-// Ported from tools/target_manifest.py.
+// TypeScript parser for dynamic target manifest inputs.
 
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";

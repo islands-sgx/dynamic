@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// cli/elf-workset.ts — atfield-workset-v1 producer (replaces tools/elf_workset.py).
+// Bun producer for atfield-workset-v1 artifacts.
 import { existsSync, readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import process from "node:process";

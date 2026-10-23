@@ -3,7 +3,7 @@
 // FinalElf. Per-Field Gate A/B/C/D trampolines go in the last page
 // (gate_helper_rva = post_start + capacity_q - 0x1000) of .atfield_pretouch
 // without changing any PT_LOAD header, section size, or business symbol RVA.
-// Ported from tools/patch_4gate.py — byte-identical output contract.
+// TypeScript implementation of the four-gate ELF layout patcher.
 
 import { chmodSync, writeFileSync } from "node:fs";
 import path from "node:path";
