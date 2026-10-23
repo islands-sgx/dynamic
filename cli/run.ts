@@ -80,10 +80,12 @@ function hasNonzeroBusinessResult(record: JsonRecord): boolean {
 }
 export function summarizeTraceEcalls(traceText: string): {
   total_ecalls: number; valid_empty_s3_ecalls: number; abnormal_ecalls: JsonRecord[];
+  nonzero_business_result_ecalls: number;
   final_v2_verification_failures: JsonRecord[];
 } {
   let total = 0;
   let validEmptyS3 = 0;
+  let nonzeroBusinessResultEcalls = 0;
   const abnormal: JsonRecord[] = [];
   const verificationFailures: JsonRecord[] = [];
   for (const line of traceText.split(/\r?\n/)) {
@@ -101,6 +103,7 @@ export function summarizeTraceEcalls(traceText: string): {
       !Array.isArray(value.measurement_invalid_reasons) || value.measurement_invalid_reasons.length !== 0 ||
       value.readiness_installed !== true;
     const businessAnomaly = hasNonzeroBusinessResult(value);
+    if (businessAnomaly) nonzeroBusinessResultEcalls++;
     const anomalous = invalid || unexpectedAex || businessAnomaly || s3Nonempty;
     const verificationReasons: string[] = [];
     if (value.sgx_status !== 0) verificationReasons.push("nonzero SGX transport status");
@@ -128,6 +131,7 @@ export function summarizeTraceEcalls(traceText: string): {
     total_ecalls: total,
     valid_empty_s3_ecalls: validEmptyS3,
     abnormal_ecalls: abnormal,
+    nonzero_business_result_ecalls: nonzeroBusinessResultEcalls,
     final_v2_verification_failures: verificationFailures,
   };
 }
@@ -229,6 +233,7 @@ async function main(): Promise<number> {
         effects: observation.effects,
       })) ?? [],
       s3_body_rule: "raw S3_BODY page set for Fields measured in this run must be empty for Final v2 PASS; no all-Field coverage is claimed; S2 is never subtracted",
+      business_result_scope: "per-call ABI/application results are diagnostic; PASS does not assert business success without an explicit expected-result contract",
       final_v2_validation: run.targetKind === "final-v2" ? {
         criterion: "at least one Field measured in this run, no raw S3_BODY page observations for those measured Fields, and no SGX transport, measurement, readiness, or unexpected/out-of-window AEX failures; S2 is never subtracted",
         field_coverage_scope: "measured_field_ids_only",
@@ -238,6 +243,7 @@ async function main(): Promise<number> {
         measured_field_ids: run.parsedTrace?.measuredFieldIds ?? [],
         manifest_field_count: run.finalV2Target?.manifestFieldCount ?? null,
         final_v2_verification_failure_count: callDiagnostics.final_v2_verification_failures.length,
+        nonzero_business_result_ecall_count: callDiagnostics.nonzero_business_result_ecalls,
         final_v2_target: run.finalV2Target ?? null,
         call_diagnostics: callDiagnostics,
       } : null,

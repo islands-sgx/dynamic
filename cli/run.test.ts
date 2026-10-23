@@ -34,6 +34,7 @@ test("Final v2 gate rejects SGX, measurement, readiness, and AEX failures but le
   const cleanSummary=summarizeTraceEcalls(JSON.stringify(businessResult));
   expect(cleanSummary.final_v2_verification_failures).toHaveLength(0);
   expect(cleanSummary.abnormal_ecalls).toHaveLength(1);
+  expect(cleanSummary.nonzero_business_result_ecalls).toBe(1);
   expect(finalV2S3Verdict("final-v2","complete",0,1,cleanSummary.final_v2_verification_failures.length)).toBe("PASS");
 
   const failed={...clean,sgx_status:1,measurement_valid:false,readiness_installed:false,aex:{unexpected_count:1,outside_window_count:1}};
